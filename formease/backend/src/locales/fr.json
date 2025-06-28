@@ -1,0 +1,14 @@
+{
+  "export.csv.title": "Liste des inscrits",
+  "export.pdf.title": "Liste des inscrits",
+  "form.field.email": "Email",
+  "form.field.nom": "Nom",
+  "form.field.prenom": "Prénom",
+  "form.field.ville": "Ville",
+  "submission.validated": "Inscription validée",
+  "submission.trashed": "Inscription mise à la corbeille",
+  "submission.deleted": "Inscription supprimée",
+  "error.server": "Erreur serveur",
+  "error.export.csv": "Erreur export CSV",
+  "error.export.pdf": "Erreur export PDF"
+}

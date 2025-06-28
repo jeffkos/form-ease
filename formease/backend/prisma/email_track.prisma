@@ -1,0 +1,29 @@
+// Ajout du modèle pour le suivi des emails
+model EmailTrack {
+  id          String    @id @default(cuid())
+  userId      Int       // L'utilisateur qui a envoyé l'email
+  user        User      @relation(fields: [userId], references: [id])
+  
+  recipientEmail String
+  subject        String
+  sentAt         DateTime @default(now())
+  deliveredAt    DateTime?
+  openedAt       DateTime?
+  clickedAt      DateTime[]
+  
+  status     String    @default("sent") // sent, delivered, opened, clicked, bounced, failed
+  bounced    Boolean   @default(false)
+  bouncedReason String?
+  
+  metadata   Json?     // Stockage flexible pour des métadonnées additionnelles
+  
+  formId     Int?      // Si l'email est lié à un formulaire
+  form       Form?     @relation(fields: [formId], references: [id])
+  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([sentAt])
+}
