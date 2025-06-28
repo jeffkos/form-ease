@@ -1,0 +1,132 @@
+// Schéma Prisma pour FormEase
+// Modèle User conforme au cahier des charges
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  PREMIUM
+  SUPERADMIN
+}
+
+enum Language {
+  FR
+  EN
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  first_name      String
+  last_name       String
+  email           String   @unique
+  password_hash   String
+  role            Role     @default(USER)
+  language        Language @default(FR)
+  plan            String   // free, premium
+  plan_expiration DateTime?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  payments        Payment[]
+  forms           Form[]
+  archiveLogs     ArchiveLog[]
+  actionLogs      ActionLog[]
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  user_id        Int
+  provider       String
+  amount         Float
+  currency       String
+  status         String
+  transaction_ref String
+  created_at     DateTime @default(now())
+  user           User     @relation(fields: [user_id], references: [id])
+}
+
+model Form {
+  id          Int       @id @default(autoincrement())
+  user_id     Int
+  title       String
+  description String
+  config      Json
+  is_active   Boolean   @default(true)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  user        User      @relation(fields: [user_id], references: [id])
+  submissions Submission[]
+  fields         FormField[]
+  archived    Boolean   @default(false)
+  archived_at DateTime?
+}
+
+model Submission {
+  id           Int      @id @default(autoincrement())
+  form_id      Int
+  data         Json
+  status       String   // new, validated, trashed
+  validated_at DateTime?
+  notified     Boolean  @default(false)
+  notified_at  DateTime?
+  mail_opened  Boolean  @default(false)
+  created_at   DateTime @default(now())
+  form         Form     @relation(fields: [form_id], references: [id])
+  archived    Boolean   @default(false)
+  archived_at DateTime?
+}
+
+model FormField {
+  id             Int      @id @default(autoincrement())
+  form_id        Int
+  type           String
+  label_fr       String
+  label_en       String
+  options        Json?
+  is_required    Boolean @default(false)
+  order          Int
+  style          Json?
+  placeholder_fr String?
+  placeholder_en String?
+  default_value  String?
+  form           Form     @relation(fields: [form_id], references: [id])
+}
+
+model EmailTemplate {
+  id        Int      @id @default(autoincrement())
+  name     String   // Nom interne du template
+  type     String   // Type d'usage (validation, notification, etc.)
+  subject  String   // Sujet de l'email
+  html     String   // Contenu HTML avec variables
+  language String   // fr, en, etc.
+  active   Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model ArchiveLog {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  entity     String   // 'Submission', 'Form', etc.
+  entity_id  Int
+  action     String   // 'archive', 'restore', 'delete'
+  date       DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [id])
+}
+
+model ActionLog {
+  id        Int      @id @default(autoincrement())
+  user_id   Int?
+  action    String   // ex: 'validate_submission', 'delete_user', etc.
+  entity    String?  // ex: 'Submission', 'User', 'Form', etc.
+  entity_id Int?
+  details   Json?
+  date      DateTime @default(now())
+  user      User?    @relation(fields: [user_id], references: [id])
+}

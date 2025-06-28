@@ -1,0 +1,6 @@
+// Ajout de la route Swagger dans app.js (extrait à placer dans votre app.js)
+/*
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./src/docs/swagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+*/
