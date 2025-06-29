@@ -76,6 +76,13 @@ FormEase/
 - PostgreSQL 14+
 - npm ou yarn
 
+### ⚠️ IMPORTANT - Sécurité
+**Avant de commencer, lisez ceci :**
+- Ne jamais commiter le fichier `.env` avec de vraies données
+- Générez vos propres clés JWT sécurisées
+- Utilisez des mots de passe forts pour la base de données
+- Configurez SMTP avec vos propres identifiants
+
 ### 1. Clone du Repository
 ```bash
 git clone https://github.com/informagenie/FormEase.git
@@ -86,8 +93,14 @@ cd FormEase
 ```bash
 cd formease/backend
 npm install
+
+# Générer des clés sécurisées
+node scripts/generate-jwt-secret.js
+
+# Configurer l'environnement
 cp .env.example .env
-# Configurez les variables d'environnement dans .env
+# ⚠️ ÉDITEZ .env avec VOS vraies valeurs sécurisées
+
 npx prisma migrate dev
 npm start
 ```

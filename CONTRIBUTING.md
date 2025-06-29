@@ -19,7 +19,7 @@ Merci de votre intérêt pour contribuer à FormEase ! Ce guide vous aidera à c
 
 ```bash
 # Fork le repository
-git clone https://github.com/VOTRE-USERNAME/FormEase.git
+git clone https://github.com/informagenie/FormEase.git
 cd FormEase
 
 # Installer les dépendances
