@@ -263,7 +263,69 @@ exports.exportSubmissionsPDF = async (req, res) => {
 
 // Création d'une inscription (squelette minimal pour éviter l'erreur de route)
 exports.createSubmission = async (req, res) => {
-  res.status(501).json({ message: 'Non implémenté : création d\'inscription.' });
+  try {
+    const { formId } = req.params;
+    const submissionData = req.body;
+
+    // Vérifier que le formulaire existe et est actif
+    const form = await prisma.form.findUnique({
+      where: { id: parseInt(formId) },
+      include: { user: true }
+    });
+
+    if (!form) {
+      return res.status(404).json({ message: 'Formulaire non trouvé' });
+    }
+
+    if (form.status !== 'active') {
+      return res.status(400).json({ message: 'Formulaire inactif' });
+    }
+
+    // Vérifier le quota de soumissions pour l'utilisateur propriétaire du formulaire
+    const submissionCount = await prisma.submission.count({
+      where: { form_id: parseInt(formId) }
+    });
+
+    const quotaLimits = {
+      free: 100,
+      premium: 10000
+    };
+
+    const userPlan = form.user.plan || 'free';
+    const maxSubmissions = quotaLimits[userPlan] || quotaLimits.free;
+
+    if (submissionCount >= maxSubmissions) {
+      return res.status(403).json({ 
+        message: 'Limite d\'inscriptions atteinte pour ce formulaire' 
+      });
+    }
+
+    // Créer la soumission
+    const submission = await prisma.submission.create({
+      data: {
+        form_id: parseInt(formId),
+        data: submissionData,
+        status: 'new',
+        created_at: new Date()
+      }
+    });
+
+    // Log de l'action
+    logger.info(`Nouvelle soumission créée pour le formulaire ${formId}`, {
+      submissionId: submission.id,
+      formId: formId,
+      email: submissionData.email
+    });
+
+    res.status(201).json({ 
+      message: 'Inscription créée avec succès',
+      submissionId: submission.id
+    });
+
+  } catch (error) {
+    logger.error('Erreur lors de la création de soumission:', error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
 };
 
 // Dans vos routes (exemple):

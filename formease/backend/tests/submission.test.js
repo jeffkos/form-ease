@@ -24,6 +24,13 @@ jest.mock('winston', () => ({
   }
 }));
 
+// Mock des middlewares
+jest.mock('../src/middleware/captcha', () => (req, res, next) => next());
+jest.mock('../src/middleware/quota', () => ({
+  checkSubmissionQuota: (req, res, next) => next(),
+  checkExportQuota: (req, res, next) => next()
+}));
+
 // Configuration de l'environnement de test
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
 process.env.NODE_ENV = 'test';
@@ -55,7 +62,7 @@ describe('API /api/submissions', () => {
     });
     
     // Mock pour le quota atteint (100 soumissions pour plan free)
-    mockPrisma.formSubmission.count.mockResolvedValue(100);
+    mockPrisma.submission.count.mockResolvedValue(100);
 
     const res = await request(app)
       .post(`/api/submissions/form/${formId}`)
@@ -84,14 +91,14 @@ describe('API /api/submissions', () => {
     });
     
     // Mock pour quota non atteint (50 soumissions sur 100 autorisées)
-    mockPrisma.formSubmission.count.mockResolvedValue(50);
+    mockPrisma.submission.count.mockResolvedValue(50);
     
     // Mock pour création de soumission
-    mockPrisma.formSubmission.create.mockResolvedValue({
+    mockPrisma.submission.create.mockResolvedValue({
       id: 1,
       form_id: formId,
-      email: 'test@example.com',
       data: { email: 'test@example.com', nom: 'Test User' },
+      status: 'new',
       created_at: new Date()
     });
 
