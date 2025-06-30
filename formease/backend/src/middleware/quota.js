@@ -1,7 +1,16 @@
 // Middleware de quotas pour FormEase
 // Vérifie les limites selon le plan utilisateur (freemium/premium)
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+// Function to get Prisma instance (mockable for tests)
+const getPrismaInstance = () => {
+  if (global.mockPrisma) {
+    return global.mockPrisma;
+  }
+  return new PrismaClient();
+};
+
+const prisma = getPrismaInstance();
 
 const QUOTAS = {
   free: {
@@ -52,7 +61,7 @@ exports.checkSubmissionQuota = async (req, res, next) => {
     }
     
     const plan = form.user?.plan || 'free';
-    const count = await prisma.formSubmission.count({ where: { form_id: parseInt(formId) } });
+    const count = await prisma.submission.count({ where: { form_id: parseInt(formId) } });
     
     if (count >= QUOTAS[plan].submissionsPerForm) {
       return res.status(403).json({ message: 'Limite d\'inscriptions atteinte pour ce formulaire.' });

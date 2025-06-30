@@ -26,24 +26,30 @@ jest.mock('winston', () => ({
 
 // Mock des middlewares
 jest.mock('../src/middleware/captcha', () => (req, res, next) => next());
-jest.mock('../src/middleware/quota', () => ({
-  checkSubmissionQuota: (req, res, next) => next(),
-  checkExportQuota: (req, res, next) => next()
-}));
 
 // Configuration de l'environnement de test
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
 process.env.NODE_ENV = 'test';
 
-const app = require('../src/app');
+// Set up Prisma mock before requiring app
 const { PrismaClient } = require('@prisma/client');
+const mockPrisma = new PrismaClient();
+global.mockPrisma = mockPrisma;
+
+const app = require('../src/app');
 
 // Récupération du mock Prisma
-const mockPrisma = new PrismaClient();
+// global.mockPrisma is already set above
 
 describe('API /api/submissions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  // Debug test to check route availability
+  it('should respond to basic route test', async () => {
+    const res = await request(app)
+      .get('/api/submissions');
   });
 
   it('refuse une inscription si quota atteint', async () => {

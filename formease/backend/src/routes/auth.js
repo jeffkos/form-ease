@@ -3,8 +3,20 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const auth = require('../middleware/auth');
-const captcha = require('../middleware/captcha');
-const { validate } = require('../middleware/validation');
+const { 
+  validateRequest, 
+  registerValidation, 
+  loginValidation, 
+  updateProfileValidation 
+} = require('../middleware/validation');
+const { 
+  authLimiter, 
+  strictLimiter, 
+  securityLogger 
+} = require('../middleware/security');
+
+// Middleware de sécurité pour toutes les routes d'auth
+router.use(securityLogger);
 
 /**
  * @swagger
@@ -32,7 +44,12 @@ const { validate } = require('../middleware/validation');
  *       201:
  *         description: Utilisateur créé
  */
-router.post('/register', validate('register'), authController.register);
+router.post('/register', 
+  strictLimiter, 
+  validateRequest(registerValidation), 
+  authController.register
+);
+
 /**
  * @swagger
  * /api/auth/login:
@@ -53,11 +70,20 @@ router.post('/register', validate('register'), authController.register);
  *       200:
  *         description: Connexion réussie
  */
-router.post('/login', validate('login'), authController.login);
+router.post('/login', 
+  authLimiter, 
+  validateRequest(loginValidation), 
+  authController.login
+);
 
 // Route pour récupérer le profil utilisateur
 router.get('/profile', auth, authController.getProfile);
+
 // Route pour mettre à jour le profil utilisateur
-router.put('/profile', auth, validate('updateProfile'), authController.updateProfile);
+router.put('/profile', 
+  auth, 
+  validateRequest(updateProfileValidation), 
+  authController.updateProfile
+);
 
 module.exports = router;

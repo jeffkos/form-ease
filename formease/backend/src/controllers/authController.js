@@ -114,8 +114,11 @@ exports.login = async (req, res) => {
     
     // Vérification critique du secret JWT
     if (!process.env.JWT_SECRET) {
-      console.error('FATAL ERROR: JWT_SECRET environment variable is required');
-      return res.status(500).json({ message: 'Configuration serveur manquante' });
+      logger.error('CRITICAL: JWT_SECRET environment variable is missing');
+      return res.status(500).json({ 
+        message: 'Configuration serveur manquante',
+        error: 'CONFIGURATION_ERROR'
+      });
     }
     
     const token = jwt.sign(
@@ -162,27 +165,54 @@ exports.login = async (req, res) => {
 // Récupération du profil utilisateur (ajout du champ submissions_count)
 exports.getProfile = async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    const user = await prisma.user.findUnique({ 
+      where: { id: req.user.id },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        email: true,
+        role: true,
+        language: true,
+        plan: true,
+        plan_expiration: true,
+        created_at: true
+      }
+    });
+    
+    if (!user) {
+      logger.warn('Profile request for non-existent user', { 
+        userId: req.user.id, 
+        ip: req.ip 
+      });
+      return res.status(404).json({ 
+        message: 'Utilisateur non trouvé',
+        error: 'USER_NOT_FOUND'
+      });
+    }
+    
     // Compter le nombre de formulaires et d'inscriptions
     const [formsCount, submissionsCount] = await Promise.all([
       prisma.form.count({ where: { user_id: user.id } }),
       prisma.submission.count({ where: { form: { user_id: user.id } } })
     ]);
+    
     res.json({
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      role: user.role,
-      language: user.language,
-      plan: user.plan,
-      plan_expiration: user.plan_expiration,
+      ...user,
       forms_count: formsCount,
       submissions_count: submissionsCount
     });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    logger.error('Profile fetch error', { 
+      error: error.message, 
+      userId: req.user?.id,
+      ip: req.ip 
+    });
+    
+    res.status(500).json({ 
+      message: 'Erreur lors de la récupération du profil',
+      error: 'INTERNAL_SERVER_ERROR'
+    });
   }
 };
 
@@ -191,24 +221,61 @@ exports.updateProfile = async (req, res) => {
   try {
     const { first_name, last_name, email, password, language } = req.body;
     const data = { first_name, last_name, email, language };
+    
+    // Si un nouveau mot de passe est fourni, le hasher avec un salt plus élevé
     if (password) {
-      data.password_hash = await bcrypt.hash(password, 10);
+      data.password_hash = await bcrypt.hash(password, 12);
     }
+    
+    // Vérifier si l'email n'est pas déjà utilisé par un autre utilisateur
+    if (email && email !== req.user.email) {
+      const existingUser = await prisma.user.findUnique({ 
+        where: { email: email.toLowerCase() } 
+      });
+      if (existingUser && existingUser.id !== req.user.id) {
+        return res.status(409).json({ 
+          message: 'Cet email est déjà utilisé par un autre compte',
+          error: 'EMAIL_ALREADY_EXISTS'
+        });
+      }
+      data.email = email.toLowerCase();
+    }
+    
     const user = await prisma.user.update({
       where: { id: req.user.id },
-      data
+      data,
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        email: true,
+        role: true,
+        language: true,
+        plan: true,
+        plan_expiration: true
+      }
     });
-    res.json({ message: 'Profil mis à jour', user: {
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      role: user.role,
-      language: user.language,
-      plan: user.plan,
-      plan_expiration: user.plan_expiration
-    }});
+    
+    logger.info('Profile updated', { 
+      userId: user.id, 
+      email: user.email, 
+      ip: req.ip 
+    });
+    
+    res.json({ 
+      message: 'Profil mis à jour avec succès', 
+      user 
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    logger.error('Profile update error', { 
+      error: error.message, 
+      userId: req.user?.id,
+      ip: req.ip 
+    });
+    
+    res.status(500).json({ 
+      message: 'Erreur lors de la mise à jour du profil',
+      error: 'INTERNAL_SERVER_ERROR'
+    });
   }
 };

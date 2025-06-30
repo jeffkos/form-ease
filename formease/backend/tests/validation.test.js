@@ -14,7 +14,7 @@ describe('Validation Middleware', () => {
   });
 
   describe('validate function', () => {
-    it('should pass valid registration data', () => {
+    it('should pass valid registration data', async () => {
       req.body = {
         first_name: 'Jean',
         last_name: 'Dupont',
@@ -24,13 +24,13 @@ describe('Validation Middleware', () => {
       };
 
       const middleware = validate('register');
-      middleware(req, res, next);
+      await middleware(req, res, next);
 
       expect(next).toHaveBeenCalled();
       expect(res.status).not.toHaveBeenCalled();
     });
 
-    it('should reject invalid email', () => {
+    it('should reject invalid email', async () => {
       req.body = {
         first_name: 'Jean',
         last_name: 'Dupont',
@@ -40,7 +40,7 @@ describe('Validation Middleware', () => {
       };
 
       const middleware = validate('register');
-      middleware(req, res, next);
+      await middleware(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
@@ -56,7 +56,7 @@ describe('Validation Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
-    it('should reject weak password', () => {
+    it('should reject weak password', async () => {
       req.body = {
         first_name: 'Jean',
         last_name: 'Dupont',
@@ -66,7 +66,7 @@ describe('Validation Middleware', () => {
       };
 
       const middleware = validate('register');
-      middleware(req, res, next);
+      await middleware(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
@@ -81,7 +81,7 @@ describe('Validation Middleware', () => {
       );
     });
 
-    it('should strip unknown fields', () => {
+    it('should strip unknown fields', async () => {
       req.body = {
         first_name: 'Jean',
         last_name: 'Dupont',
@@ -93,7 +93,7 @@ describe('Validation Middleware', () => {
       };
 
       const middleware = validate('register');
-      middleware(req, res, next);
+      await middleware(req, res, next);
 
       expect(next).toHaveBeenCalled();
       expect(req.body).not.toHaveProperty('unknown_field');
