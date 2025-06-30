@@ -1,6 +1,15 @@
 // Contrôleur des inscriptions (submissions) pour FormEase
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+// Function to get Prisma instance (mockable for tests)
+const getPrismaInstance = () => {
+  if (global.mockPrisma) {
+    return global.mockPrisma;
+  }
+  return new PrismaClient();
+};
+
+const prisma = getPrismaInstance();
 const nodemailer = require('nodemailer');
 const { Parser } = require('json2csv');
 const PDFDocument = require('pdfkit');

@@ -2,73 +2,44 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+const logger = require('./utils/logger');
 
 // Chargement des variables d'environnement
 dotenv.config();
 
-// Vérification des variables d'environnement critiques
-if (!process.env.JWT_SECRET) {
-  console.error('FATAL ERROR: JWT_SECRET environment variable is required');
-  process.exit(1);
-}
-
 const app = express();
 
+// Import des middlewares de sécurité
+const { 
+  securityHeaders, 
+  apiLimiter, 
+  checkCriticalSecrets, 
+  errorHandler 
+} = require('./middleware/security');
+
+// Vérification des secrets critiques au démarrage
+app.use(checkCriticalSecrets);
+
 // Middleware de sécurité
-app.use(helmet({
-  contentSecurityPolicy: false, // Désactivé pour Swagger UI
-  crossOriginEmbedderPolicy: false
-}));
+app.use(securityHeaders);
 
 // Configuration CORS
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Rate limiting global
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requêtes par IP par fenêtre
-  message: {
-    error: 'Trop de requêtes. Réessayez dans 15 minutes.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+app.use('/api', apiLimiter);
 
-// Rate limiting spécifique pour l'authentification
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 tentatives de connexion par IP
-  message: {
-    error: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Rate limiting pour l'inscription
-const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 heure
-  max: 3, // 3 inscriptions par IP par heure
-  message: {
-    error: 'Trop d\'inscriptions. Réessayez dans 1 heure.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-app.use(globalLimiter);
+// Middleware de parsing JSON
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Importation de la route d'authentification avec rate limiting
+// Importation des routes
 const authRoutes = require('./routes/auth');
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', registerLimiter);
 app.use('/api/auth', authRoutes);
 
 // Importation de la route de paiement
@@ -112,8 +83,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./docs/swagger');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
-// Gestion globale des erreurs (monitoring)
-const errorHandler = require('./middleware/errorHandler');
+// Gestion globale des erreurs (middleware de sécurité)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
@@ -121,6 +91,7 @@ const PORT = process.env.PORT || 4000;
 // Ne démarrer le serveur que si ce fichier est exécuté directement
 if (require.main === module) {
   app.listen(PORT, () => {
+    logger.info(`FormEase backend server started on port ${PORT}`);
     console.log(`Serveur FormEase backend démarré sur le port ${PORT}`);
   });
 }

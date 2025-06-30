@@ -1,10 +1,24 @@
 // Routes des inscriptions (submissions) pour FormEase
 const express = require('express');
+const { param } = require('express-validator');
 const router = express.Router();
 const submissionController = require('../controllers/submissionController');
 const auth = require('../middleware/auth');
 const captcha = require('../middleware/captcha');
 const quota = require('../middleware/quota');
+const { 
+  validateRequest, 
+  submitFormValidation,
+  paginationValidation
+} = require('../middleware/validation');
+const { 
+  apiLimiter, 
+  strictLimiter,
+  securityLogger 
+} = require('../middleware/security');
+
+// Middleware de sécurité pour toutes les routes
+router.use(securityLogger);
 
 /**
  * @swagger
@@ -35,7 +49,16 @@ const quota = require('../middleware/quota');
  *         description: Inscription créée
  */
 // Création d'une inscription (publique, avec captcha et quota)
-router.post('/form/:formId', captcha, quota.checkSubmissionQuota, submissionController.createSubmission);
+router.post('/form/:formId', 
+  strictLimiter, // Rate limiting strict pour les soumissions
+  captcha, 
+  quota.checkSubmissionQuota, 
+  validateRequest([
+    param('formId').isInt({ min: 1 }).withMessage('ID de formulaire invalide'),
+    // Validation générique, la validation spécifique sera faite côté contrôleur
+  ]),
+  submissionController.createSubmission
+);
 
 /**
  * @swagger
@@ -55,14 +78,50 @@ router.post('/form/:formId', captcha, quota.checkSubmissionQuota, submissionCont
  *         description: Inscription validée et notification envoyée
  */
 // Valider une inscription
-router.post('/:submissionId/validate', auth, submissionController.validateSubmission);
+router.post('/:submissionId/validate', 
+  auth, 
+  validateRequest([
+    param('submissionId').isInt({ min: 1 }).withMessage('ID de soumission invalide')
+  ]),
+  submissionController.validateSubmission
+);
+
 // Mettre à la corbeille
-router.post('/:submissionId/trash', auth, submissionController.trashSubmission);
+router.post('/:submissionId/trash', 
+  auth, 
+  validateRequest([
+    param('submissionId').isInt({ min: 1 }).withMessage('ID de soumission invalide')
+  ]),
+  submissionController.trashSubmission
+);
+
 // Supprimer définitivement
-router.delete('/:submissionId', auth, submissionController.deleteSubmission);
+router.delete('/:submissionId', 
+  auth, 
+  validateRequest([
+    param('submissionId').isInt({ min: 1 }).withMessage('ID de soumission invalide')
+  ]),
+  submissionController.deleteSubmission
+);
+
 // Export CSV (quota export)
-router.get('/form/:formId/export/csv', auth, quota.checkExportQuota, submissionController.exportSubmissionsCSV);
+router.get('/form/:formId/export/csv', 
+  auth, 
+  quota.checkExportQuota, 
+  validateRequest([
+    param('formId').isInt({ min: 1 }).withMessage('ID de formulaire invalide')
+  ]),
+  submissionController.exportSubmissionsCSV
+);
+
 // Export PDF (quota export)
-router.get('/form/:formId/export/pdf', auth, quota.checkExportQuota, submissionController.exportSubmissionsPDF);
+router.get('/form/:formId/export/pdf', 
+  auth, 
+  quota.checkExportQuota, 
+  validateRequest([
+    param('formId').isInt({ min: 1 }).withMessage('ID de formulaire invalide')
+  ]),
+  submissionController.exportSubmissionsPDF
+);
 
 module.exports = router;
