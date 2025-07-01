@@ -58,6 +58,10 @@ app.use('/api/forms', formFieldRoutes);
 const submissionRoutes = require('./routes/submission');
 app.use('/api/submissions', submissionRoutes);
 
+// Importation de la route de gestion des QR codes
+const qrcodeRoutes = require('./routes/qrcodes');
+app.use('/api/qrcodes', qrcodeRoutes);
+
 // Importation de la route des statistiques (dashboard)
 const statsRoutes = require('./routes/stats');
 app.use('/api/stats', statsRoutes);
