@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Créateur de Formulaires Avancé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe',
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .tremor-Card {
+            background-color: white;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .tremor-CardHeader {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1rem 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .tremor-Button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .tremor-Button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .tremor-Button-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .tremor-Button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .tremor-Button-secondary {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .tremor-Button-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        .tremor-Button-sm {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-md {
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+        .tremor-TextInput {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-TextInput::placeholder {
+            color: #9ca3af;
+        }
+        .tremor-TextInput:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Select {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-Select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .tremor-Badge-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .tremor-Badge-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .tremor-Badge-yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .tremor-Title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .tremor-Subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .tremor-Metric {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        .tremor-Text {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-over {
+            animation: slideOver 0.3s ease-out;
+        }
+        
+        @keyframes slideOver {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% { transform: scale(0.33); }
+            40%, 50% { opacity: 1; }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+        
+        .field-item {
+            transition: all 0.2s ease;
+        }
+        
+        .field-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .canvas-drop-zone {
+            min-height: 400px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-drop-zone.drag-over {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        .form-field {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0;
+            transition: all 0.2s ease;
+        }
+        
+        .form-field:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        
+        .form-field.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        .toolbar-glass {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+
+        .toolbar-glass {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+        const { 
+            Card, CardHeader, CardContent, 
+            Button, Badge, 
+            TextInput, Textarea, Select, SelectItem,
+            Tab, TabGroup, TabList, TabPanel, TabPanels,
+            Grid, Col, Flex,
+            Title, Subtitle, Text, Metric,
+            BarChart, DonutChart, AreaChart, LineChart,
+            Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell,
+            Callout, Alert,
+            Switch, Checkbox,
+            ProgressBar, Tracker,
+            DatePicker, NumberInput,
+            SearchSelect, SearchSelectItem,
+            MultiSelect, MultiSelectItem,
+            RangeBar, CategoryBar
+        } = Tremor;
+
+        // Templates de formulaires prédéfinis
+        const formTemplates = [
+            {
+                id: "blank",
+                name: "Formulaire Vide",
+                description: "Commencez avec un formulaire vierge",
+                icon: "ri-file-add-line",
+                color: "gray",
+                fields: []
+            },
+            {
+                id: "contact",
+                name: "Contact",
+                description: "Formulaire de contact classique",
+                icon: "ri-mail-line",
+                color: "blue",
+                fields: [
+                    { type: "text", label: "Nom complet", required: true },
+                    { type: "email", label: "Email", required: true },
+                    { type: "tel", label: "Téléphone", required: false },
+                    { type: "select", label: "Sujet", options: ["Question", "Support", "Partenariat"], required: true },
+                    { type: "textarea", label: "Message", required: true }
+                ]
+            },
+            {
+                id: "survey",
+                name: "Sondage",
+                description: "Collectez des opinions et feedbacks",
+                icon: "ri-survey-line",
+                color: "green",
+                fields: [
+                    { type: "text", label: "Nom (optionnel)", required: false },
+                    { type: "radio", label: "Évaluation générale", options: ["Excellent", "Bon", "Moyen", "Médiocre"], required: true },
+                    { type: "checkbox", label: "Aspects appréciés", options: ["Interface", "Performance", "Support", "Prix"], required: false },
+                    { type: "rating", label: "Note sur 5", required: true },
+                    { type: "textarea", label: "Commentaires", required: false }
+                ]
+            },
+            {
+                id: "registration",
+                name: "Inscription",
+                description: "Formulaire d'inscription événement",
+                icon: "ri-user-add-line",
+                color: "purple",
+                fields: [
+                    { type: "text", label: "Prénom", required: true },
+                    { type: "text", label: "Nom", required: true },
+                    { type: "email", label: "Email", required: true },
+                    { type: "tel", label: "Téléphone", required: true },
+                    { type: "select", label: "Type de billet", options: ["Standard", "VIP", "Étudiant"], required: true },
+                    { type: "checkbox", label: "Préférences alimentaires", options: ["Végétarien", "Vegan", "Sans gluten"], required: false },
+                    { type: "textarea", label: "Besoins spéciaux", required: false }
+                ]
+            },
+            {
+                id: "feedback",
+                name: "Feedback Produit",
+                description: "Recueillez les retours utilisateurs",
+                icon: "ri-feedback-line",
+                color: "orange",
+                fields: [
+                    { type: "text", label: "Nom du produit utilisé", required: true },
+                    { type: "rating", label: "Satisfaction générale", required: true },
+                    { type: "radio", label: "Recommanderiez-vous ?", options: ["Définitivement", "Probablement", "Pas sûr", "Non"], required: true },
+                    { type: "checkbox", label: "Fonctionnalités utilisées", options: ["Dashboard", "Rapports", "API", "Support"], required: false },
+                    { type: "textarea", label: "Suggestions d'amélioration", required: false }
+                ]
+            },
+            {
+                id: "lead",
+                name: "Génération de Leads",
+                description: "Capturez des prospects qualifiés",
+                icon: "ri-user-heart-line",
+                color: "pink",
+                fields: [
+                    { type: "text", label: "Nom de l'entreprise", required: true },
+                    { type: "text", label: "Nom du contact", required: true },
+                    { type: "email", label: "Email professionnel", required: true },
+                    { type: "tel", label: "Téléphone", required: true },
+                    { type: "select", label: "Taille de l'entreprise", options: ["1-10", "11-50", "51-200", "200+"], required: true },
+                    { type: "select", label: "Budget mensuel", options: ["< 1k€", "1k-5k€", "5k-10k€", "10k€+"], required: true },
+                    { type: "textarea", label: "Besoins spécifiques", required: false }
+                ]
+            }
+        ];
+
+        // Composants de champs disponibles avec catégories
+        const fieldCategories = [
+            {
+                name: "Champs de base",
+                icon: "ri-input-method-line",
+                fields: [
+                    {
+                        type: "text",
+                        label: "Texte Simple",
+                        icon: "ri-text",
+                        color: "blue",
+                        description: "Saisie de texte court"
+                    },
+                    {
+                        type: "textarea",
+                        label: "Texte Long",
+                        icon: "ri-file-text-line",
+                        color: "blue",
+                        description: "Zone de texte multiligne"
+                    },
+                    {
+                        type: "email",
+                        label: "Email",
+                        icon: "ri-mail-line",
+                        color: "green",
+                        description: "Adresse email avec validation"
+                    },
+                    {
+                        type: "tel",
+                        label: "Téléphone",
+                        icon: "ri-phone-line",
+                        color: "purple",
+                        description: "Numéro de téléphone"
+                    },
+                    {
+                        type: "number",
+                        label: "Nombre",
+                        icon: "ri-hashtag",
+                        color: "orange",
+                        description: "Saisie numérique"
+                    },
+                    {
+                        type: "url",
+                        label: "URL",
+                        icon: "ri-link",
+                        color: "cyan",
+                        description: "Adresse web"
+                    }
+                ]
+            },
+            {
+                name: "Sélection",
+                icon: "ri-checkbox-line",
+                fields: [
+                    {
+                        type: "select",
+                        label: "Liste Déroulante",
+                        icon: "ri-arrow-down-s-line",
+                        color: "indigo",
+                        description: "Sélection unique"
+                    },
+                    {
+                        type: "multiselect",
+                        label: "Sélection Multiple",
+                        icon: "ri-checkbox-multiple-line",
+                        color: "violet",
+                        description: "Choix multiples"
+                    },
+                    {
+                        type: "radio",
+                        label: "Boutons Radio",
+                        icon: "ri-radio-button-line",
+                        color: "pink",
+                        description: "Choix unique parmi plusieurs"
+                    },
+                    {
+                        type: "checkbox",
+                        label: "Cases à Cocher",
+                        icon: "ri-checkbox-line",
+                        color: "teal",
+                        description: "Sélections multiples"
+                    }
+                ]
+            },
+            {
+                name: "Date et Temps",
+                icon: "ri-calendar-line",
+                fields: [
+                    {
+                        type: "date",
+                        label: "Date",
+                        icon: "ri-calendar-line",
+                        color: "red",
+                        description: "Sélection de date"
+                    },
+                    {
+                        type: "datetime",
+                        label: "Date et Heure",
+                        icon: "ri-calendar-event-line",
+                        color: "amber",
+                        description: "Date avec heure"
+                    },
+                    {
+                        type: "time",
+                        label: "Heure",
+                        icon: "ri-time-line",
+                        color: "yellow",
+                        description: "Sélection d'heure"
+                    },
+                    {
+                        type: "daterange",
+                        label: "Plage de Dates",
+                        icon: "ri-calendar-2-line",
+                        color: "emerald",
+                        description: "Période entre deux dates"
+                    }
+                ]
+            },
+            {
+                name: "Avancé",
+                icon: "ri-tools-line",
+                fields: [
+                    {
+                        type: "file",
+                        label: "Upload Fichier",
+                        icon: "ri-upload-line",
+                        color: "rose",
+                        description: "Téléchargement de fichiers"
+                    },
+                    {
+                        type: "rating",
+                        label: "Évaluation",
+                        icon: "ri-star-line",
+                        color: "yellow",
+                        description: "Système de notation"
+                    },
+                    {
+                        type: "slider",
+                        label: "Curseur",
+                        icon: "ri-equalizer-line",
+                        color: "blue",
+                        description: "Sélection par curseur"
+                    },
+                    {
+                        type: "signature",
+                        label: "Signature",
+                        icon: "ri-quill-pen-line",
+                        color: "gray",
+                        description: "Signature électronique"
+                    },
+                    {
+                        type: "captcha",
+                        label: "CAPTCHA",
+                        icon: "ri-shield-check-line",
+                        color: "green",
+                        description: "Protection anti-spam"
+                    }
+                ]
+            }
+        ];
+
+        const FormBuilder = () => {
+            const [currentForm, setCurrentForm] = useState({
+                id: null,
+                name: "Nouveau Formulaire",
+                description: "",
+                category: "contact",
+                fields: [],
+                settings: {
+                    theme: "default",
+                    submitButton: "Envoyer",
+                    successMessage: "Merci pour votre soumission !",
+                    emailNotification: true,
+                    captcha: false,
+                    multipleSubmissions: false
+                }
+            });
+
+            const [selectedField, setSelectedField] = useState(null);
+            const [activeTab, setActiveTab] = useState("builder");
+            const [previewMode, setPreviewMode] = useState(false);
+            const [showTemplates, setShowTemplates] = useState(true);
+            const [draggedField, setDraggedField] = useState(null);
+            const [saveStatus, setSaveStatus] = useState("idle"); // idle, saving, saved, error
+
+            // Statistiques en temps réel (simulation)
+            const [stats, setStats] = useState({
+                totalForms: 24,
+                totalSubmissions: 1847,
+                conversionRate: 12.5,
+                avgCompletionTime: "2m 34s"
+            });
+
+            // Données pour les graphiques
+            const submissionData = [
+                { name: "Lun", submissions: 23 },
+                { name: "Mar", submissions: 45 },
+                { name: "Mer", submissions: 32 },
+                { name: "Jeu", submissions: 67 },
+                { name: "Ven", submissions: 89 },
+                { name: "Sam", submissions: 34 },
+                { name: "Dim", submissions: 28 }
+            ];
+
+            const fieldTypeData = [
+                { name: "Texte", value: 35 },
+                { name: "Email", value: 25 },
+                { name: "Sélection", value: 20 },
+                { name: "Numérique", value: 12 },
+                { name: "Autre", value: 8 }
+            ];
+
+            const useTemplate = (template) => {
+                setCurrentForm({
+                    ...currentForm,
+                    name: template.name,
+                    description: template.description,
+                    category: template.id,
+                    fields: template.fields.map((field, index) => ({
+                        ...field,
+                        id: `field_${Date.now()}_${index}`,
+                        placeholder: `Entrez ${field.label.toLowerCase()}`
+                    }))
+                });
+                setShowTemplates(false);
+            };
+
+            const addField = (fieldType) => {
+                const newField = {
+                    id: `field_${Date.now()}`,
+                    type: fieldType.type,
+                    label: fieldType.label,
+                    placeholder: `Entrez ${fieldType.label.toLowerCase()}`,
+                    required: false,
+                    validation: {},
+                    options: fieldType.type === 'select' || fieldType.type === 'radio' || fieldType.type === 'checkbox' ? 
+                        ['Option 1', 'Option 2', 'Option 3'] : undefined
+                };
+                
+                setCurrentForm({
+                    ...currentForm,
+                    fields: [...currentForm.fields, newField]
+                });
+            };
+
+            const updateField = (fieldId, updates) => {
+                setCurrentForm({
+                    ...currentForm,
+                    fields: currentForm.fields.map(field => 
+                        field.id === fieldId ? { ...field, ...updates } : field
+                    )
+                });
+            };
+
+            const removeField = (fieldId) => {
+                setCurrentForm({
+                    ...currentForm,
+                    fields: currentForm.fields.filter(field => field.id !== fieldId)
+                });
+                setSelectedField(null);
+            };
+
+            const moveField = (dragIndex, dropIndex) => {
+                const draggedField = currentForm.fields[dragIndex];
+                const newFields = [...currentForm.fields];
+                newFields.splice(dragIndex, 1);
+                newFields.splice(dropIndex, 0, draggedField);
+                
+                setCurrentForm({
+                    ...currentForm,
+                    fields: newFields
+                });
+            };
+
+            const saveForm = async () => {
+                setSaveStatus("saving");
+                
+                // Simulation de sauvegarde
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Sauvegarde dans localStorage
+                const savedForms = JSON.parse(localStorage.getItem('formease_forms') || '[]');
+                const formToSave = {
+                    ...currentForm,
+                    id: currentForm.id || Date.now().toString(),
+                    lastModified: new Date().toISOString(),
+                    created: currentForm.created || new Date().toISOString()
+                };
+                
+                const updatedForms = currentForm.id 
+                    ? savedForms.map(f => f.id === currentForm.id ? formToSave : f)
+                    : [...savedForms, formToSave];
+                
+                localStorage.setItem('formease_forms', JSON.stringify(updatedForms));
+                
+                setSaveStatus("saved");
+                setTimeout(() => setSaveStatus("idle"), 2000);
+            };
+
+            const renderField = (field) => {
+                const fieldCategory = fieldCategories.find(cat => 
+                    cat.fields.some(f => f.type === field.type)
+                );
+                const fieldType = fieldCategory?.fields.find(f => f.type === field.type);
+
+                return (
+                    <Card 
+                        key={field.id}
+                        className={`mb-4 cursor-pointer transition-all hover:shadow-lg ${
+                            selectedField?.id === field.id ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                        }`}
+                        onClick={() => setSelectedField(field)}
+                    >
+                        <CardContent className="p-4">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center space-x-2">
+                                    <div className={`w-6 h-6 bg-${fieldType?.color}-100 text-${fieldType?.color}-600 rounded flex items-center justify-center`}>
+                                        <i className={`${fieldType?.icon} text-xs`}></i>
+                                    </div>
+                                    <Text className="font-medium">{field.label}</Text>
+                                    {field.required && <Badge color="red" size="xs">Requis</Badge>}
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                    <button 
+                                        className="p-1 text-gray-400 hover:text-gray-600"
+                                        title="Déplacer"
+                                    >
+                                        <i className="ri-drag-move-2-line"></i>
+                                    </button>
+                                    <button 
+                                        className="p-1 text-red-400 hover:text-red-600"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeField(field.id);
+                                        }}
+                                        title="Supprimer"
+                                    >
+                                        <i className="ri-delete-bin-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Aperçu du champ */}
+                            <div className="opacity-75">
+                                {field.type === 'text' || field.type === 'email' || field.type === 'tel' || field.type === 'url' ? (
+                                    <TextInput placeholder={field.placeholder} disabled />
+                                ) : field.type === 'textarea' ? (
+                                    <Textarea placeholder={field.placeholder} disabled rows={2} />
+                                ) : field.type === 'number' ? (
+                                    <NumberInput placeholder={field.placeholder} disabled />
+                                ) : field.type === 'select' ? (
+                                    <Select disabled>
+                                        {(field.options || []).map((option, i) => (
+                                            <SelectItem key={i} value={option}>{option}</SelectItem>
+                                        ))}
+                                    </Select>
+                                ) : field.type === 'radio' ? (
+                                    <div className="space-y-2">
+                                        {(field.options || []).map((option, i) => (
+                                            <div key={i} className="flex items-center space-x-2">
+                                                <input type="radio" disabled className="text-blue-600" />
+                                                <Text className="text-sm">{option}</Text>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : field.type === 'checkbox' ? (
+                                    <div className="space-y-2">
+                                        {(field.options || []).map((option, i) => (
+                                            <div key={i} className="flex items-center space-x-2">
+                                                <Checkbox disabled />
+                                                <Text className="text-sm">{option}</Text>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : field.type === 'date' ? (
+                                    <DatePicker disabled />
+                                ) : field.type === 'rating' ? (
+                                    <div className="flex space-x-1">
+                                        {[1,2,3,4,5].map(i => (
+                                            <i key={i} className="ri-star-line text-yellow-400"></i>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-gray-400 text-sm italic">
+                                        Aperçu {field.type}
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                );
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+                    {/* Header */}
+                    <div className="bg-white border-b border-gray-200 shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center py-4">
+                                <div className="flex items-center space-x-4">
+                                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                                        <i className="ri-file-list-3-line text-white text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <Title className="text-gray-900">FormEase Builder</Title>
+                                        <Text className="text-gray-600">Créateur de formulaires avancé</Text>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center space-x-3">
+                                    <Button 
+                                        variant="outline" 
+                                        onClick={() => setPreviewMode(!previewMode)}
+                                        icon={previewMode ? "ri-edit-line" : "ri-eye-line"}
+                                    >
+                                        {previewMode ? "Éditer" : "Aperçu"}
+                                    </Button>
+                                    
+                                    <Button 
+                                        onClick={saveForm}
+                                        disabled={saveStatus === "saving"}
+                                        className={`${
+                                            saveStatus === "saved" ? "bg-green-600" : "bg-blue-600"
+                                        } text-white`}
+                                    >
+                                        {saveStatus === "saving" ? (
+                                            <>
+                                                <i className="ri-loader-4-line mr-2 animate-spin"></i>
+                                                Sauvegarde...
+                                            </>
+                                        ) : saveStatus === "saved" ? (
+                                            <>
+                                                <i className="ri-check-line mr-2"></i>
+                                                Sauvegardé
+                                            </>
+                                        ) : (
+                                            <>
+                                                <i className="ri-save-line mr-2"></i>
+                                                Sauvegarder
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Toolbar avec statistiques */}
+                    <div className="bg-white border-b border-gray-200">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                            <Grid numItems={4} className="gap-4">
+                                <Card className="bg-gradient-to-r from-blue-50 to-blue-100">
+                                    <CardContent>
+                                        <Flex alignItems="start" className="space-x-3">
+                                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                                <i className="ri-file-list-line text-white"></i>
+                                            </div>
+                                            <div>
+                                                <Metric className="text-blue-900">{stats.totalForms}</Metric>
+                                                <Text className="text-blue-700">Formulaires créés</Text>
+                                            </div>
+                                        </Flex>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="bg-gradient-to-r from-green-50 to-green-100">
+                                    <CardContent>
+                                        <Flex alignItems="start" className="space-x-3">
+                                            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                                                <i className="ri-send-plane-line text-white"></i>
+                                            </div>
+                                            <div>
+                                                <Metric className="text-green-900">{stats.totalSubmissions.toLocaleString()}</Metric>
+                                                <Text className="text-green-700">Soumissions totales</Text>
+                                            </div>
+                                        </Flex>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="bg-gradient-to-r from-purple-50 to-purple-100">
+                                    <CardContent>
+                                        <Flex alignItems="start" className="space-x-3">
+                                            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                                                <i className="ri-percent-line text-white"></i>
+                                            </div>
+                                            <div>
+                                                <Metric className="text-purple-900">{stats.conversionRate}%</Metric>
+                                                <Text className="text-purple-700">Taux de conversion</Text>
+                                            </div>
+                                        </Flex>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="bg-gradient-to-r from-orange-50 to-orange-100">
+                                    <CardContent>
+                                        <Flex alignItems="start" className="space-x-3">
+                                            <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                                                <i className="ri-time-line text-white"></i>
+                                            </div>
+                                            <div>
+                                                <Metric className="text-orange-900">{stats.avgCompletionTime}</Metric>
+                                                <Text className="text-orange-700">Temps moyen</Text>
+                                            </div>
+                                        </Flex>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </div>
+                    </div>
+
+                    {showTemplates && (
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                            <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                                <CardHeader>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <Title className="text-white text-2xl">Choisissez un modèle</Title>
+                                            <Text className="text-indigo-100">Commencez rapidement avec nos modèles prédéfinis</Text>
+                                        </div>
+                                        <Button 
+                                            variant="outline" 
+                                            onClick={() => setShowTemplates(false)}
+                                            className="border-white text-white hover:bg-white hover:text-indigo-600"
+                                        >
+                                            Ignorer
+                                        </Button>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <Grid numItems={3} className="gap-6">
+                                        {formTemplates.map((template) => (
+                                            <Card 
+                                                key={template.id}
+                                                className="bg-white cursor-pointer hover:shadow-xl transition-all hover:scale-105 bounce-in"
+                                                onClick={() => useTemplate(template)}
+                                            >
+                                                <CardContent className="p-6">
+                                                    <div className="flex items-center space-x-4 mb-4">
+                                                        <div className={`w-12 h-12 bg-${template.color}-100 text-${template.color}-600 rounded-lg flex items-center justify-center`}>
+                                                            <i className={`${template.icon} text-xl`}></i>
+                                                        </div>
+                                                        <div>
+                                                            <Title className="text-gray-900">{template.name}</Title>
+                                                            <Text className="text-gray-600">{template.description}</Text>
+                                                        </div>
+                                                    </div>
+                                                    <Badge color={template.color} className="mb-2">
+                                                        {template.fields.length} champs
+                                                    </Badge>
+                                                    <div className="text-sm text-gray-500">
+                                                        {template.fields.slice(0, 3).map((field, i) => (
+                                                            <span key={i}>
+                                                                {field.label}
+                                                                {i < Math.min(2, template.fields.length - 1) && ", "}
+                                                                {i === 2 && template.fields.length > 3 && "..."}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+
+                    {!showTemplates && (
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                            <div className="flex space-x-6 h-[calc(100vh-200px)]">
+                                {/* Sidebar - Composants */}
+                                {!previewMode && (
+                                    <div className="w-80 space-y-4 slide-in-left">
+                                        <TabGroup>
+                                            <TabList>
+                                                <Tab>Composants</Tab>
+                                                <Tab>Paramètres</Tab>
+                                                <Tab>Analytics</Tab>
+                                            </TabList>
+                                            
+                                            <TabPanels className="mt-4 h-[calc(100vh-280px)] overflow-y-auto">
+                                                {/* Onglet Composants */}
+                                                <TabPanel>
+                                                    <div className="space-y-6">
+                                                        {fieldCategories.map((category) => (
+                                                            <Card key={category.name}>
+                                                                <CardHeader>
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <i className={`${category.icon} text-gray-600`}></i>
+                                                                        <Title className="text-sm">{category.name}</Title>
+                                                                    </div>
+                                                                </CardHeader>
+                                                                <CardContent>
+                                                                    <div className="grid grid-cols-1 gap-2">
+                                                                        {category.fields.map((field) => (
+                                                                            <button
+                                                                                key={field.type}
+                                                                                onClick={() => addField(field)}
+                                                                                className="field-item w-full text-left p-3 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition-all group"
+                                                                            >
+                                                                                <div className="flex items-center space-x-3">
+                                                                                    <div className={`w-8 h-8 bg-${field.color}-100 text-${field.color}-600 rounded-lg flex items-center justify-center group-hover:bg-${field.color}-200 transition-colors`}>
+                                                                                        <i className={field.icon}></i>
+                                                                                    </div>
+                                                                                    <div className="flex-1">
+                                                                                        <div className="font-medium text-sm text-gray-900">{field.label}</div>
+                                                                                        <div className="text-xs text-gray-500">{field.description}</div>
+                                                                                    </div>
+                                                                                    <i className="ri-add-line text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+                                                                                </div>
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                </CardContent>
+                                                            </Card>
+                                                        ))}
+                                                    </div>
+                                                </TabPanel>
+
+                                                {/* Onglet Paramètres */}
+                                                <TabPanel>
+                                                    <div className="space-y-4">
+                                                        <Card>
+                                                            <CardHeader>
+                                                                <Title>Informations générales</Title>
+                                                            </CardHeader>
+                                                            <CardContent className="space-y-4">
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                        Nom du formulaire
+                                                                    </label>
+                                                                    <TextInput
+                                                                        value={currentForm.name}
+                                                                        onChange={(e) => setCurrentForm({...currentForm, name: e.target.value})}
+                                                                        placeholder="Nom du formulaire"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                        Description
+                                                                    </label>
+                                                                    <Textarea
+                                                                        value={currentForm.description}
+                                                                        onChange={(e) => setCurrentForm({...currentForm, description: e.target.value})}
+                                                                        placeholder="Description du formulaire"
+                                                                        rows={3}
+                                                                    />
+                                                                </div>
+                                                            </CardContent>
+                                                        </Card>
+
+                                                        <Card>
+                                                            <CardHeader>
+                                                                <Title>Personnalisation</Title>
+                                                            </CardHeader>
+                                                            <CardContent className="space-y-4">
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                        Texte du bouton
+                                                                    </label>
+                                                                    <TextInput
+                                                                        value={currentForm.settings.submitButton}
+                                                                        onChange={(e) => setCurrentForm({
+                                                                            ...currentForm,
+                                                                            settings: {...currentForm.settings, submitButton: e.target.value}
+                                                                        })}
+                                                                        placeholder="Texte du bouton"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                        Message de succès
+                                                                    </label>
+                                                                    <Textarea
+                                                                        value={currentForm.settings.successMessage}
+                                                                        onChange={(e) => setCurrentForm({
+                                                                            ...currentForm,
+                                                                            settings: {...currentForm.settings, successMessage: e.target.value}
+                                                                        })}
+                                                                        placeholder="Message après soumission"
+                                                                        rows={2}
+                                                                    />
+                                                                </div>
+                                                            </CardContent>
+                                                        </Card>
+
+                                                        <Card>
+                                                            <CardHeader>
+                                                                <Title>Options avancées</Title>
+                                                            </CardHeader>
+                                                            <CardContent className="space-y-4">
+                                                                <div className="flex items-center justify-between">
+                                                                    <div>
+                                                                        <Text className="font-medium">Notification email</Text>
+                                                                        <Text className="text-sm text-gray-600">Recevoir les soumissions par email</Text>
+                                                                    </div>
+                                                                    <Switch 
+                                                                        checked={currentForm.settings.emailNotification}
+                                                                        onChange={(checked) => setCurrentForm({
+                                                                            ...currentForm,
+                                                                            settings: {...currentForm.settings, emailNotification: checked}
+                                                                        })}
+                                                                    />
+                                                                </div>
+                                                                
+                                                                <div className="flex items-center justify-between">
+                                                                    <div>
+                                                                        <Text className="font-medium">CAPTCHA</Text>
+                                                                        <Text className="text-sm text-gray-600">Protection anti-spam</Text>
+                                                                    </div>
+                                                                    <Switch 
+                                                                        checked={currentForm.settings.captcha}
+                                                                        onChange={(checked) => setCurrentForm({
+                                                                            ...currentForm,
+                                                                            settings: {...currentForm.settings, captcha: checked}
+                                                                        })}
+                                                                    />
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <div>
+                                                                        <Text className="font-medium">Soumissions multiples</Text>
+                                                                        <Text className="text-sm text-gray-600">Autoriser plusieurs envois</Text>
+                                                                    </div>
+                                                                    <Switch 
+                                                                        checked={currentForm.settings.multipleSubmissions}
+                                                                        onChange={(checked) => setCurrentForm({
+                                                                            ...currentForm,
+                                                                            settings: {...currentForm.settings, multipleSubmissions: checked}
+                                                                        })}
+                                                                    />
+                                                                </div>
+                                                            </CardContent>
+                                                        </Card>
+                                                    </div>
+                                                </TabPanel>
+
+                                                {/* Onglet Analytics */}
+                                                <TabPanel>
+                                                    <div className="space-y-4">
+                                                        <Card>
+                                                            <CardHeader>
+                                                                <Title>Soumissions par jour</Title>
+                                                            </CardHeader>
+                                                            <CardContent>
+                                                                <AreaChart
+                                                                    data={submissionData}
+                                                                    index="name"
+                                                                    categories={["submissions"]}
+                                                                    colors={["blue"]}
+                                                                    className="h-40"
+                                                                />
+                                                            </CardContent>
+                                                        </Card>
+
+                                                        <Card>
+                                                            <CardHeader>
+                                                                <Title>Types de champs</Title>
+                                                            </CardHeader>
+                                                            <CardContent>
+                                                                <DonutChart
+                                                                    data={fieldTypeData}
+                                                                    category="value"
+                                                                    index="name"
+                                                                    colors={["blue", "green", "yellow", "purple", "gray"]}
+                                                                    className="h-40"
+                                                                />
+                                                            </CardContent>
+                                                        </Card>
+
+                                                        <Card>
+                                                            <CardHeader>
+                                                                <Title>Performance</Title>
+                                                            </CardHeader>
+                                                            <CardContent className="space-y-4">
+                                                                <div>
+                                                                    <Flex justifyContent="between" className="mb-2">
+                                                                        <Text>Taux de complétion</Text>
+                                                                        <Text>87%</Text>
+                                                                    </Flex>
+                                                                    <ProgressBar value={87} color="green" />
+                                                                </div>
+                                                                <div>
+                                                                    <Flex justifyContent="between" className="mb-2">
+                                                                        <Text>Taux d'abandon</Text>
+                                                                        <Text>13%</Text>
+                                                                    </Flex>
+                                                                    <ProgressBar value={13} color="red" />
+                                                                </div>
+                                                                <div>
+                                                                    <Flex justifyContent="between" className="mb-2">
+                                                                        <Text>Satisfaction</Text>
+                                                                        <Text>4.6/5</Text>
+                                                                    </Flex>
+                                                                    <ProgressBar value={92} color="yellow" />
+                                                                </div>
+                                                            </CardContent>
+                                                        </Card>
+                                                    </div>
+                                                </TabPanel>
+                                            </TabPanels>
+                                        </TabGroup>
+                                    </div>
+                                )}
+
+                                {/* Zone de construction */}
+                                <div className="flex-1 slide-in-right">
+                                    {!previewMode ? (
+                                        <div className="h-full flex">
+                                            {/* Canvas */}
+                                            <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto">
+                                                <div className="max-w-2xl mx-auto">
+                                                    {/* En-tête du formulaire */}
+                                                    <div className="mb-8 text-center">
+                                                        <Title className="text-2xl text-gray-900 mb-2">{currentForm.name}</Title>
+                                                        {currentForm.description && (
+                                                            <Text className="text-gray-600">{currentForm.description}</Text>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Zone de construction */}
+                                                    <div className="space-y-4">
+                                                        {currentForm.fields.length === 0 ? (
+                                                            <div className="drag-area border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+                                                                <div className="text-gray-400">
+                                                                    <div className="relative inline-block">
+                                                                        <i className="ri-add-circle-line text-6xl mb-4 floating"></i>
+                                                                        <div className="absolute inset-0 pulse-ring bg-blue-400 rounded-full opacity-20"></div>
+                                                                    </div>
+                                                                    <Title className="text-gray-500 mb-2">Formulaire vide</Title>
+                                                                    <Text className="text-gray-400 mb-4">
+                                                                        Glissez des composants ici ou cliquez sur "Ajouter" dans la barre latérale
+                                                                    </Text>
+                                                                    <Button 
+                                                                        variant="outline" 
+                                                                        onClick={() => addField(fieldCategories[0].fields[0])}
+                                                                        className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                                                                    >
+                                                                        <i className="ri-add-line mr-2"></i>
+                                                                        Ajouter le premier champ
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            currentForm.fields.map((field, index) => renderField(field))
+                                                        )}
+                                                    </div>
+
+                                                    {/* Bouton de soumission */}
+                                                    {currentForm.fields.length > 0 && (
+                                                        <div className="mt-8 p-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                                                            <Button className="w-full bg-blue-600 text-white text-lg py-3">
+                                                                <i className="ri-send-plane-line mr-2"></i>
+                                                                {currentForm.settings.submitButton}
+                                                            </Button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Panneau de propriétés */}
+                                            {selectedField && (
+                                                <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200 ml-4 p-6 overflow-y-auto">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <Title>Propriétés</Title>
+                                                        <button 
+                                                            onClick={() => setSelectedField(null)}
+                                                            className="text-gray-400 hover:text-gray-600"
+                                                        >
+                                                            <i className="ri-close-line"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="space-y-4">
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Label
+                                                            </label>
+                                                            <TextInput
+                                                                value={selectedField.label}
+                                                                onChange={(e) => updateField(selectedField.id, { label: e.target.value })}
+                                                                placeholder="Label du champ"
+                                                            />
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Placeholder
+                                                            </label>
+                                                            <TextInput
+                                                                value={selectedField.placeholder || ''}
+                                                                onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
+                                                                placeholder="Texte d'aide"
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between py-2">
+                                                            <div>
+                                                                <Text className="font-medium">Champ requis</Text>
+                                                                <Text className="text-sm text-gray-600">Obligatoire pour valider</Text>
+                                                            </div>
+                                                            <Switch 
+                                                                checked={selectedField.required}
+                                                                onChange={(checked) => updateField(selectedField.id, { required: checked })}
+                                                            />
+                                                        </div>
+
+                                                        {(selectedField.type === 'select' || selectedField.type === 'radio' || selectedField.type === 'checkbox') && (
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                    Options
+                                                                </label>
+                                                                <div className="space-y-2">
+                                                                    {(selectedField.options || []).map((option, index) => (
+                                                                        <div key={index} className="flex items-center space-x-2">
+                                                                            <TextInput
+                                                                                value={option}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...(selectedField.options || [])];
+                                                                                    newOptions[index] = e.target.value;
+                                                                                    updateField(selectedField.id, { options: newOptions });
+                                                                                }}
+                                                                                placeholder={`Option ${index + 1}`}
+                                                                                className="flex-1"
+                                                                            />
+                                                                            <button
+                                                                                onClick={() => {
+                                                                                    const newOptions = (selectedField.options || []).filter((_, i) => i !== index);
+                                                                                    updateField(selectedField.id, { options: newOptions });
+                                                                                }}
+                                                                                className="text-red-500 hover:text-red-700 p-2"
+                                                                            >
+                                                                                <i className="ri-delete-bin-line"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                    <Button 
+                                                                        variant="outline" 
+                                                                        onClick={() => {
+                                                                            const newOptions = [...(selectedField.options || []), `Option ${(selectedField.options || []).length + 1}`];
+                                                                            updateField(selectedField.id, { options: newOptions });
+                                                                        }}
+                                                                        className="w-full"
+                                                                    >
+                                                                        <i className="ri-add-line mr-2"></i>
+                                                                        Ajouter une option
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        <div className="pt-4 border-t border-gray-200">
+                                                            <Button 
+                                                                variant="outline" 
+                                                                color="red"
+                                                                onClick={() => removeField(selectedField.id)}
+                                                                className="w-full"
+                                                            >
+                                                                <i className="ri-delete-bin-line mr-2"></i>
+                                                                Supprimer le champ
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        /* Mode aperçu */
+                                        <div className="h-full bg-white rounded-lg shadow-sm border border-gray-200 p-6 overflow-y-auto">
+                                            <div className="max-w-2xl mx-auto">
+                                                <div className="form-preview-container">
+                                                    <div className="form-preview-inner">
+                                                        <div className="text-center mb-8">
+                                                            <Title className="text-3xl text-gray-900 mb-3">{currentForm.name}</Title>
+                                                            {currentForm.description && (
+                                                                <Text className="text-gray-600 text-lg">{currentForm.description}</Text>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="space-y-6">
+                                                            {currentForm.fields.map((field, index) => (
+                                                                <div key={field.id} className="space-y-2">
+                                                                    <label className="block text-sm font-medium text-gray-700">
+                                                                        {field.label}
+                                                                        {field.required && <span className="text-red-500 ml-1">*</span>}
+                                                                    </label>
+                                                                    
+                                                                    {field.type === 'text' || field.type === 'email' || field.type === 'tel' || field.type === 'url' ? (
+                                                                        <TextInput placeholder={field.placeholder} />
+                                                                    ) : field.type === 'textarea' ? (
+                                                                        <Textarea placeholder={field.placeholder} rows={4} />
+                                                                    ) : field.type === 'number' ? (
+                                                                        <NumberInput placeholder={field.placeholder} />
+                                                                    ) : field.type === 'select' ? (
+                                                                        <Select>
+                                                                            {(field.options || []).map((option, optIndex) => (
+                                                                                <SelectItem key={optIndex} value={option}>{option}</SelectItem>
+                                                                            ))}
+                                                                        </Select>
+                                                                    ) : field.type === 'radio' ? (
+                                                                        <div className="space-y-2">
+                                                                            {(field.options || []).map((option, optIndex) => (
+                                                                                <div key={optIndex} className="flex items-center space-x-2">
+                                                                                    <input type="radio" name={field.id} className="text-blue-600" />
+                                                                                    <Text>{option}</Text>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : field.type === 'checkbox' ? (
+                                                                        <div className="space-y-2">
+                                                                            {(field.options || []).map((option, optIndex) => (
+                                                                                <div key={optIndex} className="flex items-center space-x-2">
+                                                                                    <Checkbox />
+                                                                                    <Text>{option}</Text>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : field.type === 'date' ? (
+                                                                        <DatePicker />
+                                                                    ) : field.type === 'rating' ? (
+                                                                        <div className="flex space-x-1">
+                                                                            {[1,2,3,4,5].map(i => (
+                                                                                <button key={i} className="text-yellow-400 hover:text-yellow-500 text-xl">
+                                                                                    <i className="ri-star-line hover:ri-star-fill"></i>
+                                                                                </button>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="p-4 bg-gray-100 rounded-lg text-center text-gray-500">
+                                                                            Aperçu de {field.type}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                            
+                                                            <div className="pt-8">
+                                                                <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg py-3 shadow-lg hover:shadow-xl transition-all">
+                                                                    <i className="ri-send-plane-line mr-2"></i>
+                                                                    {currentForm.settings.submitButton}
+                                                                </Button>
+                                                            </div>
+
+                                                            {currentForm.settings.captcha && (
+                                                                <div className="flex items-center justify-center space-x-2 p-4 bg-gray-50 rounded-lg">
+                                                                    <i className="ri-shield-check-line text-green-600"></i>
+                                                                    <Text className="text-sm text-gray-600">Protégé par CAPTCHA</Text>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const App = () => {
+            return <FormBuilder />;
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

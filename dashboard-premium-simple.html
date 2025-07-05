@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .btn-primary {
+            @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+        }
+        .card {
+            @apply bg-white rounded-lg shadow-sm border p-6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-gray-900">FormEase</h1>
+                        <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Premium</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+                            U
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex">
+            <!-- Sidebar -->
+            <nav class="w-64 bg-white shadow-sm h-screen sticky top-0 border-r">
+                <div class="p-6">
+                    <div class="space-y-2">
+                        <a href="#dashboard" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="ri-dashboard-line mr-3 text-lg"></i>
+                            Tableau de bord
+                        </a>
+                        <a href="#forms" class="flex items-center px-3 py-2 text-blue-600 bg-blue-50 rounded-lg">
+                            <i class="ri-file-list-3-line mr-3 text-lg"></i>
+                            Mes formulaires
+                        </a>
+                        <a href="#responses" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="ri-inbox-line mr-3 text-lg"></i>
+                            Réponses
+                        </a>
+                        <a href="#analytics" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="ri-bar-chart-line mr-3 text-lg"></i>
+                            Analytics
+                        </a>
+                        <a href="#integrations" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="ri-links-line mr-3 text-lg"></i>
+                            Intégrations
+                        </a>
+                        <a href="#settings" class="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="ri-settings-line mr-3 text-lg"></i>
+                            Paramètres
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6">
+                <!-- Page Header -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Mes Formulaires</h2>
+                            <p class="text-gray-600 mt-1">Créez et gérez vos formulaires interactifs</p>
+                        </div>
+                        <button onclick="openFormBuilder()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium flex items-center">
+                            <i class="ri-add-line mr-2"></i>
+                            Créer un formulaire
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="card">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Total Formulaires</p>
+                                <p class="text-2xl font-bold text-gray-900">12</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-green-100 rounded-lg">
+                                <i class="ri-inbox-line text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Réponses ce mois</p>
+                                <p class="text-2xl font-bold text-gray-900">287</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-yellow-100 rounded-lg">
+                                <i class="ri-eye-line text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Vues ce mois</p>
+                                <p class="text-2xl font-bold text-gray-900">1,234</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 rounded-lg">
+                                <i class="ri-percent-line text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Taux de conversion</p>
+                                <p class="text-2xl font-bold text-gray-900">23.2%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="card cursor-pointer hover:shadow-md transition-shadow" onclick="openFormBuilder()">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                                <i class="ri-add-line text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Nouveau Formulaire</h3>
+                            <p class="text-gray-600 text-sm">Créez un formulaire à partir de zéro ou utilisez un template</p>
+                        </div>
+                    </div>
+                    <div class="card cursor-pointer hover:shadow-md transition-shadow" onclick="openTemplateGallery()">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                                <i class="ri-layout-grid-line text-green-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Templates Premium</h3>
+                            <p class="text-gray-600 text-sm">Choisissez parmi nos templates professionnels</p>
+                        </div>
+                    </div>
+                    <div class="card cursor-pointer hover:shadow-md transition-shadow" onclick="openAnalytics()">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                                <i class="ri-bar-chart-line text-purple-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Analytics Avancées</h3>
+                            <p class="text-gray-600 text-sm">Analysez les performances de vos formulaires</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Forms -->
+                <div class="card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Formulaires Récents</h3>
+                        <a href="#" class="text-blue-600 hover:text-blue-700 text-sm">Voir tout</a>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onclick="editForm('contact')">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-mail-line text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Formulaire de Contact</h4>
+                                    <p class="text-sm text-gray-600">Modifié il y a 2 heures</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Actif</span>
+                                <span class="text-sm text-gray-600">45 réponses</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onclick="editForm('survey')">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-questionnaire-line text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Enquête Satisfaction</h4>
+                                    <p class="text-sm text-gray-600">Modifié il y a 1 jour</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Actif</span>
+                                <span class="text-sm text-gray-600">127 réponses</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onclick="editForm('registration')">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-user-add-line text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Inscription Événement</h4>
+                                    <p class="text-sm text-gray-600">Modifié il y a 3 jours</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">Brouillon</span>
+                                <span class="text-sm text-gray-600">0 réponses</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Form Builder Modal -->
+    <div id="formBuilderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">Créateur de Formulaire Premium</h2>
+                        <button onclick="closeFormBuilder()" class="text-gray-500 hover:text-gray-700">
+                            <i class="ri-close-line text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Form Builder Interface -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Palette d'éléments -->
+                        <div class="lg:col-span-1">
+                            <h3 class="text-lg font-semibold mb-4">Éléments</h3>
+                            <div class="space-y-2">
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('text')">
+                                    <div class="flex items-center">
+                                        <i class="ri-input-cursor-move mr-3 text-gray-600"></i>
+                                        <span>Champ Texte</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('email')">
+                                    <div class="flex items-center">
+                                        <i class="ri-mail-line mr-3 text-gray-600"></i>
+                                        <span>Email</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('select')">
+                                    <div class="flex items-center">
+                                        <i class="ri-arrow-down-s-line mr-3 text-gray-600"></i>
+                                        <span>Liste déroulante</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('radio')">
+                                    <div class="flex items-center">
+                                        <i class="ri-radio-button-line mr-3 text-gray-600"></i>
+                                        <span>Boutons radio</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('checkbox')">
+                                    <div class="flex items-center">
+                                        <i class="ri-checkbox-line mr-3 text-gray-600"></i>
+                                        <span>Cases à cocher</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('file')">
+                                    <div class="flex items-center">
+                                        <i class="ri-upload-line mr-3 text-blue-600"></i>
+                                        <span class="text-blue-600">Upload fichier (Premium)</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('signature')">
+                                    <div class="flex items-center">
+                                        <i class="ri-edit-line mr-3 text-blue-600"></i>
+                                        <span class="text-blue-600">Signature (Premium)</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="addField('payment')">
+                                    <div class="flex items-center">
+                                        <i class="ri-bank-card-line mr-3 text-blue-600"></i>
+                                        <span class="text-blue-600">Paiement (Premium)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Zone de construction -->
+                        <div class="lg:col-span-2">
+                            <h3 class="text-lg font-semibold mb-4">Aperçu du formulaire</h3>
+                            <div id="formPreview" class="min-h-96 border-2 border-dashed border-gray-300 rounded-lg p-6">
+                                <div class="text-center text-gray-500">
+                                    <i class="ri-drag-drop-line text-4xl mb-2"></i>
+                                    <p>Glissez des éléments ici pour construire votre formulaire</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 flex justify-between">
+                                <div class="space-x-2">
+                                    <button onclick="previewForm()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                        <i class="ri-eye-line mr-2"></i>Aperçu
+                                    </button>
+                                    <button onclick="saveForm()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        <i class="ri-save-line mr-2"></i>Sauvegarder
+                                    </button>
+                                </div>
+                                <button onclick="publishForm()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                    <i class="ri-share-line mr-2"></i>Publier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let formFields = [];
+        let fieldCounter = 0;
+
+        function openFormBuilder() {
+            document.getElementById('formBuilderModal').classList.remove('hidden');
+        }
+
+        function closeFormBuilder() {
+            document.getElementById('formBuilderModal').classList.add('hidden');
+        }
+
+        function addField(type) {
+            fieldCounter++;
+            const field = {
+                id: fieldCounter,
+                type: type,
+                label: getFieldLabel(type),
+                required: false
+            };
+            
+            formFields.push(field);
+            updateFormPreview();
+        }
+
+        function getFieldLabel(type) {
+            const labels = {
+                'text': 'Champ Texte',
+                'email': 'Adresse Email',
+                'select': 'Liste de choix',
+                'radio': 'Choix unique',
+                'checkbox': 'Choix multiple',
+                'file': 'Upload de fichier',
+                'signature': 'Signature électronique',
+                'payment': 'Paiement'
+            };
+            return labels[type] || 'Champ';
+        }
+
+        function updateFormPreview() {
+            const preview = document.getElementById('formPreview');
+            
+            if (formFields.length === 0) {
+                preview.innerHTML = `
+                    <div class="text-center text-gray-500">
+                        <i class="ri-drag-drop-line text-4xl mb-2"></i>
+                        <p>Glissez des éléments ici pour construire votre formulaire</p>
+                    </div>
+                `;
+                return;
+            }
+
+            preview.innerHTML = `
+                <div class="space-y-4">
+                    <div class="mb-6">
+                        <input type="text" placeholder="Titre du formulaire" class="text-2xl font-bold w-full border-none outline-none" value="Mon Nouveau Formulaire">
+                        <textarea placeholder="Description du formulaire" class="w-full mt-2 text-gray-600 border-none outline-none resize-none" rows="2">Veuillez remplir ce formulaire.</textarea>
+                    </div>
+                    ${formFields.map(field => renderField(field)).join('')}
+                    <div class="pt-4">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                            Envoyer
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderField(field) {
+            switch (field.type) {
+                case 'text':
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Entrez votre texte">
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+                case 'email':
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
+                            <input type="email" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="exemple@email.com">
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+                case 'select':
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
+                            <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                                <option>Option 3</option>
+                            </select>
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+                case 'file':
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-blue-600">(Premium)</span></label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <i class="ri-upload-cloud-line text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-600">Glissez vos fichiers ici ou cliquez pour parcourir</p>
+                                <p class="text-sm text-gray-500 mt-1">Formats supportés: PDF, DOC, JPG, PNG (Max 10MB)</p>
+                            </div>
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+                case 'signature':
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-blue-600">(Premium)</span></label>
+                            <div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                                <div class="h-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
+                                    <p class="text-gray-500">Zone de signature</p>
+                                </div>
+                                <div class="mt-2 text-center">
+                                    <button class="text-sm text-blue-600">Effacer</button>
+                                </div>
+                            </div>
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+                case 'payment':
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label} <span class="text-blue-600">(Premium)</span></label>
+                            <div class="border border-gray-300 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium">Montant à payer:</span>
+                                    <span class="text-lg font-bold">€50.00</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <input type="text" placeholder="Numéro de carte" class="w-full border border-gray-300 rounded px-3 py-2">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="text" placeholder="MM/AA" class="border border-gray-300 rounded px-3 py-2">
+                                        <input type="text" placeholder="CVC" class="border border-gray-300 rounded px-3 py-2">
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+                default:
+                    return `
+                        <div class="field-container">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>
+                            <div class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50">
+                                <label class="flex items-center">
+                                    <input type="${field.type === 'radio' ? 'radio' : 'checkbox'}" class="mr-2">
+                                    Option 1
+                                </label>
+                            </div>
+                            <button onclick="removeField(${field.id})" class="text-red-500 text-sm mt-1">Supprimer</button>
+                        </div>
+                    `;
+            }
+        }
+
+        function removeField(id) {
+            formFields = formFields.filter(field => field.id !== id);
+            updateFormPreview();
+        }
+
+        function previewForm() {
+            alert('Aperçu du formulaire - Cette fonctionnalité ouvrira le formulaire dans un nouvel onglet');
+        }
+
+        function saveForm() {
+            alert('Formulaire sauvegardé avec succès ! Dans une version complète, cela sauvegarderait dans la base de données.');
+        }
+
+        function publishForm() {
+            alert('Formulaire publié ! Un lien de partage sera généré pour distribuer votre formulaire.');
+        }
+
+        function editForm(type) {
+            alert(`Édition du formulaire ${type} - Cette fonctionnalité ouvrirait l'éditeur de formulaire.`);
+        }
+
+        function openTemplateGallery() {
+            alert('Galerie de templates - Cette page afficherait tous les templates premium disponibles.');
+        }
+
+        function openAnalytics() {
+            alert('Analytics - Cette page afficherait les statistiques détaillées de vos formulaires.');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Créateur de Formulaires Avancé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe',
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .tremor-CardHeader {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1rem 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .tremor-Button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .tremor-Button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .tremor-Button-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .tremor-Button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .tremor-Button-secondary {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .tremor-Button-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        .tremor-Button-sm {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-md {
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+        .tremor-TextInput {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-TextInput::placeholder {
+            color: #9ca3af;
+        }
+        .tremor-TextInput:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Select {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-Select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .tremor-Badge-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .tremor-Badge-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .tremor-Badge-yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .tremor-Title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .tremor-Subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .tremor-Metric {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        .tremor-Text {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-over {
+            animation: slideOver 0.3s ease-out;
+        }
+        
+        @keyframes slideOver {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% { transform: scale(0.33); }
+            40%, 50% { opacity: 1; }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+        
+        .field-item {
+            transition: all 0.2s ease;
+        }
+        
+        .field-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .canvas-drop-zone {
+            min-height: 400px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-drop-zone.drag-over {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        .form-field {
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0;
+            transition: all 0.2s ease;
+        }
+        
+        .form-field:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        
+        .form-field.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Styles pour les notifications toast */
+        .toast-notification {
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        /* Styles pour les boutons d'action des champs */
+        .form-field .field-actions button {
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+        
+        .form-field:hover .field-actions button {
+            opacity: 1;
+        }
+        
+        .form-field .field-actions button:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Animation pour les champs déplacés */
+        .field-moving {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            border-color: #3b82f6;
+            transition: all 0.3s ease;
+        }
+        
+        .toolbar-glass {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header avec métriques -->
+    <header class="toolbar-glass border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <h1 class="tremor-Title flex items-center text-lg">
+                        <i class="ri-file-list-3-line text-blue-600 mr-2"></i>
+                        FormEase Builder
+                    </h1>
+                    <span class="tremor-Badge tremor-Badge-blue text-xs">v2.0</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="saveForm()">
+                        <i class="ri-save-line mr-1"></i>
+                        Sauvegarder
+                    </button>
+                    <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="previewForm()">
+                        <i class="ri-eye-line mr-1"></i>
+                        Aperçu
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Métriques Dashboard compactes -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                <div class="tremor-Card">
+                    <div class="tremor-CardContent !py-2">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Text text-xs">Champs</p>
+                                <p class="tremor-Metric text-lg" id="totalFields">0</p>
+                            </div>
+                            <i class="ri-input-method-line text-lg text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="tremor-Card">
+                    <div class="tremor-CardContent !py-2">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Text text-xs">Réponses</p>
+                                <p class="tremor-Metric text-lg" id="totalResponses">1,234</p>
+                            </div>
+                            <i class="ri-bar-chart-line text-lg text-green-600"></i>
+                        </div>
+                </div>
+                <div class="tremor-Card">
+                    <div class="tremor-CardContent !py-2">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Text text-xs">Taux</p>
+                                <p class="tremor-Metric text-lg text-green-600">87%</p>
+                            </div>
+                            <i class="ri-check-line text-lg text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="tremor-Card">
+                    <div class="tremor-CardContent !py-2">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Text text-xs">Activité</p>
+                                <p class="tremor-Text font-medium text-sm">2 min</p>
+                            </div>
+                            <i class="ri-time-line text-lg text-gray-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout principal avec largeur limitée -->
+    <div class="max-w-7xl mx-auto flex h-screen pt-0">
+        <!-- Sidebar - Composants -->
+        <div class="w-80 toolbar-glass border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="tremor-Title mb-4">Composants</h2>
+                
+                <!-- Templates rapides -->
+                <div class="mb-4">
+                    <h3 class="tremor-Subtitle mb-2">Templates Rapides</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('contact')">
+                            <i class="ri-phone-line mr-1"></i>
+                            Contact
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('survey')">
+                            <i class="ri-questionnaire-line mr-1"></i>
+                            Sondage
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('registration')">
+                            <i class="ri-user-add-line mr-1"></i>
+                            Inscription
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('feedback')">
+                            <i class="ri-feedback-line mr-1"></i>
+                            Feedback
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Actions sur les champs -->
+                <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <h3 class="tremor-Subtitle mb-2 text-blue-800">Actions Disponibles</h3>
+                    <div class="text-xs text-blue-700 space-y-1">
+                        <div class="flex items-center">
+                            <i class="ri-arrow-up-line mr-2"></i>
+                            <span>Monter le champ</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-arrow-down-line mr-2"></i>
+                            <span>Descendre le champ</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-file-copy-line mr-2"></i>
+                            <span>Dupliquer le champ</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-edit-line mr-2"></i>
+                            <span>Éditer les propriétés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Catégories de champs -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <!-- Champs de base -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-input-method-line mr-2 text-blue-600"></i>
+                        Champs de Base
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="text">
+                            <div class="flex items-center">
+                                <i class="ri-text text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Texte Court</p>
+                                    <p class="text-xs text-gray-500">Champ de saisie simple</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="textarea">
+                            <div class="flex items-center">
+                                <i class="ri-file-text-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Texte Long</p>
+                                    <p class="text-xs text-gray-500">Zone de texte étendue</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="email">
+                            <div class="flex items-center">
+                                <i class="ri-mail-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Email</p>
+                                    <p class="text-xs text-gray-500">Adresse électronique</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="tel">
+                            <div class="flex items-center">
+                                <i class="ri-phone-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Téléphone</p>
+                                    <p class="text-xs text-gray-500">Numéro de téléphone</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="number">
+                            <div class="flex items-center">
+                                <i class="ri-hashtag text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Nombre</p>
+                                    <p class="text-xs text-gray-500">Valeur numérique</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Champs de sélection -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-checkbox-line mr-2 text-green-600"></i>
+                        Sélection
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="select">
+                            <div class="flex items-center">
+                                <i class="ri-arrow-down-s-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Liste Déroulante</p>
+                                    <p class="text-xs text-gray-500">Choix unique</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="radio">
+                            <div class="flex items-center">
+                                <i class="ri-radio-button-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Boutons Radio</p>
+                                    <p class="text-xs text-gray-500">Choix unique visible</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="checkbox">
+                            <div class="flex items-center">
+                                <i class="ri-checkbox-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Cases à Cocher</p>
+                                    <p class="text-xs text-gray-500">Choix multiples</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Champs avancés -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-star-line mr-2 text-purple-600"></i>
+                        Avancé
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="date">
+                            <div class="flex items-center">
+                                <i class="ri-calendar-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Date</p>
+                                    <p class="text-xs text-gray-500">Sélecteur de date</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="file">
+                            <div class="flex items-center">
+                                <i class="ri-upload-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Fichier</p>
+                                    <p class="text-xs text-gray-500">Upload de document</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="rating">
+                            <div class="flex items-center">
+                                <i class="ri-star-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Notation</p>
+                                    <p class="text-xs text-gray-500">Étoiles ou échelle</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Éléments de mise en page -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-layout-line mr-2 text-orange-600"></i>
+                        Mise en Page
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="row">
+                            <div class="flex items-center">
+                                <i class="ri-layout-row-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Ligne 2 colonnes</p>
+                                    <p class="text-xs text-gray-500">Champs côte à côte</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="section">
+                            <div class="flex items-center">
+                                <i class="ri-separator text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Section</p>
+                                    <p class="text-xs text-gray-500">Séparateur avec titre</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="page-break">
+                            <div class="flex items-center">
+                                <i class="ri-page-separator text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Saut de Page</p>
+                                    <p class="text-xs text-gray-500">Nouvelle page/étape</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone centrale - Canvas + Propriétés -->
+        <div class="flex-1 flex">
+            <!-- Canvas de construction -->
+            <div class="flex-1 p-6">
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="tremor-Title">Conception du Formulaire</h2>
+                        <!-- Contrôles de pagination -->
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-500">Page</span>
+                            <select id="currentPage" class="tremor-Select w-20" onchange="changePage()">
+                                <option value="1">1</option>
+                            </select>
+                            <span class="text-sm text-gray-500">sur <span id="totalPages">1</span></span>
+                            <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="addPage()">
+                                <i class="ri-add-line mr-1"></i>
+                                Page
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="tremor-Badge tremor-Badge-green" id="autoSaveStatus">
+                            <i class="ri-check-line mr-1"></i>
+                            Sauvegardé
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Zone de drop -->
+                <div id="formCanvas" class="canvas-drop-zone rounded-lg p-6 min-h-96">
+                    <div class="text-center text-gray-500 mt-20" id="emptyState">
+                        <i class="ri-drag-drop-line text-4xl mb-4 text-gray-400"></i>
+                        <h3 class="text-lg font-medium mb-2">Commencez à créer votre formulaire</h3>
+                        <p>Glissez-déposez des champs depuis la sidebar ou utilisez un template</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel des propriétés -->
+            <div class="w-80 toolbar-glass border-l border-gray-200 p-4" id="propertiesPanel">
+                <h3 class="tremor-Title mb-4">Propriétés</h3>
+                <div class="text-center text-gray-500 mt-8">
+                    <i class="ri-settings-3-line text-2xl mb-2 text-gray-400"></i>
+                    <p>Sélectionnez un champ pour voir ses propriétés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'aperçu amélioré -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden z-50">
+        <div class="flex items-center justify-center h-full p-6">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-gray-200">
+                <div class="tremor-CardHeader flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
+                    <h3 class="tremor-Title flex items-center">
+                        <i class="ri-eye-line text-blue-600 mr-2"></i>
+                        Aperçu du Formulaire
+                    </h3>
+                    <button onclick="closePreview()" class="text-gray-400 hover:text-gray-600 hover:bg-white rounded-full p-2 transition-all">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+                <div class="tremor-CardContent bg-gray-50">
+                    <div id="previewContent" class="bg-white rounded-lg p-6 shadow-sm">
+                        <!-- Le formulaire sera généré ici -->
+                    </div>
+                </div>
+                <div class="tremor-CardHeader border-t border-gray-200 flex justify-between items-center bg-gray-50 rounded-b-xl">
+                    <div class="text-xs text-gray-500">
+                        Formulaire prêt à être partagé
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="closePreview()">
+                            <i class="ri-close-line mr-2"></i>
+                            Fermer
+                        </button>
+                        <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="exportForm()">
+                            <i class="ri-external-link-line mr-2"></i>
+                            Publier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // État global de l'application
+        let formFields = [];
+        let selectedField = null;
+        let draggedElement = null;
+        let fieldCounter = 0;
+        let currentPageNumber = 1;
+        let totalPagesCount = 1;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop();
+            loadFromStorage();
+            updateMetrics();
+        });
+
+        // Configuration drag & drop
+        function setupDragAndDrop() {
+            const fieldItems = document.querySelectorAll('.field-item');
+            const canvas = document.getElementById('formCanvas');
+
+            fieldItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    e.dataTransfer.effectAllowed = 'copy';
+                });
+            });
+
+            canvas.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                this.classList.add('drag-over');
+            });
+
+            canvas.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over');
+            });
+
+            canvas.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                
+                if (draggedElement) {
+                    const fieldType = draggedElement.getAttribute('data-field-type');
+                    addField(fieldType);
+                    draggedElement = null;
+                }
+            });
+        }
+
+        // Ajouter un champ au formulaire
+        function addField(type) {
+            fieldCounter++;
+            const fieldId = `field_${fieldCounter}`;
+            
+            const field = {
+                id: fieldId,
+                type: type,
+                label: getDefaultLabel(type),
+                placeholder: getDefaultPlaceholder(type),
+                required: false,
+                options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Option 1', 'Option 2'] : [],
+                page: currentPageNumber || 1,
+                width: type === 'row' ? '50%' : '100%'
+            };
+            
+            formFields.push(field);
+            renderField(field);
+            hideEmptyState();
+            updateMetrics();
+            autoSave();
+        }
+
+        // Obtenir le label par défaut
+        function getDefaultLabel(type) {
+            const labels = {
+                'text': 'Texte Court',
+                'textarea': 'Texte Long', 
+                'email': 'Adresse Email',
+                'tel': 'Numéro de Téléphone',
+                'number': 'Nombre',
+                'select': 'Liste de Choix',
+                'radio': 'Choix Unique',
+                'checkbox': 'Choix Multiples',
+                'date': 'Date',
+                'file': 'Fichier',
+                'rating': 'Notation',
+                'row': 'Ligne 2 colonnes',
+                'section': 'Section',
+                'page-break': 'Nouvelle Page'
+            };
+            return labels[type] || 'Champ';
+        }
+
+        // Obtenir le placeholder par défaut
+        function getDefaultPlaceholder(type) {
+            const placeholders = {
+                'text': 'Saisissez votre texte...',
+                'textarea': 'Votre message...',
+                'email': 'exemple@email.com',
+                'tel': '+33 1 23 45 67 89',
+                'number': '0',
+                'date': 'Sélectionnez une date',
+                'file': 'Choisir un fichier'
+            };
+            return placeholders[type] || '';
+        }
+
+        // Render un champ dans le canvas
+        function renderField(field) {
+            const canvas = document.getElementById('formCanvas');
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'form-field fade-in';
+            fieldDiv.setAttribute('data-field-id', field.id);
+            
+            let fieldHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                        ${field.label}${field.required ? ' *' : ''}
+                    </label>
+                    <div class="field-actions flex items-center space-x-1">
+                        <button onclick="moveFieldUp('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Monter">
+                            <i class="ri-arrow-up-line"></i>
+                        </button>
+                        <button onclick="moveFieldDown('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Descendre">
+                            <i class="ri-arrow-down-line"></i>
+                        </button>
+                        <button onclick="duplicateField('${field.id}')" class="text-gray-400 hover:text-green-600 p-1 rounded hover:bg-green-50" title="Dupliquer">
+                            <i class="ri-file-copy-line"></i>
+                        </button>
+                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Éditer">
+                            <i class="ri-edit-line"></i>
+                        </button>
+                        <button onclick="deleteField('${field.id}')" class="text-gray-400 hover:text-red-600 p-1 rounded hover:bg-red-50" title="Supprimer">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Générer le HTML selon le type
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'tel':
+                    fieldHTML += `<input type="${field.type}" class="tremor-TextInput" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'textarea':
+                    fieldHTML += `<textarea class="tremor-TextInput" rows="3" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}></textarea>`;
+                    break;
+                case 'number':
+                    fieldHTML += `<input type="number" class="tremor-TextInput" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'select':
+                    fieldHTML += `<select class="tremor-Select" ${field.required ? 'required' : ''}>
+                        <option value="">Choisissez une option</option>`;
+                    field.options.forEach(option => {
+                        fieldHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    fieldHTML += `</select>`;
+                    break;
+                case 'radio':
+                    field.options.forEach((option, index) => {
+                        fieldHTML += `
+                            <div class="flex items-center">
+                                <input type="radio" id="${field.id}_${index}" name="${field.id}" value="${option}" class="mr-2" ${field.required ? 'required' : ''}>
+                                <label for="${field.id}_${index}" class="text-sm">${option}</label>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'checkbox':
+                    field.options.forEach((option, index) => {
+                        fieldHTML += `
+                            <div class="flex items-center">
+                                <input type="checkbox" id="${field.id}_${index}" name="${field.id}[]" value="${option}" class="mr-2">
+                                <label for="${field.id}_${index}" class="text-sm">${option}</label>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'date':
+                    fieldHTML += `<input type="date" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'file':
+                    fieldHTML += `<input type="file" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'rating':
+                    fieldHTML += `
+                        <div class="flex items-center space-x-1">
+                            ${[1,2,3,4,5].map(i => `<i class="ri-star-line text-yellow-400 text-xl cursor-pointer hover:text-yellow-500"></i>`).join('')}
+                        </div>
+                    `;
+                    break;
+                case 'row':
+                    fieldHTML += `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 border border-dashed border-gray-300 rounded text-center text-gray-500">
+                                <i class="ri-drag-drop-line text-2xl mb-2"></i>
+                                <p class="text-sm">Glissez un champ ici</p>
+                            </div>
+                            <div class="p-4 border border-dashed border-gray-300 rounded text-center text-gray-500">
+                                <i class="ri-drag-drop-line text-2xl mb-2"></i>
+                                <p class="text-sm">Glissez un champ ici</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'section':
+                    fieldHTML += `
+                        <div class="border-t border-gray-300 pt-4">
+                            <div class="flex items-center">
+                                <div class="flex-1 border-t border-gray-300"></div>
+                                <span class="px-3 text-gray-500 bg-white text-sm font-medium">${field.label}</span>
+                                <div class="flex-1 border-t border-gray-300"></div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'page-break':
+                    fieldHTML += `
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <i class="ri-page-separator text-blue-600 text-2xl mb-2"></i>
+                            <p class="text-blue-800 font-medium">${field.label}</p>
+                            <p class="text-blue-600 text-sm">Les champs suivants seront sur une nouvelle page</p>
+                            <div class="mt-3 flex justify-center space-x-2">
+                                <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="goToNextPage()">
+                                    Suivant <i class="ri-arrow-right-line ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            fieldDiv.innerHTML = fieldHTML;
+            fieldDiv.addEventListener('click', () => selectField(field.id));
+            canvas.appendChild(fieldDiv);
+        }
+
+        // Sélectionner un champ
+        function selectField(fieldId) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.form-field').forEach(f => f.classList.remove('selected'));
+            
+            // Ajouter la sélection
+            const fieldElement = document.querySelector(`[data-field-id="${fieldId}"]`);
+            if (fieldElement) {
+                fieldElement.classList.add('selected');
+                selectedField = fieldId;
+                showFieldProperties(fieldId);
+            }
+        }
+
+        // Afficher les propriétés d'un champ
+        function showFieldProperties(fieldId) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (!field) return;
+            
+            const panel = document.getElementById('propertiesPanel');
+            panel.innerHTML = `
+                <h3 class="tremor-Title mb-4">Propriétés - ${field.label}</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+                        <input type="text" value="${field.label}" class="tremor-TextInput" onchange="updateFieldProperty('${fieldId}', 'label', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Placeholder</label>
+                        <input type="text" value="${field.placeholder}" class="tremor-TextInput" onchange="updateFieldProperty('${fieldId}', 'placeholder', this.value)">
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" ${field.required ? 'checked' : ''} class="mr-2" onchange="updateFieldProperty('${fieldId}', 'required', this.checked)">
+                        <label class="text-sm">Champ obligatoire</label>
+                    </div>
+                    
+                    ${field.options && field.options.length > 0 ? `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Options</label>
+                            <div class="space-y-2">
+                                ${field.options.map((option, index) => `
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" value="${option}" class="tremor-TextInput flex-1" onchange="updateFieldOption('${fieldId}', ${index}, this.value)">
+                                        <button onclick="removeFieldOption('${fieldId}', ${index})" class="text-red-600 hover:text-red-800">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                                <button onclick="addFieldOption('${fieldId}')" class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full">
+                                    <i class="ri-add-line mr-2"></i>
+                                    Ajouter une option
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Mettre à jour une propriété de champ
+        function updateFieldProperty(fieldId, property, value) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field) {
+                field[property] = value;
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Mettre à jour une option de champ
+        function updateFieldOption(fieldId, optionIndex, value) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field && field.options) {
+                field.options[optionIndex] = value;
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Ajouter une option à un champ
+        function addFieldOption(fieldId) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field && field.options) {
+                field.options.push(`Option ${field.options.length + 1}`);
+                showFieldProperties(fieldId);
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Supprimer une option d'un champ
+        function removeFieldOption(fieldId, optionIndex) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field && field.options && field.options.length > 1) {
+                field.options.splice(optionIndex, 1);
+                showFieldProperties(fieldId);
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Rafraîchir l'affichage d'un champ
+        function refreshField(fieldId) {
+            const fieldElement = document.querySelector(`[data-field-id="${fieldId}"]`);
+            const field = formFields.find(f => f.id === fieldId);
+            if (fieldElement && field) {
+                fieldElement.remove();
+                renderField(field);
+                selectField(fieldId);
+            }
+        }
+
+        // Éditer un champ (alias pour sélectionner)
+        function editField(fieldId) {
+            selectField(fieldId);
+        }
+
+        // Supprimer un champ
+        function deleteField(fieldId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce champ ?')) {
+                formFields = formFields.filter(f => f.id !== fieldId);
+                const fieldElement = document.querySelector(`[data-field-id="${fieldId}"]`);
+                if (fieldElement) {
+                    fieldElement.remove();
+                }
+                
+                if (formFields.length === 0) {
+                    showEmptyState();
+                }
+                
+                // Réinitialiser le panel des propriétés
+                document.getElementById('propertiesPanel').innerHTML = `
+                    <h3 class="tremor-Title mb-4">Propriétés</h3>
+                    <div class="text-center text-gray-500 mt-8">
+                        <i class="ri-settings-3-line text-2xl mb-2 text-gray-400"></i>
+                        <p>Sélectionnez un champ pour voir ses propriétés</p>
+                    </div>
+                `;
+                
+                updateMetrics();
+                autoSave();
+            }
+        }
+
+        // Dupliquer un champ
+        function duplicateField(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex === -1) return;
+            
+            const originalField = formFields[fieldIndex];
+            fieldCounter++;
+            
+            // Créer une copie du champ avec un nouvel ID
+            const duplicatedField = {
+                ...originalField,
+                id: `field_${fieldCounter}`,
+                label: `${originalField.label} (Copie)`,
+                options: originalField.options ? [...originalField.options] : []
+            };
+            
+            // Insérer le champ dupliqué juste après l'original
+            formFields.splice(fieldIndex + 1, 0, duplicatedField);
+            
+            // Re-render tous les champs pour maintenir l'ordre
+            refreshAllFields();
+            
+            showToast('Champ dupliqué avec succès !', 'success');
+            updateMetrics();
+            autoSave();
+        }
+
+        // Monter un champ dans la liste
+        function moveFieldUp(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex <= 0) {
+                showToast('Le champ est déjà en première position', 'info');
+                return;
+            }
+            
+            // Échanger avec le champ précédent
+            [formFields[fieldIndex - 1], formFields[fieldIndex]] = [formFields[fieldIndex], formFields[fieldIndex - 1]];
+            
+            // Re-render tous les champs pour maintenir l'ordre
+            refreshAllFields();
+            
+            // Maintenir la sélection sur le champ déplacé
+            setTimeout(() => selectField(fieldId), 100);
+            
+            showToast('Champ déplacé vers le haut', 'success');
+            autoSave();
+        }
+
+        // Descendre un champ dans la liste
+        function moveFieldDown(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex === -1 || fieldIndex >= formFields.length - 1) {
+                showToast('Le champ est déjà en dernière position', 'info');
+                return;
+            }
+            
+            // Échanger avec le champ suivant
+            [formFields[fieldIndex], formFields[fieldIndex + 1]] = [formFields[fieldIndex + 1], formFields[fieldIndex]];
+            
+            // Re-render tous les champs pour maintenir l'ordre
+            refreshAllFields();
+            
+            // Maintenir la sélection sur le champ déplacé
+            setTimeout(() => selectField(fieldId), 100);
+            
+            showToast('Champ déplacé vers le bas', 'success');
+            autoSave();
+        }
+
+        // Fonction pour re-render tous les champs dans le bon ordre
+        function refreshAllFields() {
+            const canvas = document.getElementById('formCanvas');
+            
+            // Supprimer tous les champs existants
+            const existingFields = canvas.querySelectorAll('.form-field');
+            existingFields.forEach(field => field.remove());
+            
+            // Re-render dans l'ordre correct
+            formFields.forEach(field => {
+                renderField(field);
+            });
+            
+            // Cacher l'état vide si il y a des champs
+            if (formFields.length > 0) {
+                hideEmptyState();
+            }
+        }
+
+        // Cacher l'état vide
+        function hideEmptyState() {
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        // Afficher l'état vide
+        function showEmptyState() {
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // Charger un template
+        function loadTemplate(templateType) {
+            if (formFields.length > 0 && !confirm('Cela va remplacer votre formulaire actuel. Continuer ?')) {
+                return;
+            }
+            
+            formFields = [];
+            document.getElementById('formCanvas').innerHTML = `
+                <div class="text-center text-gray-500 mt-20" id="emptyState">
+                    <i class="ri-drag-drop-line text-4xl mb-4 text-gray-400"></i>
+                    <h3 class="text-lg font-medium mb-2">Commencez à créer votre formulaire</h3>
+                    <p>Glissez-déposez des champs depuis la sidebar ou utilisez un template</p>
+                </div>
+            `;
+            
+            const templates = {
+                contact: [
+                    {type: 'text', label: 'Nom complet', required: true},
+                    {type: 'email', label: 'Adresse email', required: true},
+                    {type: 'tel', label: 'Téléphone'},
+                    {type: 'select', label: 'Sujet', options: ['Question générale', 'Support technique', 'Ventes', 'Autre'], required: true},
+                    {type: 'textarea', label: 'Message', required: true}
+                ],
+                survey: [
+                    {type: 'text', label: 'Votre nom'},
+                    {type: 'rating', label: 'Satisfaction globale', required: true},
+                    {type: 'radio', label: 'Recommanderiez-vous nos services ?', options: ['Oui, certainement', 'Probablement', 'Peu probable', 'Non'], required: true},
+                    {type: 'checkbox', label: 'Quels aspects appréciez-vous ?', options: ['Qualité', 'Prix', 'Service client', 'Rapidité']},
+                    {type: 'textarea', label: 'Commentaires additionnels'}
+                ],
+                registration: [
+                    {type: 'text', label: 'Prénom', required: true},
+                    {type: 'text', label: 'Nom', required: true},
+                    {type: 'email', label: 'Email', required: true},
+                    {type: 'tel', label: 'Téléphone', required: true},
+                    {type: 'select', label: 'Type de participation', options: ['Individuel', 'Groupe', 'Entreprise'], required: true},
+                    {type: 'checkbox', label: 'Services supplémentaires', options: ['Hébergement', 'Transport', 'Repas']}
+                ],
+                feedback: [
+                    {type: 'text', label: 'Nom du produit/service'},
+                    {type: 'rating', label: 'Note globale', required: true},
+                    {type: 'textarea', label: 'Ce qui vous a plu', required: true},
+                    {type: 'textarea', label: 'Points d\'amélioration'},
+                    {type: 'radio', label: 'Rachèteriez-vous ?', options: ['Oui', 'Non', 'Peut-être'], required: true}
+                ]
+            };
+            
+            if (templates[templateType]) {
+                templates[templateType].forEach(fieldConfig => {
+                    fieldCounter++;
+                    const field = {
+                        id: `field_${fieldCounter}`,
+                        type: fieldConfig.type,
+                        label: fieldConfig.label,
+                        placeholder: getDefaultPlaceholder(fieldConfig.type),
+                        required: fieldConfig.required || false,
+                        options: fieldConfig.options || []
+                    };
+                    formFields.push(field);
+                    renderField(field);
+                });
+                hideEmptyState();
+                updateMetrics();
+                autoSave();
+            }
+        }
+
+        // Aperçu du formulaire
+        function previewForm() {
+            const modal = document.getElementById('previewModal');
+            const content = document.getElementById('previewContent');
+            
+            let formHTML = `
+                <form class="space-y-6">
+                    <h2 class="tremor-Title mb-4">Aperçu du Formulaire</h2>
+            `;
+            
+            formFields.forEach(field => {
+                formHTML += `<div class="space-y-2">`;
+                formHTML += `<label class="block text-sm font-medium text-gray-700">${field.label}${field.required ? ' *' : ''}</label>`;
+                
+                switch(field.type) {
+                    case 'text':
+                    case 'email':
+                    case 'tel':
+                    case 'number':
+                        formHTML += `<input type="${field.type}" class="tremor-TextInput" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                        break;
+                    case 'textarea':
+                        formHTML += `<textarea class="tremor-TextInput" rows="3" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}></textarea>`;
+                        break;
+                    case 'select':
+                        formHTML += `<select class="tremor-Select" ${field.required ? 'required' : ''}>
+                            <option value="">Choisissez une option</option>`;
+                        field.options.forEach(option => {
+                            formHTML += `<option value="${option}">${option}</option>`;
+                        });
+                        formHTML += `</select>`;
+                        break;
+                    case 'radio':
+                        field.options.forEach((option, index) => {
+                            formHTML += `
+                                <div class="flex items-center">
+                                    <input type="radio" id="preview_${field.id}_${index}" name="${field.id}" value="${option}" class="mr-2" ${field.required ? 'required' : ''}>
+                                    <label for="preview_${field.id}_${index}" class="text-sm">${option}</label>
+                                </div>
+                            `;
+                        });
+                        break;
+                    case 'checkbox':
+                        field.options.forEach((option, index) => {
+                            formHTML += `
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="preview_${field.id}_${index}" name="${field.id}[]" value="${option}" class="mr-2">
+                                    <label for="preview_${field.id}_${index}" class="text-sm">${option}</label>
+                                </div>
+                            `;
+                        });
+                        break;
+                    case 'date':
+                        formHTML += `<input type="date" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                        break;
+                    case 'file':
+                        formHTML += `<input type="file" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                        break;
+                    case 'rating':
+                        formHTML += `
+                            <div class="flex items-center space-x-1">
+                                ${[1,2,3,4,5].map(i => `<i class="ri-star-line text-yellow-400 text-xl cursor-pointer hover:text-yellow-500"></i>`).join('')}
+                            </div>
+                        `;
+                        break;
+                }
+                formHTML += `</div>`;
+            });
+            
+            formHTML += `
+                    <div class="flex justify-end space-x-2 pt-4">
+                        <button type="reset" class="tremor-Button tremor-Button-secondary tremor-Button-sm">Réinitialiser</button>
+                        <button type="submit" class="tremor-Button tremor-Button-primary tremor-Button-sm">Envoyer</button>
+                    </div>
+                </form>
+            `;
+            
+            content.innerHTML = formHTML;
+            modal.classList.remove('hidden');
+        }
+
+        // Fermer l'aperçu
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // Sauvegarder le formulaire
+        function saveForm() {
+            try {
+                localStorage.setItem('formEaseBuilder', JSON.stringify({
+                    fields: formFields,
+                    timestamp: new Date().toISOString(),
+                    version: '2.0'
+                }));
+                
+                // Feedback visuel amélioré
+                const status = document.getElementById('autoSaveStatus');
+                status.innerHTML = '<i class="ri-check-line mr-1"></i>Sauvegardé';
+                status.className = 'tremor-Badge tremor-Badge-green';
+                
+                // Toast notification
+                showToast('Formulaire sauvegardé avec succès !', 'success');
+                
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde:', error);
+                showToast('Erreur lors de la sauvegarde', 'error');
+            }
+        }
+
+        // Sauvegarde automatique
+        function autoSave() {
+            saveForm();
+        }
+
+        // Charger depuis le stockage
+        function loadFromStorage() {
+            const saved = localStorage.getItem('formEaseBuilder');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.fields && Array.isArray(data.fields)) {
+                        formFields = data.fields;
+                        
+                        // Trouver le plus grand ID pour continuer la numérotation
+                        const maxId = formFields.reduce((max, field) => {
+                            const id = parseInt(field.id.replace('field_', ''));
+                            return id > max ? id : max;
+                        }, 0);
+                        fieldCounter = maxId;
+                        
+                        // Rendre tous les champs
+                        formFields.forEach(field => renderField(field));
+                        if (formFields.length > 0) {
+                            hideEmptyState();
+                        }
+                    }
+                } catch (e) {
+                    console.error('Erreur lors du chargement:', e);
+                }
+            }
+        }
+
+        // Mettre à jour les métriques
+        function updateMetrics() {
+            document.getElementById('totalFields').textContent = formFields.length;
+        }
+
+        // Fonction toast pour les notifications
+        function showToast(message, type = 'info') {
+            // Supprimer les toasts existants
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => toast.remove());
+
+            // Créer le toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+            
+            if (type === 'success') {
+                toast.className += ' bg-green-500 text-white';
+                toast.innerHTML = `<i class="ri-check-line mr-2"></i>${message}`;
+            } else if (type === 'error') {
+                toast.className += ' bg-red-500 text-white';
+                toast.innerHTML = `<i class="ri-error-warning-line mr-2"></i>${message}`;
+            } else {
+                toast.className += ' bg-blue-500 text-white';
+                toast.innerHTML = `<i class="ri-information-line mr-2"></i>${message}`;
+            }
+
+            document.body.appendChild(toast);
+
+            // Animation d'entrée
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+
+            // Suppression automatique
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Fonction d'export du formulaire
+        function exportForm() {
+            if (formFields.length === 0) {
+                showToast('Aucun champ à exporter', 'error');
+                return;
+            }
+
+            const formData = {
+                title: 'Mon Formulaire FormEase',
+                description: 'Formulaire créé avec FormEase Builder',
+                fields: formFields,
+                created: new Date().toISOString(),
+                version: '2.0'
+            };
+
+            // Créer un blob JSON pour téléchargement
+            const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            // Créer un lien de téléchargement
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formulaire-formease.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Formulaire exporté avec succès !', 'success');
+            closePreview();
+        }
+
+        // Fonctions de gestion des pages
+        function addPage() {
+            totalPagesCount++;
+            updatePageControls();
+            
+            // Ajouter une option dans le select
+            const pageSelect = document.getElementById('currentPage');
+            const option = document.createElement('option');
+            option.value = totalPagesCount;
+            option.textContent = totalPagesCount;
+            pageSelect.appendChild(option);
+            
+            showToast(`Page ${totalPagesCount} ajoutée`, 'success');
+        }
+
+        function changePage() {
+            const pageSelect = document.getElementById('currentPage');
+            currentPageNumber = parseInt(pageSelect.value);
+            
+            // Filtrer les champs de la page actuelle
+            filterFieldsByPage();
+            showToast(`Page ${currentPageNumber} sélectionnée`, 'info');
+        }
+
+        function goToNextPage() {
+            if (currentPageNumber < totalPagesCount) {
+                currentPageNumber++;
+                document.getElementById('currentPage').value = currentPageNumber;
+                filterFieldsByPage();
+                showToast(`Passage à la page ${currentPageNumber}`, 'info');
+            } else {
+                showToast('Vous êtes déjà sur la dernière page', 'info');
+            }
+        }
+
+        function filterFieldsByPage() {
+            const canvas = document.getElementById('formCanvas');
+            const allFields = canvas.querySelectorAll('.form-field');
+            
+            allFields.forEach(fieldElement => {
+                const fieldId = fieldElement.getAttribute('data-field-id');
+                const field = formFields.find(f => f.id === fieldId);
+                
+                if (field && (field.page === currentPageNumber || !field.page)) {
+                    fieldElement.style.display = 'block';
+                } else {
+                    fieldElement.style.display = 'none';
+                }
+            });
+        }
+
+        function updatePageControls() {
+            document.getElementById('totalPages').textContent = totalPagesCount;
+            
+            // Mettre à jour le select si nécessaire
+            const pageSelect = document.getElementById('currentPage');
+            if (pageSelect.children.length < totalPagesCount) {
+                for (let i = pageSelect.children.length + 1; i <= totalPagesCount; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    pageSelect.appendChild(option);
+                }
+            }
+        }
+
+        // Gestionnaire pour fermer le modal en cliquant à l'extérieur
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreview();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Premium Tremor</title>
+    
+    <!-- Tremor/Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- React Dependencies -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: "#eff6ff",
+                                muted: "#bfdbfe", 
+                                subtle: "#60a5fa",
+                                DEFAULT: "#3b82f6",
+                                emphasis: "#1d4ed8",
+                                inverted: "#ffffff",
+                            },
+                            background: {
+                                muted: "#f9fafb",
+                                subtle: "#f3f4f6", 
+                                DEFAULT: "#ffffff",
+                                emphasis: "#374151",
+                            },
+                            border: {
+                                DEFAULT: "#e5e7eb",
+                            },
+                            content: {
+                                subtle: "#9ca3af",
+                                DEFAULT: "#6b7280", 
+                                emphasis: "#374151",
+                                strong: "#111827",
+                                inverted: "#ffffff",
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        .tremor-metric { 
+            font-size: 1.875rem; 
+            line-height: 2.25rem; 
+            font-weight: 700; 
+        }
+        .tremor-title { 
+            font-size: 1.125rem; 
+            line-height: 1.75rem; 
+            font-weight: 600; 
+        }
+        .tremor-label { 
+            font-size: 0.75rem; 
+            line-height: 1rem; 
+            font-weight: 500; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tremor-default { 
+            font-size: 0.875rem; 
+            line-height: 1.25rem; 
+        }
+        
+        /* Tremor Input Components */
+        .tremor-TextInput {
+            @apply flex w-full rounded-tremor-default bg-tremor-background border border-tremor-border px-3 py-2 text-tremor-default text-tremor-content-emphasis focus:border-tremor-brand focus:ring-1 focus:ring-tremor-brand;
+        }
+        
+        .tremor-Select {
+            @apply flex w-full rounded-tremor-default bg-tremor-background border border-tremor-border px-3 py-2 text-tremor-default text-tremor-content-emphasis focus:border-tremor-brand focus:ring-1 focus:ring-tremor-brand;
+        }
+        
+        .tremor-Textarea {
+            @apply flex w-full rounded-tremor-default bg-tremor-background border border-tremor-border px-3 py-2 text-tremor-default text-tremor-content-emphasis focus:border-tremor-brand focus:ring-1 focus:ring-tremor-brand resize-none;
+        }
+        
+        .tremor-Button {
+            @apply inline-flex items-center justify-center rounded-tremor-default bg-tremor-brand px-3 py-2 text-tremor-default font-medium text-tremor-brand-inverted hover:bg-tremor-brand-emphasis focus:ring-2 focus:ring-tremor-brand;
+        }
+        
+        .tremor-Card {
+            @apply rounded-tremor-default bg-tremor-background border border-tremor-border p-6 shadow-tremor-input;
+        }
+        
+        /* Chart styling */
+        .tremor-chart-container {
+            @apply relative h-64 w-full;
+        }
+        
+        .drag-over {
+            @apply border-tremor-brand bg-tremor-brand-faint;
+        }
+    </style>
+</head>
+
+<body class="bg-tremor-background-muted text-tremor-content antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { createElement: h } = React;
+
+        // Country codes with auto-detection
+        const getCountryFromIP = () => {
+            // Simulation de détection IP - en production, utilisez un service comme ipapi.co
+            return { code: '+243', name: 'République Démocratique du Congo', flag: '🇨🇩' };
+        };
+
+        // Tremor Chart Components
+        const TremorChart = ({ data, type = 'area' }) => {
+            return h('div', { className: 'tremor-chart-container' }, [
+                h('svg', { 
+                    width: '100%', 
+                    height: '100%', 
+                    viewBox: '0 0 400 200',
+                    className: 'tremor-chart'
+                }, [
+                    // Gradient definition
+                    h('defs', {}, [
+                        h('linearGradient', { id: 'chartGradient', x1: '0', y1: '0', x2: '0', y2: '1' }, [
+                            h('stop', { offset: '0%', stopColor: '#3b82f6', stopOpacity: '0.4' }),
+                            h('stop', { offset: '100%', stopColor: '#3b82f6', stopOpacity: '0.0' })
+                        ])
+                    ]),
+                    // Grid lines
+                    ...Array.from({length: 5}, (_, i) => 
+                        h('line', {
+                            key: `grid-${i}`,
+                            x1: '40',
+                            y1: 40 + (i * 32),
+                            x2: '380',
+                            y2: 40 + (i * 32),
+                            stroke: '#e5e7eb',
+                            strokeWidth: '1'
+                        })
+                    ),
+                    // Chart area
+                    h('path', {
+                        d: 'M 40 150 Q 100 120 120 100 T 200 80 T 280 90 T 360 70 L 360 180 L 40 180 Z',
+                        fill: 'url(#chartGradient)',
+                        stroke: '#3b82f6',
+                        strokeWidth: '2'
+                    }),
+                    // Data points
+                    [120, 200, 280, 360].map((x, i) => 
+                        h('circle', {
+                            key: `point-${i}`,
+                            cx: x,
+                            cy: [100, 80, 90, 70][i],
+                            r: '3',
+                            fill: '#3b82f6'
+                        })
+                    )
+                ])
+            ]);
+        };
+
+        const TremorBarChart = ({ data }) => {
+            const maxValue = Math.max(...data.map(d => d.value));
+            return h('div', { className: 'tremor-chart-container' }, [
+                h('svg', { 
+                    width: '100%', 
+                    height: '100%', 
+                    viewBox: '0 0 400 200',
+                    className: 'tremor-chart'
+                }, [
+                    ...data.map((item, i) => {
+                        const barHeight = (item.value / maxValue) * 120;
+                        const x = 50 + (i * 60);
+                        return h('g', { key: i }, [
+                            h('rect', {
+                                x: x,
+                                y: 160 - barHeight,
+                                width: 40,
+                                height: barHeight,
+                                fill: `hsl(${200 + i * 30}, 70%, 50%)`,
+                                rx: 4
+                            }),
+                            h('text', {
+                                x: x + 20,
+                                y: 180,
+                                textAnchor: 'middle',
+                                fill: '#6b7280',
+                                fontSize: '12'
+                            }, item.name)
+                        ]);
+                    })
+                ])
+            ]);
+        };
+
+        // Form Builder avec large choix d'éléments
+        const FormBuilder = ({ isOpen, onClose }) => {
+            const [fields, setFields] = useState([]);
+            const [formSettings, setFormSettings] = useState({
+                title: 'Mon Nouveau Formulaire',
+                description: 'Décrivez votre formulaire ici...',
+                submitButtonText: 'Envoyer'
+            });
+
+            const countryInfo = getCountryFromIP();
+
+            // Large collection d'éléments de formulaire
+            const fieldCategories = [
+                {
+                    name: 'Texte et Saisie',
+                    icon: 'ri-text',
+                    fields: [
+                        { type: 'text', icon: 'ri-input-cursor-move', label: 'Texte simple', placeholder: 'Entrez votre texte...' },
+                        { type: 'textarea', icon: 'ri-file-text-line', label: 'Zone de texte longue', placeholder: 'Votre message...' },
+                        { type: 'email', icon: 'ri-mail-line', label: 'Adresse email', placeholder: 'email@exemple.com' },
+                        { type: 'phone', icon: 'ri-phone-line', label: 'Numéro de téléphone', placeholder: `${countryInfo.code} `, defaultCountry: countryInfo },
+                        { type: 'url', icon: 'ri-links-line', label: 'Site web / URL', placeholder: 'https://exemple.com' },
+                        { type: 'password', icon: 'ri-lock-line', label: 'Mot de passe', placeholder: '••••••••' },
+                        { type: 'number', icon: 'ri-hashtag', label: 'Nombre', placeholder: '0' },
+                        { type: 'search', icon: 'ri-search-line', label: 'Recherche', placeholder: 'Rechercher...' }
+                    ]
+                },
+                {
+                    name: 'Choix et Sélection',
+                    icon: 'ri-checkbox-circle-line',
+                    fields: [
+                        { type: 'select', icon: 'ri-arrow-down-s-line', label: 'Liste déroulante', options: ['Option 1', 'Option 2', 'Option 3'] },
+                        { type: 'radio', icon: 'ri-radio-button-line', label: 'Choix unique', options: ['Choix 1', 'Choix 2', 'Choix 3'] },
+                        { type: 'checkbox', icon: 'ri-checkbox-line', label: 'Choix multiples', options: ['Option A', 'Option B', 'Option C'] },
+                        { type: 'toggle', icon: 'ri-toggle-line', label: 'Interrupteur Oui/Non' },
+                        { type: 'rating', icon: 'ri-star-line', label: 'Évaluation par étoiles', max: 5 },
+                        { type: 'slider', icon: 'ri-equalizer-line', label: 'Curseur de valeur', min: 0, max: 100 },
+                        { type: 'scale', icon: 'ri-scales-line', label: 'Échelle de notation', min: 1, max: 10 }
+                    ]
+                },
+                {
+                    name: 'Date et Temps',
+                    icon: 'ri-calendar-line',
+                    fields: [
+                        { type: 'date', icon: 'ri-calendar-line', label: 'Date' },
+                        { type: 'time', icon: 'ri-time-line', label: 'Heure' },
+                        { type: 'datetime', icon: 'ri-calendar-event-line', label: 'Date et heure' },
+                        { type: 'daterange', icon: 'ri-calendar-2-line', label: 'Période (du/au)' },
+                        { type: 'month', icon: 'ri-calendar-check-line', label: 'Mois et année' },
+                        { type: 'week', icon: 'ri-calendar-todo-line', label: 'Semaine' }
+                    ]
+                },
+                {
+                    name: 'Médias et Fichiers',
+                    icon: 'ri-folder-line',
+                    fields: [
+                        { type: 'file', icon: 'ri-upload-line', label: 'Upload de fichier' },
+                        { type: 'image', icon: 'ri-image-line', label: 'Upload d\'image' },
+                        { type: 'video', icon: 'ri-video-line', label: 'Upload de vidéo' },
+                        { type: 'audio', icon: 'ri-mic-line', label: 'Enregistrement audio' },
+                        { type: 'camera', icon: 'ri-camera-line', label: 'Prise de photo' },
+                        { type: 'signature', icon: 'ri-edit-line', label: 'Signature électronique' }
+                    ]
+                },
+                {
+                    name: 'Informations Personnelles',
+                    icon: 'ri-user-line',
+                    fields: [
+                        { type: 'fullname', icon: 'ri-user-line', label: 'Nom complet' },
+                        { type: 'address', icon: 'ri-map-pin-line', label: 'Adresse complète' },
+                        { type: 'country', icon: 'ri-earth-line', label: 'Pays', defaultValue: countryInfo.name },
+                        { type: 'city', icon: 'ri-building-line', label: 'Ville' },
+                        { type: 'postal', icon: 'ri-mail-line', label: 'Code postal' },
+                        { type: 'birthdate', icon: 'ri-cake-line', label: 'Date de naissance' },
+                        { type: 'gender', icon: 'ri-user-heart-line', label: 'Genre', options: ['Homme', 'Femme', 'Autre', 'Préfère ne pas dire'] },
+                        { type: 'profession', icon: 'ri-briefcase-line', label: 'Profession' }
+                    ]
+                },
+                {
+                    name: 'E-commerce et Paiement',
+                    icon: 'ri-shopping-cart-line',
+                    fields: [
+                        { type: 'payment', icon: 'ri-bank-card-line', label: 'Paiement sécurisé' },
+                        { type: 'price', icon: 'ri-price-tag-line', label: 'Prix / Montant' },
+                        { type: 'quantity', icon: 'ri-add-box-line', label: 'Quantité' },
+                        { type: 'product', icon: 'ri-shopping-bag-line', label: 'Sélection de produit' },
+                        { type: 'coupon', icon: 'ri-coupon-line', label: 'Code promo' },
+                        { type: 'tax', icon: 'ri-percent-line', label: 'Calcul de taxes' }
+                    ]
+                },
+                {
+                    name: 'Avancés et Premium',
+                    icon: 'ri-star-line',
+                    fields: [
+                        { type: 'matrix', icon: 'ri-table-line', label: 'Grille de questions' },
+                        { type: 'ranking', icon: 'ri-sort-asc', label: 'Classement par ordre' },
+                        { type: 'captcha', icon: 'ri-shield-check-line', label: 'Vérification CAPTCHA' },
+                        { type: 'location', icon: 'ri-map-2-line', label: 'Géolocalisation' },
+                        { type: 'barcode', icon: 'ri-qr-code-line', label: 'Scanner QR/Code-barres' },
+                        { type: 'calculation', icon: 'ri-calculator-line', label: 'Calcul automatique' },
+                        { type: 'conditional', icon: 'ri-git-branch-line', label: 'Logique conditionnelle' },
+                        { type: 'appointment', icon: 'ri-calendar-schedule-line', label: 'Prise de rendez-vous' }
+                    ]
+                }
+            ];
+
+            const addField = (fieldType) => {
+                const allFields = fieldCategories.flatMap(cat => cat.fields);
+                const template = allFields.find(f => f.type === fieldType);
+                if (!template) return;
+
+                const newField = {
+                    id: Date.now().toString(),
+                    type: fieldType,
+                    label: template.label,
+                    placeholder: template.placeholder || '',
+                    required: false,
+                    options: template.options ? [...template.options] : [],
+                    defaultCountry: template.defaultCountry || null,
+                    min: template.min,
+                    max: template.max,
+                    defaultValue: template.defaultValue || ''
+                };
+
+                setFields([...fields, newField]);
+            };
+
+            const removeField = (fieldId) => {
+                setFields(fields.filter(field => field.id !== fieldId));
+            };
+
+            const updateField = (fieldId, updates) => {
+                setFields(fields.map(field => 
+                    field.id === fieldId ? { ...field, ...updates } : field
+                ));
+            };
+
+            const addOption = (fieldId) => {
+                const field = fields.find(f => f.id === fieldId);
+                if (field && field.options) {
+                    updateField(fieldId, {
+                        options: [...field.options, `Option ${field.options.length + 1}`]
+                    });
+                }
+            };
+
+            const updateOption = (fieldId, optionIndex, newValue) => {
+                const field = fields.find(f => f.id === fieldId);
+                if (field && field.options) {
+                    const newOptions = [...field.options];
+                    newOptions[optionIndex] = newValue;
+                    updateField(fieldId, { options: newOptions });
+                }
+            };
+
+            const removeOption = (fieldId, optionIndex) => {
+                const field = fields.find(f => f.id === fieldId);
+                if (field && field.options && field.options.length > 1) {
+                    const newOptions = field.options.filter((_, index) => index !== optionIndex);
+                    updateField(fieldId, { options: newOptions });
+                }
+            };
+
+            const renderFieldPreview = (field) => {
+                const baseClass = 'tremor-TextInput';
+                
+                switch (field.type) {
+                    case 'textarea':
+                        return h('textarea', {
+                            className: 'tremor-Textarea',
+                            placeholder: field.placeholder,
+                            rows: 4,
+                            disabled: true
+                        });
+                    case 'select':
+                        return h('select', { className: 'tremor-Select', disabled: true }, 
+                            field.options.map((option, index) => 
+                                h('option', { key: index, value: option }, option)
+                            )
+                        );
+                    case 'radio':
+                        return h('div', { className: 'space-y-2' }, 
+                            field.options.map((option, index) => 
+                                h('label', { key: index, className: 'flex items-center space-x-2' }, [
+                                    h('input', { type: 'radio', name: `preview-${field.id}`, className: 'text-tremor-brand', disabled: true }),
+                                    h('span', { className: 'tremor-default text-tremor-content-emphasis' }, option)
+                                ])
+                            )
+                        );
+                    case 'checkbox':
+                        return h('div', { className: 'space-y-2' }, 
+                            field.options.map((option, index) => 
+                                h('label', { key: index, className: 'flex items-center space-x-2' }, [
+                                    h('input', { type: 'checkbox', className: 'text-tremor-brand rounded', disabled: true }),
+                                    h('span', { className: 'tremor-default text-tremor-content-emphasis' }, option)
+                                ])
+                            )
+                        );
+                    case 'phone':
+                        return h('div', { className: 'flex space-x-2' }, [
+                            h('div', { className: 'flex items-center px-3 py-2 bg-tremor-background-subtle border border-tremor-border rounded-l text-tremor-default' }, [
+                                h('span', { className: 'mr-1' }, field.defaultCountry?.flag || '🌍'),
+                                h('span', {}, field.defaultCountry?.code || '+1')
+                            ]),
+                            h('input', {
+                                type: 'tel',
+                                className: 'tremor-TextInput rounded-l-none flex-1',
+                                placeholder: '123 456 789',
+                                disabled: true
+                            })
+                        ]);
+                    case 'rating':
+                        return h('div', { className: 'flex space-x-1' }, 
+                            Array.from({ length: field.max || 5 }, (_, i) => 
+                                h('i', { 
+                                    key: i, 
+                                    className: 'ri-star-line text-xl text-yellow-400 cursor-pointer hover:text-yellow-500' 
+                                })
+                            )
+                        );
+                    case 'slider':
+                        return h('div', { className: 'space-y-2' }, [
+                            h('input', {
+                                type: 'range',
+                                min: field.min || 0,
+                                max: field.max || 100,
+                                className: 'w-full h-2 bg-tremor-background-subtle rounded-lg appearance-none cursor-pointer',
+                                disabled: true
+                            }),
+                            h('div', { className: 'flex justify-between text-xs text-tremor-content-subtle' }, [
+                                h('span', {}, field.min || 0),
+                                h('span', {}, field.max || 100)
+                            ])
+                        ]);
+                    case 'toggle':
+                        return h('label', { className: 'flex items-center space-x-3' }, [
+                            h('div', { className: 'relative' }, [
+                                h('input', { type: 'checkbox', className: 'sr-only' }),
+                                h('div', { className: 'w-10 h-6 bg-tremor-background-subtle rounded-full border border-tremor-border' }),
+                                h('div', { className: 'absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform' })
+                            ]),
+                            h('span', { className: 'tremor-default text-tremor-content-emphasis' }, 'Activer cette option')
+                        ]);
+                    case 'file':
+                    case 'image':
+                    case 'video':
+                        return h('div', { className: 'border-2 border-dashed border-tremor-border rounded-lg p-6 text-center hover:border-tremor-brand transition-colors' }, [
+                            h('i', { className: `${field.type === 'image' ? 'ri-image-line' : field.type === 'video' ? 'ri-video-line' : 'ri-upload-line'} text-3xl text-tremor-content-subtle mb-2` }),
+                            h('p', { className: 'tremor-default text-tremor-content-emphasis mb-2' }, `Cliquez pour uploader ${field.type === 'image' ? 'une image' : field.type === 'video' ? 'une vidéo' : 'un fichier'}`),
+                            h('p', { className: 'text-xs text-tremor-content-subtle' }, 'ou glissez-déposez ici')
+                        ]);
+                    case 'signature':
+                        return h('div', { className: 'border-2 border-dashed border-tremor-border rounded-lg p-6 text-center h-32 flex items-center justify-center' }, [
+                            h('div', { className: 'text-center' }, [
+                                h('i', { className: 'ri-edit-line text-2xl text-tremor-content-subtle mb-2' }),
+                                h('p', { className: 'tremor-default text-tremor-content-emphasis' }, 'Zone de signature électronique')
+                            ])
+                        ]);
+                    case 'payment':
+                        return h('div', { className: 'tremor-Card' }, [
+                            h('div', { className: 'flex items-center justify-between mb-4' }, [
+                                h('span', { className: 'tremor-default font-medium text-tremor-content-emphasis' }, 'Paiement sécurisé'),
+                                h('div', { className: 'flex space-x-2' }, [
+                                    h('i', { className: 'ri-visa-line text-2xl text-blue-600' }),
+                                    h('i', { className: 'ri-mastercard-line text-2xl text-red-600' }),
+                                    h('i', { className: 'ri-paypal-line text-2xl text-blue-500' })
+                                ])
+                            ]),
+                            h('div', { className: 'space-y-3' }, [
+                                h('input', { type: 'text', placeholder: 'Numéro de carte', className: baseClass, disabled: true }),
+                                h('div', { className: 'grid grid-cols-2 gap-3' }, [
+                                    h('input', { type: 'text', placeholder: 'MM/AA', className: baseClass, disabled: true }),
+                                    h('input', { type: 'text', placeholder: 'CVC', className: baseClass, disabled: true })
+                                ])
+                            ])
+                        ]);
+                    default:
+                        return h('input', {
+                            type: field.type,
+                            placeholder: field.placeholder,
+                            className: baseClass,
+                            disabled: true,
+                            defaultValue: field.defaultValue
+                        });
+                }
+            };
+
+            const renderFieldConfig = (field) => {
+                return h('div', {
+                    key: field.id,
+                    className: 'tremor-Card group hover:shadow-md transition-all duration-200'
+                }, [
+                    // Field Header
+                    h('div', { className: 'flex justify-between items-center mb-4' }, [
+                        h('div', { className: 'flex items-center' }, [
+                            h('i', { className: `${getFieldIcon(field.type)} mr-3 text-tremor-brand` }),
+                            h('span', { className: 'tremor-title text-tremor-content-strong' }, field.label),
+                            field.required && h('span', { className: 'text-red-500 ml-1' }, '*')
+                        ]),
+                        h('button', {
+                            onClick: () => removeField(field.id),
+                            className: 'text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity'
+                        }, h('i', { className: 'ri-delete-bin-line text-lg' }))
+                    ]),
+                    
+                    // Field Configuration
+                    h('div', { className: 'space-y-4' }, [
+                        // Label input
+                        h('div', {}, [
+                            h('label', { className: 'tremor-label text-tremor-content-emphasis mb-2 block' }, 'Libellé du champ'),
+                            h('input', {
+                                type: 'text',
+                                value: field.label,
+                                onChange: (e) => updateField(field.id, { label: e.target.value }),
+                                className: 'tremor-TextInput'
+                            })
+                        ]),
+
+                        // Placeholder for text inputs
+                        ['text', 'textarea', 'email', 'url', 'search', 'password'].includes(field.type) && h('div', {}, [
+                            h('label', { className: 'tremor-label text-tremor-content-emphasis mb-2 block' }, 'Texte d\'aide'),
+                            h('input', {
+                                type: 'text',
+                                value: field.placeholder,
+                                onChange: (e) => updateField(field.id, { placeholder: e.target.value }),
+                                className: 'tremor-TextInput',
+                                placeholder: 'Texte affiché dans le champ vide'
+                            })
+                        ]),
+
+                        // Options for select, radio, checkbox
+                        ['select', 'radio', 'checkbox', 'gender'].includes(field.type) && h('div', {}, [
+                            h('label', { className: 'tremor-label text-tremor-content-emphasis mb-2 block' }, 'Options disponibles'),
+                            h('div', { className: 'space-y-2' }, [
+                                ...field.options.map((option, optionIndex) => 
+                                    h('div', { key: optionIndex, className: 'flex items-center space-x-2' }, [
+                                        h('input', {
+                                            type: 'text',
+                                            value: option,
+                                            onChange: (e) => updateOption(field.id, optionIndex, e.target.value),
+                                            className: 'tremor-TextInput flex-1'
+                                        }),
+                                        h('button', {
+                                            onClick: () => removeOption(field.id, optionIndex),
+                                            className: 'text-red-500 hover:text-red-700 p-1',
+                                            disabled: field.options.length <= 1
+                                        }, h('i', { className: 'ri-delete-bin-line' }))
+                                    ])
+                                ),
+                                h('button', {
+                                    onClick: () => addOption(field.id),
+                                    className: 'w-full py-2 border-2 border-dashed border-tremor-border rounded-lg text-tremor-content hover:border-tremor-brand hover:text-tremor-brand transition-colors'
+                                }, '+ Ajouter une option')
+                            ])
+                        ]),
+
+                        // Min/Max for sliders and ratings
+                        ['slider', 'rating', 'scale'].includes(field.type) && h('div', { className: 'grid grid-cols-2 gap-3' }, [
+                            h('div', {}, [
+                                h('label', { className: 'tremor-label text-tremor-content-emphasis mb-2 block' }, 'Minimum'),
+                                h('input', {
+                                    type: 'number',
+                                    value: field.min || 0,
+                                    onChange: (e) => updateField(field.id, { min: parseInt(e.target.value) }),
+                                    className: 'tremor-TextInput'
+                                })
+                            ]),
+                            h('div', {}, [
+                                h('label', { className: 'tremor-label text-tremor-content-emphasis mb-2 block' }, 'Maximum'),
+                                h('input', {
+                                    type: 'number',
+                                    value: field.max || (field.type === 'rating' ? 5 : 100),
+                                    onChange: (e) => updateField(field.id, { max: parseInt(e.target.value) }),
+                                    className: 'tremor-TextInput'
+                                })
+                            ])
+                        ]),
+                        
+                        // Field Preview
+                        h('div', {}, [
+                            h('label', { className: 'tremor-label text-tremor-content-emphasis mb-2 block' }, 'Aperçu'),
+                            h('div', { className: 'tremor-Card bg-tremor-background-subtle' }, [
+                                h('label', { className: 'tremor-default font-medium text-tremor-content-strong mb-2 block' }, [
+                                    field.label,
+                                    field.required && h('span', { className: 'text-red-500 ml-1' }, '*')
+                                ]),
+                                renderFieldPreview(field)
+                            ])
+                        ]),
+                        
+                        // Required toggle
+                        h('label', { className: 'flex items-center space-x-2 cursor-pointer' }, [
+                            h('input', {
+                                type: 'checkbox',
+                                checked: field.required,
+                                onChange: (e) => updateField(field.id, { required: e.target.checked }),
+                                className: 'rounded border-tremor-border text-tremor-brand focus:ring-tremor-brand'
+                            }),
+                            h('span', { className: 'tremor-default text-tremor-content-emphasis' }, 'Champ obligatoire')
+                        ])
+                    ])
+                ]);
+            };
+
+            const getFieldIcon = (type) => {
+                const iconMap = {
+                    text: 'ri-input-cursor-move',
+                    textarea: 'ri-file-text-line',
+                    email: 'ri-mail-line',
+                    phone: 'ri-phone-line',
+                    url: 'ri-links-line',
+                    password: 'ri-lock-line',
+                    number: 'ri-hashtag',
+                    search: 'ri-search-line',
+                    select: 'ri-arrow-down-s-line',
+                    radio: 'ri-radio-button-line',
+                    checkbox: 'ri-checkbox-line',
+                    toggle: 'ri-toggle-line',
+                    rating: 'ri-star-line',
+                    slider: 'ri-equalizer-line',
+                    scale: 'ri-scales-line',
+                    date: 'ri-calendar-line',
+                    time: 'ri-time-line',
+                    datetime: 'ri-calendar-event-line',
+                    daterange: 'ri-calendar-2-line',
+                    month: 'ri-calendar-check-line',
+                    week: 'ri-calendar-todo-line',
+                    file: 'ri-upload-line',
+                    image: 'ri-image-line',
+                    video: 'ri-video-line',
+                    audio: 'ri-mic-line',
+                    camera: 'ri-camera-line',
+                    signature: 'ri-edit-line',
+                    fullname: 'ri-user-line',
+                    address: 'ri-map-pin-line',
+                    country: 'ri-earth-line',
+                    city: 'ri-building-line',
+                    postal: 'ri-mail-line',
+                    birthdate: 'ri-cake-line',
+                    gender: 'ri-user-heart-line',
+                    profession: 'ri-briefcase-line',
+                    payment: 'ri-bank-card-line',
+                    price: 'ri-price-tag-line',
+                    quantity: 'ri-add-box-line',
+                    product: 'ri-shopping-bag-line',
+                    coupon: 'ri-coupon-line',
+                    tax: 'ri-percent-line',
+                    matrix: 'ri-table-line',
+                    ranking: 'ri-sort-asc',
+                    captcha: 'ri-shield-check-line',
+                    location: 'ri-map-2-line',
+                    barcode: 'ri-qr-code-line',
+                    calculation: 'ri-calculator-line',
+                    conditional: 'ri-git-branch-line',
+                    appointment: 'ri-calendar-schedule-line'
+                };
+                return iconMap[type] || 'ri-question-line';
+            };
+
+            if (!isOpen) return null;
+
+            return h('div', { 
+                className: 'fixed inset-0 bg-black bg-opacity-50 z-50 flex'
+            }, [
+                h('div', { 
+                    className: 'bg-tremor-background w-full max-w-7xl mx-auto my-4 rounded-tremor-default overflow-hidden flex shadow-xl border border-tremor-border'
+                }, [
+                    // Sidebar - Element Palette
+                    h('div', { className: 'w-80 bg-tremor-background-muted p-6 overflow-y-auto border-r border-tremor-border' }, [
+                        h('div', { className: 'flex justify-between items-center mb-6' }, [
+                            h('h3', { className: 'tremor-title text-tremor-content-strong' }, 'Éléments de Formulaire'),
+                            h('button', { 
+                                onClick: onClose,
+                                className: 'text-tremor-content-subtle hover:text-tremor-content-strong transition-colors'
+                            }, h('i', { className: 'ri-close-line text-xl' }))
+                        ]),
+                        
+                        h('div', { className: 'space-y-6' }, 
+                            fieldCategories.map(category => 
+                                h('div', { key: category.name }, [
+                                    h('h4', { className: 'tremor-label text-tremor-content-emphasis mb-3 flex items-center' }, [
+                                        h('i', { className: `${category.icon} mr-2` }),
+                                        category.name
+                                    ]),
+                                    h('div', { className: 'grid grid-cols-2 gap-2' }, 
+                                        category.fields.map(field => 
+                                            h('button', {
+                                                key: field.type,
+                                                onClick: () => addField(field.type),
+                                                className: 'p-3 bg-tremor-background border border-tremor-border rounded-tremor-default hover:border-tremor-brand hover:shadow-md transition-all duration-200 text-center group'
+                                            }, [
+                                                h('i', { className: `${field.icon} text-xl text-tremor-content-subtle group-hover:text-tremor-brand mb-1 block transition-colors` }),
+                                                h('p', { className: 'text-xs text-tremor-content-emphasis group-hover:text-tremor-content-strong transition-colors leading-tight' }, field.label)
+                                            ])
+                                        )
+                                    )
+                                ])
+                            )
+                        )
+                    ]),
+                    
+                    // Main Form Builder Area
+                    h('div', { className: 'flex-1 flex flex-col' }, [
+                        // Header
+                        h('div', { className: 'bg-tremor-background border-b border-tremor-border p-6' }, [
+                            h('div', { className: 'flex justify-between items-center' }, [
+                                h('div', { className: 'flex items-center space-x-4' }, [
+                                    h('input', {
+                                        type: 'text',
+                                        value: formSettings.title,
+                                        onChange: (e) => setFormSettings({...formSettings, title: e.target.value}),
+                                        className: 'text-xl font-bold bg-transparent border-none outline-none text-tremor-content-strong'
+                                    }),
+                                    h('span', { className: 'px-2 py-1 bg-green-100 text-green-800 text-xs rounded-tremor-default font-medium' }, 'Brouillon')
+                                ]),
+                                h('div', { className: 'flex space-x-3' }, [
+                                    h('button', { className: 'tremor-Button' }, [
+                                        h('i', { className: 'ri-eye-line mr-2' }),
+                                        'Aperçu'
+                                    ]),
+                                    h('button', { className: 'tremor-Button' }, [
+                                        h('i', { className: 'ri-save-line mr-2' }),
+                                        'Sauvegarder'
+                                    ]),
+                                    h('button', { className: 'tremor-Button bg-green-600 hover:bg-green-700' }, [
+                                        h('i', { className: 'ri-share-line mr-2' }),
+                                        'Publier'
+                                    ])
+                                ])
+                            ])
+                        ]),
+                        
+                        // Form Canvas
+                        h('div', { className: 'flex-1 p-6 overflow-y-auto bg-tremor-background-muted' }, [
+                            h('div', { 
+                                className: 'max-w-4xl mx-auto',
+                                onDrop: (e) => {
+                                    e.preventDefault();
+                                    // Handle drop
+                                },
+                                onDragOver: (e) => e.preventDefault()
+                            }, [
+                                // Form Header
+                                h('div', { className: 'tremor-Card mb-6' }, [
+                                    h('input', {
+                                        type: 'text',
+                                        value: formSettings.title,
+                                        onChange: (e) => setFormSettings({...formSettings, title: e.target.value}),
+                                        className: 'text-2xl font-bold w-full bg-transparent border-none outline-none text-tremor-content-strong mb-3',
+                                        placeholder: 'Titre du formulaire'
+                                    }),
+                                    h('textarea', {
+                                        value: formSettings.description,
+                                        onChange: (e) => setFormSettings({...formSettings, description: e.target.value}),
+                                        className: 'w-full bg-transparent border-none outline-none resize-none text-tremor-content tremor-default',
+                                        rows: 2,
+                                        placeholder: 'Description du formulaire'
+                                    })
+                                ]),
+                                
+                                // Form Fields
+                                fields.length === 0 ? 
+                                    h('div', { className: 'tremor-Card text-center py-12' }, [
+                                        h('i', { className: 'ri-drag-drop-line text-6xl text-tremor-content-subtle mb-4' }),
+                                        h('h3', { className: 'tremor-title text-tremor-content-strong mb-2' }, 'Commencez à construire votre formulaire'),
+                                        h('p', { className: 'tremor-default text-tremor-content mb-6' }, 'Cliquez sur les éléments dans la palette à gauche pour les ajouter à votre formulaire'),
+                                        h('div', { className: 'flex justify-center space-x-3' }, [
+                                            h('button', {
+                                                onClick: () => addField('text'),
+                                                className: 'tremor-Button'
+                                            }, 'Ajouter un champ texte'),
+                                            h('button', {
+                                                onClick: () => addField('email'),
+                                                className: 'tremor-Button bg-white text-tremor-brand border border-tremor-brand hover:bg-tremor-brand-faint'
+                                            }, 'Ajouter un email')
+                                        ])
+                                    ]) :
+                                    h('div', { className: 'space-y-6' }, [
+                                        ...fields.map(field => renderFieldConfig(field)),
+                                        h('div', { className: 'tremor-Card text-center' }, [
+                                            h('button', {
+                                                type: 'submit',
+                                                className: 'tremor-Button text-lg px-8 py-3'
+                                            }, formSettings.submitButtonText)
+                                        ])
+                                    ])
+                            ])
+                        ])
+                    ])
+                ])
+            ]);
+        };
+
+        // Main App with Tremor Light Dashboard
+        const App = () => {
+            const [showFormBuilder, setShowFormBuilder] = useState(false);
+
+            const chartData = [
+                { name: 'Lun', value: 120 },
+                { name: 'Mar', value: 198 },
+                { name: 'Mer', value: 308 },
+                { name: 'Jeu', value: 248 },
+                { name: 'Ven', value: 389 },
+                { name: 'Sam', value: 178 },
+                { name: 'Dim', value: 289 }
+            ];
+
+            return h('div', { className: 'min-h-screen bg-tremor-background-muted' }, [
+                // Navigation Header
+                h('nav', { className: 'bg-tremor-background border-b border-tremor-border sticky top-0 z-40' }, [
+                    h('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' }, [
+                        h('div', { className: 'flex justify-between items-center h-16' }, [
+                            h('div', { className: 'flex items-center' }, [
+                                h('h1', { className: 'text-2xl font-bold text-tremor-content-strong mr-8' }, '✨ FormEase'),
+                                h('nav', { className: 'hidden md:flex space-x-8' }, [
+                                    h('a', { className: 'text-tremor-brand font-medium' }, 'Dashboard'),
+                                    h('a', { className: 'text-tremor-content hover:text-tremor-content-strong transition-colors' }, 'Formulaires'),
+                                    h('a', { className: 'text-tremor-content hover:text-tremor-content-strong transition-colors' }, 'Analytics'),
+                                    h('a', { className: 'text-tremor-content hover:text-tremor-content-strong transition-colors' }, 'Paramètres')
+                                ])
+                            ]),
+                            h('div', { className: 'flex items-center space-x-4' }, [
+                                h('button', {
+                                    onClick: () => setShowFormBuilder(true),
+                                    className: 'tremor-Button'
+                                }, [
+                                    h('i', { className: 'ri-add-line mr-2' }),
+                                    'Nouveau Formulaire'
+                                ]),
+                                h('div', { className: 'w-8 h-8 bg-tremor-brand rounded-full flex items-center justify-center' }, [
+                                    h('i', { className: 'ri-user-line text-tremor-brand-inverted' })
+                                ])
+                            ])
+                        ])
+                    ])
+                ]),
+
+                // Main Content
+                h('main', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8' }, [
+                    // Page Header
+                    h('div', { className: 'mb-8' }, [
+                        h('h2', { className: 'tremor-title text-tremor-content-strong mb-2' }, 'Dashboard Premium'),
+                        h('p', { className: 'tremor-default text-tremor-content' }, 'Aperçu de vos formulaires et performances en temps réel')
+                    ]),
+
+                    // KPI Cards
+                    h('div', { className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8' }, [
+                        // Formulaires Actifs
+                        h('div', { className: 'tremor-Card hover:shadow-lg transition-shadow' }, [
+                            h('div', { className: 'flex items-center justify-between' }, [
+                                h('div', {}, [
+                                    h('p', { className: 'tremor-default text-tremor-content mb-1' }, 'Formulaires Actifs'),
+                                    h('p', { className: 'tremor-metric text-tremor-content-strong' }, '24')
+                                ]),
+                                h('div', { className: 'w-12 h-12 bg-tremor-brand-faint rounded-tremor-default flex items-center justify-center' }, [
+                                    h('i', { className: 'ri-file-list-3-line text-tremor-brand text-xl' })
+                                ])
+                            ]),
+                            h('div', { className: 'mt-4 flex items-center' }, [
+                                h('span', { className: 'text-green-600 tremor-default font-medium' }, '+12.5%'),
+                                h('span', { className: 'text-tremor-content-subtle tremor-default ml-1' }, 'vs mois dernier')
+                            ])
+                        ]),
+
+                        // Réponses
+                        h('div', { className: 'tremor-Card hover:shadow-lg transition-shadow' }, [
+                            h('div', { className: 'flex items-center justify-between' }, [
+                                h('div', {}, [
+                                    h('p', { className: 'tremor-default text-tremor-content mb-1' }, 'Réponses ce mois'),
+                                    h('p', { className: 'tremor-metric text-tremor-content-strong' }, '1,247')
+                                ]),
+                                h('div', { className: 'w-12 h-12 bg-green-50 rounded-tremor-default flex items-center justify-center' }, [
+                                    h('i', { className: 'ri-mail-line text-green-600 text-xl' })
+                                ])
+                            ]),
+                            h('div', { className: 'mt-4 flex items-center' }, [
+                                h('span', { className: 'text-green-600 tremor-default font-medium' }, '+18.2%'),
+                                h('span', { className: 'text-tremor-content-subtle tremor-default ml-1' }, 'vs mois dernier')
+                            ])
+                        ]),
+
+                        // Vues
+                        h('div', { className: 'tremor-Card hover:shadow-lg transition-shadow' }, [
+                            h('div', { className: 'flex items-center justify-between' }, [
+                                h('div', {}, [
+                                    h('p', { className: 'tremor-default text-tremor-content mb-1' }, 'Vues totales'),
+                                    h('p', { className: 'tremor-metric text-tremor-content-strong' }, '8,742')
+                                ]),
+                                h('div', { className: 'w-12 h-12 bg-purple-50 rounded-tremor-default flex items-center justify-center' }, [
+                                    h('i', { className: 'ri-eye-line text-purple-600 text-xl' })
+                                ])
+                            ]),
+                            h('div', { className: 'mt-4 flex items-center' }, [
+                                h('span', { className: 'text-green-600 tremor-default font-medium' }, '+7.4%'),
+                                h('span', { className: 'text-tremor-content-subtle tremor-default ml-1' }, 'vs mois dernier')
+                            ])
+                        ]),
+
+                        // Taux de conversion
+                        h('div', { className: 'tremor-Card hover:shadow-lg transition-shadow' }, [
+                            h('div', { className: 'flex items-center justify-between' }, [
+                                h('div', {}, [
+                                    h('p', { className: 'tremor-default text-tremor-content mb-1' }, 'Taux de conversion'),
+                                    h('p', { className: 'tremor-metric text-tremor-content-strong' }, '14.3%')
+                                ]),
+                                h('div', { className: 'w-12 h-12 bg-amber-50 rounded-tremor-default flex items-center justify-center' }, [
+                                    h('i', { className: 'ri-percent-line text-amber-600 text-xl' })
+                                ])
+                            ]),
+                            h('div', { className: 'mt-4 flex items-center' }, [
+                                h('span', { className: 'text-red-600 tremor-default font-medium' }, '-2.1%'),
+                                h('span', { className: 'text-tremor-content-subtle tremor-default ml-1' }, 'vs mois dernier')
+                            ])
+                        ])
+                    ]),
+
+                    // Charts and Activity
+                    h('div', { className: 'grid grid-cols-1 lg:grid-cols-3 gap-8' }, [
+                        // Performance Chart (Tremor style)
+                        h('div', { className: 'lg:col-span-2 tremor-Card' }, [
+                            h('div', { className: 'flex items-center justify-between mb-6' }, [
+                                h('h3', { className: 'tremor-title text-tremor-content-strong' }, 'Performance des Formulaires'),
+                                h('button', { className: 'text-tremor-brand hover:text-tremor-brand-emphasis tremor-default font-medium transition-colors' }, 'Voir le rapport complet')
+                            ]),
+                            h(TremorChart, { data: chartData, type: 'area' })
+                        ]),
+
+                        // Recent Activity
+                        h('div', { className: 'tremor-Card' }, [
+                            h('div', { className: 'flex items-center justify-between mb-6' }, [
+                                h('h3', { className: 'tremor-title text-tremor-content-strong' }, 'Activité Récente'),
+                                h('button', { className: 'text-tremor-brand hover:text-tremor-brand-emphasis tremor-default font-medium transition-colors' }, 'Voir tout')
+                            ]),
+                            h('div', { className: 'space-y-4' }, [
+                                {
+                                    type: 'response',
+                                    message: 'Nouvelle réponse sur "Formulaire de Contact"',
+                                    time: 'Il y a 5 minutes',
+                                    icon: 'ri-mail-line',
+                                    iconColor: 'text-blue-600 bg-blue-50'
+                                },
+                                {
+                                    type: 'form',
+                                    message: 'Formulaire "Newsletter" mis à jour',
+                                    time: 'Il y a 1 heure',
+                                    icon: 'ri-edit-line',
+                                    iconColor: 'text-green-600 bg-green-50'
+                                },
+                                {
+                                    type: 'analytics',
+                                    message: 'Rapport mensuel généré',
+                                    time: 'Il y a 3 heures',
+                                    icon: 'ri-bar-chart-line',
+                                    iconColor: 'text-purple-600 bg-purple-50'
+                                },
+                                {
+                                    type: 'integration',
+                                    message: 'Nouvelle intégration Zapier activée',
+                                    time: 'Il y a 1 jour',
+                                    icon: 'ri-links-line',
+                                    iconColor: 'text-amber-600 bg-amber-50'
+                                }
+                            ].map((activity, index) => 
+                                h('div', { key: index, className: 'flex items-center p-3 border border-tremor-border rounded-tremor-default hover:bg-tremor-background-subtle transition-colors' }, [
+                                    h('div', { className: `p-2 rounded-tremor-default mr-3 ${activity.iconColor}` }, [
+                                        h('i', { className: `${activity.icon}` })
+                                    ]),
+                                    h('div', { className: 'flex-1 min-w-0' }, [
+                                        h('p', { className: 'text-tremor-content-strong font-medium tremor-default' }, activity.message),
+                                        h('p', { className: 'text-tremor-content-subtle text-xs mt-1' }, activity.time)
+                                    ])
+                                ])
+                            ))
+                        ])
+                    ]),
+
+                    // Charts Section
+                    h('div', { className: 'mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8' }, [
+                        h('div', { className: 'tremor-Card' }, [
+                            h('h3', { className: 'tremor-title text-tremor-content-strong mb-6' }, 'Réponses par Jour'),
+                            h(TremorBarChart, { data: chartData })
+                        ]),
+                        h('div', { className: 'tremor-Card' }, [
+                            h('h3', { className: 'tremor-title text-tremor-content-strong mb-6' }, 'Formulaires Populaires'),
+                            h('div', { className: 'space-y-4' }, [
+                                { name: 'Formulaire de Contact', responses: 324, growth: '+12%' },
+                                { name: 'Newsletter', responses: 198, growth: '+8%' },
+                                { name: 'Feedback Produit', responses: 156, growth: '+15%' },
+                                { name: 'Enquête Satisfaction', responses: 134, growth: '+3%' }
+                            ].map((form, index) => 
+                                h('div', { key: index, className: 'flex items-center justify-between p-3 border border-tremor-border rounded-tremor-default hover:bg-tremor-background-subtle transition-colors' }, [
+                                    h('div', {}, [
+                                        h('p', { className: 'tremor-default font-medium text-tremor-content-strong' }, form.name),
+                                        h('p', { className: 'text-xs text-tremor-content-subtle' }, `${form.responses} réponses`)
+                                    ]),
+                                    h('span', { className: 'text-green-600 tremor-default font-medium' }, form.growth)
+                                ])
+                            ))
+                        ])
+                    ])
+                ]),
+
+                // Form Builder Modal
+                h(FormBuilder, { 
+                    isOpen: showFormBuilder, 
+                    onClose: () => setShowFormBuilder(false)
+                })
+            ]);
+        };
+
+        ReactDOM.render(h(App), document.getElementById('root'));
+    </script>
+</body>
+</html>

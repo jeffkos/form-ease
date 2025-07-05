@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Premium</title>
+    
+    <!-- Tremor/Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for advanced charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- React Dependencies -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: "#eff6ff",
+                                muted: "#bfdbfe", 
+                                subtle: "#60a5fa",
+                                DEFAULT: "#3b82f6",
+                                emphasis: "#1d4ed8",
+                                inverted: "#ffffff",
+                            },
+                            background: {
+                                muted: "#f9fafb",
+                                subtle: "#f3f4f6", 
+                                DEFAULT: "#ffffff",
+                                emphasis: "#374151",
+                            },
+                            border: {
+                                DEFAULT: "#e5e7eb",
+                            },
+                            content: {
+                                subtle: "#9ca3af",
+                                DEFAULT: "#6b7280", 
+                                emphasis: "#374151",
+                                strong: "#111827",
+                                inverted: "#ffffff",
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        .tremor-metric { 
+            font-size: 1.875rem; 
+            line-height: 2.25rem; 
+            font-weight: 700; 
+        }
+        .tremor-title { 
+            font-size: 1.125rem; 
+            line-height: 1.75rem; 
+            font-weight: 600; 
+        }
+        .tremor-label { 
+            font-size: 0.75rem; 
+            line-height: 1rem; 
+            font-weight: 500; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tremor-default { 
+            font-size: 0.875rem; 
+            line-height: 1.25rem; 
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { createElement: h } = React;
+
+        // Mock data for charts
+        const generateChartData = () => {
+            const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
+            return months.map(month => ({
+                month,
+                forms: Math.floor(Math.random() * 40) + 20,
+                responses: Math.floor(Math.random() * 400) + 100,
+                views: Math.floor(Math.random() * 1000) + 300
+            }));
+        };
+
+        const FormBuilder = ({ isOpen, onClose }) => {
+            const [fields, setFields] = useState([]);
+            const [draggedField, setDraggedField] = useState(null);
+            const [formSettings, setFormSettings] = useState({
+                title: 'Mon Nouveau Formulaire',
+                description: 'Veuillez remplir ce formulaire avec les informations demandées.',
+                submitButtonText: 'Envoyer le formulaire'
+            });
+
+            const fieldTypes = [
+                // Texte et Saisie
+                { type: 'text', icon: 'ri-input-cursor-move', label: 'Texte simple', category: 'text', premium: false },
+                { type: 'textarea', icon: 'ri-file-text-line', label: 'Zone de texte', category: 'text', premium: false },
+                { type: 'email', icon: 'ri-mail-line', label: 'Adresse email', category: 'text', premium: false },
+                { type: 'phone', icon: 'ri-phone-line', label: 'Numéro téléphone', category: 'text', premium: false },
+                { type: 'url', icon: 'ri-links-line', label: 'Site web (URL)', category: 'text', premium: false },
+                { type: 'number', icon: 'ri-hashtag', label: 'Nombre', category: 'text', premium: false },
+                
+                // Sélection et Choix
+                { type: 'select', icon: 'ri-arrow-down-s-line', label: 'Liste déroulante', category: 'choice', premium: false },
+                { type: 'radio', icon: 'ri-radio-button-line', label: 'Choix unique', category: 'choice', premium: false },
+                { type: 'checkbox', icon: 'ri-checkbox-line', label: 'Choix multiples', category: 'choice', premium: false },
+                { type: 'rating', icon: 'ri-star-line', label: 'Évaluation étoiles', category: 'choice', premium: true },
+                { type: 'slider', icon: 'ri-equalizer-line', label: 'Curseur de valeur', category: 'choice', premium: true },
+                
+                // Date et Temps
+                { type: 'date', icon: 'ri-calendar-line', label: 'Date', category: 'datetime', premium: false },
+                { type: 'time', icon: 'ri-time-line', label: 'Heure', category: 'datetime', premium: false },
+                { type: 'datetime', icon: 'ri-calendar-event-line', label: 'Date et heure', category: 'datetime', premium: true },
+                
+                // Fichiers et Médias
+                { type: 'file', icon: 'ri-upload-line', label: 'Upload de fichier', category: 'media', premium: true },
+                { type: 'image', icon: 'ri-image-line', label: 'Upload d\'image', category: 'media', premium: true },
+                { type: 'signature', icon: 'ri-edit-line', label: 'Signature électronique', category: 'media', premium: true },
+                
+                // Avancés et Premium
+                { type: 'payment', icon: 'ri-bank-card-line', label: 'Paiement sécurisé', category: 'advanced', premium: true },
+                { type: 'address', icon: 'ri-map-pin-line', label: 'Adresse complète', category: 'advanced', premium: true },
+                { type: 'matrix', icon: 'ri-table-line', label: 'Grille de questions', category: 'advanced', premium: true },
+                { type: 'captcha', icon: 'ri-shield-check-line', label: 'Vérification CAPTCHA', category: 'advanced', premium: true }
+            ];
+
+            const categories = [
+                { id: 'text', label: 'Texte & Saisie', icon: 'ri-text' },
+                { id: 'choice', label: 'Choix & Sélection', icon: 'ri-checkbox-circle-line' },
+                { id: 'datetime', label: 'Date & Temps', icon: 'ri-calendar-line' },
+                { id: 'media', label: 'Fichiers & Médias', icon: 'ri-folder-line' },
+                { id: 'advanced', label: 'Avancés & Premium', icon: 'ri-star-line' }
+            ];
+
+            const [activeCategory, setActiveCategory] = useState('text');
+
+            const addField = (fieldType) => {
+                const fieldData = fieldTypes.find(f => f.type === fieldType);
+                const newField = {
+                    id: Date.now(),
+                    type: fieldType,
+                    label: fieldData.label,
+                    placeholder: `Entrez votre ${fieldData.label.toLowerCase()}`,
+                    required: false,
+                    options: ['radio', 'checkbox', 'select'].includes(fieldType) ? ['Option 1', 'Option 2', 'Option 3'] : [],
+                    validation: {},
+                    settings: {}
+                };
+                setFields([...fields, newField]);
+            };
+
+            const updateField = (fieldId, updates) => {
+                setFields(fields.map(field => 
+                    field.id === fieldId ? { ...field, ...updates } : field
+                ));
+            };
+
+            const removeField = (fieldId) => {
+                setFields(fields.filter(field => field.id !== fieldId));
+            };
+
+            const moveField = (fromIndex, toIndex) => {
+                const newFields = [...fields];
+                const [removed] = newFields.splice(fromIndex, 1);
+                newFields.splice(toIndex, 0, removed);
+                setFields(newFields);
+            };
+
+            if (!isOpen) return null;
+
+            return h('div', { 
+                className: 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4'
+            }, [
+                h('div', { 
+                    className: 'bg-white rounded-xl max-w-7xl w-full max-h-[95vh] overflow-hidden shadow-2xl border border-gray-200',
+                    key: 'modal'
+                }, [
+                    // Header
+                    h('div', { className: 'flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50' }, [
+                        h('div', {}, [
+                            h('h2', { className: 'text-2xl font-bold text-gray-900' }, 'Form Builder Premium'),
+                            h('p', { className: 'text-gray-600 mt-1' }, 'Créez des formulaires interactifs avec glisser-déposer')
+                        ]),
+                        h('button', { 
+                            onClick: onClose,
+                            className: 'text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg'
+                        }, h('i', { className: 'ri-close-line text-2xl' }))
+                    ]),
+                    
+                    h('div', { className: 'flex h-[calc(95vh-80px)]' }, [
+                        // Sidebar - Element Palette
+                        h('div', { className: 'w-80 border-r border-gray-200 bg-gray-50 overflow-y-auto' }, [
+                            h('div', { className: 'p-4' }, [
+                                h('h3', { className: 'font-semibold text-gray-900 mb-4' }, 'Éléments de formulaire'),
+                                
+                                // Category Tabs
+                                h('div', { className: 'flex flex-wrap gap-2 mb-4' }, 
+                                    categories.map(category => 
+                                        h('button', {
+                                            key: category.id,
+                                            onClick: () => setActiveCategory(category.id),
+                                            className: `px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
+                                                activeCategory === category.id 
+                                                    ? 'bg-blue-100 text-blue-700 border border-blue-200' 
+                                                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                                            }`
+                                        }, category.label)
+                                    )
+                                ),
+                                
+                                // Field Elements
+                                h('div', { className: 'space-y-2' }, 
+                                    fieldTypes
+                                        .filter(field => field.category === activeCategory)
+                                        .map(field => 
+                                            h('div', {
+                                                key: field.type,
+                                                className: `group p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all ${
+                                                    field.premium ? 'border-l-4 border-l-blue-500' : ''
+                                                }`,
+                                                onClick: () => addField(field.type),
+                                                onDragStart: (e) => {
+                                                    setDraggedField(field.type);
+                                                    e.dataTransfer.effectAllowed = 'copy';
+                                                },
+                                                draggable: true
+                                            }, [
+                                                h('div', { className: 'flex items-center justify-between' }, [
+                                                    h('div', { className: 'flex items-center' }, [
+                                                        h('i', { className: `${field.icon} mr-3 text-lg ${field.premium ? 'text-blue-600' : 'text-gray-600'}` }),
+                                                        h('div', {}, [
+                                                            h('span', { 
+                                                                className: `text-sm font-medium ${field.premium ? 'text-blue-700' : 'text-gray-700'}`
+                                                            }, field.label),
+                                                            field.premium && h('div', { className: 'text-xs text-blue-600 font-medium' }, 'Premium')
+                                                        ])
+                                                    ]),
+                                                    h('i', { className: 'ri-add-circle-line text-gray-400 group-hover:text-blue-500 transition-colors' })
+                                                ])
+                                            ])
+                                        )
+                                ),
+                                
+                                // Form Settings
+                                h('div', { className: 'mt-8 p-4 bg-white border border-gray-200 rounded-lg' }, [
+                                    h('h4', { className: 'font-medium text-gray-900 mb-3' }, 'Paramètres du formulaire'),
+                                    h('div', { className: 'space-y-3' }, [
+                                        h('div', {}, [
+                                            h('label', { className: 'block text-xs font-medium text-gray-700 mb-1' }, 'Titre'),
+                                            h('input', {
+                                                type: 'text',
+                                                value: formSettings.title,
+                                                onChange: (e) => setFormSettings({...formSettings, title: e.target.value}),
+                                                className: 'w-full text-sm border border-gray-300 rounded px-2 py-1'
+                                            })
+                                        ]),
+                                        h('div', {}, [
+                                            h('label', { className: 'block text-xs font-medium text-gray-700 mb-1' }, 'Description'),
+                                            h('textarea', {
+                                                value: formSettings.description,
+                                                onChange: (e) => setFormSettings({...formSettings, description: e.target.value}),
+                                                className: 'w-full text-sm border border-gray-300 rounded px-2 py-1',
+                                                rows: 2
+                                            })
+                                        ])
+                                    ])
+                                ])
+                            ])
+                        ]),
+                        
+                        // Main Form Builder Area
+                        h('div', { className: 'flex-1 flex flex-col' }, [
+                            // Toolbar
+                            h('div', { className: 'p-4 border-b border-gray-200 bg-white' }, [
+                                h('div', { className: 'flex justify-between items-center' }, [
+                                    h('div', { className: 'flex items-center space-x-4' }, [
+                                        h('span', { className: 'text-sm text-gray-600' }, `${fields.length} élément${fields.length !== 1 ? 's' : ''}`),
+                                        h('div', { className: 'h-4 w-px bg-gray-300' }),
+                                        h('button', { 
+                                            onClick: () => setFields([]),
+                                            className: 'text-sm text-red-600 hover:text-red-700 flex items-center'
+                                        }, [h('i', { className: 'ri-delete-bin-line mr-1' }), 'Effacer tout'])
+                                    ]),
+                                    h('div', { className: 'flex items-center space-x-3' }, [
+                                        h('button', { 
+                                            className: 'px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm flex items-center'
+                                        }, [h('i', { className: 'ri-eye-line mr-2' }), 'Aperçu']),
+                                        h('button', { 
+                                            className: 'px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm flex items-center'
+                                        }, [h('i', { className: 'ri-save-line mr-2' }), 'Sauvegarder']),
+                                        h('button', { 
+                                            className: 'px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex items-center font-medium'
+                                        }, [h('i', { className: 'ri-share-line mr-2' }), 'Publier'])
+                                    ])
+                                ])
+                            ]),
+                            
+                            // Form Canvas
+                            h('div', { className: 'flex-1 overflow-y-auto p-6 bg-gray-50' }, [
+                                h('div', { 
+                                    className: 'max-w-2xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 min-h-96',
+                                    onDrop: (e) => {
+                                        e.preventDefault();
+                                        if (draggedField) {
+                                            addField(draggedField);
+                                            setDraggedField(null);
+                                        }
+                                    },
+                                    onDragOver: (e) => e.preventDefault()
+                                }, [
+                                    // Form Header
+                                    h('div', { className: 'p-6 border-b border-gray-200' }, [
+                                        h('input', {
+                                            type: 'text',
+                                            value: formSettings.title,
+                                            onChange: (e) => setFormSettings({...formSettings, title: e.target.value}),
+                                            className: 'text-2xl font-bold w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500',
+                                            placeholder: 'Titre du formulaire'
+                                        }),
+                                        h('textarea', {
+                                            value: formSettings.description,
+                                            onChange: (e) => setFormSettings({...formSettings, description: e.target.value}),
+                                            className: 'w-full mt-2 text-gray-600 bg-transparent border-none outline-none resize-none placeholder-gray-400',
+                                            rows: 2,
+                                            placeholder: 'Description du formulaire'
+                                        })
+                                    ]),
+                                    
+                                    // Form Fields
+                                    h('div', { className: 'p-6' }, [
+                                        fields.length === 0 ? 
+                                            h('div', { className: 'text-center py-12 text-gray-500' }, [
+                                                h('i', { className: 'ri-drag-drop-line text-6xl mb-4 text-gray-300' }),
+                                                h('h3', { className: 'text-lg font-medium mb-2' }, 'Commencez à construire votre formulaire'),
+                                                h('p', { className: 'text-sm mb-4' }, 'Glissez des éléments depuis la palette ou cliquez pour les ajouter'),
+                                                h('div', { className: 'flex justify-center space-x-2' }, [
+                                                    h('button', {
+                                                        onClick: () => addField('text'),
+                                                        className: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm'
+                                                    }, 'Ajouter un champ texte'),
+                                                    h('button', {
+                                                        onClick: () => addField('email'),
+                                                        className: 'px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm'
+                                                    }, 'Ajouter un email')
+                                                ])
+                                            ]) :
+                                            h('div', { className: 'space-y-6' }, [
+                                                ...fields.map((field, index) => renderFormField(field, index, updateField, removeField, moveField)),
+                                                h('div', { className: 'pt-6 border-t border-gray-200' }, [
+                                                    h('button', {
+                                                        type: 'submit',
+                                                        className: 'w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors'
+                                                    }, formSettings.submitButtonText)
+                                                ])
+                                            ])
+                                    ])
+                                ])
+                            ])
+                        ])
+                    ])
+                ])
+            ]);
+        };
+
+        const renderFormField = (field, index, updateField, removeField, moveField) => {
+            const fieldTypeData = {
+                text: { icon: 'ri-input-cursor-move', label: 'Texte simple' },
+                textarea: { icon: 'ri-file-text-line', label: 'Zone de texte' },
+                email: { icon: 'ri-mail-line', label: 'Email' },
+                phone: { icon: 'ri-phone-line', label: 'Téléphone' },
+                url: { icon: 'ri-links-line', label: 'URL' },
+                number: { icon: 'ri-hashtag', label: 'Nombre' },
+                select: { icon: 'ri-arrow-down-s-line', label: 'Liste déroulante' },
+                radio: { icon: 'ri-radio-button-line', label: 'Choix unique' },
+                checkbox: { icon: 'ri-checkbox-line', label: 'Choix multiples' },
+                rating: { icon: 'ri-star-line', label: 'Évaluation' },
+                slider: { icon: 'ri-equalizer-line', label: 'Curseur' },
+                date: { icon: 'ri-calendar-line', label: 'Date' },
+                time: { icon: 'ri-time-line', label: 'Heure' },
+                datetime: { icon: 'ri-calendar-event-line', label: 'Date et heure' },
+                file: { icon: 'ri-upload-line', label: 'Upload fichier' },
+                image: { icon: 'ri-image-line', label: 'Upload image' },
+                signature: { icon: 'ri-edit-line', label: 'Signature' },
+                payment: { icon: 'ri-bank-card-line', label: 'Paiement' },
+                address: { icon: 'ri-map-pin-line', label: 'Adresse' },
+                matrix: { icon: 'ri-table-line', label: 'Matrice' },
+                captcha: { icon: 'ri-shield-check-line', label: 'CAPTCHA' }
+            };
+
+            const fieldInfo = fieldTypeData[field.type] || { icon: 'ri-question-line', label: field.type };
+
+            return h('div', {
+                key: field.id,
+                className: 'group border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors bg-gray-50'
+            }, [
+                // Field Header
+                h('div', { className: 'flex items-center justify-between mb-3' }, [
+                    h('div', { className: 'flex items-center' }, [
+                        h('i', { className: `${fieldInfo.icon} text-gray-600 mr-2` }),
+                        h('span', { className: 'text-sm font-medium text-gray-900' }, fieldInfo.label),
+                        field.required && h('span', { className: 'text-red-500 ml-1' }, '*')
+                    ]),
+                    h('div', { className: 'flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity' }, [
+                        index > 0 && h('button', {
+                            onClick: () => moveField(index, index - 1),
+                            className: 'p-1 text-gray-400 hover:text-gray-600'
+                        }, h('i', { className: 'ri-arrow-up-line' })),
+                        index < fields.length - 1 && h('button', {
+                            onClick: () => moveField(index, index + 1),
+                            className: 'p-1 text-gray-400 hover:text-gray-600'
+                        }, h('i', { className: 'ri-arrow-down-line' })),
+                        h('button', {
+                            onClick: () => removeField(field.id),
+                            className: 'p-1 text-red-400 hover:text-red-600'
+                        }, h('i', { className: 'ri-delete-bin-line' }))
+                    ])
+                ]),
+                
+                // Field Configuration
+                h('div', { className: 'space-y-3' }, [
+                    // Label Input
+                    h('div', {}, [
+                        h('label', { className: 'block text-xs font-medium text-gray-700 mb-1' }, 'Libellé'),
+                        h('input', {
+                            type: 'text',
+                            value: field.label,
+                            onChange: (e) => updateField(field.id, { label: e.target.value }),
+                            className: 'w-full text-sm border border-gray-300 rounded px-3 py-2 bg-white'
+                        })
+                    ]),
+                    
+                    // Field Preview
+                    h('div', { className: 'bg-white border border-gray-200 rounded p-3' }, [
+                        h('label', { className: 'block text-sm font-medium text-gray-900 mb-2' }, field.label),
+                        renderFieldPreview(field)
+                    ]),
+                    
+                    // Field Options
+                    ['radio', 'checkbox', 'select'].includes(field.type) && h('div', {}, [
+                        h('label', { className: 'block text-xs font-medium text-gray-700 mb-1' }, 'Options'),
+                        h('div', { className: 'space-y-1' }, [
+                            ...field.options.map((option, optIndex) => 
+                                h('div', { key: optIndex, className: 'flex items-center space-x-2' }, [
+                                    h('input', {
+                                        type: 'text',
+                                        value: option,
+                                        onChange: (e) => {
+                                            const newOptions = [...field.options];
+                                            newOptions[optIndex] = e.target.value;
+                                            updateField(field.id, { options: newOptions });
+                                        },
+                                        className: 'flex-1 text-sm border border-gray-300 rounded px-2 py-1'
+                                    }),
+                                    h('button', {
+                                        onClick: () => {
+                                            const newOptions = field.options.filter((_, i) => i !== optIndex);
+                                            updateField(field.id, { options: newOptions });
+                                        },
+                                        className: 'text-red-500 hover:text-red-700'
+                                    }, h('i', { className: 'ri-close-line' }))
+                                ])
+                            ),
+                            h('button', {
+                                onClick: () => {
+                                    updateField(field.id, { options: [...field.options, `Option ${field.options.length + 1}`] });
+                                },
+                                className: 'text-xs text-blue-600 hover:text-blue-700 flex items-center'
+                            }, [h('i', { className: 'ri-add-line mr-1' }), 'Ajouter option'])
+                        ])
+                    ]),
+                    
+                    // Required Toggle
+                    h('div', { className: 'flex items-center justify-between' }, [
+                        h('label', { className: 'text-xs font-medium text-gray-700' }, 'Champ obligatoire'),
+                        h('input', {
+                            type: 'checkbox',
+                            checked: field.required,
+                            onChange: (e) => updateField(field.id, { required: e.target.checked }),
+                            className: 'text-blue-600'
+                        })
+                    ])
+                ])
+            ]);
+        };
+
+        const renderFieldPreview = (field) => {
+            switch (field.type) {
+                case 'text':
+                case 'email':
+                case 'phone':
+                case 'url':
+                case 'number':
+                    return h('input', {
+                        type: field.type === 'phone' ? 'tel' : field.type,
+                        placeholder: field.placeholder,
+                        className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white',
+                        disabled: true
+                    });
+                
+                case 'textarea':
+                    return h('textarea', {
+                        placeholder: field.placeholder,
+                        className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white',
+                        rows: 3,
+                        disabled: true
+                    });
+                
+                case 'select':
+                    return h('select', {
+                        className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white',
+                        disabled: true
+                    }, [
+                        h('option', {}, 'Choisissez une option'),
+                        ...field.options.map((option, index) => 
+                            h('option', { key: index }, option)
+                        )
+                    ]);
+                
+                case 'radio':
+                    return h('div', { className: 'space-y-2' }, 
+                        field.options.map((option, index) => 
+                            h('label', { key: index, className: 'flex items-center' }, [
+                                h('input', { type: 'radio', name: `radio_${field.id}`, className: 'mr-2 text-blue-600', disabled: true }),
+                                option
+                            ])
+                        )
+                    );
+                
+                case 'checkbox':
+                    return h('div', { className: 'space-y-2' }, 
+                        field.options.map((option, index) => 
+                            h('label', { key: index, className: 'flex items-center' }, [
+                                h('input', { type: 'checkbox', className: 'mr-2 text-blue-600', disabled: true }),
+                                option
+                            ])
+                        )
+                    );
+                
+                case 'rating':
+                    return h('div', { className: 'flex space-x-1' }, 
+                        Array.from({ length: 5 }, (_, i) => 
+                            h('i', { key: i, className: 'ri-star-line text-xl text-yellow-400 cursor-pointer hover:text-yellow-500' })
+                        )
+                    );
+                
+                case 'slider':
+                    return h('div', { className: 'space-y-2' }, [
+                        h('input', { type: 'range', min: '0', max: '100', className: 'w-full', disabled: true }),
+                        h('div', { className: 'flex justify-between text-sm text-gray-500' }, [
+                            h('span', {}, '0'),
+                            h('span', {}, '50'),
+                            h('span', {}, '100')
+                        ])
+                    ]);
+                
+                case 'date':
+                    return h('input', {
+                        type: 'date',
+                        className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white',
+                        disabled: true
+                    });
+                
+                case 'time':
+                    return h('input', {
+                        type: 'time',
+                        className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white',
+                        disabled: true
+                    });
+                
+                case 'datetime':
+                    return h('input', {
+                        type: 'datetime-local',
+                        className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white',
+                        disabled: true
+                    });
+                
+                case 'file':
+                case 'image':
+                    return h('div', { className: 'border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50' }, [
+                        h('i', { className: 'ri-upload-cloud-line text-4xl text-blue-600 mb-2' }),
+                        h('p', { className: 'text-blue-600 font-medium' }, 'Zone de glisser-déposer'),
+                        h('p', { className: 'text-sm text-blue-500 mt-1' }, field.type === 'image' ? 'Images: JPG, PNG, GIF (Max 5MB)' : 'Fichiers: PDF, DOC, XLS (Max 10MB)')
+                    ]);
+                
+                case 'signature':
+                    return h('div', { className: 'border border-gray-300 rounded-lg p-4 bg-white' }, [
+                        h('div', { className: 'h-32 border-2 border-dashed border-blue-300 rounded flex items-center justify-center bg-blue-50' }, [
+                            h('p', { className: 'text-blue-600 font-medium' }, 'Zone de signature électronique')
+                        ]),
+                        h('div', { className: 'mt-2 flex justify-between' }, [
+                            h('button', { className: 'text-sm text-blue-600 hover:text-blue-800', disabled: true }, 'Effacer'),
+                            h('button', { className: 'text-sm text-green-600 hover:text-green-800', disabled: true }, 'Valider')
+                        ])
+                    ]);
+                
+                case 'payment':
+                    return h('div', { className: 'border border-gray-300 rounded-lg p-4 bg-white' }, [
+                        h('div', { className: 'flex items-center justify-between mb-4 p-3 bg-blue-50 rounded' }, [
+                            h('span', { className: 'font-medium text-gray-900' }, 'Montant à payer:'),
+                            h('span', { className: 'text-xl font-bold text-blue-600' }, '€50.00')
+                        ]),
+                        h('div', { className: 'space-y-3' }, [
+                            h('input', { 
+                                type: 'text', 
+                                placeholder: '•••• •••• •••• ••••',
+                                className: 'w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700',
+                                disabled: true
+                            }),
+                            h('div', { className: 'grid grid-cols-2 gap-3' }, [
+                                h('input', { 
+                                    type: 'text', 
+                                    placeholder: 'MM/AA',
+                                    className: 'border border-gray-300 rounded-lg px-3 py-2 text-gray-700',
+                                    disabled: true
+                                }),
+                                h('input', { 
+                                    type: 'text', 
+                                    placeholder: 'CVC',
+                                    className: 'border border-gray-300 rounded-lg px-3 py-2 text-gray-700',
+                                    disabled: true
+                                })
+                            ])
+                        ])
+                    ]);
+                
+                case 'address':
+                    return h('div', { className: 'space-y-3' }, [
+                        h('input', { type: 'text', placeholder: 'Adresse', className: 'w-full border border-gray-300 rounded-lg px-3 py-2', disabled: true }),
+                        h('div', { className: 'grid grid-cols-2 gap-3' }, [
+                            h('input', { type: 'text', placeholder: 'Ville', className: 'border border-gray-300 rounded-lg px-3 py-2', disabled: true }),
+                            h('input', { type: 'text', placeholder: 'Code postal', className: 'border border-gray-300 rounded-lg px-3 py-2', disabled: true })
+                        ])
+                    ]);
+                
+                case 'matrix':
+                    return h('div', { className: 'overflow-x-auto' }, [
+                        h('table', { className: 'w-full border border-gray-300 rounded' }, [
+                            h('thead', {}, [
+                                h('tr', { className: 'bg-gray-50' }, [
+                                    h('th', { className: 'border border-gray-300 p-2 text-left' }, 'Question'),
+                                    h('th', { className: 'border border-gray-300 p-2' }, 'Oui'),
+                                    h('th', { className: 'border border-gray-300 p-2' }, 'Non')
+                                ])
+                            ]),
+                            h('tbody', {}, [
+                                h('tr', {}, [
+                                    h('td', { className: 'border border-gray-300 p-2' }, 'Question 1'),
+                                    h('td', { className: 'border border-gray-300 p-2 text-center' }, h('input', { type: 'radio', disabled: true })),
+                                    h('td', { className: 'border border-gray-300 p-2 text-center' }, h('input', { type: 'radio', disabled: true }))
+                                ])
+                            ])
+                        ])
+                    ]);
+                
+                case 'captcha':
+                    return h('div', { className: 'border border-gray-300 rounded-lg p-4 bg-gray-50 text-center' }, [
+                        h('i', { className: 'ri-shield-check-line text-3xl text-green-600 mb-2' }),
+                        h('p', { className: 'text-gray-700 font-medium' }, 'Vérification CAPTCHA'),
+                        h('p', { className: 'text-sm text-gray-500' }, 'Protection contre les robots')
+                    ]);
+                
+                default:
+                    return h('div', { className: 'p-4 bg-gray-100 rounded text-center text-gray-500' }, 
+                        `Aperçu non disponible pour ${field.type}`
+                    );
+            }
+        };
+
+        const KPICard = ({ title, value, change, changeType, icon, color = 'blue' }) => {
+            const iconColors = {
+                blue: 'text-blue-600 bg-blue-100',
+                green: 'text-emerald-600 bg-emerald-100',
+                yellow: 'text-amber-600 bg-amber-100',
+                purple: 'text-violet-600 bg-violet-100'
+            };
+
+            return h('div', { className: 'bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow' }, [
+                h('div', { className: 'flex items-center justify-between' }, [
+                    h('div', {}, [
+                        h('p', { className: 'tremor-label text-gray-500 mb-1' }, title),
+                        h('p', { className: 'tremor-metric text-gray-900' }, value),
+                        change && h('div', { className: 'flex items-center mt-2' }, [
+                            h('i', { 
+                                className: `ri-arrow-${changeType === 'positive' ? 'up' : 'down'}-line mr-1 text-sm ${changeType === 'positive' ? 'text-emerald-600' : 'text-red-600'}`
+                            }),
+                            h('span', { 
+                                className: `text-sm font-medium ${changeType === 'positive' ? 'text-emerald-600' : 'text-red-600'}`
+                            }, change),
+                            h('span', { className: 'text-sm text-gray-500 ml-1' }, 'vs mois dernier')
+                        ])
+                    ]),
+                    h('div', { className: `p-3 rounded-lg ${iconColors[color]}` }, [
+                        h('i', { className: `${icon} text-xl` })
+                    ])
+                ])
+            ]);
+        };
+
+        const AreaChart = ({ data, title }) => {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            useEffect(() => {
+                if (chartRef.current) {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+
+                    const ctx = chartRef.current.getContext('2d');
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.map(d => d.month),
+                            datasets: [{
+                                label: 'Réponses',
+                                data: data.map(d => d.responses),
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2,
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#ffffff',
+                                    bodyColor: '#ffffff',
+                                    cornerRadius: 8,
+                                    padding: 12
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    border: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: '#6b7280'
+                                    }
+                                },
+                                y: {
+                                    grid: {
+                                        color: '#f3f4f6'
+                                    },
+                                    border: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: '#6b7280'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [data]);
+
+            return h('div', { className: 'bg-white rounded-xl p-6 shadow-sm border border-gray-200' }, [
+                h('h3', { className: 'tremor-title text-gray-900 mb-4' }, title),
+                h('div', { className: 'h-64' }, [
+                    h('canvas', { ref: chartRef })
+                ])
+            ]);
+        };
+
+        const App = () => {
+            const [showFormBuilder, setShowFormBuilder] = useState(false);
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const chartData = generateChartData();
+
+            const navigation = [
+                { id: 'dashboard', label: 'Tableau de bord', icon: 'ri-dashboard-line' },
+                { id: 'forms', label: 'Mes formulaires', icon: 'ri-file-list-3-line' },
+                { id: 'responses', label: 'Réponses', icon: 'ri-inbox-line' },
+                { id: 'analytics', label: 'Analytics', icon: 'ri-bar-chart-line' },
+                { id: 'integrations', label: 'Intégrations', icon: 'ri-links-line' },
+                { id: 'settings', label: 'Paramètres', icon: 'ri-settings-line' }
+            ];
+
+            return h('div', { className: 'min-h-screen bg-gray-50' }, [
+                // Header
+                h('header', { className: 'bg-white border-b border-gray-200' }, [
+                    h('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' }, [
+                        h('div', { className: 'flex justify-between items-center h-16' }, [
+                            h('div', { className: 'flex items-center' }, [
+                                h('h1', { className: 'text-2xl font-bold text-gray-900' }, 'FormEase'),
+                                h('span', { className: 'ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded' }, 'Premium')
+                            ]),
+                            h('div', { className: 'flex items-center space-x-4' }, [
+                                h('button', { className: 'text-gray-500 hover:text-gray-700 transition-colors' }, [
+                                    h('i', { className: 'ri-notification-line text-xl' })
+                                ]),
+                                h('div', { className: 'w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium' }, 'U')
+                            ])
+                        ])
+                    ])
+                ]),
+
+                h('div', { className: 'flex' }, [
+                    // Sidebar
+                    h('nav', { className: 'w-64 bg-white h-screen sticky top-0 border-r border-gray-200' }, [
+                        h('div', { className: 'p-6' }, [
+                            h('div', { className: 'space-y-1' }, 
+                                navigation.map(item => 
+                                    h('button', {
+                                        key: item.id,
+                                        className: `flex items-center w-full px-3 py-2 rounded-lg text-left transition-colors ${
+                                            activeTab === item.id 
+                                                ? 'bg-blue-50 text-blue-700 font-medium' 
+                                                : 'text-gray-700 hover:bg-gray-50'
+                                        }`,
+                                        onClick: () => setActiveTab(item.id)
+                                    }, [
+                                        h('i', { className: `${item.icon} mr-3 text-lg` }),
+                                        item.label
+                                    ])
+                                )
+                            )
+                        ])
+                    ]),
+
+                    // Main Content
+                    h('main', { className: 'flex-1 p-6' }, [
+                        // Page Header
+                        h('div', { className: 'mb-8' }, [
+                            h('div', { className: 'flex justify-between items-center' }, [
+                                h('div', {}, [
+                                    h('h2', { className: 'text-3xl font-bold text-gray-900' }, 'Tableau de bord'),
+                                    h('p', { className: 'text-gray-600 mt-1' }, 'Suivez les performances de vos formulaires en temps réel')
+                                ]),
+                                h('button', {
+                                    onClick: () => setShowFormBuilder(true),
+                                    className: 'bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium flex items-center transition-colors'
+                                }, [
+                                    h('i', { className: 'ri-add-line mr-2' }),
+                                    'Créer un formulaire'
+                                ])
+                            ])
+                        ]),
+
+                        // KPI Cards
+                        h('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8' }, [
+                            h(KPICard, {
+                                title: 'Total Formulaires',
+                                value: '24',
+                                change: '+12%',
+                                changeType: 'positive',
+                                icon: 'ri-file-list-3-line',
+                                color: 'blue'
+                            }),
+                            h(KPICard, {
+                                title: 'Réponses ce mois',
+                                value: '1,847',
+                                change: '+23%',
+                                changeType: 'positive',
+                                icon: 'ri-inbox-line',
+                                color: 'green'
+                            }),
+                            h(KPICard, {
+                                title: 'Taux de conversion',
+                                value: '32.4%',
+                                change: '+5.2%',
+                                changeType: 'positive',
+                                icon: 'ri-percent-line',
+                                color: 'purple'
+                            }),
+                            h(KPICard, {
+                                title: 'Vues totales',
+                                value: '5,694',
+                                change: '+18%',
+                                changeType: 'positive',
+                                icon: 'ri-eye-line',
+                                color: 'yellow'
+                            })
+                        ]),
+
+                        // Charts Section
+                        h('div', { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8' }, [
+                            h(AreaChart, {
+                                data: chartData,
+                                title: 'Réponses par mois'
+                            }),
+                            h('div', { className: 'bg-white rounded-xl p-6 shadow-sm border border-gray-200' }, [
+                                h('h3', { className: 'tremor-title text-gray-900 mb-6' }, 'Top Formulaires'),
+                                h('div', { className: 'space-y-4' }, [
+                                    { name: 'Formulaire de Contact', responses: 342, percentage: 85, color: 'bg-blue-500' },
+                                    { name: 'Newsletter Signup', responses: 256, percentage: 65, color: 'bg-green-500' },
+                                    { name: 'Inscription Événement', responses: 189, percentage: 48, color: 'bg-yellow-500' },
+                                    { name: 'Enquête Satisfaction', responses: 145, percentage: 37, color: 'bg-purple-500' }
+                                ].map((form, index) => 
+                                    h('div', { key: index, className: 'flex items-center justify-between py-3' }, [
+                                        h('div', { className: 'flex-1' }, [
+                                            h('p', { className: 'font-medium text-gray-900' }, form.name),
+                                            h('p', { className: 'text-sm text-gray-500' }, `${form.responses} réponses`)
+                                        ]),
+                                        h('div', { className: 'flex items-center space-x-3 ml-4' }, [
+                                            h('div', { className: 'w-32 bg-gray-200 rounded-full h-2' }, [
+                                                h('div', { 
+                                                    className: `${form.color} h-2 rounded-full transition-all duration-500`,
+                                                    style: { width: `${form.percentage}%` }
+                                                })
+                                            ]),
+                                            h('span', { className: 'text-sm font-medium text-gray-700 w-12 text-right' }, `${form.percentage}%`)
+                                        ])
+                                    ])
+                                ))
+                            ])
+                        ]),
+
+                        // Recent Activity
+                        h('div', { className: 'bg-white rounded-xl p-6 shadow-sm border border-gray-200' }, [
+                            h('div', { className: 'flex justify-between items-center mb-6' }, [
+                                h('h3', { className: 'tremor-title text-gray-900' }, 'Activité Récente'),
+                                h('button', { className: 'text-blue-600 hover:text-blue-700 text-sm font-medium' }, 'Voir tout')
+                            ]),
+                            h('div', { className: 'space-y-4' }, [
+                                {
+                                    type: 'response',
+                                    message: 'Nouvelle réponse sur "Formulaire de Contact"',
+                                    time: 'Il y a 5 minutes',
+                                    icon: 'ri-mail-line',
+                                    iconColor: 'text-blue-600 bg-blue-100'
+                                },
+                                {
+                                    type: 'form',
+                                    message: 'Formulaire "Newsletter" mis à jour',
+                                    time: 'Il y a 1 heure',
+                                    icon: 'ri-edit-line',
+                                    iconColor: 'text-green-600 bg-green-100'
+                                },
+                                {
+                                    type: 'analytics',
+                                    message: 'Rapport mensuel généré',
+                                    time: 'Il y a 3 heures',
+                                    icon: 'ri-bar-chart-line',
+                                    iconColor: 'text-purple-600 bg-purple-100'
+                                },
+                                {
+                                    type: 'integration',
+                                    message: 'Nouvelle intégration Zapier activée',
+                                    time: 'Il y a 1 jour',
+                                    icon: 'ri-links-line',
+                                    iconColor: 'text-amber-600 bg-amber-100'
+                                }
+                            ].map((activity, index) => 
+                                h('div', { key: index, className: 'flex items-center p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors' }, [
+                                    h('div', { className: `p-2 rounded-lg mr-4 ${activity.iconColor}` }, [
+                                        h('i', { className: `${activity.icon}` })
+                                    ]),
+                                    h('div', { className: 'flex-1' }, [
+                                        h('p', { className: 'text-gray-900 font-medium' }, activity.message),
+                                        h('p', { className: 'text-sm text-gray-500 mt-1' }, activity.time)
+                                    ])
+                                ])
+                            ))
+                        ])
+                    ])
+                ]),
+
+                // Form Builder Component
+                h(FormBuilder, { 
+                    isOpen: showFormBuilder, 
+                    onClose: () => setShowFormBuilder(false)
+                })
+            ]);
+        };
+
+        ReactDOM.render(h(App), document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Premium</title>
+    
+    <!-- Tremor/Tailwind CSS Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: "#eff6ff",
+                                muted: "#bfdbfe",
+                                subtle: "#60a5fa",
+                                DEFAULT: "#3b82f6",
+                                emphasis: "#1d4ed8",
+                                inverted: "#ffffff",
+                            },
+                            background: {
+                                muted: "#f9fafb",
+                                subtle: "#f3f4f6",
+                                DEFAULT: "#ffffff",
+                                emphasis: "#374151",
+                            },
+                            border: {
+                                DEFAULT: "#e5e7eb",
+                            },
+                            ring: {
+                                DEFAULT: "#e5e7eb",
+                            },
+                            content: {
+                                subtle: "#9ca3af",
+                                DEFAULT: "#6b7280",
+                                emphasis: "#374151",
+                                strong: "#111827",
+                                inverted: "#ffffff",
+                            },
+                        },
+                    },
+                    fontSize: {
+                        "tremor-label": ["0.75rem", { lineHeight: "1rem" }],
+                        "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
+                        "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
+                        "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Recharts for Tremor -->
+    <script src="https://unpkg.com/recharts@2.8.0/umd/Recharts.js"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        .tremor-Card {
+            background: white;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .tremor-KPI {
+            transition: transform 0.2s ease;
+        }
+        
+        .tremor-KPI:hover {
+            transform: translateY(-2px);
+        }
+        
+        .premium-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .feature-available {
+            opacity: 1;
+        }
+        
+        .feature-locked {
+            opacity: 0.6;
+            filter: grayscale(0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback, useMemo } = React;
+        const { createElement: h } = React;
+        
+        // ==================== TREMOR UTILITIES ====================
+        
+        const chartColors = {
+            blue: { bg: "bg-blue-500", stroke: "stroke-blue-500", fill: "fill-blue-500", text: "text-blue-500" },
+            emerald: { bg: "bg-emerald-500", stroke: "stroke-emerald-500", fill: "fill-emerald-500", text: "text-emerald-500" },
+            violet: { bg: "bg-violet-500", stroke: "stroke-violet-500", fill: "fill-violet-500", text: "text-violet-500" },
+            amber: { bg: "bg-amber-500", stroke: "stroke-amber-500", fill: "fill-amber-500", text: "text-amber-500" },
+            gray: { bg: "bg-gray-500", stroke: "stroke-gray-500", fill: "fill-gray-500", text: "text-gray-500" },
+            cyan: { bg: "bg-cyan-500", stroke: "stroke-cyan-500", fill: "fill-cyan-500", text: "text-cyan-500" },
+            pink: { bg: "bg-pink-500", stroke: "stroke-pink-500", fill: "fill-pink-500", text: "text-pink-500" },
+            lime: { bg: "bg-lime-500", stroke: "stroke-lime-500", fill: "fill-lime-500", text: "text-lime-500" },
+            orange: { bg: "bg-orange-500", stroke: "stroke-orange-500", fill: "fill-orange-500", text: "text-orange-500" }
+        };
+        
+        const AvailableChartColors = Object.keys(chartColors);
+        
+        const constructCategoryColors = (categories, colors) => {
+            const categoryColors = new Map();
+            categories.forEach((category, index) => {
+                categoryColors.set(category, colors[index % colors.length]);
+            });
+            return categoryColors;
+        };
+        
+        const getColorClassName = (color, type) => {
+            const fallbackColor = { bg: "bg-gray-500", stroke: "stroke-gray-500", fill: "fill-gray-500", text: "text-gray-500" };
+            return chartColors[color]?.[type] ?? fallbackColor[type];
+        };
+        
+        const cx = (...classes) => {
+            return classes.filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+        };
+        
+        // ==================== TREMOR COMPONENTS ====================
+        
+        const Card = ({ children, className = "", ...props }) => {
+            return h('div', { className: cx('tremor-Card p-6', className), ...props }, children);
+        };
+        
+        const Text = ({ children, className = "", ...props }) => {
+            return h('p', { className: cx('text-tremor-default text-tremor-content', className), ...props }, children);
+        };
+        
+        const Title = ({ children, className = "", ...props }) => {
+            return h('h3', { className: cx('text-tremor-title font-semibold text-tremor-content-strong', className), ...props }, children);
+        };
+        
+        const Metric = ({ children, className = "", ...props }) => {
+            return h('p', { className: cx('text-tremor-metric font-semibold text-tremor-content-strong', className), ...props }, children);
+        };
+        
+        const Badge = ({ children, color = "gray", size = "sm", className = "", ...props }) => {
+            const colorClass = getColorClassName(color, "bg");
+            const textColorClass = color === "gray" ? "text-gray-50" : "text-white";
+            
+            return h('span', {
+                className: cx(
+                    'inline-flex items-center rounded-md font-medium',
+                    size === "sm" ? "px-2 py-1 text-xs" : "px-2.5 py-1.5 text-sm",
+                    colorClass, textColorClass, className
+                ), ...props
+            }, children);
+        };
+        
+        const Flex = ({ children, className = "", justifyContent = "start", alignItems = "center", ...props }) => {
+            const justifyClass = {
+                start: "justify-start", center: "justify-center", end: "justify-end",
+                between: "justify-between", around: "justify-around"
+            }[justifyContent];
+            
+            const alignClass = {
+                start: "items-start", center: "items-center", end: "items-end"
+            }[alignItems];
+            
+            return h('div', { className: cx('flex', justifyClass, alignClass, className), ...props }, children);
+        };
+        
+        const Grid = ({ children, className = "", numItems = 1, numItemsSm, numItemsMd, numItemsLg, ...props }) => {
+            const gridClass = `grid-cols-${numItems}`;
+            const gridClassSm = numItemsSm ? `sm:grid-cols-${numItemsSm}` : "";
+            const gridClassMd = numItemsMd ? `md:grid-cols-${numItemsMd}` : "";
+            const gridClassLg = numItemsLg ? `lg:grid-cols-${numItemsLg}` : "";
+            
+            return h('div', {
+                className: cx('grid gap-6', gridClass, gridClassSm, gridClassMd, gridClassLg, className),
+                ...props
+            }, children);
+        };
+        
+        // ComboChart Component
+        const ComboChart = ({
+            data = [], index, barSeries = { categories: [] }, lineSeries = { categories: [] },
+            className = "", showLegend = true, showTooltip = true, showGridLines = true, ...props
+        }) => {
+            const barCategoryColors = constructCategoryColors(
+                barSeries.categories, barSeries.colors || AvailableChartColors
+            );
+            const lineCategoryColors = constructCategoryColors(
+                lineSeries.categories, lineSeries.colors || AvailableChartColors
+            );
+            
+            const CustomTooltip = ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                    return h('div', {
+                        className: 'rounded-md border text-sm shadow-md border-gray-200 bg-white p-3'
+                    }, [
+                        h('div', { key: 'label', className: 'border-b border-gray-200 pb-2 mb-2' }, 
+                            h('p', { className: 'font-medium text-gray-900' }, label)),
+                        h('div', { key: 'content', className: 'space-y-1' }, 
+                            payload.map((entry, index) => {
+                                const isBar = barCategoryColors.has(entry.dataKey);
+                                const colors = isBar ? barCategoryColors : lineCategoryColors;
+                                const formatter = isBar ? 
+                                    (barSeries.valueFormatter || ((v) => v.toString())) :
+                                    (lineSeries.valueFormatter || ((v) => v.toString()));
+                                
+                                return h('div', { key: index, className: 'flex items-center justify-between space-x-8' }, [
+                                    h('div', { key: 'legend', className: 'flex items-center space-x-2' }, [
+                                        h('span', {
+                                            key: 'dot',
+                                            className: cx(
+                                                isBar ? 'size-2 rounded-xs' : 'h-[3px] w-3.5 rounded-full',
+                                                getColorClassName(colors.get(entry.dataKey), 'bg')
+                                            )
+                                        }),
+                                        h('p', { key: 'name', className: 'text-gray-700' }, entry.dataKey)
+                                    ]),
+                                    h('p', { key: 'value', className: 'font-semibold text-gray-900' }, 
+                                        formatter(entry.value))
+                                ]);
+                            }))
+                    ]);
+                }
+                return null;
+            };
+            
+            return h('div', { className: cx('h-80 w-full', className), ...props },
+                h(Recharts.ResponsiveContainer, null,
+                    h(Recharts.ComposedChart, {
+                        data: data, margin: { top: 10, right: 30, left: 0, bottom: 0 }
+                    }, [
+                        showGridLines && h(Recharts.CartesianGrid, {
+                            key: 'grid', className: 'stroke-gray-200 stroke-1', horizontal: true, vertical: false
+                        }),
+                        h(Recharts.XAxis, {
+                            key: 'xaxis', dataKey: index, className: 'text-xs fill-gray-500', 
+                            axisLine: false, tickLine: false
+                        }),
+                        h(Recharts.YAxis, {
+                            key: 'yaxis', className: 'text-xs fill-gray-500', axisLine: false, tickLine: false,
+                            tickFormatter: barSeries.valueFormatter || ((v) => v.toString())
+                        }),
+                        showTooltip && h(Recharts.Tooltip, {
+                            key: 'tooltip', content: CustomTooltip, cursor: { stroke: '#d1d5db', strokeWidth: 1 }
+                        }),
+                        ...barSeries.categories.map(category =>
+                            h(Recharts.Bar, {
+                                key: `bar-${category}`, dataKey: category, fill: "",
+                                className: getColorClassName(barCategoryColors.get(category), 'fill')
+                            })
+                        ),
+                        ...lineSeries.categories.map(category =>
+                            h(Recharts.Line, {
+                                key: `line-${category}`, type: "linear", dataKey: category, 
+                                stroke: "", strokeWidth: 2, dot: false,
+                                className: getColorClassName(lineCategoryColors.get(category), 'stroke')
+                            })
+                        )
+                    ])
+                )
+            );
+        };
+        
+        // AreaChart Component
+        const AreaChart = ({ 
+            data = [], index, categories = [], colors = AvailableChartColors,
+            valueFormatter = (value) => value.toString(), className = "",
+            showLegend = true, showTooltip = true, showGridLines = true, ...props 
+        }) => {
+            const categoryColors = constructCategoryColors(categories, colors);
+            const areaId = `area-${Math.random().toString(36).substr(2, 9)}`;
+            
+            const CustomTooltip = ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                    return h('div', {
+                        className: 'rounded-md border text-sm shadow-md border-gray-200 bg-white p-3'
+                    }, [
+                        h('div', { key: 'label', className: 'border-b border-gray-200 pb-2 mb-2' }, 
+                            h('p', { className: 'font-medium text-gray-900' }, label)),
+                        h('div', { key: 'content', className: 'space-y-1' }, 
+                            payload.map((entry, index) => 
+                                h('div', { key: index, className: 'flex items-center justify-between space-x-8' }, [
+                                    h('div', { key: 'legend', className: 'flex items-center space-x-2' }, [
+                                        h('span', {
+                                            key: 'dot',
+                                            className: cx('h-[3px] w-3.5 rounded-full',
+                                                getColorClassName(categoryColors.get(entry.dataKey), 'bg'))
+                                        }),
+                                        h('p', { key: 'name', className: 'text-gray-700' }, entry.dataKey)
+                                    ]),
+                                    h('p', { key: 'value', className: 'font-semibold text-gray-900' }, 
+                                        valueFormatter(entry.value))
+                                ])
+                            ))
+                    ]);
+                }
+                return null;
+            };
+            
+            return h('div', { className: cx('h-80 w-full', className), ...props }, 
+                h(Recharts.ResponsiveContainer, null,
+                    h(Recharts.AreaChart, {
+                        data: data, margin: { top: 10, right: 30, left: 0, bottom: 0 }
+                    }, [
+                        h('defs', { key: 'defs' },
+                            categories.map(category => {
+                                const categoryId = `${areaId}-${category.replace(/[^a-zA-Z0-9]/g, "")}`;
+                                return h('linearGradient', {
+                                    key: categoryId, id: categoryId, x1: "0", y1: "0", x2: "0", y2: "1",
+                                    className: getColorClassName(categoryColors.get(category), 'text')
+                                }, [
+                                    h('stop', { key: 'start', offset: "5%", stopColor: "currentColor", stopOpacity: 0.3 }),
+                                    h('stop', { key: 'end', offset: "95%", stopColor: "currentColor", stopOpacity: 0 })
+                                ]);
+                            })
+                        ),
+                        showGridLines && h(Recharts.CartesianGrid, {
+                            key: 'grid', className: 'stroke-gray-200 stroke-1', horizontal: true, vertical: false
+                        }),
+                        h(Recharts.XAxis, {
+                            key: 'xaxis', dataKey: index, className: 'text-xs fill-gray-500', axisLine: false, tickLine: false
+                        }),
+                        h(Recharts.YAxis, {
+                            key: 'yaxis', className: 'text-xs fill-gray-500', axisLine: false, tickLine: false,
+                            tickFormatter: valueFormatter
+                        }),
+                        showTooltip && h(Recharts.Tooltip, {
+                            key: 'tooltip', content: CustomTooltip, cursor: { stroke: '#d1d5db', strokeWidth: 1 }
+                        }),
+                        categories.map(category => {
+                            const categoryId = `${areaId}-${category.replace(/[^a-zA-Z0-9]/g, "")}`;
+                            return h(Recharts.Area, {
+                                key: category, type: "linear", dataKey: category, stroke: "", strokeWidth: 2,
+                                fill: `url(#${categoryId})`,
+                                className: getColorClassName(categoryColors.get(category), 'stroke')
+                            });
+                        })
+                    ])
+                )
+            );
+        };
+        
+        // ==================== DATA GENERATION ====================
+        
+        const generatePremiumMetrics = () => {
+            return {
+                formsCreated: 156,
+                monthlySubmissions: 3847,
+                conversionRate: 24.8,
+                avgResponseTime: 2.3,
+                storageUsed: 45.2, // MB
+                apiCallsRemaining: 8450,
+                collaborators: 5,
+                integrations: 8
+            };
+        };
+        
+        const generateSubmissionData = () => {
+            const days = Array.from({length: 30}, (_, i) => `J-${29-i}`);
+            return days.map(day => ({
+                day,
+                'Soumissions': Math.floor(Math.random() * 150) + 50,
+                'Conversions': Math.floor(Math.random() * 80) + 20,
+                'Vues': Math.floor(Math.random() * 500) + 200
+            }));
+        };
+        
+        const generateFormData = () => {
+            const weeks = ['S1', 'S2', 'S3', 'S4'];
+            return weeks.map(week => ({
+                week,
+                'Nouveaux Formulaires': Math.floor(Math.random() * 15) + 5,
+                'Formulaires Actifs': Math.floor(Math.random() * 25) + 15,
+                'Taux d\'Engagement': Math.random() * 0.3 + 0.6
+            }));
+        };
+        
+        const generateRecentForms = () => {
+            return [
+                { name: 'Contact Commercial', submissions: 234, status: 'Actif', lastUpdate: '2025-07-05' },
+                { name: 'Demande de Devis', submissions: 189, status: 'Actif', lastUpdate: '2025-07-04' },
+                { name: 'Newsletter Inscription', submissions: 456, status: 'Actif', lastUpdate: '2025-07-03' },
+                { name: 'Support Technique', submissions: 123, status: 'Pause', lastUpdate: '2025-07-02' },
+                { name: 'Candidature Emploi', submissions: 67, status: 'Actif', lastUpdate: '2025-07-01' }
+            ];
+        };
+        
+        const generateIntegrations = () => {
+            return [
+                { name: 'Mailchimp', status: 'Connecté', icon: 'ri-mail-line', color: 'emerald' },
+                { name: 'Slack', status: 'Connecté', icon: 'ri-slack-line', color: 'violet' },
+                { name: 'Google Sheets', status: 'Connecté', icon: 'ri-file-excel-line', color: 'emerald' },
+                { name: 'Zapier', status: 'Connecté', icon: 'ri-flashlight-line', color: 'orange' },
+                { name: 'HubSpot', status: 'Disponible', icon: 'ri-customer-service-line', color: 'gray' },
+                { name: 'Salesforce', status: 'Premium+', icon: 'ri-cloud-line', color: 'blue' }
+            ];
+        };
+        
+        // ==================== MAIN DASHBOARD COMPONENT ====================
+        
+        const PremiumDashboard = () => {
+            const [metrics, setMetrics] = useState(generatePremiumMetrics());
+            const [submissionData] = useState(generateSubmissionData());
+            const [formData] = useState(generateFormData());
+            const [recentForms] = useState(generateRecentForms());
+            const [integrations] = useState(generateIntegrations());
+            
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setMetrics(generatePremiumMetrics());
+                }, 10000);
+                
+                return () => clearInterval(interval);
+            }, []);
+            
+            const formatNumber = (value) => new Intl.NumberFormat('fr-FR').format(Math.round(value));
+            const formatPercent = (value) => `${value.toFixed(1)}%`;
+            
+            return h('div', { className: 'min-h-screen bg-gray-50 p-6' }, [
+                // Header Premium
+                h('div', { key: 'header', className: 'mb-8' }, [
+                    h(Flex, { key: 'header-flex', justifyContent: 'between', alignItems: 'center', className: 'mb-6' }, [
+                        h('div', { key: 'title-section' }, [
+                            h('h1', { key: 'title', className: 'text-3xl font-bold text-gray-900' }, 
+                                'Dashboard Premium'),
+                            h('p', { key: 'subtitle', className: 'text-gray-600 mt-1' }, 
+                                'Gestion avancée de vos formulaires et analyses détaillées')
+                        ]),
+                        h('div', { key: 'actions', className: 'flex items-center space-x-3' }, [
+                            h(Badge, { key: 'premium-badge', color: 'blue', className: 'premium-gradient' }, [
+                                h('i', { key: 'premium-icon', className: 'ri-vip-crown-line mr-1' }),
+                                'Premium'
+                            ]),
+                            h('button', { key: 'create-btn', 
+                                className: 'inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            }, [
+                                h('i', { key: 'create-icon', className: 'ri-add-line mr-2' }),
+                                'Nouveau Formulaire'
+                            ]),
+                            h('button', { key: 'export-btn', 
+                                className: 'inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50'
+                            }, [
+                                h('i', { key: 'export-icon', className: 'ri-download-line mr-2' }),
+                                'Exporter'
+                            ])
+                        ])
+                    ])
+                ]),
+                
+                // Premium KPIs
+                h(Grid, { key: 'premium-kpis', numItems: 1, numItemsSm: 2, numItemsLg: 4, className: 'mb-8' }, [
+                    h(Card, { key: 'forms-card', className: 'tremor-KPI feature-available' }, [
+                        h(Flex, { key: 'forms-flex', justifyContent: 'between', alignItems: 'start' }, [
+                            h('div', { key: 'forms-content' }, [
+                                h(Text, { key: 'forms-label' }, 'Formulaires Créés'),
+                                h(Metric, { key: 'forms-metric' }, formatNumber(metrics.formsCreated)),
+                                h(Flex, { key: 'forms-change', alignItems: 'center', className: 'mt-2' }, [
+                                    h('i', { key: 'forms-icon', className: 'ri-arrow-up-line text-emerald-500 mr-1' }),
+                                    h(Text, { key: 'forms-percent', className: 'text-emerald-600 font-medium' }, '+12%')
+                                ])
+                            ]),
+                            h('div', { key: 'forms-icon-bg', className: 'p-3 bg-blue-100 rounded-lg' }, 
+                                h('i', { className: 'ri-file-list-line text-2xl text-blue-600' }))
+                        ])
+                    ]),
+                    
+                    h(Card, { key: 'submissions-card', className: 'tremor-KPI feature-available' }, [
+                        h(Flex, { key: 'submissions-flex', justifyContent: 'between', alignItems: 'start' }, [
+                            h('div', { key: 'submissions-content' }, [
+                                h(Text, { key: 'submissions-label' }, 'Soumissions (30j)'),
+                                h(Metric, { key: 'submissions-metric' }, formatNumber(metrics.monthlySubmissions)),
+                                h(Flex, { key: 'submissions-change', alignItems: 'center', className: 'mt-2' }, [
+                                    h('i', { key: 'submissions-icon', className: 'ri-arrow-up-line text-emerald-500 mr-1' }),
+                                    h(Text, { key: 'submissions-percent', className: 'text-emerald-600 font-medium' }, '+18.5%')
+                                ])
+                            ]),
+                            h('div', { key: 'submissions-icon-bg', className: 'p-3 bg-emerald-100 rounded-lg' }, 
+                                h('i', { className: 'ri-send-plane-line text-2xl text-emerald-600' }))
+                        ])
+                    ]),
+                    
+                    h(Card, { key: 'conversion-card', className: 'tremor-KPI feature-available' }, [
+                        h(Flex, { key: 'conversion-flex', justifyContent: 'between', alignItems: 'start' }, [
+                            h('div', { key: 'conversion-content' }, [
+                                h(Text, { key: 'conversion-label' }, 'Taux de Conversion'),
+                                h(Metric, { key: 'conversion-metric' }, formatPercent(metrics.conversionRate)),
+                                h(Flex, { key: 'conversion-change', alignItems: 'center', className: 'mt-2' }, [
+                                    h('i', { key: 'conversion-icon', className: 'ri-arrow-up-line text-emerald-500 mr-1' }),
+                                    h(Text, { key: 'conversion-percent', className: 'text-emerald-600 font-medium' }, '+3.2%')
+                                ])
+                            ]),
+                            h('div', { key: 'conversion-icon-bg', className: 'p-3 bg-violet-100 rounded-lg' }, 
+                                h('i', { className: 'ri-line-chart-line text-2xl text-violet-600' }))
+                        ])
+                    ]),
+                    
+                    h(Card, { key: 'response-card', className: 'tremor-KPI feature-available' }, [
+                        h(Flex, { key: 'response-flex', justifyContent: 'between', alignItems: 'start' }, [
+                            h('div', { key: 'response-content' }, [
+                                h(Text, { key: 'response-label' }, 'Temps de Réponse'),
+                                h(Metric, { key: 'response-metric' }, `${metrics.avgResponseTime}s`),
+                                h(Flex, { key: 'response-change', alignItems: 'center', className: 'mt-2' }, [
+                                    h('i', { key: 'response-icon', className: 'ri-arrow-down-line text-emerald-500 mr-1' }),
+                                    h(Text, { key: 'response-percent', className: 'text-emerald-600 font-medium' }, '-15%')
+                                ])
+                            ]),
+                            h('div', { key: 'response-icon-bg', className: 'p-3 bg-cyan-100 rounded-lg' }, 
+                                h('i', { className: 'ri-timer-line text-2xl text-cyan-600' }))
+                        ])
+                    ])
+                ]),
+                
+                // Analytics Charts
+                h(Grid, { key: 'analytics-grid', numItems: 1, numItemsLg: 2, className: 'mb-8' }, [
+                    h(Card, { key: 'submissions-chart', className: 'feature-available' }, [
+                        h(Title, { key: 'submissions-title', className: 'mb-6' }, 'Évolution des Soumissions (30 jours)'),
+                        h(ComboChart, {
+                            key: 'submissions-data',
+                            data: submissionData,
+                            index: "day",
+                            barSeries: {
+                                categories: ["Soumissions", "Conversions"],
+                                colors: ["blue", "emerald"],
+                                valueFormatter: formatNumber
+                            },
+                            lineSeries: {
+                                categories: ["Vues"],
+                                colors: ["violet"],
+                                valueFormatter: formatNumber
+                            },
+                            showLegend: true,
+                            showTooltip: true
+                        })
+                    ]),
+                    
+                    h(Card, { key: 'forms-chart', className: 'feature-available' }, [
+                        h(Title, { key: 'forms-title', className: 'mb-6' }, 'Performance des Formulaires'),
+                        h(AreaChart, {
+                            key: 'forms-data',
+                            data: formData,
+                            index: "week",
+                            categories: ["Nouveaux Formulaires", "Formulaires Actifs"],
+                            colors: ["blue", "emerald"],
+                            valueFormatter: formatNumber,
+                            showLegend: true,
+                            showTooltip: true
+                        })
+                    ])
+                ]),
+                
+                // Forms & Integrations
+                h(Grid, { key: 'content-grid', numItems: 1, numItemsLg: 2, className: 'mb-8' }, [
+                    h(Card, { key: 'recent-forms', className: 'feature-available' }, [
+                        h(Flex, { key: 'forms-header', justifyContent: 'between', alignItems: 'center', className: 'mb-6' }, [
+                            h(Title, { key: 'forms-title' }, 'Formulaires Récents'),
+                            h('button', { key: 'view-all', className: 'text-blue-600 hover:text-blue-700 text-sm font-medium' }, 
+                                'Voir tout')
+                        ]),
+                        h('div', { key: 'forms-list', className: 'space-y-4' },
+                            recentForms.map((form, index) => 
+                                h('div', { key: index, className: 'flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors' }, [
+                                    h('div', { key: 'form-info' }, [
+                                        h('p', { key: 'form-name', className: 'font-medium text-gray-900' }, form.name),
+                                        h('p', { key: 'form-submissions', className: 'text-sm text-gray-600' }, 
+                                            `${form.submissions} soumissions`),
+                                        h('p', { key: 'form-update', className: 'text-xs text-gray-500' }, 
+                                            `Mis à jour: ${form.lastUpdate}`)
+                                    ]),
+                                    h('div', { key: 'form-actions', className: 'flex items-center space-x-2' }, [
+                                        h(Badge, { 
+                                            key: 'status-badge',
+                                            color: form.status === 'Actif' ? 'emerald' : 'amber',
+                                            size: 'sm'
+                                        }, form.status),
+                                        h('button', { key: 'edit-btn', className: 'text-gray-400 hover:text-gray-600' }, 
+                                            h('i', { className: 'ri-pencil-line' }))
+                                    ])
+                                ])
+                            )
+                        )
+                    ]),
+                    
+                    h(Card, { key: 'integrations-card', className: 'feature-available' }, [
+                        h(Title, { key: 'integrations-title', className: 'mb-6' }, 'Intégrations & Connecteurs'),
+                        h('div', { key: 'integrations-grid', className: 'grid grid-cols-2 gap-4' },
+                            integrations.map((integration, index) => 
+                                h('div', { key: index, 
+                                    className: cx('p-4 border rounded-lg transition-all hover:shadow-md',
+                                        integration.status === 'Premium+' ? 'feature-locked border-gray-200' : 'border-gray-200')
+                                }, [
+                                    h(Flex, { key: 'integration-header', justifyContent: 'between', alignItems: 'center', className: 'mb-2' }, [
+                                        h('i', { key: 'integration-icon', className: cx(integration.icon, 'text-xl', 
+                                            getColorClassName(integration.color, 'text')) }),
+                                        h(Badge, { 
+                                            key: 'integration-status',
+                                            color: integration.status === 'Connecté' ? 'emerald' : 
+                                                  integration.status === 'Premium+' ? 'violet' : 'gray',
+                                            size: 'sm'
+                                        }, integration.status)
+                                    ]),
+                                    h('p', { key: 'integration-name', className: 'font-medium text-gray-900' }, integration.name),
+                                    integration.status === 'Premium+' && h('p', { key: 'upgrade-note', className: 'text-xs text-gray-500 mt-1' }, 
+                                        'Nécessite Premium+')
+                                ])
+                            )
+                        )
+                    ])
+                ]),
+                
+                // Usage & Limits
+                h(Grid, { key: 'usage-grid', numItems: 1, numItemsSm: 2, numItemsLg: 4, className: 'mb-8' }, [
+                    h(Card, { key: 'storage-card', className: 'feature-available' }, [
+                        h(Text, { key: 'storage-label' }, 'Stockage Utilisé'),
+                        h(Metric, { key: 'storage-metric', className: 'mt-2' }, `${metrics.storageUsed} MB`),
+                        h('div', { key: 'storage-bar', className: 'w-full bg-gray-200 rounded-full h-2 mt-3' }, 
+                            h('div', { className: 'bg-blue-500 h-2 rounded-full', style: { width: '45%' } })),
+                        h(Text, { key: 'storage-limit', className: 'text-xs text-gray-500 mt-1' }, 'Limite: 100 MB')
+                    ]),
+                    
+                    h(Card, { key: 'api-card', className: 'feature-available' }, [
+                        h(Text, { key: 'api-label' }, 'Appels API Restants'),
+                        h(Metric, { key: 'api-metric', className: 'mt-2' }, formatNumber(metrics.apiCallsRemaining)),
+                        h(Text, { key: 'api-reset', className: 'text-xs text-gray-500 mt-1' }, 'Reset dans 22 jours')
+                    ]),
+                    
+                    h(Card, { key: 'collaborators-card', className: 'feature-available' }, [
+                        h(Text, { key: 'collaborators-label' }, 'Collaborateurs'),
+                        h(Metric, { key: 'collaborators-metric', className: 'mt-2' }, `${metrics.collaborators}/10`),
+                        h(Badge, { key: 'add-collab', color: 'blue', className: 'mt-3 cursor-pointer' }, 
+                            '+ Inviter')
+                    ]),
+                    
+                    h(Card, { key: 'plan-card', className: 'feature-available' }, [
+                        h(Text, { key: 'plan-label' }, 'Plan Actuel'),
+                        h(Metric, { key: 'plan-name', className: 'mt-2 text-lg' }, 'Premium'),
+                        h(Badge, { key: 'upgrade-badge', color: 'violet', className: 'mt-3 cursor-pointer' }, 
+                            'Upgrade Pro+')
+                    ])
+                ])
+            ]);
+        };
+        
+        // ==================== APP RENDER ====================
+        
+        const App = () => {
+            return h(PremiumDashboard);
+        };
+        
+        ReactDOM.render(h(App), document.getElementById('root'));
+    </script>
+</body>
+</html>

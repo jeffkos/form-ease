@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Test Dashboard</title>
+    
+    <!-- Tremor React CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Test Dashboard Component
+        const Dashboard = () => {
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [forms, setForms] = useState([
+                {
+                    id: '1',
+                    name: 'Formulaire de contact',
+                    description: 'Un formulaire simple',
+                    status: 'active',
+                    responses: 42,
+                    created: '15/06/2025',
+                    elements: []
+                }
+            ]);
+
+            const showQRCode = async (form) => {
+                try {
+                    const formURL = 'https://formease.app/form/' + form.id;
+                    
+                    let qrCodeDataURL = null;
+                    if (typeof QRCode !== 'undefined') {
+                        qrCodeDataURL = await QRCode.toDataURL(formURL, {
+                            width: 256,
+                            height: 256,
+                            margin: 2,
+                            color: {
+                                dark: '#1f2937',
+                                light: '#ffffff'
+                            }
+                        });
+                    }
+                    
+                    const modal = document.createElement('div');
+                    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+                    
+                    const qrContent = qrCodeDataURL 
+                        ? '<div class="mb-4"><img src="' + qrCodeDataURL + '" alt="QR Code" class="mx-auto border-2 border-gray-100 rounded-lg shadow-sm" /></div><p class="text-sm text-gray-600 mb-4">Scannez ce QR code pour accéder au formulaire</p>'
+                        : '<div class="mb-4 p-8 bg-gray-100 rounded-lg"><i class="ri-qr-code-line text-6xl text-gray-400 mx-auto block mb-2"></i><p class="text-sm text-gray-500">QR Code indisponible</p></div><p class="text-sm text-amber-600 mb-4">Le QR code n\'a pas pu être généré, mais vous pouvez copier le lien</p>';
+                    
+                    modal.innerHTML = '<div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"><div class="flex items-center justify-between p-6 border-b border-gray-200"><h3 class="text-lg font-semibold text-gray-900">QR Code - ' + form.name + '</h3><button onclick="this.closest(\'.fixed\').remove()" class="text-gray-400 hover:text-gray-600 transition-colors"><i class="ri-close-line text-xl"></i></button></div><div class="p-6 text-center">' + qrContent + '<div class="bg-gray-50 rounded-lg p-3 mb-6"><p class="text-xs text-gray-500 break-all">' + formURL + '</p></div><div class="grid grid-cols-1 gap-3"><button onclick="navigator.clipboard.writeText(\'' + formURL + '\'); alert(\'Lien copié !\')" class="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"><i class="ri-file-copy-line"></i><span>Copier le lien</span></button></div></div></div>';
+                    
+                    document.body.appendChild(modal);
+                    
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.remove();
+                        }
+                    });
+                    
+                    alert(qrCodeDataURL ? 'QR Code généré pour "' + form.name + '"' : 'Lien disponible pour "' + form.name + '"');
+                } catch (error) {
+                    console.error('Erreur lors de l\'affichage du QR Code:', error);
+                    alert('Erreur lors de l\'affichage du QR Code');
+                }
+            };
+
+            const editForm = (form) => {
+                alert('Éditeur de formulaire pour: ' + form.name + '\n\nCette fonctionnalité sera disponible bientôt !');
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {/* Header */}
+                    <div className="bg-white shadow-sm border-b border-gray-200">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center py-6">
+                                <div className="flex items-center">
+                                    <div className="flex-shrink-0">
+                                        <h1 className="text-2xl font-bold text-gray-900">FormEase</h1>
+                                        <p className="text-sm text-gray-600">Dashboard Premium</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center space-x-4">
+                                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                                        <i className="ri-add-line"></i>
+                                        <span>Nouveau formulaire</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        <div className="mb-8">
+                            <h2 className="text-xl font-semibold text-gray-900 mb-6">Mes Formulaires</h2>
+                            
+                            <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Formulaire
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Statut
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Réponses
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Créé le
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {forms.map(form => (
+                                            <tr key={form.id} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center">
+                                                        <div>
+                                                            <div className="text-sm font-medium text-gray-900">
+                                                                {form.name}
+                                                            </div>
+                                                            <div className="text-sm text-gray-500">
+                                                                {form.description}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                        form.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                                    }`}>
+                                                        {form.status === 'active' ? 'Actif' : 'Brouillon'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {form.responses}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {form.created}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <div className="flex items-center space-x-3">
+                                                        <button
+                                                            onClick={() => showQRCode(form)}
+                                                            className="text-green-600 hover:text-green-900 transition-colors"
+                                                            title="QR Code"
+                                                        >
+                                                            <i className="ri-qr-code-line text-lg"></i>
+                                                        </button>
+                                                        <button
+                                                            onClick={() => editForm(form)}
+                                                            className="text-gray-600 hover:text-gray-900 transition-colors"
+                                                            title="Éditer"
+                                                        >
+                                                            <i className="ri-edit-line text-lg"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

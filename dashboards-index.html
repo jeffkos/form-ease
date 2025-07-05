@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Sélection Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        .dashboard-card {
+            transition: all 0.3s ease;
+            background: white;
+            border-radius: 1rem;
+            border: 2px solid #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #3b82f6;
+        }
+        
+        .superadmin-gradient {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        }
+        
+        .premium-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .freemium-gradient {
+            background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+        }
+        
+        .role-badge {
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .comparison-table {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Hero Section -->
+    <div class="hero-section py-16">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold mb-6">FormEase Dashboard</h1>
+            <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                Découvrez nos 3 niveaux de dashboards adaptés à chaque type d'utilisateur. 
+                Chaque interface offre des fonctionnalités spécifiques selon vos besoins et permissions.
+            </p>
+            <div class="flex items-center justify-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <i class="ri-shield-check-line text-2xl"></i>
+                    <span>Sécurisé</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="ri-flashlight-line text-2xl"></i>
+                    <span>Performant</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <i class="ri-mobile-download-line text-2xl"></i>
+                    <span>Responsive</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Selection -->
+    <div class="max-w-6xl mx-auto px-6 -mt-8 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            
+            <!-- SuperAdmin Dashboard -->
+            <div class="dashboard-card">
+                <div class="superadmin-gradient p-6 text-center">
+                    <div class="feature-icon mx-auto mb-4" style="background: rgba(255,255,255,0.2)">
+                        <i class="ri-shield-user-line"></i>
+                    </div>
+                    <span class="role-badge" style="background: rgba(255,255,255,0.2)">SuperAdmin</span>
+                </div>
+                
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Dashboard SuperAdmin</h3>
+                    <p class="text-gray-600 mb-6 min-h-[4rem]">
+                        Administration complète du système avec surveillance globale, gestion des utilisateurs et contrôle total de la plateforme.
+                    </p>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-red-500"></i>
+                            <span class="text-sm text-gray-700">Surveillance système temps réel</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-red-500"></i>
+                            <span class="text-sm text-gray-700">Gestion utilisateurs & permissions</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-red-500"></i>
+                            <span class="text-sm text-gray-700">Analytics avancées & rapports</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-red-500"></i>
+                            <span class="text-sm text-gray-700">Alertes sécurité & maintenance</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-red-500"></i>
+                            <span class="text-sm text-gray-700">Configuration système complète</span>
+                        </div>
+                    </div>
+                    
+                    <a href="dashboard-superadmin.html" 
+                       class="w-full bg-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors text-center block">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        Accéder au Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Premium User Dashboard -->
+            <div class="dashboard-card">
+                <div class="premium-gradient p-6 text-center">
+                    <div class="feature-icon mx-auto mb-4" style="background: rgba(255,255,255,0.2)">
+                        <i class="ri-vip-crown-line"></i>
+                    </div>
+                    <span class="role-badge" style="background: rgba(255,255,255,0.2)">Premium</span>
+                </div>
+                
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Dashboard Premium</h3>
+                    <p class="text-gray-600 mb-6 min-h-[4rem]">
+                        Expérience complète avec analyses détaillées, intégrations avancées et fonctionnalités professionnelles.
+                    </p>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-blue-500"></i>
+                            <span class="text-sm text-gray-700">Formulaires illimités</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-blue-500"></i>
+                            <span class="text-sm text-gray-700">Analytics avancées & exports</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-blue-500"></i>
+                            <span class="text-sm text-gray-700">15+ intégrations tierces</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-blue-500"></i>
+                            <span class="text-sm text-gray-700">Collaboration équipe (10 users)</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-blue-500"></i>
+                            <span class="text-sm text-gray-700">Support prioritaire 24/7</span>
+                        </div>
+                    </div>
+                    
+                    <a href="dashboard-premium-user.html" 
+                       class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center block">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        Accéder au Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Freemium User Dashboard -->
+            <div class="dashboard-card">
+                <div class="freemium-gradient p-6 text-center">
+                    <div class="feature-icon mx-auto mb-4" style="background: rgba(255,255,255,0.2)">
+                        <i class="ri-user-line"></i>
+                    </div>
+                    <span class="role-badge" style="background: rgba(255,255,255,0.2)">Freemium</span>
+                </div>
+                
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Dashboard Freemium</h3>
+                    <p class="text-gray-600 mb-6 min-h-[4rem]">
+                        Découverte de FormEase avec les fonctionnalités essentielles et encouragement à l'upgrade Premium.
+                    </p>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-gray-500"></i>
+                            <span class="text-sm text-gray-700">3 formulaires maximum</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-gray-500"></i>
+                            <span class="text-sm text-gray-700">Analytics de base (7 jours)</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-check-line text-gray-500"></i>
+                            <span class="text-sm text-gray-700">2 intégrations simples</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-close-line text-gray-400"></i>
+                            <span class="text-sm text-gray-400">500 soumissions/mois max</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="ri-close-line text-gray-400"></i>
+                            <span class="text-sm text-gray-400">Stockage limité (5 MB)</span>
+                        </div>
+                    </div>
+                    
+                    <a href="dashboard-freemium-user.html" 
+                       class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-center block">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        Accéder au Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison-table mb-16">
+            <div class="bg-gray-50 px-8 py-6 border-b">
+                <h2 class="text-2xl font-bold text-gray-900 text-center">Comparaison Détaillée des Fonctionnalités</h2>
+                <p class="text-gray-600 text-center mt-2">Choisissez le niveau d'accès adapté à vos besoins</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-900">Fonctionnalité</th>
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">Freemium</th>
+                            <th class="px-6 py-4 text-center font-semibold text-blue-600">Premium</th>
+                            <th class="px-6 py-4 text-center font-semibold text-red-600">SuperAdmin</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-gray-900">Nombre de formulaires</td>
+                            <td class="px-6 py-4 text-center text-gray-600">3 max</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">Illimité</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Accès global</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900">Analytics et rapports</td>
+                            <td class="px-6 py-4 text-center text-gray-600">Basique (7j)</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">Avancé (∞)</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Système complet</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-gray-900">Intégrations tierces</td>
+                            <td class="px-6 py-4 text-center text-gray-600">2 simples</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">15+ premium</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Configuration</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900">Collaboration équipe</td>
+                            <td class="px-6 py-4 text-center text-gray-600">1 utilisateur</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">10 utilisateurs</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Gestion globale</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-gray-900">Stockage données</td>
+                            <td class="px-6 py-4 text-center text-gray-600">5 MB</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">100 MB</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Surveillance</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900">Support technique</td>
+                            <td class="px-6 py-4 text-center text-gray-600">Email</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">24/7 Chat</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Accès direct</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-gray-900">Sécurité & permissions</td>
+                            <td class="px-6 py-4 text-center text-gray-600">Standard</td>
+                            <td class="px-6 py-4 text-center text-blue-600 font-semibold">Avancée</td>
+                            <td class="px-6 py-4 text-center text-red-600 font-semibold">Administration</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Technical Information -->
+        <div class="bg-white rounded-xl p-8 shadow-lg mb-16">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Informations Techniques</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto mb-3 bg-blue-500">
+                        <i class="ri-reactjs-line"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">React 18</h3>
+                    <p class="text-sm text-gray-600">Composants modernes avec Hooks</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon mx-auto mb-3 bg-emerald-500">
+                        <i class="ri-bar-chart-line"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Tremor UI</h3>
+                    <p class="text-sm text-gray-600">Composants natifs et Recharts</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon mx-auto mb-3 bg-violet-500">
+                        <i class="ri-palette-line"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Tailwind CSS</h3>
+                    <p class="text-sm text-gray-600">Design system Tremor</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon mx-auto mb-3 bg-orange-500">
+                        <i class="ri-smartphone-line"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Responsive</h3>
+                    <p class="text-sm text-gray-600">Adaptatif tous écrans</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h3 class="text-2xl font-bold mb-4">FormEase Dashboard Suite</h3>
+            <p class="text-gray-400 mb-6">
+                3 niveaux de dashboards adaptés à chaque utilisateur - SuperAdmin, Premium et Freemium
+            </p>
+            <div class="flex items-center justify-center space-x-8">
+                <a href="dashboard-superadmin.html" class="text-red-400 hover:text-red-300 transition-colors">
+                    <i class="ri-shield-user-line mr-2"></i>SuperAdmin
+                </a>
+                <a href="dashboard-premium-user.html" class="text-blue-400 hover:text-blue-300 transition-colors">
+                    <i class="ri-vip-crown-line mr-2"></i>Premium
+                </a>
+                <a href="dashboard-freemium-user.html" class="text-gray-400 hover:text-gray-300 transition-colors">
+                    <i class="ri-user-line mr-2"></i>Freemium
+                </a>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-gray-500 text-sm">
+                <p>© 2025 FormEase - Dashboards avec composants Tremor natifs</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

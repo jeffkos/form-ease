@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Premium</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        .drag-over {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
+        }
+        
+        .dragging {
+            opacity: 0.5;
+        }
+        
+        .field-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="min-h-screen">
+        <!-- Top Navigation -->
+        <div class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900 mr-8">FormEase</h1>
+                    <nav class="flex space-x-6">
+                        <a href="#" class="text-blue-600 font-medium">Formulaires</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Analytics</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Intégrations</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Paramètres</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="newFormBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center transition-colors">
+                        <i class="ri-add-line mr-2"></i>
+                        Nouveau Formulaire
+                    </button>
+                    <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg mr-4">
+                            <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900">24</p>
+                            <p class="text-sm text-gray-600">Formulaires actifs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg mr-4">
+                            <i class="ri-mail-line text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900">1,247</p>
+                            <p class="text-sm text-gray-600">Réponses ce mois</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg mr-4">
+                            <i class="ri-eye-line text-yellow-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900">8,742</p>
+                            <p class="text-sm text-gray-600">Vues totales</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-lg mr-4">
+                            <i class="ri-percent-line text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-gray-900">14.3%</p>
+                            <p class="text-sm text-gray-600">Taux de conversion</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Forms -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Formulaires Récents</h2>
+                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">Voir tout</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                        <h3 class="font-medium text-gray-900 mb-2">Formulaire de Contact</h3>
+                        <p class="text-sm text-gray-600 mb-3">Créé il y a 2 jours</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-green-600">124 réponses</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">Actif</span>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                        <h3 class="font-medium text-gray-900 mb-2">Enquête Satisfaction</h3>
+                        <p class="text-sm text-gray-600 mb-3">Créé il y a 1 semaine</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-green-600">89 réponses</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">Actif</span>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                        <h3 class="font-medium text-gray-900 mb-2">Newsletter</h3>
+                        <p class="text-sm text-gray-600 mb-3">Créé il y a 3 jours</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-green-600">56 réponses</span>
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Brouillon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Builder Modal -->
+    <div id="formBuilderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white w-full max-w-7xl mx-auto my-4 rounded-lg overflow-hidden flex h-[calc(100vh-2rem)]">
+            <!-- Sidebar - Field Palette -->
+            <div class="w-80 bg-gray-50 border-r border-gray-200 p-6 overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Éléments</h3>
+                    <button id="closeBuilderBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Champs de base -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Champs de base</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="text" draggable="true">
+                            <i class="ri-input-cursor-move text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Texte</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="textarea" draggable="true">
+                            <i class="ri-file-text-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Zone de texte</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="email" draggable="true">
+                            <i class="ri-mail-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Email</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="phone" draggable="true">
+                            <i class="ri-phone-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Téléphone</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="number" draggable="true">
+                            <i class="ri-hashtag text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Nombre</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="url" draggable="true">
+                            <i class="ri-links-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">URL</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Choix et sélection -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Choix et sélection</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="select" draggable="true">
+                            <i class="ri-arrow-down-s-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Liste</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="radio" draggable="true">
+                            <i class="ri-radio-button-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Choix unique</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="checkbox" draggable="true">
+                            <i class="ri-checkbox-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Choix multiples</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="rating" draggable="true">
+                            <i class="ri-star-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Évaluation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date et heure -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Date et heure</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="date" draggable="true">
+                            <i class="ri-calendar-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Date</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="time" draggable="true">
+                            <i class="ri-time-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Heure</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Médias et fichiers -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Médias et fichiers</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="file" draggable="true">
+                            <i class="ri-upload-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Fichier</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="image" draggable="true">
+                            <i class="ri-image-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Image</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Champs avancés -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Champs avancés</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="signature" draggable="true">
+                            <i class="ri-edit-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Signature</p>
+                        </div>
+                        <div class="field-element p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors text-center" 
+                             data-type="payment" draggable="true">
+                            <i class="ri-bank-card-line text-xl text-gray-600 mb-2"></i>
+                            <p class="text-xs text-gray-900 font-medium">Paiement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Form Builder Area -->
+            <div class="flex-1 flex flex-col">
+                <!-- Form Builder Header -->
+                <div class="bg-white border-b border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <input type="text" id="formTitle" value="Mon Nouveau Formulaire"
+                                   class="text-xl font-semibold bg-transparent border-none outline-none text-gray-900 border-b-2 border-transparent focus:border-blue-500">
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Brouillon</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button id="previewBtn" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm flex items-center">
+                                <i class="ri-eye-line mr-2"></i>Aperçu
+                            </button>
+                            <button id="saveBtn" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm flex items-center">
+                                <i class="ri-save-line mr-2"></i>Sauvegarder
+                            </button>
+                            <button id="publishBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex items-center font-medium">
+                                <i class="ri-share-line mr-2"></i>Publier
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Canvas -->
+                <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                    <div class="max-w-2xl mx-auto">
+                        <div id="formCanvas" class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-96">
+                            <!-- Form Header -->
+                            <div class="p-6 border-b border-gray-200">
+                                <input type="text" id="formTitleMain" value="Mon Nouveau Formulaire"
+                                       class="text-2xl font-bold w-full bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
+                                       placeholder="Titre du formulaire">
+                                <textarea id="formDescription" class="w-full mt-2 text-gray-600 bg-transparent border-none outline-none resize-none placeholder-gray-400"
+                                          rows="2" placeholder="Description du formulaire">Décrivez votre formulaire ici...</textarea>
+                            </div>
+                            
+                            <!-- Form Fields Area -->
+                            <div class="p-6" id="formFields">
+                                <div id="emptyState" class="text-center py-12 text-gray-500">
+                                    <i class="ri-drag-drop-line text-6xl mb-4 text-gray-300"></i>
+                                    <h3 class="text-lg font-medium mb-2">Commencez à construire votre formulaire</h3>
+                                    <p class="text-sm mb-4">Glissez des éléments depuis la palette ou cliquez pour les ajouter</p>
+                                    <div class="flex justify-center space-x-2">
+                                        <button onclick="addField('text')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                                            Ajouter un champ texte
+                                        </button>
+                                        <button onclick="addField('email')" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                                            Ajouter un email
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="fieldsContainer" class="space-y-6 hidden"></div>
+                                <div id="submitButton" class="pt-6 border-t border-gray-200 mt-6 hidden">
+                                    <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                                        Envoyer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white w-full max-w-4xl mx-auto my-8 rounded-lg overflow-hidden h-[calc(100vh-4rem)]">
+            <div class="bg-gray-50 border-b border-gray-200 p-4 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Aperçu du formulaire</h3>
+                <button id="closePreviewBtn" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto h-full">
+                <div id="previewContent" class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-6">
+                    <!-- Preview content will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        let formFields = [];
+        let fieldCounter = 0;
+
+        // Field templates
+        const fieldTemplates = {
+            text: { 
+                icon: 'ri-input-cursor-move', 
+                label: 'Champ texte', 
+                type: 'text',
+                placeholder: 'Entrez votre texte...'
+            },
+            textarea: { 
+                icon: 'ri-file-text-line', 
+                label: 'Zone de texte', 
+                type: 'textarea',
+                placeholder: 'Entrez votre message...'
+            },
+            email: { 
+                icon: 'ri-mail-line', 
+                label: 'Adresse email', 
+                type: 'email',
+                placeholder: 'email@exemple.com'
+            },
+            phone: { 
+                icon: 'ri-phone-line', 
+                label: 'Numéro de téléphone', 
+                type: 'tel',
+                placeholder: '+33 1 23 45 67 89'
+            },
+            number: { 
+                icon: 'ri-hashtag', 
+                label: 'Nombre', 
+                type: 'number',
+                placeholder: '0'
+            },
+            url: { 
+                icon: 'ri-links-line', 
+                label: 'URL', 
+                type: 'url',
+                placeholder: 'https://exemple.com'
+            },
+            select: { 
+                icon: 'ri-arrow-down-s-line', 
+                label: 'Liste déroulante', 
+                type: 'select',
+                options: ['Option 1', 'Option 2', 'Option 3']
+            },
+            radio: { 
+                icon: 'ri-radio-button-line', 
+                label: 'Choix unique', 
+                type: 'radio',
+                options: ['Choix 1', 'Choix 2', 'Choix 3']
+            },
+            checkbox: { 
+                icon: 'ri-checkbox-line', 
+                label: 'Choix multiples', 
+                type: 'checkbox',
+                options: ['Option A', 'Option B', 'Option C']
+            },
+            rating: { 
+                icon: 'ri-star-line', 
+                label: 'Évaluation', 
+                type: 'rating',
+                max: 5
+            },
+            date: { 
+                icon: 'ri-calendar-line', 
+                label: 'Date', 
+                type: 'date'
+            },
+            time: { 
+                icon: 'ri-time-line', 
+                label: 'Heure', 
+                type: 'time'
+            },
+            file: { 
+                icon: 'ri-upload-line', 
+                label: 'Upload fichier', 
+                type: 'file'
+            },
+            image: { 
+                icon: 'ri-image-line', 
+                label: 'Upload image', 
+                type: 'file',
+                accept: 'image/*'
+            },
+            signature: { 
+                icon: 'ri-edit-line', 
+                label: 'Signature électronique', 
+                type: 'signature'
+            },
+            payment: { 
+                icon: 'ri-bank-card-line', 
+                label: 'Paiement', 
+                type: 'payment'
+            }
+        };
+
+        // DOM elements
+        const newFormBtn = document.getElementById('newFormBtn');
+        const formBuilderModal = document.getElementById('formBuilderModal');
+        const closeBuilderBtn = document.getElementById('closeBuilderBtn');
+        const formCanvas = document.getElementById('formCanvas');
+        const fieldsContainer = document.getElementById('fieldsContainer');
+        const emptyState = document.getElementById('emptyState');
+        const submitButton = document.getElementById('submitButton');
+        const previewBtn = document.getElementById('previewBtn');
+        const previewModal = document.getElementById('previewModal');
+        const closePreviewBtn = document.getElementById('closePreviewBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const publishBtn = document.getElementById('publishBtn');
+
+        // Event listeners
+        newFormBtn.addEventListener('click', () => {
+            formBuilderModal.classList.remove('hidden');
+        });
+
+        closeBuilderBtn.addEventListener('click', () => {
+            formBuilderModal.classList.add('hidden');
+        });
+
+        closePreviewBtn.addEventListener('click', () => {
+            previewModal.classList.add('hidden');
+        });
+
+        previewBtn.addEventListener('click', showPreview);
+        saveBtn.addEventListener('click', saveForm);
+        publishBtn.addEventListener('click', publishForm);
+
+        // Add field function
+        function addField(fieldType) {
+            const template = fieldTemplates[fieldType];
+            if (!template) return;
+
+            fieldCounter++;
+            const field = {
+                id: 'field_' + fieldCounter,
+                type: fieldType,
+                label: template.label,
+                placeholder: template.placeholder || '',
+                required: false,
+                options: template.options ? [...template.options] : []
+            };
+
+            formFields.push(field);
+            renderFormFields();
+            updateEmptyState();
+        }
+
+        // Remove field function
+        function removeField(fieldId) {
+            formFields = formFields.filter(field => field.id !== fieldId);
+            renderFormFields();
+            updateEmptyState();
+        }
+
+        // Update field function
+        function updateField(fieldId, property, value) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field) {
+                field[property] = value;
+                renderFormFields();
+            }
+        }
+
+        // Move field function
+        function moveField(fieldId, direction) {
+            const currentIndex = formFields.findIndex(f => f.id === fieldId);
+            if (currentIndex === -1) return;
+
+            const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+            if (newIndex < 0 || newIndex >= formFields.length) return;
+
+            const [field] = formFields.splice(currentIndex, 1);
+            formFields.splice(newIndex, 0, field);
+            renderFormFields();
+        }
+
+        // Render form fields
+        function renderFormFields() {
+            fieldsContainer.innerHTML = '';
+            
+            formFields.forEach((field, index) => {
+                const fieldElement = createFieldElement(field, index);
+                fieldsContainer.appendChild(fieldElement);
+            });
+        }
+
+        // Create field element
+        function createFieldElement(field, index) {
+            const template = fieldTemplates[field.type];
+            const div = document.createElement('div');
+            div.className = 'group border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors bg-gray-50 field-item';
+            
+            div.innerHTML = `
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="${template.icon} text-gray-600 mr-2"></i>
+                        <span class="text-sm font-medium text-gray-900">${template.label}</span>
+                        ${field.required ? '<span class="text-red-500 ml-1">*</span>' : ''}
+                    </div>
+                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        ${index > 0 ? `<button onclick="moveField('${field.id}', 'up')" class="p-1 text-gray-400 hover:text-gray-600"><i class="ri-arrow-up-line"></i></button>` : ''}
+                        ${index < formFields.length - 1 ? `<button onclick="moveField('${field.id}', 'down')" class="p-1 text-gray-400 hover:text-gray-600"><i class="ri-arrow-down-line"></i></button>` : ''}
+                        <button onclick="removeField('${field.id}')" class="p-1 text-red-400 hover:text-red-600"><i class="ri-delete-bin-line"></i></button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Libellé</label>
+                        <input type="text" value="${field.label}" 
+                               onchange="updateField('${field.id}', 'label', this.value)"
+                               class="w-full text-sm border border-gray-300 rounded px-3 py-2 bg-white">
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded p-3">
+                        <label class="block text-sm font-medium text-gray-900 mb-2">${field.label}</label>
+                        ${createFieldPreview(field)}
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" ${field.required ? 'checked' : ''} 
+                               onchange="updateField('${field.id}', 'required', this.checked)"
+                               class="mr-2 rounded border-gray-300">
+                        <label class="text-xs text-gray-600">Champ obligatoire</label>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Create field preview
+        function createFieldPreview(field) {
+            switch (field.type) {
+                case 'textarea':
+                    return `<textarea placeholder="${field.placeholder}" class="w-full px-3 py-2 border border-gray-300 rounded resize-none" rows="3" disabled></textarea>`;
+                case 'select':
+                    return `<select class="w-full px-3 py-2 border border-gray-300 rounded bg-white" disabled>
+                        ${field.options.map(option => `<option>${option}</option>`).join('')}
+                    </select>`;
+                case 'radio':
+                    return field.options.map((option, i) => 
+                        `<div class="flex items-center mb-2">
+                            <input type="radio" name="preview-${field.id}" ${i === 0 ? 'checked' : ''} class="mr-2" disabled>
+                            <label class="text-sm text-gray-700">${option}</label>
+                        </div>`
+                    ).join('');
+                case 'checkbox':
+                    return field.options.map(option => 
+                        `<div class="flex items-center mb-2">
+                            <input type="checkbox" class="mr-2 rounded" disabled>
+                            <label class="text-sm text-gray-700">${option}</label>
+                        </div>`
+                    ).join('');
+                case 'rating':
+                    return `<div class="flex space-x-1">
+                        ${Array.from({length: field.max || 5}, () => 
+                            `<i class="ri-star-line text-yellow-400 text-xl cursor-pointer hover:text-yellow-500"></i>`
+                        ).join('')}
+                    </div>`;
+                case 'file':
+                    return `<div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        <i class="ri-upload-line text-2xl text-gray-400 mb-2"></i>
+                        <p class="text-sm text-gray-500">Cliquez ou glissez pour uploader</p>
+                    </div>`;
+                case 'signature':
+                    return `<div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center h-24 flex items-center justify-center">
+                        <p class="text-sm text-gray-500">Zone de signature</p>
+                    </div>`;
+                case 'payment':
+                    return `<div class="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                        <p class="text-sm text-gray-600 mb-2">Informations de paiement</p>
+                        <div class="flex space-x-2">
+                            <i class="ri-visa-line text-2xl text-blue-600"></i>
+                            <i class="ri-mastercard-line text-2xl text-red-600"></i>
+                            <i class="ri-paypal-line text-2xl text-blue-500"></i>
+                        </div>
+                    </div>`;
+                default:
+                    return `<input type="${field.type}" placeholder="${field.placeholder}" class="w-full px-3 py-2 border border-gray-300 rounded" disabled>`;
+            }
+        }
+
+        // Update empty state
+        function updateEmptyState() {
+            if (formFields.length === 0) {
+                emptyState.classList.remove('hidden');
+                fieldsContainer.classList.add('hidden');
+                submitButton.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                fieldsContainer.classList.remove('hidden');
+                submitButton.classList.remove('hidden');
+            }
+        }
+
+        // Drag and drop functionality
+        let draggedElement = null;
+
+        // Field elements drag and drop
+        document.querySelectorAll('.field-element').forEach(element => {
+            element.addEventListener('dragstart', function(e) {
+                draggedElement = this.dataset.type;
+                this.classList.add('dragging');
+            });
+
+            element.addEventListener('dragend', function(e) {
+                this.classList.remove('dragging');
+                draggedElement = null;
+            });
+
+            element.addEventListener('click', function() {
+                addField(this.dataset.type);
+            });
+        });
+
+        // Form canvas drop zone
+        formCanvas.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+
+        formCanvas.addEventListener('dragleave', function(e) {
+            this.classList.remove('drag-over');
+        });
+
+        formCanvas.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            if (draggedElement) {
+                addField(draggedElement);
+            }
+        });
+
+        // Show preview
+        function showPreview() {
+            const previewContent = document.getElementById('previewContent');
+            const formTitle = document.getElementById('formTitleMain').value;
+            const formDescription = document.getElementById('formDescription').value;
+            
+            let html = `
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">${formTitle}</h2>
+                    <p class="text-gray-600">${formDescription}</p>
+                </div>
+                <form class="space-y-6">
+            `;
+            
+            formFields.forEach(field => {
+                html += `<div class="space-y-2">`;
+                html += `<label class="block text-sm font-medium text-gray-700">
+                    ${field.label}
+                    ${field.required ? '<span class="text-red-500">*</span>' : ''}
+                </label>`;
+                
+                switch (field.type) {
+                    case 'textarea':
+                        html += `<textarea placeholder="${field.placeholder}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4"></textarea>`;
+                        break;
+                    case 'select':
+                        html += `<select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            ${field.options.map(option => `<option value="${option}">${option}</option>`).join('')}
+                        </select>`;
+                        break;
+                    case 'radio':
+                        html += `<div class="space-y-2">
+                            ${field.options.map((option, i) => 
+                                `<div class="flex items-center">
+                                    <input type="radio" name="${field.id}" value="${option}" class="mr-2">
+                                    <label class="text-sm text-gray-700">${option}</label>
+                                </div>`
+                            ).join('')}
+                        </div>`;
+                        break;
+                    case 'checkbox':
+                        html += `<div class="space-y-2">
+                            ${field.options.map(option => 
+                                `<div class="flex items-center">
+                                    <input type="checkbox" value="${option}" class="mr-2 rounded">
+                                    <label class="text-sm text-gray-700">${option}</label>
+                                </div>`
+                            ).join('')}
+                        </div>`;
+                        break;
+                    case 'rating':
+                        html += `<div class="flex space-x-1">
+                            ${Array.from({length: field.max || 5}, (_, i) => 
+                                `<button type="button" class="text-yellow-400 hover:text-yellow-500 text-2xl">
+                                    <i class="ri-star-line"></i>
+                                </button>`
+                            ).join('')}
+                        </div>`;
+                        break;
+                    case 'file':
+                        html += `<div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                            <i class="ri-upload-line text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Cliquez pour choisir un fichier ou glissez-le ici</p>
+                            <input type="file" class="hidden">
+                            <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                                Choisir un fichier
+                            </button>
+                        </div>`;
+                        break;
+                    default:
+                        html += `<input type="${field.type}" placeholder="${field.placeholder}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">`;
+                }
+                
+                html += `</div>`;
+            });
+            
+            html += `
+                    <div class="pt-6">
+                        <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                            Envoyer
+                        </button>
+                    </div>
+                </form>
+            `;
+            
+            previewContent.innerHTML = html;
+            previewModal.classList.remove('hidden');
+        }
+
+        // Save form
+        function saveForm() {
+            const formData = {
+                title: document.getElementById('formTitleMain').value,
+                description: document.getElementById('formDescription').value,
+                fields: formFields,
+                created: new Date().toISOString()
+            };
+            
+            // Simulate save
+            localStorage.setItem('formease_form_' + Date.now(), JSON.stringify(formData));
+            
+            // Show success message
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="ri-check-line mr-2"></i>Sauvegardé';
+            saveBtn.className = 'px-3 py-2 bg-green-600 text-white rounded-lg text-sm flex items-center';
+            
+            setTimeout(() => {
+                saveBtn.innerHTML = originalText;
+                saveBtn.className = 'px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm flex items-center';
+            }, 2000);
+        }
+
+        // Publish form
+        function publishForm() {
+            // Simulate publish
+            const originalText = publishBtn.innerHTML;
+            publishBtn.innerHTML = '<i class="ri-check-line mr-2"></i>Publié';
+            publishBtn.className = 'px-4 py-2 bg-green-600 text-white rounded-lg text-sm flex items-center font-medium';
+            
+            setTimeout(() => {
+                publishBtn.innerHTML = originalText;
+                publishBtn.className = 'px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex items-center font-medium';
+            }, 2000);
+        }
+
+        // Initialize
+        updateEmptyState();
+        
+        console.log('FormEase Dashboard loaded successfully!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Premium</title>
+    
+    <!-- Tremor/Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for advanced charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- React Dependencies -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe',
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff',
+                            },
+                            background: {
+                                muted: '#111827',
+                                subtle: '#1f2937',
+                                DEFAULT: '#0f172a',
+                                emphasis: '#374151',
+                            },
+                            border: {
+                                DEFAULT: '#374151',
+                            },
+                            content: {
+                                subtle: '#9ca3af',
+                                DEFAULT: '#d1d5db',
+                                emphasis: '#f3f4f6',
+                                strong: '#ffffff',
+                                inverted: '#000000',
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        .tremor-metric { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; }
+        .tremor-title { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; }
+        .tremor-label { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
+        .tremor-default { font-size: 0.875rem; line-height: 1.25rem; }
+        
+        .kpi-card { 
+            @apply bg-tremor-background-subtle border border-tremor-border rounded-lg p-6;
+            transition: all 0.2s ease-in-out;
+        }
+        .kpi-card:hover { 
+            @apply border-tremor-brand-emphasis shadow-lg;
+        }
+        
+        .chart-container {
+            @apply bg-tremor-background-subtle border border-tremor-border rounded-lg p-6;
+        }
+        
+        .nav-item {
+            @apply flex items-center px-3 py-2 text-tremor-content rounded-lg transition-colors;
+        }
+        .nav-item:hover {
+            @apply bg-tremor-background-emphasis text-tremor-content-strong;
+        }
+        .nav-item.active {
+            @apply bg-tremor-brand text-tremor-brand-inverted;
+        }
+    </style>
+</head>
+
+<body class="bg-tremor-background text-tremor-content antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { createElement: h } = React;
+
+        // Mock data for charts
+        const generateChartData = () => {
+            const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+            return days.map(day => ({
+                day,
+                forms: Math.floor(Math.random() * 50) + 10,
+                responses: Math.floor(Math.random() * 300) + 50,
+                views: Math.floor(Math.random() * 800) + 200
+            }));
+        };
+
+        const FormBuilder = ({ isOpen, onClose }) => {
+            const [fields, setFields] = useState([]);
+            const [draggedField, setDraggedField] = useState(null);
+            const [formSettings, setFormSettings] = useState({
+                title: 'Mon Nouveau Formulaire',
+                description: 'Décrivez votre formulaire ici...',
+                submitButtonText: 'Envoyer'
+            });
+
+            const addField = (type) => {
+                const fieldTemplates = {
+                    text: { label: 'Champ texte', placeholder: 'Entrez votre texte...' },
+                    email: { label: 'Adresse email', placeholder: 'email@exemple.com' },
+                    select: { label: 'Liste déroulante', options: ['Option 1', 'Option 2', 'Option 3'] },
+                    radio: { label: 'Choix unique', options: ['Choix 1', 'Choix 2', 'Choix 3'] },
+                    checkbox: { label: 'Choix multiples', options: ['Option A', 'Option B', 'Option C'] },
+                    file: { label: 'Upload fichier' },
+                    signature: { label: 'Signature électronique' },
+                    payment: { label: 'Paiement sécurisé' }
+                };
+
+                const template = fieldTemplates[type] || { label: `Champ ${type}` };
+                const newField = {
+                    id: Date.now().toString(),
+                    type,
+                    label: template.label,
+                    placeholder: template.placeholder || '',
+                    required: false,
+                    options: template.options ? [...template.options] : []
+                };
+                setFields([...fields, newField]);
+            };
+
+            const removeField = (fieldId) => {
+                setFields(fields.filter(field => field.id !== fieldId));
+            };
+
+            const updateField = (fieldId, updates) => {
+                setFields(fields.map(field => 
+                    field.id === fieldId ? { ...field, ...updates } : field
+                ));
+            };
+
+            const addOption = (fieldId) => {
+                const field = fields.find(f => f.id === fieldId);
+                if (field && field.options) {
+                    updateField(fieldId, {
+                        options: [...field.options, `Option ${field.options.length + 1}`]
+                    });
+                }
+            };
+
+            const updateOption = (fieldId, optionIndex, newValue) => {
+                const field = fields.find(f => f.id === fieldId);
+                if (field && field.options) {
+                    const newOptions = [...field.options];
+                    newOptions[optionIndex] = newValue;
+                    updateField(fieldId, { options: newOptions });
+                }
+            };
+
+            const removeOption = (fieldId, optionIndex) => {
+                const field = fields.find(f => f.id === fieldId);
+                if (field && field.options && field.options.length > 1) {
+                    const newOptions = field.options.filter((_, index) => index !== optionIndex);
+                    updateField(fieldId, { options: newOptions });
+                }
+            };
+
+            if (!isOpen) return null;
+
+            return h('div', { 
+                className: 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4'
+            }, [
+                h('div', { 
+                    className: 'bg-tremor-background-subtle rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden border border-tremor-border flex',
+                    key: 'modal'
+                }, [
+                    // Sidebar - Element Palette
+                    h('div', { className: 'w-80 bg-tremor-background-muted p-6 overflow-y-auto border-r border-tremor-border' }, [
+                        h('div', { className: 'flex justify-between items-center mb-6' }, [
+                            h('h3', { className: 'tremor-title text-tremor-content-strong' }, 'Éléments'),
+                            h('button', { 
+                                onClick: onClose,
+                                className: 'text-tremor-content hover:text-tremor-content-strong'
+                            }, h('i', { className: 'ri-close-line text-xl' }))
+                        ]),
+                        
+                        h('div', { className: 'space-y-4' }, [
+                            // Champs de base
+                            h('div', {}, [
+                                h('h4', { className: 'text-sm font-medium text-tremor-content-emphasis mb-3' }, 'Champs de base'),
+                                h('div', { className: 'grid grid-cols-2 gap-2' }, [
+                                    ['text', 'ri-input-cursor-move', 'Texte'],
+                                    ['email', 'ri-mail-line', 'Email'],
+                                    ['select', 'ri-arrow-down-s-line', 'Liste'],
+                                    ['radio', 'ri-radio-button-line', 'Choix unique'],
+                                    ['checkbox', 'ri-checkbox-line', 'Choix multiples']
+                                ].map(([type, icon, label]) => 
+                                    h('button', {
+                                        key: type,
+                                        onClick: () => addField(type),
+                                        className: 'p-3 bg-tremor-background-subtle border border-tremor-border rounded-lg hover:border-tremor-brand hover:bg-tremor-brand/10 transition-colors text-center'
+                                    }, [
+                                        h('i', { className: `${icon} text-xl text-tremor-content mb-1` }),
+                                        h('p', { className: 'text-xs text-tremor-content' }, label)
+                                    ])
+                                ))
+                            ]),
+                            
+                            // Champs premium
+                            h('div', {}, [
+                                h('h4', { className: 'text-sm font-medium text-tremor-content-emphasis mb-3' }, 'Premium'),
+                                h('div', { className: 'grid grid-cols-2 gap-2' }, [
+                                    ['file', 'ri-upload-line', 'Fichier'],
+                                    ['signature', 'ri-edit-line', 'Signature'],
+                                    ['payment', 'ri-bank-card-line', 'Paiement']
+                                ].map(([type, icon, label]) => 
+                                    h('button', {
+                                        key: type,
+                                        onClick: () => addField(type),
+                                        className: 'p-3 bg-tremor-background-subtle border border-yellow-500/50 rounded-lg hover:border-yellow-400 hover:bg-yellow-500/10 transition-colors text-center relative'
+                                    }, [
+                                        h('i', { className: `${icon} text-xl text-tremor-content mb-1` }),
+                                        h('p', { className: 'text-xs text-tremor-content' }, label),
+                                        h('span', { className: 'absolute top-1 right-1 bg-yellow-500 text-black text-xs px-1 rounded' }, 'PRO')
+                                    ])
+                                ))
+                            ])
+                        ])
+                    ]),
+                    
+                    // Main Form Area
+                    h('div', { className: 'flex-1 flex flex-col' }, [
+                        // Header
+                        h('div', { className: 'p-6 border-b border-tremor-border' }, [
+                            h('div', { className: 'flex justify-between items-center' }, [
+                                h('input', {
+                                    type: 'text',
+                                    value: formSettings.title,
+                                    onChange: (e) => setFormSettings({...formSettings, title: e.target.value}),
+                                    className: 'text-xl font-bold bg-transparent border-none outline-none text-tremor-content-strong'
+                                }),
+                                h('div', { className: 'flex space-x-2' }, [
+                                    h('button', { className: 'px-3 py-2 bg-tremor-brand text-tremor-brand-inverted rounded-lg text-sm' }, 'Sauvegarder'),
+                                    h('button', { className: 'px-3 py-2 bg-green-600 text-white rounded-lg text-sm' }, 'Publier')
+                                ])
+                            ])
+                        ]),
+                        
+                        // Form Canvas
+                        h('div', { className: 'flex-1 p-6 overflow-y-auto' }, [
+                            h('div', { 
+                                className: 'max-w-2xl mx-auto bg-tremor-background rounded-lg border border-tremor-border p-6 min-h-96',
+                                onDrop: (e) => {
+                                    e.preventDefault();
+                                    if (draggedField) {
+                                        addField(draggedField);
+                                        setDraggedField(null);
+                                    }
+                                },
+                                onDragOver: (e) => e.preventDefault()
+                            }, [
+                                // Form Header
+                                h('div', { className: 'mb-6 pb-4 border-b border-tremor-border' }, [
+                                    h('input', {
+                                        type: 'text',
+                                        value: formSettings.title,
+                                        onChange: (e) => setFormSettings({...formSettings, title: e.target.value}),
+                                        className: 'text-2xl font-bold w-full bg-transparent border-none outline-none text-tremor-content-strong',
+                                        placeholder: 'Titre du formulaire'
+                                    }),
+                                    h('textarea', {
+                                        value: formSettings.description,
+                                        onChange: (e) => setFormSettings({...formSettings, description: e.target.value}),
+                                        className: 'w-full mt-2 bg-transparent border-none outline-none resize-none text-tremor-content',
+                                        rows: 2,
+                                        placeholder: 'Description du formulaire'
+                                    })
+                                ]),
+                                
+                                // Form Fields
+                                fields.length === 0 ? 
+                                    h('div', { className: 'text-center py-12' }, [
+                                        h('i', { className: 'ri-drag-drop-line text-6xl text-tremor-content-subtle mb-4' }),
+                                        h('h3', { className: 'text-lg font-medium text-tremor-content-emphasis mb-2' }, 'Commencez à construire'),
+                                        h('p', { className: 'text-tremor-content mb-4' }, 'Cliquez sur les éléments à gauche pour les ajouter'),
+                                        h('button', {
+                                            onClick: () => addField('text'),
+                                            className: 'px-4 py-2 bg-tremor-brand text-tremor-brand-inverted rounded-lg'
+                                        }, 'Ajouter un champ texte')
+                                    ]) :
+                                    h('div', { className: 'space-y-4' }, [
+                                        ...fields.map((field, index) => renderField(field, index, updateField, removeField, addOption, updateOption, removeOption)),
+                                        h('button', {
+                                            type: 'submit',
+                                            className: 'w-full bg-tremor-brand text-tremor-brand-inverted px-6 py-3 rounded-lg font-medium mt-6'
+                                        }, formSettings.submitButtonText)
+                                    ])
+                            ])
+                        ])
+                    ])
+                ])
+            ]);
+                                ].map(([type, icon, label, isPremium]) => 
+                                    h('div', {
+                                        key: type,
+                                        className: `p-3 border border-tremor-border rounded-lg cursor-pointer hover:border-tremor-brand transition-colors ${isPremium ? 'bg-tremor-brand/10' : ''}`,
+                                        onClick: () => addField(type)
+                                    }, [
+                                        h('div', { className: 'flex items-center' }, [
+                                            h('i', { className: `${icon} mr-3 ${isPremium ? 'text-tremor-brand' : 'text-tremor-content'}` }),
+                                            h('span', { className: isPremium ? 'text-tremor-brand' : '' }, label)
+                                        ])
+                                    ])
+                                ))
+                            ]),
+                            
+                            // Form Preview
+                            h('div', { className: 'lg:col-span-3' }, [
+                                h('h3', { className: 'tremor-title text-tremor-content-strong mb-4' }, 'Aperçu'),
+                                h('div', { 
+                                    className: 'min-h-96 border-2 border-dashed border-tremor-border rounded-lg p-6 bg-tremor-background' 
+                                }, [
+                                    fields.length === 0 ? 
+                                        h('div', { className: 'text-center text-tremor-content-subtle' }, [
+                                            h('i', { className: 'ri-drag-drop-line text-4xl mb-2' }),
+                                            h('p', {}, 'Ajoutez des éléments pour construire votre formulaire')
+                                        ]) :
+                                        h('div', { className: 'space-y-4' }, [
+                                            h('div', { className: 'mb-6' }, [
+                                                h('input', { 
+                                                    type: 'text', 
+                                                    placeholder: 'Titre du formulaire',
+                                                    className: 'text-2xl font-bold w-full bg-transparent border-none outline-none text-tremor-content-strong',
+                                                    defaultValue: 'Mon Nouveau Formulaire'
+                                                })
+                                            ]),
+                                            ...fields.map(field => 
+                                                h('div', { key: field.id, className: 'space-y-2' }, [
+                                                    h('label', { className: 'block tremor-label text-tremor-content-strong' }, field.label),
+                                                    field.type === 'file' ? 
+                                                        h('div', { className: 'border-2 border-dashed border-tremor-brand rounded-lg p-4 text-center' }, [
+                                                            h('i', { className: 'ri-upload-cloud-line text-3xl text-tremor-brand mb-2' }),
+                                                            h('p', { className: 'text-tremor-brand' }, 'Zone de glisser-déposer Premium')
+                                                        ]) :
+                                                    field.type === 'signature' ?
+                                                        h('div', { className: 'border border-tremor-border rounded-lg p-4 bg-tremor-background-muted' }, [
+                                                            h('div', { className: 'h-24 border-2 border-dashed border-tremor-brand rounded flex items-center justify-center' }, [
+                                                                h('p', { className: 'text-tremor-brand' }, 'Zone de signature Premium')
+                                                            ])
+                                                        ]) :
+                                                    field.type === 'payment' ?
+                                                        h('div', { className: 'border border-tremor-border rounded-lg p-4 bg-tremor-background-muted' }, [
+                                                            h('div', { className: 'space-y-3' }, [
+                                                                h('input', { 
+                                                                    type: 'text', 
+                                                                    placeholder: 'Numéro de carte',
+                                                                    className: 'w-full bg-tremor-background border border-tremor-border rounded px-3 py-2 text-tremor-content'
+                                                                }),
+                                                                h('div', { className: 'grid grid-cols-2 gap-2' }, [
+                                                                    h('input', { 
+                                                                        type: 'text', 
+                                                                        placeholder: 'MM/AA',
+                                                                        className: 'bg-tremor-background border border-tremor-border rounded px-3 py-2 text-tremor-content'
+                                                                    }),
+                                                                    h('input', { 
+                                                                        type: 'text', 
+                                                                        placeholder: 'CVC',
+                                                                        className: 'bg-tremor-background border border-tremor-border rounded px-3 py-2 text-tremor-content'
+                                                                    })
+                                                                ])
+                                                            ])
+                                                        ]) :
+                                                        h('input', { 
+                                                            type: field.type, 
+                                                            className: 'w-full bg-tremor-background border border-tremor-border rounded-lg px-3 py-2 text-tremor-content',
+                                                            placeholder: `Entrez votre ${field.label.toLowerCase()}`
+                                                        }),
+                                                    h('button', {
+                                                        onClick: () => setFields(fields.filter(f => f.id !== field.id)),
+                                                        className: 'text-red-400 text-sm hover:text-red-300'
+                                                    }, 'Supprimer')
+                                                ])
+                                            )
+                                        ])
+                                ]),
+                                
+                                h('div', { className: 'mt-6 flex justify-between' }, [
+                                    h('div', { className: 'space-x-2' }, [
+                                        h('button', { 
+                                            className: 'px-4 py-2 border border-tremor-border rounded-lg hover:bg-tremor-background-emphasis text-tremor-content'
+                                        }, [h('i', { className: 'ri-eye-line mr-2' }), 'Aperçu']),
+                                        h('button', { 
+                                            className: 'px-4 py-2 bg-tremor-brand text-tremor-brand-inverted rounded-lg hover:bg-tremor-brand-emphasis'
+                                        }, [h('i', { className: 'ri-save-line mr-2' }), 'Sauvegarder'])
+                                    ]),
+                                    h('button', { 
+                                        className: 'px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700'
+                                    }, [h('i', { className: 'ri-share-line mr-2' }), 'Publier'])
+                                ])
+                            ])
+                        ])
+                    ])
+                ])
+            ]);
+        };
+
+        const KPICard = ({ title, value, change, changeType, icon, color = 'blue' }) => {
+            const colors = {
+                blue: 'text-blue-400',
+                green: 'text-emerald-400',
+                yellow: 'text-amber-400',
+                purple: 'text-violet-400'
+            };
+
+            return h('div', { className: 'kpi-card' }, [
+                h('div', { className: 'flex items-center justify-between' }, [
+                    h('div', {}, [
+                        h('p', { className: 'tremor-label text-tremor-content-subtle' }, title),
+                        h('p', { className: 'tremor-metric text-tremor-content-strong mt-1' }, value),
+                        change && h('div', { className: 'flex items-center mt-2' }, [
+                            h('i', { 
+                                className: `ri-arrow-${changeType === 'positive' ? 'up' : 'down'}-line mr-1 ${changeType === 'positive' ? 'text-emerald-400' : 'text-red-400'}`
+                            }),
+                            h('span', { 
+                                className: `tremor-default ${changeType === 'positive' ? 'text-emerald-400' : 'text-red-400'}`
+                            }, change)
+                        ])
+                    ]),
+                    h('div', { className: `p-3 rounded-lg bg-${color}-500/10` }, [
+                        h('i', { className: `${icon} text-xl ${colors[color]}` })
+                    ])
+                ])
+            ]);
+        };
+
+        const LineChart = ({ data, title }) => {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            useEffect(() => {
+                if (chartRef.current) {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+
+                    const ctx = chartRef.current.getContext('2d');
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.map(d => d.day),
+                            datasets: [{
+                                label: 'Réponses',
+                                data: data.map(d => d.responses),
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        color: '#374151'
+                                    },
+                                    ticks: {
+                                        color: '#9ca3af'
+                                    }
+                                },
+                                y: {
+                                    grid: {
+                                        color: '#374151'
+                                    },
+                                    ticks: {
+                                        color: '#9ca3af'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [data]);
+
+            return h('div', { className: 'chart-container' }, [
+                h('h3', { className: 'tremor-title text-tremor-content-strong mb-4' }, title),
+                h('div', { className: 'h-64' }, [
+                    h('canvas', { ref: chartRef })
+                ])
+            ]);
+        };
+
+        const App = () => {
+            const [showFormBuilder, setShowFormBuilder] = useState(false);
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const chartData = generateChartData();
+
+            const navigation = [
+                { id: 'dashboard', label: 'Tableau de bord', icon: 'ri-dashboard-line' },
+                { id: 'forms', label: 'Mes formulaires', icon: 'ri-file-list-3-line' },
+                { id: 'responses', label: 'Réponses', icon: 'ri-inbox-line' },
+                { id: 'analytics', label: 'Analytics', icon: 'ri-bar-chart-line' },
+                { id: 'integrations', label: 'Intégrations', icon: 'ri-links-line' },
+                { id: 'settings', label: 'Paramètres', icon: 'ri-settings-line' }
+            ];
+
+            return h('div', { className: 'min-h-screen bg-tremor-background' }, [
+                // Header
+                h('header', { className: 'bg-tremor-background-subtle border-b border-tremor-border' }, [
+                    h('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' }, [
+                        h('div', { className: 'flex justify-between items-center h-16' }, [
+                            h('div', { className: 'flex items-center' }, [
+                                h('h1', { className: 'text-2xl font-bold text-tremor-content-strong' }, 'FormEase'),
+                                h('span', { className: 'ml-2 px-2 py-1 bg-tremor-brand/20 text-tremor-brand text-xs font-medium rounded' }, 'Premium')
+                            ]),
+                            h('div', { className: 'flex items-center space-x-4' }, [
+                                h('button', { className: 'text-tremor-content hover:text-tremor-content-strong' }, [
+                                    h('i', { className: 'ri-notification-line text-xl' })
+                                ]),
+                                h('div', { className: 'w-8 h-8 bg-tremor-brand rounded-full flex items-center justify-center text-tremor-brand-inverted font-medium' }, 'U')
+                            ])
+                        ])
+                    ])
+                ]),
+
+                h('div', { className: 'flex' }, [
+                    // Sidebar
+                    h('nav', { className: 'w-64 bg-tremor-background-subtle h-screen sticky top-0 border-r border-tremor-border' }, [
+                        h('div', { className: 'p-6' }, [
+                            h('div', { className: 'space-y-2' }, 
+                                navigation.map(item => 
+                                    h('button', {
+                                        key: item.id,
+                                        className: `nav-item w-full ${activeTab === item.id ? 'active' : ''}`,
+                                        onClick: () => setActiveTab(item.id)
+                                    }, [
+                                        h('i', { className: `${item.icon} mr-3 text-lg` }),
+                                        item.label
+                                    ])
+                                )
+                            )
+                        ])
+                    ]),
+
+                    // Main Content
+                    h('main', { className: 'flex-1 p-6' }, [
+                        // Page Header
+                        h('div', { className: 'mb-6' }, [
+                            h('div', { className: 'flex justify-between items-center' }, [
+                                h('div', {}, [
+                                    h('h2', { className: 'text-2xl font-bold text-tremor-content-strong' }, 'Tableau de bord'),
+                                    h('p', { className: 'text-tremor-content-subtle mt-1' }, 'Suivez les performances de vos formulaires en temps réel')
+                                ]),
+                                h('button', {
+                                    onClick: () => setShowFormBuilder(true),
+                                    className: 'bg-tremor-brand hover:bg-tremor-brand-emphasis text-tremor-brand-inverted px-6 py-3 rounded-lg font-medium flex items-center'
+                                }, [
+                                    h('i', { className: 'ri-add-line mr-2' }),
+                                    'Créer un formulaire'
+                                ])
+                            ])
+                        ]),
+
+                        // KPI Cards
+                        h('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8' }, [
+                            h(KPICard, {
+                                title: 'Total Formulaires',
+                                value: '24',
+                                change: '+12%',
+                                changeType: 'positive',
+                                icon: 'ri-file-list-3-line',
+                                color: 'blue'
+                            }),
+                            h(KPICard, {
+                                title: 'Réponses ce mois',
+                                value: '1,847',
+                                change: '+23%',
+                                changeType: 'positive',
+                                icon: 'ri-inbox-line',
+                                color: 'green'
+                            }),
+                            h(KPICard, {
+                                title: 'Taux de conversion',
+                                value: '32.4%',
+                                change: '+5.2%',
+                                changeType: 'positive',
+                                icon: 'ri-percent-line',
+                                color: 'purple'
+                            }),
+                            h(KPICard, {
+                                title: 'Vues totales',
+                                value: '5,694',
+                                change: '+18%',
+                                changeType: 'positive',
+                                icon: 'ri-eye-line',
+                                color: 'yellow'
+                            })
+                        ]),
+
+                        // Charts Section
+                        h('div', { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8' }, [
+                            h(LineChart, {
+                                data: chartData,
+                                title: 'Réponses par jour'
+                            }),
+                            h('div', { className: 'chart-container' }, [
+                                h('h3', { className: 'tremor-title text-tremor-content-strong mb-4' }, 'Top Formulaires'),
+                                h('div', { className: 'space-y-4' }, [
+                                    { name: 'Contact Form', responses: 342, percentage: 85 },
+                                    { name: 'Newsletter Signup', responses: 256, percentage: 65 },
+                                    { name: 'Event Registration', responses: 189, percentage: 48 },
+                                    { name: 'Feedback Survey', responses: 145, percentage: 37 }
+                                ].map((form, index) => 
+                                    h('div', { key: index, className: 'flex items-center justify-between' }, [
+                                        h('div', {}, [
+                                            h('p', { className: 'tremor-default text-tremor-content-strong font-medium' }, form.name),
+                                            h('p', { className: 'text-sm text-tremor-content-subtle' }, `${form.responses} réponses`)
+                                        ]),
+                                        h('div', { className: 'flex items-center space-x-3' }, [
+                                            h('div', { className: 'w-24 bg-tremor-background-muted rounded-full h-2' }, [
+                                                h('div', { 
+                                                    className: 'bg-tremor-brand h-2 rounded-full',
+                                                    style: { width: `${form.percentage}%` }
+                                                })
+                                            ]),
+                                            h('span', { className: 'text-sm text-tremor-content-subtle w-10' }, `${form.percentage}%`)
+                                        ])
+                                    ])
+                                ))
+                            ])
+                        ]),
+
+                        // Recent Activity
+                        h('div', { className: 'chart-container' }, [
+                            h('div', { className: 'flex justify-between items-center mb-4' }, [
+                                h('h3', { className: 'tremor-title text-tremor-content-strong' }, 'Activité Récente'),
+                                h('button', { className: 'text-tremor-brand hover:text-tremor-brand-emphasis text-sm' }, 'Voir tout')
+                            ]),
+                            h('div', { className: 'space-y-3' }, [
+                                {
+                                    type: 'response',
+                                    message: 'Nouvelle réponse sur "Formulaire de Contact"',
+                                    time: 'Il y a 5 minutes',
+                                    icon: 'ri-mail-line',
+                                    color: 'text-blue-400'
+                                },
+                                {
+                                    type: 'form',
+                                    message: 'Formulaire "Newsletter" mis à jour',
+                                    time: 'Il y a 1 heure',
+                                    icon: 'ri-edit-line',
+                                    color: 'text-green-400'
+                                },
+                                {
+                                    type: 'analytics',
+                                    message: 'Rapport mensuel généré',
+                                    time: 'Il y a 3 heures',
+                                    icon: 'ri-bar-chart-line',
+                                    color: 'text-purple-400'
+                                }
+                            ].map((activity, index) => 
+                                h('div', { key: index, className: 'flex items-center p-3 border border-tremor-border rounded-lg hover:bg-tremor-background-emphasis transition-colors' }, [
+                                    h('div', { className: 'p-2 rounded-lg bg-tremor-background-muted mr-3' }, [
+                                        h('i', { className: `${activity.icon} ${activity.color}` })
+                                    ]),
+                                    h('div', { className: 'flex-1' }, [
+                                        h('p', { className: 'tremor-default text-tremor-content-strong' }, activity.message),
+                                        h('p', { className: 'text-sm text-tremor-content-subtle' }, activity.time)
+                                    ])
+                                ])
+                            ))
+                        ])
+                    ])
+                ]),
+
+                // Form Builder Component
+                showFormBuilder && h(FormBuilder, { key: 'form-builder' })
+            ]);
+        };
+
+        ReactDOM.render(h(App), document.getElementById('root'));
+    </script>
+</body>
+</html>
