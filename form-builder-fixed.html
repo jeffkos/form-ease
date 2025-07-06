@@ -37,6 +37,13 @@
             border-radius: 0.5rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            min-width: 0; /* Permet au contenu de se rétrécir */
+            overflow: hidden; /* Évite le débordement */
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
         }
         .tremor-CardHeader {
             padding: 1rem 1.5rem;
@@ -155,6 +162,333 @@
         .tremor-Text {
             font-size: 0.875rem;
             color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .tremor-Metric {
+            color: #111827;
+            font-weight: 600;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Styles responsifs pour les métriques */
+        @media (max-width: 768px) {
+            .metric-card .tremor-CardContent {
+                padding: 0.75rem 1rem !important;
+            }
+            .metric-card .tremor-Metric {
+                font-size: 1.25rem !important;
+            }
+            .metric-card .tremor-Text {
+                font-size: 0.625rem !important;
+            }
+            .metric-card .w-12 {
+                width: 2.5rem !important;
+                height: 2.5rem !important;
+            }
+            .metric-card .w-12 i {
+                font-size: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .metrics-container {
+                gap: 0.75rem !important;
+                margin-top: 0.75rem !important;
+            }
+            .metric-card .tremor-CardContent {
+                padding: 0.5rem 0.75rem !important;
+            }
+            .metric-card .tremor-Metric {
+                font-size: 1.125rem !important;
+            }
+            .metric-card .flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            .metric-card .flex-shrink-0 {
+                margin-left: 0 !important;
+                margin-top: 0.5rem;
+                align-self: flex-end;
+            }
+            .metric-card .w-12 {
+                width: 2rem !important;
+                height: 2rem !important;
+            }
+        }
+        
+        /* Animation fluide pour le responsive */
+        .metrics-container {
+            transition: grid-template-columns 0.3s ease, gap 0.3s ease;
+        }
+        
+        /* Amélioration des hover effects sur mobile */
+        @media (hover: none) {
+            .metric-card:hover {
+                transform: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Styles pour l'assistant étape par étape */
+        .wizard-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .wizard-step.active {
+            opacity: 1;
+        }
+        
+        .wizard-step.completed {
+            opacity: 1;
+            color: #10b981;
+        }
+        
+        .step-circle {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        
+        .wizard-step.active .step-circle {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .wizard-step.completed .step-circle {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step-label {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .step-divider {
+            width: 2rem;
+            height: 2px;
+            background: #e5e7eb;
+            margin: 0 1rem;
+            align-self: center;
+            margin-top: -1rem;
+        }
+        
+        .wizard-step.completed + .step-divider {
+            background: #10b981;
+        }
+        
+        .wizard-step-content {
+            display: none;
+            animation: fadeInSlide 0.4s ease-out;
+        }
+        
+        .wizard-step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .form-type-option.selected > div {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .field-checkbox {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        
+        .field-checkbox:hover {
+            background-color: #f9fafb;
+        }
+        
+        .field-checkbox input:checked + i,
+        .field-checkbox input:checked + i + span {
+            color: #3b82f6;
+        }
+        
+        /* Responsive pour l'assistant */
+        @media (max-width: 768px) {
+            .wizard-step {
+                transform: scale(0.85);
+            }
+            
+            .step-divider {
+                width: 1rem;
+            }
+            
+            .step-label {
+                font-size: 0.625rem;
+            }
+        }
+        
+        /* Amélioration de l'affichage des icônes dans les métriques */
+        .tremor-Card i {
+            flex-shrink: 0;
+        }
+
+        /* Styles améliorés pour les cartes métriques */
+        .metrics-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .metric-card {
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #ef4444);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .metric-card:nth-child(1):hover::before {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+        
+        .metric-card:nth-child(2):hover::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        
+        .metric-card:nth-child(3):hover::before {
+            background: linear-gradient(90deg, #10b981, #047857);
+        }
+        
+        .metric-card:nth-child(4):hover::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        
+        /* Animation pour les icônes des métriques */
+        .metric-card .w-12 {
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover .w-12 {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        /* Animation fadeInUp pour les métriques */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Animation échelonnée pour chaque carte */
+        .metric-card:nth-child(1) { animation-delay: 0ms; }
+        .metric-card:nth-child(2) { animation-delay: 100ms; }
+        .metric-card:nth-child(3) { animation-delay: 200ms; }
+        .metric-card:nth-child(4) { animation-delay: 300ms; }
+        
+        .metric-card {
+            animation: cardSlideIn 0.5s ease-out both;
+        }
+        
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Styles pour les zones de drop dans les lignes */
+        .row-drop-zone {
+            transition: all 0.3s ease;
+        }
+        
+        .row-drop-zone:hover {
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+        }
+        
+        .row-drop-zone.drag-over {
+            border-color: #2563eb;
+            background-color: #dbeafe;
+            transform: scale(1.02);
+        }
+        
+        .field-in-row {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .field-in-row:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive pour les lignes */
+        @media (max-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .row-drop-zone {
+                margin-bottom: 0.5rem;
+            }
         }
         
         .fade-in {
@@ -274,6 +608,10 @@
                     <span class="tremor-Badge tremor-Badge-blue text-xs">v2.0</span>
                 </div>
                 <div class="flex items-center space-x-2">
+                    <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="openStepWizard()">
+                        <i class="ri-magic-line mr-1"></i>
+                        Assistant
+                    </button>
                     <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="saveForm()">
                         <i class="ri-save-line mr-1"></i>
                         Sauvegarder
@@ -285,48 +623,72 @@
                 </div>
             </div>
             
-            <!-- Métriques Dashboard compactes -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                <div class="tremor-Card">
-                    <div class="tremor-CardContent !py-2">
+            <!-- Métriques Dashboard améliorées -->
+            <div class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 mb-2">
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <p class="tremor-Text text-xs">Champs</p>
-                                <p class="tremor-Metric text-lg" id="totalFields">0</p>
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Champs</p>
+                                <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1" id="totalFields">0</p>
+                                <p class="text-xs text-gray-400 mt-1">Total des éléments</p>
                             </div>
-                            <i class="ri-input-method-line text-lg text-blue-600"></i>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
+                                    <i class="ri-input-method-line text-xl text-blue-600"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="tremor-Card">
-                    <div class="tremor-CardContent !py-2">
+                
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <p class="tremor-Text text-xs">Réponses</p>
-                                <p class="tremor-Metric text-lg" id="totalResponses">1,234</p>
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Réponses</p>
+                                <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1" id="totalResponses">1,234</p>
+                                <p class="text-xs text-green-600 mt-1">↗ +12% ce mois</p>
                             </div>
-                            <i class="ri-bar-chart-line text-lg text-green-600"></i>
-                        </div>
-                </div>
-                <div class="tremor-Card">
-                    <div class="tremor-CardContent !py-2">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="tremor-Text text-xs">Taux</p>
-                                <p class="tremor-Metric text-lg text-green-600">87%</p>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
+                                    <i class="ri-bar-chart-line text-xl text-green-600"></i>
+                                </div>
                             </div>
-                            <i class="ri-check-line text-lg text-green-600"></i>
                         </div>
                     </div>
                 </div>
-                <div class="tremor-Card">
-                    <div class="tremor-CardContent !py-2">
+                
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <p class="tremor-Text text-xs">Activité</p>
-                                <p class="tremor-Text font-medium text-sm">2 min</p>
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Taux</p>
+                                <p class="tremor-Metric text-xl font-bold text-green-600 mt-1">87%</p>
+                                <p class="text-xs text-gray-400 mt-1">Complétion</p>
                             </div>
-                            <i class="ri-time-line text-lg text-gray-600"></i>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center group-hover:bg-emerald-200 transition-colors duration-200">
+                                    <i class="ri-check-line text-xl text-emerald-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Activité</p>
+                                <p class="tremor-Text font-bold text-lg text-gray-900 mt-1">2 min</p>
+                                <p class="text-xs text-orange-600 mt-1">Temps moyen</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-200">
+                                    <i class="ri-time-line text-xl text-orange-600"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -654,6 +1016,278 @@
         </div>
     </div>
 
+    <!-- Modal Assistant Étape par Étape -->
+    <div id="stepWizardModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden z-50">
+        <div class="flex items-center justify-center h-full p-6">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200">
+                <!-- Header du modal -->
+                <div class="tremor-CardHeader flex items-center justify-between bg-gradient-to-r from-purple-50 to-blue-50 rounded-t-xl">
+                    <h3 class="tremor-Title flex items-center">
+                        <i class="ri-magic-line text-purple-600 mr-2"></i>
+                        Assistant de Création de Formulaire
+                    </h3>
+                    <button onclick="closeStepWizard()" class="text-gray-400 hover:text-gray-600 hover:bg-white rounded-full p-2 transition-all">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Indicateur d'étapes -->
+                <div class="px-6 py-4 bg-white border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="wizard-step active" data-step="1">
+                                <div class="step-circle">1</div>
+                                <span class="step-label">Type</span>
+                            </div>
+                            <div class="step-divider"></div>
+                            <div class="wizard-step" data-step="2">
+                                <div class="step-circle">2</div>
+                                <span class="step-label">Configuration</span>
+                            </div>
+                            <div class="step-divider"></div>
+                            <div class="wizard-step" data-step="3">
+                                <div class="step-circle">3</div>
+                                <span class="step-label">Champs</span>
+                            </div>
+                            <div class="step-divider"></div>
+                            <div class="wizard-step" data-step="4">
+                                <div class="step-circle">4</div>
+                                <span class="step-label">Finition</span>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Étape <span id="currentStepNumber">1</span> sur 4
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenu des étapes -->
+                <div class="wizard-content p-6">
+                    <!-- Étape 1: Type de formulaire -->
+                    <div id="step1" class="wizard-step-content active">
+                        <h4 class="text-lg font-semibold mb-4">Quel type de formulaire souhaitez-vous créer ?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="form-type-option" data-type="contact">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-phone-line text-xl text-blue-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Contact</h5>
+                                    <p class="text-sm text-gray-600">Formulaire de contact simple avec nom, email et message</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="survey">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-questionnaire-line text-xl text-green-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Sondage</h5>
+                                    <p class="text-sm text-gray-600">Enquête avec questions à choix multiples et échelles</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="registration">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-user-add-line text-xl text-purple-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Inscription</h5>
+                                    <p class="text-sm text-gray-600">Formulaire d'inscription avec informations personnelles</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="feedback">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-feedback-line text-xl text-orange-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Feedback</h5>
+                                    <p class="text-sm text-gray-600">Formulaire de retour client avec évaluation</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="order">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-shopping-cart-line text-xl text-red-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Commande</h5>
+                                    <p class="text-sm text-gray-600">Bon de commande avec sélection de produits</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="custom">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-settings-line text-xl text-gray-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Personnalisé</h5>
+                                    <p class="text-sm text-gray-600">Créer un formulaire sur mesure</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Configuration -->
+                    <div id="step2" class="wizard-step-content hidden">
+                        <h4 class="text-lg font-semibold mb-4">Configuration du formulaire</h4>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Titre du formulaire</label>
+                                <input type="text" id="formTitle" class="tremor-TextInput" placeholder="Ex: Formulaire de contact">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea id="formDescription" class="tremor-TextInput" rows="3" placeholder="Décrivez brièvement votre formulaire..."></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre d'étapes</label>
+                                    <select id="formSteps" class="tremor-Select">
+                                        <option value="1">1 étape</option>
+                                        <option value="2">2 étapes</option>
+                                        <option value="3">3 étapes</option>
+                                        <option value="4">4 étapes</option>
+                                        <option value="5">5 étapes</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Style visuel</label>
+                                    <select id="formStyle" class="tremor-Select">
+                                        <option value="modern">Moderne</option>
+                                        <option value="classic">Classique</option>
+                                        <option value="minimal">Minimal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="requireAuth" class="mr-2">
+                                    <span class="text-sm">Authentification requise</span>
+                                </label>
+                                
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="enableSave" class="mr-2" checked>
+                                    <span class="text-sm">Sauvegarde brouillon</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Sélection des champs -->
+                    <div id="step3" class="wizard-step-content hidden">
+                        <h4 class="text-lg font-semibold mb-4">Quels champs souhaitez-vous inclure ?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h5 class="font-medium mb-3">Champs suggérés</h5>
+                                <div id="suggestedFields" class="space-y-3">
+                                    <!-- Les champs suggérés seront générés dynamiquement -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-medium mb-3">Champs supplémentaires</h5>
+                                <div class="space-y-3">
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="phone" class="mr-3">
+                                        <i class="ri-phone-line mr-2 text-gray-600"></i>
+                                        <span>Téléphone</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="address" class="mr-3">
+                                        <i class="ri-map-pin-line mr-2 text-gray-600"></i>
+                                        <span>Adresse</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="company" class="mr-3">
+                                        <i class="ri-building-line mr-2 text-gray-600"></i>
+                                        <span>Entreprise</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="website" class="mr-3">
+                                        <i class="ri-global-line mr-2 text-gray-600"></i>
+                                        <span>Site web</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="file" class="mr-3">
+                                        <i class="ri-attachment-line mr-2 text-gray-600"></i>
+                                        <span>Pièce jointe</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 4: Finition -->
+                    <div id="step4" class="wizard-step-content hidden">
+                        <h4 class="text-lg font-semibold mb-4">Finalisation du formulaire</h4>
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h5 class="font-medium text-blue-900 mb-2">Récapitulatif</h5>
+                                <div id="wizardSummary" class="text-sm text-blue-800">
+                                    <!-- Le récapitulatif sera généré ici -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message de confirmation</label>
+                                <textarea id="confirmationMessage" class="tremor-TextInput" rows="3" placeholder="Merci pour votre soumission !"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email de notification</label>
+                                <input type="email" id="notificationEmail" class="tremor-TextInput" placeholder="admin@exemple.com">
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="enableNotifications" class="mr-2" checked>
+                                    <span class="text-sm">Notifications par email</span>
+                                </label>
+                                
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="enableAnalytics" class="mr-2">
+                                    <span class="text-sm">Suivi analytique</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer du modal -->
+                <div class="tremor-CardHeader border-t border-gray-200 flex justify-between items-center bg-gray-50 rounded-b-xl">
+                    <button id="prevStepBtn" class="tremor-Button tremor-Button-secondary tremor-Button-sm hidden" onclick="previousStep()">
+                        <i class="ri-arrow-left-line mr-2"></i>
+                        Précédent
+                    </button>
+                    <div></div>
+                    <div class="flex space-x-2">
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="closeStepWizard()">
+                            Annuler
+                        </button>
+                        <button id="nextStepBtn" class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="nextStep()">
+                            Suivant
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </button>
+                        <button id="finishBtn" class="tremor-Button tremor-Button-primary tremor-Button-sm hidden" onclick="finishWizard()">
+                            <i class="ri-check-line mr-2"></i>
+                            Créer le formulaire
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // État global de l'application
         let formFields = [];
@@ -663,11 +1297,20 @@
         let currentPageNumber = 1;
         let totalPagesCount = 1;
 
+        // Variables pour l'assistant étape par étape
+        let wizardData = {
+            currentStep: 1,
+            selectedType: null,
+            formConfig: {},
+            selectedFields: []
+        };
+
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop();
             loadFromStorage();
             updateMetrics();
+            initializeMetricsAnimations();
         });
 
         // Configuration drag & drop
@@ -685,23 +1328,95 @@
             canvas.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'copy';
-                this.classList.add('drag-over');
+                
+                // Vérifier si on survole une zone de ligne
+                const dropZone = e.target.closest('.row-drop-zone');
+                if (dropZone) {
+                    dropZone.classList.add('drag-over');
+                    // Retirer la classe drag-over des autres zones
+                    document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                        if (zone !== dropZone) zone.classList.remove('drag-over');
+                    });
+                } else {
+                    this.classList.add('drag-over');
+                    // Retirer la classe drag-over de toutes les zones de ligne
+                    document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                        zone.classList.remove('drag-over');
+                    });
+                }
             });
 
             canvas.addEventListener('dragleave', function(e) {
-                this.classList.remove('drag-over');
+                // Ne retirer que si on quitte vraiment la zone
+                if (!canvas.contains(e.relatedTarget)) {
+                    this.classList.remove('drag-over');
+                    document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                        zone.classList.remove('drag-over');
+                    });
+                }
             });
 
             canvas.addEventListener('drop', function(e) {
                 e.preventDefault();
                 this.classList.remove('drag-over');
+                document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                    zone.classList.remove('drag-over');
+                });
                 
                 if (draggedElement) {
                     const fieldType = draggedElement.getAttribute('data-field-type');
-                    addField(fieldType);
+                    
+                    // Vérifier si on drop dans une zone de ligne
+                    const dropTarget = e.target.closest('.row-drop-zone');
+                    if (dropTarget && fieldType !== 'row' && fieldType !== 'section' && fieldType !== 'page-break') {
+                        addFieldToRow(fieldType, dropTarget);
+                    } else {
+                        addField(fieldType);
+                    }
                     draggedElement = null;
                 }
             });
+        }
+
+        // Ajouter un champ dans une ligne existante
+        function addFieldToRow(fieldType, dropZone) {
+            const rowElement = dropZone.closest('.form-field[data-field-type="row"]');
+            if (!rowElement) return;
+
+            const rowFieldId = rowElement.getAttribute('data-field-id');
+            const rowField = formFields.find(f => f.id === rowFieldId);
+            
+            if (!rowField || !rowField.children) {
+                rowField.children = [];
+            }
+
+            // Déterminer dans quelle colonne insérer
+            const columnIndex = dropZone.dataset.column ? parseInt(dropZone.dataset.column) : 0;
+            
+            fieldCounter++;
+            const fieldId = `field_${fieldCounter}`;
+            
+            const field = {
+                id: fieldId,
+                type: fieldType,
+                label: getDefaultLabel(fieldType),
+                placeholder: getDefaultPlaceholder(fieldType),
+                required: false,
+                options: fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox' ? ['Option 1', 'Option 2'] : [],
+                page: currentPageNumber || 1,
+                width: '100%',
+                parentRow: rowFieldId,
+                column: columnIndex
+            };
+            
+            formFields.push(field);
+            rowField.children.push(fieldId);
+            
+            // Rerender la ligne complète
+            renderField(rowField);
+            updateMetrics();
+            autoSave();
+            showToast(`Champ ajouté dans la ligne`, 'success');
         }
 
         // Ajouter un champ au formulaire
@@ -849,15 +1564,24 @@
                     `;
                     break;
                 case 'row':
+                    // Récupérer les champs enfants de cette ligne
+                    const childFields = formFields.filter(f => f.parentRow === field.id);
+                    const leftField = childFields.find(f => f.column === 0);
+                    const rightField = childFields.find(f => f.column === 1);
+                    
                     fieldHTML += `
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="p-4 border border-dashed border-gray-300 rounded text-center text-gray-500">
-                                <i class="ri-drag-drop-line text-2xl mb-2"></i>
-                                <p class="text-sm">Glissez un champ ici</p>
+                            <div class="row-drop-zone p-4 border border-dashed border-gray-300 rounded text-center text-gray-500 min-h-24" data-column="0">
+                                ${leftField ? renderChildField(leftField) : `
+                                    <i class="ri-drag-drop-line text-2xl mb-2"></i>
+                                    <p class="text-sm">Glissez un champ ici</p>
+                                `}
                             </div>
-                            <div class="p-4 border border-dashed border-gray-300 rounded text-center text-gray-500">
-                                <i class="ri-drag-drop-line text-2xl mb-2"></i>
-                                <p class="text-sm">Glissez un champ ici</p>
+                            <div class="row-drop-zone p-4 border border-dashed border-gray-300 rounded text-center text-gray-500 min-h-24" data-column="1">
+                                ${rightField ? renderChildField(rightField) : `
+                                    <i class="ri-drag-drop-line text-2xl mb-2"></i>
+                                    <p class="text-sm">Glissez un champ ici</p>
+                                `}
                             </div>
                         </div>
                     `;
@@ -892,6 +1616,87 @@
             fieldDiv.innerHTML = fieldHTML;
             fieldDiv.addEventListener('click', () => selectField(field.id));
             canvas.appendChild(fieldDiv);
+        }
+
+        // Fonction pour rendre un champ enfant dans une ligne
+        function renderChildField(field) {
+            let childHTML = `
+                <div class="field-in-row text-left">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        ${field.label}
+                        ${field.required ? '<span class="text-red-500">*</span>' : ''}
+                    </label>
+            `;
+            
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'tel':
+                    childHTML += `<input type="${field.type}" class="tremor-TextInput w-full" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'textarea':
+                    childHTML += `<textarea class="tremor-TextInput w-full" rows="2" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}></textarea>`;
+                    break;
+                case 'number':
+                    childHTML += `<input type="number" class="tremor-TextInput w-full" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'select':
+                    childHTML += `<select class="tremor-Select w-full" ${field.required ? 'required' : ''}>
+                        <option value="">Choisissez une option</option>`;
+                    field.options.forEach(option => {
+                        childHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    childHTML += `</select>`;
+                    break;
+                case 'date':
+                    childHTML += `<input type="date" class="tremor-TextInput w-full" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'file':
+                    childHTML += `<input type="file" class="tremor-TextInput w-full" ${field.required ? 'required' : ''}>`;
+                    break;
+                default:
+                    childHTML += `<input type="text" class="tremor-TextInput w-full" placeholder="${field.placeholder}">`;
+            }
+            
+            childHTML += `
+                    <div class="mt-2 flex justify-end space-x-1">
+                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Éditer">
+                            <i class="ri-edit-line text-xs"></i>
+                        </button>
+                        <button onclick="removeFieldFromRow('${field.id}')" class="text-gray-400 hover:text-red-600 p-1 rounded hover:bg-red-50" title="Retirer">
+                            <i class="ri-close-line text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return childHTML;
+        }
+
+        // Fonction pour retirer un champ d'une ligne
+        function removeFieldFromRow(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex !== -1) {
+                const field = formFields[fieldIndex];
+                const parentRowField = formFields.find(f => f.id === field.parentRow);
+                
+                // Retirer le champ de la liste des enfants de la ligne
+                if (parentRowField && parentRowField.children) {
+                    parentRowField.children = parentRowField.children.filter(id => id !== fieldId);
+                }
+                
+                // Supprimer le champ
+                formFields.splice(fieldIndex, 1);
+                
+                // Rerender la ligne parent
+                if (parentRowField) {
+                    renderField(parentRowField);
+                }
+                
+                updateMetrics();
+                autoSave();
+                showToast('Champ retiré de la ligne', 'success');
+            }
         }
 
         // Sélectionner un champ
@@ -1355,8 +2160,73 @@
         }
 
         // Mettre à jour les métriques
+        // Mettre à jour les métriques avec animation
         function updateMetrics() {
-            document.getElementById('totalFields').textContent = formFields.length;
+            const totalFields = formFields.length;
+            const fieldsElement = document.getElementById('totalFields');
+            
+            if (fieldsElement) {
+                // Animation de compteur
+                animateCounter(fieldsElement, parseInt(fieldsElement.textContent) || 0, totalFields);
+            }
+            
+            // Animer les cartes métriques
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 200);
+                }, index * 100);
+            });
+        }
+
+        // Animation de compteur pour les métriques
+        function animateCounter(element, start, end, duration = 500) {
+            const range = end - start;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function pour un effet plus naturel
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(start + (range * easeOutCubic));
+                
+                element.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Initialiser les animations des métriques
+        function initializeMetricsAnimations() {
+            const metricCards = document.querySelectorAll('.metric-card');
+            
+            // Observer d'intersection pour animer au scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            metricCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(card);
+            });
         }
 
         // Fonction toast pour les notifications
@@ -1496,6 +2366,462 @@
         document.getElementById('previewModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closePreview();
+            }
+        });
+
+        // Gestion du redimensionnement de la fenêtre pour les métriques
+        function handleWindowResize() {
+            // Forcer le recalcul des dimensions des cartes métriques
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach(card => {
+                // Trigger reflow pour recalculer les dimensions
+                card.style.width = 'auto';
+                card.offsetHeight; // Force reflow
+            });
+
+            // Ajuster les métriques selon la taille d'écran
+            const metricsContainer = document.querySelector('.metrics-container');
+            if (metricsContainer) {
+                const windowWidth = window.innerWidth;
+                
+                // Responsive breakpoints améliorés
+                if (windowWidth < 640) {
+                    metricsContainer.className = 'metrics-container grid grid-cols-1 gap-3 mt-4 mb-2';
+                } else if (windowWidth < 768) {
+                    metricsContainer.className = 'metrics-container grid grid-cols-2 gap-3 mt-4 mb-2';
+                } else if (windowWidth < 1024) {
+                    metricsContainer.className = 'metrics-container grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-2';
+                } else {
+                    metricsContainer.className = 'metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 mb-2';
+                }
+            }
+
+            // Mettre à jour les dimensions du canvas
+            const canvas = document.getElementById('formCanvas');
+            if (canvas) {
+                canvas.style.minHeight = `${window.innerHeight - 200}px`;
+            }
+
+            // Mettre à jour la sidebar si nécessaire
+            const sidebar = document.querySelector('.w-80.toolbar-glass');
+            if (sidebar && window.innerWidth < 1024) {
+                sidebar.style.width = '280px';
+            } else if (sidebar) {
+                sidebar.style.width = '320px';
+            }
+
+            // Animation des cartes lors du redimensionnement
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 150);
+                }, index * 50);
+            });
+        }
+
+        // Gestionnaire d'événement pour le redimensionnement
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            // Debounce pour éviter trop d'appels
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleWindowResize, 150);
+        });
+
+        // Appel initial pour configurer l'affichage
+        window.addEventListener('load', handleWindowResize);
+        
+        // Gestionnaire pour l'orientation mobile
+        window.addEventListener('orientationchange', function() {
+            setTimeout(handleWindowResize, 300);
+        });
+
+        // ===== FONCTIONS ASSISTANT ÉTAPE PAR ÉTAPE =====
+
+        // Ouvrir l'assistant
+        function openStepWizard() {
+            document.getElementById('stepWizardModal').classList.remove('hidden');
+            resetWizard();
+            setupWizardEventListeners();
+        }
+
+        // Fermer l'assistant
+        function closeStepWizard() {
+            document.getElementById('stepWizardModal').classList.add('hidden');
+            resetWizard();
+        }
+
+        // Réinitialiser l'assistant
+        function resetWizard() {
+            wizardData = {
+                currentStep: 1,
+                selectedType: null,
+                formConfig: {},
+                selectedFields: []
+            };
+            updateWizardStep(1);
+            clearFormTypeSelection();
+        }
+
+        // Configurer les event listeners de l'assistant
+        function setupWizardEventListeners() {
+            // Sélection du type de formulaire
+            document.querySelectorAll('.form-type-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectFormType(this.getAttribute('data-type'));
+                });
+            });
+        }
+
+        // Sélectionner un type de formulaire
+        function selectFormType(type) {
+            wizardData.selectedType = type;
+            
+            // Mettre à jour l'interface
+            document.querySelectorAll('.form-type-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+            
+            // Préremplir les champs selon le type
+            fillDefaultConfig(type);
+        }
+
+        // Préremplir la configuration selon le type
+        function fillDefaultConfig(type) {
+            const configs = {
+                contact: {
+                    title: 'Formulaire de Contact',
+                    description: 'Contactez-nous facilement via ce formulaire',
+                    steps: 1,
+                    fields: ['name', 'email', 'message']
+                },
+                survey: {
+                    title: 'Enquête de Satisfaction',
+                    description: 'Aidez-nous à améliorer nos services',
+                    steps: 3,
+                    fields: ['name', 'email', 'rating', 'feedback']
+                },
+                registration: {
+                    title: 'Formulaire d\'Inscription',
+                    description: 'Inscrivez-vous à notre service',
+                    steps: 2,
+                    fields: ['name', 'email', 'phone', 'company']
+                },
+                feedback: {
+                    title: 'Retour Client',
+                    description: 'Partagez votre expérience avec nous',
+                    steps: 2,
+                    fields: ['name', 'email', 'rating', 'comments']
+                },
+                order: {
+                    title: 'Bon de Commande',
+                    description: 'Passez votre commande en ligne',
+                    steps: 3,
+                    fields: ['name', 'email', 'phone', 'address', 'products']
+                },
+                custom: {
+                    title: 'Formulaire Personnalisé',
+                    description: 'Créez votre formulaire sur mesure',
+                    steps: 1,
+                    fields: []
+                }
+            };
+            
+            wizardData.formConfig = configs[type] || configs.custom;
+        }
+
+        // Aller à l'étape suivante
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (wizardData.currentStep < 4) {
+                    wizardData.currentStep++;
+                    updateWizardStep(wizardData.currentStep);
+                    populateStepContent();
+                }
+            }
+        }
+
+        // Aller à l'étape précédente
+        function previousStep() {
+            if (wizardData.currentStep > 1) {
+                wizardData.currentStep--;
+                updateWizardStep(wizardData.currentStep);
+            }
+        }
+
+        // Valider l'étape actuelle
+        function validateCurrentStep() {
+            switch (wizardData.currentStep) {
+                case 1:
+                    if (!wizardData.selectedType) {
+                        showToast('Veuillez sélectionner un type de formulaire', 'error');
+                        return false;
+                    }
+                    return true;
+                case 2:
+                    const title = document.getElementById('formTitle').value.trim();
+                    if (!title) {
+                        showToast('Veuillez saisir un titre pour le formulaire', 'error');
+                        return false;
+                    }
+                    wizardData.formConfig.title = title;
+                    wizardData.formConfig.description = document.getElementById('formDescription').value.trim();
+                    wizardData.formConfig.steps = parseInt(document.getElementById('formSteps').value);
+                    wizardData.formConfig.style = document.getElementById('formStyle').value;
+                    return true;
+                case 3:
+                    const selectedFields = document.querySelectorAll('#step3 input[type="checkbox"]:checked');
+                    wizardData.selectedFields = Array.from(selectedFields).map(cb => cb.getAttribute('data-field') || cb.value);
+                    return true;
+                case 4:
+                    return true;
+                default:
+                    return true;
+            }
+        }
+
+        // Mettre à jour l'affichage de l'étape
+        function updateWizardStep(stepNumber) {
+            // Mettre à jour l'indicateur d'étapes
+            document.querySelectorAll('.wizard-step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < stepNumber) {
+                    step.classList.add('completed');
+                } else if (index + 1 === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Mettre à jour le contenu
+            document.querySelectorAll('.wizard-step-content').forEach((content, index) => {
+                content.classList.remove('active');
+                if (index + 1 === stepNumber) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Mettre à jour les boutons
+            document.getElementById('prevStepBtn').classList.toggle('hidden', stepNumber === 1);
+            document.getElementById('nextStepBtn').classList.toggle('hidden', stepNumber === 4);
+            document.getElementById('finishBtn').classList.toggle('hidden', stepNumber !== 4);
+
+            // Mettre à jour le numéro d'étape
+            document.getElementById('currentStepNumber').textContent = stepNumber;
+        }
+
+        // Remplir le contenu de l'étape
+        function populateStepContent() {
+            switch (wizardData.currentStep) {
+                case 2:
+                    if (wizardData.formConfig.title) {
+                        document.getElementById('formTitle').value = wizardData.formConfig.title;
+                    }
+                    if (wizardData.formConfig.description) {
+                        document.getElementById('formDescription').value = wizardData.formConfig.description;
+                    }
+                    if (wizardData.formConfig.steps) {
+                        document.getElementById('formSteps').value = wizardData.formConfig.steps;
+                    }
+                    break;
+                case 3:
+                    populateSuggestedFields();
+                    break;
+                case 4:
+                    populateWizardSummary();
+                    break;
+            }
+        }
+
+        // Remplir les champs suggérés
+        function populateSuggestedFields() {
+            const suggestedContainer = document.getElementById('suggestedFields');
+            const fieldLabels = {
+                name: 'Nom complet',
+                email: 'Adresse email',
+                phone: 'Téléphone',
+                message: 'Message',
+                rating: 'Évaluation',
+                feedback: 'Commentaires',
+                company: 'Entreprise',
+                address: 'Adresse',
+                products: 'Produits',
+                comments: 'Remarques'
+            };
+
+            const fieldIcons = {
+                name: 'ri-user-line',
+                email: 'ri-mail-line',
+                phone: 'ri-phone-line',
+                message: 'ri-message-line',
+                rating: 'ri-star-line',
+                feedback: 'ri-feedback-line',
+                company: 'ri-building-line',
+                address: 'ri-map-pin-line',
+                products: 'ri-shopping-bag-line',
+                comments: 'ri-chat-1-line'
+            };
+
+            suggestedContainer.innerHTML = '';
+            
+            wizardData.formConfig.fields.forEach(fieldType => {
+                const label = document.createElement('label');
+                label.className = 'flex items-center field-checkbox';
+                label.innerHTML = `
+                    <input type="checkbox" data-field="${fieldType}" class="mr-3" checked>
+                    <i class="${fieldIcons[fieldType] || 'ri-input-method-line'} mr-2 text-gray-600"></i>
+                    <span>${fieldLabels[fieldType] || fieldType}</span>
+                `;
+                suggestedContainer.appendChild(label);
+            });
+        }
+
+        // Remplir le récapitulatif
+        function populateWizardSummary() {
+            const summary = document.getElementById('wizardSummary');
+            const allCheckedFields = document.querySelectorAll('#step3 input[type="checkbox"]:checked');
+            const fieldCount = allCheckedFields.length;
+            
+            summary.innerHTML = `
+                <div class="space-y-2">
+                    <p><strong>Type:</strong> ${getTypeLabel(wizardData.selectedType)}</p>
+                    <p><strong>Titre:</strong> ${wizardData.formConfig.title}</p>
+                    <p><strong>Nombre d'étapes:</strong> ${wizardData.formConfig.steps}</p>
+                    <p><strong>Champs sélectionnés:</strong> ${fieldCount} champ(s)</p>
+                    <p><strong>Style:</strong> ${wizardData.formConfig.style}</p>
+                </div>
+            `;
+        }
+
+        // Obtenir le label du type
+        function getTypeLabel(type) {
+            const labels = {
+                contact: 'Formulaire de Contact',
+                survey: 'Sondage',
+                registration: 'Inscription',
+                feedback: 'Feedback',
+                order: 'Commande',
+                custom: 'Personnalisé'
+            };
+            return labels[type] || type;
+        }
+
+        // Finaliser l'assistant et créer le formulaire
+        function finishWizard() {
+            validateCurrentStep();
+            
+            // Sauvegarder les paramètres de confirmation
+            wizardData.formConfig.confirmationMessage = document.getElementById('confirmationMessage').value.trim();
+            wizardData.formConfig.notificationEmail = document.getElementById('notificationEmail').value.trim();
+            wizardData.formConfig.enableNotifications = document.getElementById('enableNotifications').checked;
+            wizardData.formConfig.enableAnalytics = document.getElementById('enableAnalytics').checked;
+
+            // Générer le formulaire
+            generateFormFromWizard();
+            
+            // Fermer l'assistant
+            closeStepWizard();
+            
+            showToast('Formulaire créé avec succès !', 'success');
+        }
+
+        // Générer le formulaire à partir des données de l'assistant
+        function generateFormFromWizard() {
+            // Vider le formulaire actuel
+            formFields = [];
+            fieldCounter = 0;
+            currentPageNumber = 1;
+            totalPagesCount = wizardData.formConfig.steps;
+
+            // Créer les champs selon les sélections
+            const allCheckedFields = document.querySelectorAll('#step3 input[type="checkbox"]:checked');
+            let currentPage = 1;
+            let fieldsPerPage = Math.ceil(allCheckedFields.length / wizardData.formConfig.steps);
+            let currentFieldInPage = 0;
+
+            allCheckedFields.forEach((checkbox, index) => {
+                const fieldType = checkbox.getAttribute('data-field');
+                const field = createFieldFromType(fieldType, currentPage);
+                
+                if (field) {
+                    formFields.push(field);
+                    renderField(field);
+                    
+                    currentFieldInPage++;
+                    if (currentFieldInPage >= fieldsPerPage && currentPage < totalPagesCount) {
+                        currentPage++;
+                        currentFieldInPage = 0;
+                    }
+                }
+            });
+
+            // Ajouter des sauts de page si nécessaire
+            if (wizardData.formConfig.steps > 1) {
+                for (let page = 1; page < totalPagesCount; page++) {
+                    fieldCounter++;
+                    const pageBreak = {
+                        id: `field_${fieldCounter}`,
+                        type: 'page-break',
+                        label: `Étape ${page + 1}`,
+                        page: page,
+                        required: false
+                    };
+                    formFields.push(pageBreak);
+                    renderField(pageBreak);
+                }
+            }
+
+            // Mettre à jour l'interface
+            updateMetrics();
+            updatePageControls();
+            hideEmptyState();
+            autoSave();
+        }
+
+        // Créer un champ à partir du type
+        function createFieldFromType(fieldType, page) {
+            fieldCounter++;
+            const fieldId = `field_${fieldCounter}`;
+            
+            const fieldMappings = {
+                name: { type: 'text', label: 'Nom complet', placeholder: 'Votre nom complet' },
+                email: { type: 'email', label: 'Adresse email', placeholder: 'votre@email.com' },
+                phone: { type: 'tel', label: 'Téléphone', placeholder: '+33 1 23 45 67 89' },
+                message: { type: 'textarea', label: 'Message', placeholder: 'Votre message...' },
+                rating: { type: 'rating', label: 'Évaluation', placeholder: '' },
+                feedback: { type: 'textarea', label: 'Commentaires', placeholder: 'Vos commentaires...' },
+                company: { type: 'text', label: 'Entreprise', placeholder: 'Nom de votre entreprise' },
+                address: { type: 'textarea', label: 'Adresse', placeholder: 'Votre adresse complète' },
+                website: { type: 'text', label: 'Site web', placeholder: 'https://votre-site.com' },
+                file: { type: 'file', label: 'Pièce jointe', placeholder: '' }
+            };
+
+            const mapping = fieldMappings[fieldType];
+            if (!mapping) return null;
+
+            return {
+                id: fieldId,
+                type: mapping.type,
+                label: mapping.label,
+                placeholder: mapping.placeholder,
+                required: fieldType === 'name' || fieldType === 'email',
+                page: page,
+                options: mapping.type === 'select' || mapping.type === 'radio' || mapping.type === 'checkbox' ? ['Option 1', 'Option 2'] : []
+            };
+        }
+
+        // Supprimer la sélection du type de formulaire
+        function clearFormTypeSelection() {
+            document.querySelectorAll('.form-type-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        // Gestionnaire pour fermer les modals en cliquant à l'extérieur
+        document.getElementById('stepWizardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeStepWizard();
             }
         });
     </script>
