@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase AI - Génération de Formulaires par IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe',
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .tremor-CardHeader {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1rem 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .tremor-Button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .tremor-Button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .tremor-Button-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .tremor-Button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .tremor-Button-secondary {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .tremor-Button-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        .tremor-Button-sm {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-md {
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-lg {
+            height: 3rem;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+        }
+        .tremor-TextInput {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-TextInput::placeholder {
+            color: #9ca3af;
+        }
+        .tremor-TextInput:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .tremor-Subtitle {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #111827;
+        }
+        .tremor-Text {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .toolbar-glass {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Animations pour l'IA */
+        .ai-thinking {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .ai-typing {
+            position: relative;
+        }
+
+        .ai-typing::after {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background-color: #3b82f6;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .prompt-example {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .prompt-example:hover {
+            background-color: #f0f9ff;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .generation-step {
+            opacity: 0.5;
+            transition: all 0.5s ease;
+        }
+
+        .generation-step.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .generation-step.completed {
+            opacity: 1;
+            color: #10b981;
+        }
+
+        /* Styles pour le rendu du formulaire généré */
+        .generated-form {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .field-preview {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .field-preview:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animation de chargement AI */
+        .ai-loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-tremor-brand-faint via-white to-tremor-brand-faint font-sans min-h-screen">
+    <!-- Header -->
+    <header class="toolbar-glass border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <h1 class="tremor-Title flex items-center text-lg">
+                        <i class="ri-robot-line text-tremor-brand-emphasis mr-2"></i>
+                        FormEase AI Generator
+                    </h1>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-tremor-brand-faint text-tremor-brand-emphasis">
+                        <i class="ri-sparkle-line mr-1"></i>
+                        Powered by AI
+                    </span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="showSavedForms()" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                        <i class="ri-folder-line mr-1"></i>
+                        Mes Formulaires (<span id="savedFormsCount">0</span>)
+                    </button>
+                    <a href="form-builder-fixed.html" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                        <i class="ri-arrow-left-line mr-1"></i>
+                        Retour au Builder
+                    </a>
+                    <button id="saveGeneratedForm" class="tremor-Button tremor-Button-primary tremor-Button-sm hidden">
+                        <i class="ri-save-line mr-1"></i>
+                        Sauvegarder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Panel de génération -->
+            <div class="space-y-6">
+                <!-- Introduction -->
+                <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                        <h2 class="tremor-Title flex items-center">
+                            <i class="ri-magic-line text-tremor-brand-emphasis mr-2"></i>
+                            Génération par IA
+                        </h2>
+                    </div>
+                    <div class="tremor-CardContent">
+                        <p class="tremor-Text mb-4">
+                            Décrivez votre formulaire en langage naturel et notre IA générera automatiquement 
+                            une structure complète avec les champs appropriés.
+                        </p>
+                        <div class="bg-gradient-to-r from-tremor-brand-faint to-tremor-brand-muted rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <i class="ri-lightbulb-line text-tremor-brand-emphasis text-xl mt-1"></i>
+                                <div>
+                                    <h4 class="font-medium text-tremor-brand-emphasis mb-2">Conseils pour un prompt efficace :</h4>
+                                    <ul class="text-sm text-tremor-brand space-y-1">
+                                        <li>• Décrivez le but du formulaire</li>
+                                        <li>• Mentionnez les informations nécessaires</li>
+                                        <li>• Précisez le public cible</li>
+                                        <li>• Indiquez le niveau de complexité souhaité</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone de prompt -->
+                <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                        <h3 class="tremor-Subtitle">Décrivez votre formulaire</h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                        <textarea 
+                            id="promptInput" 
+                            class="tremor-TextInput h-32 resize-none" 
+                            placeholder="Exemple : Je veux créer un formulaire d'inscription pour un événement sportif. J'ai besoin du nom, email, téléphone, âge, niveau sportif, préférences alimentaires et d'urgence contact. Le formulaire doit être simple et rapide à remplir."
+                        ></textarea>
+                        
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="text-xs text-gray-500">
+                                <span id="charCount">0</span> / 500 caractères
+                            </div>
+                            <button 
+                                id="generateBtn" 
+                                class="tremor-Button tremor-Button-primary tremor-Button-md"
+                                onclick="generateForm()"
+                            >
+                                <i class="ri-robot-line mr-2"></i>
+                                Générer le formulaire
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemples de prompts -->
+                <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                        <h3 class="tremor-Subtitle">Exemples de prompts</h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                        <div class="space-y-3">
+                            <div class="prompt-example border border-gray-200 rounded-lg p-3" onclick="useExample(0)">
+                                <h4 class="font-medium text-sm mb-1">Candidature emploi</h4>
+                                <p class="text-xs text-gray-600">
+                                    "Formulaire de candidature pour un poste de développeur web. Besoin des informations personnelles, formation, expérience, compétences techniques et motivation."
+                                </p>
+                            </div>
+                            
+                            <div class="prompt-example border border-gray-200 rounded-lg p-3" onclick="useExample(1)">
+                                <h4 class="font-medium text-sm mb-1">Enquête satisfaction</h4>
+                                <p class="text-xs text-gray-600">
+                                    "Enquête de satisfaction client pour un restaurant. Questions sur la qualité, service, ambiance, prix et recommandations d'amélioration."
+                                </p>
+                            </div>
+                            
+                            <div class="prompt-example border border-gray-200 rounded-lg p-3" onclick="useExample(2)">
+                                <h4 class="font-medium text-sm mb-1">Réservation événement</h4>
+                                <p class="text-xs text-gray-600">
+                                    "Formulaire de réservation pour un mariage. Informations des mariés, date, nombre d'invités, menu, décoration et services supplémentaires."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processus de génération -->
+                <div id="generationProcess" class="tremor-Card hidden">
+                    <div class="tremor-CardHeader">
+                        <h3 class="tremor-Subtitle">Génération en cours...</h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                        <div class="space-y-4">
+                            <div class="generation-step active" id="step1">
+                                <div class="flex items-center">
+                                    <div class="ai-loader mr-3"></div>
+                                    <span>Analyse du prompt...</span>
+                                </div>
+                            </div>
+                            <div class="generation-step" id="step2">
+                                <div class="flex items-center">
+                                    <i class="ri-brain-line mr-3"></i>
+                                    <span>Identification des champs nécessaires...</span>
+                                </div>
+                            </div>
+                            <div class="generation-step" id="step3">
+                                <div class="flex items-center">
+                                    <i class="ri-list-check mr-3"></i>
+                                    <span>Structuration du formulaire...</span>
+                                </div>
+                            </div>
+                            <div class="generation-step" id="step4">
+                                <div class="flex items-center">
+                                    <i class="ri-paint-brush-line mr-3"></i>
+                                    <span>Optimisation et finalisation...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de prévisualisation -->
+            <div class="space-y-6">
+                <!-- État initial -->
+                <div id="initialState" class="tremor-Card">
+                    <div class="tremor-CardContent text-center py-16">
+                        <i class="ri-robot-line text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="tremor-Subtitle mb-2 text-gray-500">Formulaire généré par IA</h3>
+                        <p class="tremor-Text">
+                            Entrez votre description et l'IA créera automatiquement votre formulaire
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulaire généré -->
+                <div id="generatedFormContainer" class="hidden">
+                    <div class="tremor-Card">
+                        <div class="tremor-CardHeader flex items-center justify-between">
+                            <h3 class="tremor-Subtitle">Formulaire généré</h3>
+                            <div class="flex items-center space-x-2">
+                                <button 
+                                    id="regenerateBtn" 
+                                    class="tremor-Button tremor-Button-secondary tremor-Button-sm"
+                                    onclick="regenerateForm()"
+                                >
+                                    <i class="ri-refresh-line mr-1"></i>
+                                    Régénérer
+                                </button>
+                                <button 
+                                    id="editBtn" 
+                                    class="tremor-Button tremor-Button-primary tremor-Button-sm"
+                                    onclick="openInBuilder()"
+                                >
+                                    <i class="ri-edit-line mr-1"></i>
+                                    Éditer
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tremor-CardContent generated-form" id="formPreview">
+                            <!-- Le formulaire généré apparaîtra ici -->
+                        </div>
+                    </div>
+
+                    <!-- Métadonnées du formulaire -->
+                    <div class="tremor-Card">
+                        <div class="tremor-CardHeader">
+                            <h3 class="tremor-Subtitle">Détails du formulaire</h3>
+                        </div>
+                        <div class="tremor-CardContent">
+                            <div id="formMetadata" class="space-y-3">
+                                <!-- Les métadonnées seront générées ici -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let generatedFormData = null;
+        let isGenerating = false;
+
+        // Exemples de prompts
+        const promptExamples = [
+            "Formulaire de candidature pour un poste de développeur web. J'ai besoin des informations personnelles (nom, email, téléphone), formation académique, expérience professionnelle, compétences techniques (langages, frameworks), projets réalisés et lettre de motivation. Le formulaire doit être professionnel et détaillé.",
+            
+            "Enquête de satisfaction client pour un restaurant. Je veux évaluer la qualité de la nourriture, la rapidité du service, l'accueil du personnel, l'ambiance du restaurant, le rapport qualité-prix, et recueillir des suggestions d'amélioration. Formulaire court et facile à remplir.",
+            
+            "Formulaire de réservation pour un service de traiteur de mariage. Informations des mariés, date et lieu de l'événement, nombre d'invités, choix du menu (entrée, plat, dessert), options végétariennes, allergies, décoration, services supplémentaires (photographe, musiciens) et budget estimé."
+        ];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateSavedFormsCount();
+        });
+
+        // Configuration des event listeners
+        function setupEventListeners() {
+            const promptInput = document.getElementById('promptInput');
+            const charCount = document.getElementById('charCount');
+            const saveButton = document.getElementById('saveGeneratedForm');
+
+            // Compteur de caractères
+            promptInput.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count;
+                
+                if (count > 500) {
+                    charCount.style.color = '#ef4444';
+                } else {
+                    charCount.style.color = '#6b7280';
+                }
+            });
+
+            // Raccourci clavier pour générer
+            promptInput.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    generateForm();
+                }
+            });
+
+            // Bouton sauvegarder
+            if (saveButton) {
+                saveButton.addEventListener('click', saveGeneratedForm);
+            }
+        }
+
+        // Utiliser un exemple de prompt
+        function useExample(index) {
+            document.getElementById('promptInput').value = promptExamples[index];
+            document.getElementById('charCount').textContent = promptExamples[index].length;
+        }
+
+        // Générer le formulaire
+        async function generateForm() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            
+            if (!prompt) {
+                showNotification('Veuillez entrer une description du formulaire', 'error');
+                return;
+            }
+
+            if (prompt.length > 500) {
+                showNotification('La description ne peut pas dépasser 500 caractères', 'error');
+                return;
+            }
+
+            if (isGenerating) return;
+
+            isGenerating = true;
+            showGenerationProcess();
+            
+            try {
+                // Simulation de génération par IA (remplacer par un vrai appel API)
+                await simulateAIGeneration(prompt);
+                
+                // Générer le formulaire basé sur le prompt
+                const formData = await processPrompt(prompt);
+                
+                // Afficher le résultat
+                displayGeneratedForm(formData);
+                
+            } catch (error) {
+                console.error('Erreur lors de la génération:', error);
+                showNotification('Erreur lors de la génération du formulaire', 'error');
+            } finally {
+                isGenerating = false;
+                hideGenerationProcess();
+            }
+        }
+
+        // Simuler le processus de génération par IA
+        async function simulateAIGeneration(prompt) {
+            const steps = ['step1', 'step2', 'step3', 'step4'];
+            
+            for (let i = 0; i < steps.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+                
+                // Marquer l'étape précédente comme complétée
+                if (i > 0) {
+                    const prevStep = document.getElementById(steps[i-1]);
+                    prevStep.classList.remove('active');
+                    prevStep.classList.add('completed');
+                    prevStep.querySelector('.ai-loader')?.remove();
+                    const icon = prevStep.querySelector('i');
+                    if (icon) {
+                        icon.className = 'ri-check-line mr-3 text-green-600';
+                    }
+                }
+                
+                // Activer l'étape actuelle
+                if (i < steps.length) {
+                    const currentStep = document.getElementById(steps[i]);
+                    currentStep.classList.add('active');
+                    
+                    if (i === steps.length - 1) {
+                        // Dernière étape
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        currentStep.classList.remove('active');
+                        currentStep.classList.add('completed');
+                        currentStep.querySelector('.ai-loader')?.remove();
+                        const icon = currentStep.querySelector('i');
+                        if (icon) {
+                            icon.className = 'ri-check-line mr-3 text-green-600';
+                        }
+                    }
+                }
+            }
+        }
+
+        // Traitement du prompt pour générer les données du formulaire
+        async function processPrompt(prompt) {
+            // Simulation d'analyse IA du prompt
+            const formData = analyzePromptContent(prompt);
+            generatedFormData = formData;
+            return formData;
+        }
+
+        // Analyse du contenu du prompt (simulation IA)
+        function analyzePromptContent(prompt) {
+            const lowercasePrompt = prompt.toLowerCase();
+            
+            // Détection du type de formulaire
+            let formType = 'custom';
+            let title = 'Formulaire Généré';
+            let description = 'Formulaire créé automatiquement par IA';
+            
+            if (lowercasePrompt.includes('candidature') || lowercasePrompt.includes('emploi') || lowercasePrompt.includes('poste')) {
+                formType = 'job-application';
+                title = 'Formulaire de Candidature';
+                description = 'Candidature pour un poste';
+            } else if (lowercasePrompt.includes('satisfaction') || lowercasePrompt.includes('enquête') || lowercasePrompt.includes('avis')) {
+                formType = 'survey';
+                title = 'Enquête de Satisfaction';
+                description = 'Votre avis nous intéresse';
+            } else if (lowercasePrompt.includes('réservation') || lowercasePrompt.includes('booking') || lowercasePrompt.includes('événement')) {
+                formType = 'reservation';
+                title = 'Formulaire de Réservation';
+                description = 'Réservez votre événement';
+            } else if (lowercasePrompt.includes('contact') || lowercasePrompt.includes('message')) {
+                formType = 'contact';
+                title = 'Formulaire de Contact';
+                description = 'Contactez-nous';
+            } else if (lowercasePrompt.includes('inscription') || lowercasePrompt.includes('register')) {
+                formType = 'registration';
+                title = 'Formulaire d\'Inscription';
+                description = 'Inscrivez-vous';
+            }
+
+            // Génération des champs basée sur les mots-clés
+            const fields = generateFieldsFromPrompt(prompt, formType);
+            
+            // Estimation de la complexité
+            const complexity = fields.length <= 5 ? 'Simple' : fields.length <= 10 ? 'Modéré' : 'Complexe';
+            const estimatedTime = fields.length <= 5 ? '2-3 min' : fields.length <= 10 ? '5-7 min' : '10+ min';
+            
+            return {
+                type: formType,
+                title: title,
+                description: description,
+                fields: fields,
+                metadata: {
+                    complexity: complexity,
+                    estimatedTime: estimatedTime,
+                    fieldCount: fields.length,
+                    categories: getFieldCategories(fields),
+                    prompt: prompt
+                }
+            };
+        }
+
+        // Générer les champs à partir du prompt
+        function generateFieldsFromPrompt(prompt, formType) {
+            const fields = [];
+            let fieldId = 1;
+            
+            // Champs de base toujours présents
+            const baseFields = [
+                { type: 'text', label: 'Nom complet', placeholder: 'Votre nom complet', required: true },
+                { type: 'email', label: 'Adresse email', placeholder: 'votre@email.com', required: true }
+            ];
+            
+            fields.push(...baseFields.map(field => ({ ...field, id: `field_${fieldId++}` })));
+            
+            // Détection de champs spécifiques basée sur les mots-clés
+            const keywords = {
+                phone: ['téléphone', 'phone', 'mobile', 'contact'],
+                company: ['entreprise', 'société', 'company', 'organisation'],
+                address: ['adresse', 'address', 'lieu', 'location'],
+                age: ['âge', 'age', 'naissance', 'birth'],
+                experience: ['expérience', 'experience', 'années', 'ancienneté'],
+                education: ['formation', 'education', 'diplôme', 'études'],
+                skills: ['compétences', 'skills', 'techniques', 'abilities'],
+                motivation: ['motivation', 'lettre', 'pourquoi', 'interest'],
+                date: ['date', 'quand', 'when', 'planning'],
+                number: ['nombre', 'quantité', 'combien', 'how many'],
+                rating: ['évaluation', 'note', 'rating', 'satisfaction', 'qualité'],
+                message: ['message', 'commentaire', 'remarque', 'suggestion', 'feedback'],
+                budget: ['budget', 'prix', 'coût', 'tarif', 'cost'],
+                file: ['cv', 'pièce jointe', 'document', 'file', 'upload']
+            };
+            
+            const lowercasePrompt = prompt.toLowerCase();
+            
+            // Ajouter des champs basés sur la détection de mots-clés
+            for (const [fieldType, keywordList] of Object.entries(keywords)) {
+                if (keywordList.some(keyword => lowercasePrompt.includes(keyword))) {
+                    let field = null;
+                    
+                    switch (fieldType) {
+                        case 'phone':
+                            field = { type: 'tel', label: 'Téléphone', placeholder: '+33 1 23 45 67 89', required: false };
+                            break;
+                        case 'company':
+                            field = { type: 'text', label: 'Entreprise', placeholder: 'Nom de votre entreprise', required: false };
+                            break;
+                        case 'address':
+                            field = { type: 'textarea', label: 'Adresse', placeholder: 'Votre adresse complète', required: false };
+                            break;
+                        case 'age':
+                            field = { type: 'number', label: 'Âge', placeholder: 'Votre âge', required: false };
+                            break;
+                        case 'experience':
+                            field = { type: 'select', label: 'Expérience professionnelle', options: ['Débutant', '1-3 ans', '3-5 ans', '5-10 ans', '+10 ans'], required: false };
+                            break;
+                        case 'education':
+                            field = { type: 'select', label: 'Niveau d\'études', options: ['Bac', 'Bac+2', 'Bac+3', 'Bac+5', 'Doctorat'], required: false };
+                            break;
+                        case 'skills':
+                            field = { type: 'checkbox', label: 'Compétences techniques', options: ['JavaScript', 'Python', 'Java', 'React', 'Node.js', 'PHP'], required: false };
+                            break;
+                        case 'motivation':
+                            field = { type: 'textarea', label: 'Lettre de motivation', placeholder: 'Expliquez votre motivation...', required: true };
+                            break;
+                        case 'date':
+                            field = { type: 'date', label: 'Date souhaitée', required: false };
+                            break;
+                        case 'number':
+                            field = { type: 'number', label: 'Nombre de participants', placeholder: 'Nombre', required: false };
+                            break;
+                        case 'rating':
+                            field = { type: 'rating', label: 'Évaluation globale', required: false };
+                            break;
+                        case 'message':
+                            field = { type: 'textarea', label: 'Message', placeholder: 'Votre message...', required: false };
+                            break;
+                        case 'budget':
+                            field = { type: 'select', label: 'Budget', options: ['< 1000€', '1000-5000€', '5000-10000€', '> 10000€'], required: false };
+                            break;
+                        case 'file':
+                            field = { type: 'file', label: 'CV / Document', required: false };
+                            break;
+                    }
+                    
+                    if (field && !fields.some(f => f.label === field.label)) {
+                        fields.push({ ...field, id: `field_${fieldId++}` });
+                    }
+                }
+            }
+            
+            // Ajouter des champs spécifiques selon le type de formulaire
+            if (formType === 'survey' && !fields.some(f => f.type === 'rating')) {
+                fields.push({
+                    id: `field_${fieldId++}`,
+                    type: 'rating',
+                    label: 'Satisfaction générale',
+                    required: false
+                });
+            }
+            
+            return fields;
+        }
+
+        // Obtenir les catégories de champs
+        function getFieldCategories(fields) {
+            const categories = new Set();
+            
+            fields.forEach(field => {
+                if (['text', 'email', 'tel'].includes(field.type)) {
+                    categories.add('Informations personnelles');
+                } else if (['select', 'radio', 'checkbox'].includes(field.type)) {
+                    categories.add('Choix multiples');
+                } else if (field.type === 'textarea') {
+                    categories.add('Texte long');
+                } else if (['date', 'number'].includes(field.type)) {
+                    categories.add('Données structurées');
+                } else if (field.type === 'file') {
+                    categories.add('Fichiers');
+                } else if (field.type === 'rating') {
+                    categories.add('Évaluation');
+                }
+            });
+            
+            return Array.from(categories);
+        }
+
+        // Afficher le formulaire généré
+        function displayGeneratedForm(formData) {
+            document.getElementById('initialState').classList.add('hidden');
+            document.getElementById('generatedFormContainer').classList.remove('hidden');
+            document.getElementById('saveGeneratedForm').classList.remove('hidden');
+            
+            // Rendre le formulaire
+            renderFormPreview(formData);
+            
+            // Afficher les métadonnées
+            renderFormMetadata(formData.metadata);
+            
+            showNotification('Formulaire généré avec succès !', 'success');
+        }
+
+        // Rendre l'aperçu du formulaire
+        function renderFormPreview(formData) {
+            const preview = document.getElementById('formPreview');
+            
+            let html = `
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">${formData.title}</h3>
+                    <p class="text-gray-600">${formData.description}</p>
+                </div>
+            `;
+            
+            formData.fields.forEach((field, index) => {
+                html += `<div class="field-preview">`;
+                
+                // Label
+                html += `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        ${field.label}
+                        ${field.required ? '<span class="text-red-500">*</span>' : ''}
+                    </label>
+                `;
+                
+                // Champ selon le type
+                switch (field.type) {
+                    case 'text':
+                    case 'email':
+                    case 'tel':
+                        html += `<input type="${field.type}" class="tremor-TextInput" placeholder="${field.placeholder || ''}" disabled>`;
+                        break;
+                    case 'number':
+                        html += `<input type="number" class="tremor-TextInput" placeholder="${field.placeholder || ''}" disabled>`;
+                        break;
+                    case 'textarea':
+                        html += `<textarea class="tremor-TextInput" rows="3" placeholder="${field.placeholder || ''}" disabled></textarea>`;
+                        break;
+                    case 'select':
+                        html += `<select class="tremor-TextInput" disabled>
+                            <option>Choisissez une option</option>`;
+                        if (field.options) {
+                            field.options.forEach(option => {
+                                html += `<option>${option}</option>`;
+                            });
+                        }
+                        html += `</select>`;
+                        break;
+                    case 'radio':
+                        if (field.options) {
+                            field.options.forEach((option, i) => {
+                                html += `
+                                    <div class="flex items-center mb-2">
+                                        <input type="radio" id="${field.id}_${i}" name="${field.id}" class="mr-2" disabled>
+                                        <label for="${field.id}_${i}" class="text-sm">${option}</label>
+                                    </div>
+                                `;
+                            });
+                        }
+                        break;
+                    case 'checkbox':
+                        if (field.options) {
+                            field.options.forEach((option, i) => {
+                                html += `
+                                    <div class="flex items-center mb-2">
+                                        <input type="checkbox" id="${field.id}_${i}" class="mr-2" disabled>
+                                        <label for="${field.id}_${i}" class="text-sm">${option}</label>
+                                    </div>
+                                `;
+                            });
+                        }
+                        break;
+                    case 'date':
+                        html += `<input type="date" class="tremor-TextInput" disabled>`;
+                        break;
+                    case 'file':
+                        html += `<input type="file" class="tremor-TextInput" disabled>`;
+                        break;
+                    case 'rating':
+                        html += `
+                            <div class="flex items-center space-x-1">
+                                ${[1,2,3,4,5].map(i => `<i class="ri-star-line text-yellow-400 text-xl"></i>`).join('')}
+                            </div>
+                        `;
+                        break;
+                }
+                
+                html += `</div>`;
+            });
+            
+            // Bouton de soumission
+            html += `
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <button class="tremor-Button tremor-Button-primary tremor-Button-lg w-full" disabled>
+                        <i class="ri-send-plane-line mr-2"></i>
+                        Soumettre le formulaire
+                    </button>
+                </div>
+            `;
+            
+            preview.innerHTML = html;
+        }
+
+        // Rendre les métadonnées du formulaire
+        function renderFormMetadata(metadata) {
+            const container = document.getElementById('formMetadata');
+            
+            const html = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <div class="text-xs text-blue-600 uppercase tracking-wide font-medium">Complexité</div>
+                        <div class="text-sm font-semibold text-blue-900">${metadata.complexity}</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3">
+                        <div class="text-xs text-green-600 uppercase tracking-wide font-medium">Temps estimé</div>
+                        <div class="text-sm font-semibold text-green-900">${metadata.estimatedTime}</div>
+                    </div>
+                    <div class="bg-tremor-brand-faint rounded-lg p-3">
+                        <div class="text-xs text-tremor-brand uppercase tracking-wide font-medium">Nombre de champs</div>
+                        <div class="text-sm font-semibold text-tremor-brand-emphasis">${metadata.fieldCount}</div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-3">
+                        <div class="text-xs text-orange-600 uppercase tracking-wide font-medium">Catégories</div>
+                        <div class="text-sm font-semibold text-orange-900">${metadata.categories.length}</div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h5 class="text-sm font-medium text-gray-700 mb-2">Catégories de champs :</h5>
+                    <div class="flex flex-wrap gap-2">
+                        ${metadata.categories.map(cat => 
+                            `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">${cat}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Afficher le processus de génération
+        function showGenerationProcess() {
+            document.getElementById('generationProcess').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').innerHTML = '<div class="ai-loader mr-2"></div>Génération...';
+        }
+
+        // Masquer le processus de génération
+        function hideGenerationProcess() {
+            document.getElementById('generationProcess').classList.add('hidden');
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('generateBtn').innerHTML = '<i class="ri-robot-line mr-2"></i>Générer le formulaire';
+            
+            // Réinitialiser les étapes
+            document.querySelectorAll('.generation-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+                step.querySelector('i').className = step.querySelector('i').className.replace('ri-check-line text-green-600', 'ri-brain-line');
+            });
+        }
+
+        // Régénérer le formulaire
+        function regenerateForm() {
+            if (isGenerating) return;
+            
+            const prompt = document.getElementById('promptInput').value.trim();
+            if (prompt) {
+                generateForm();
+            }
+        }
+
+        // Ouvrir dans le builder
+        function openInBuilder() {
+            if (!generatedFormData) return;
+            
+            // Sauvegarder les données dans le localStorage pour le builder
+            localStorage.setItem('aiGeneratedForm', JSON.stringify(generatedFormData));
+            
+            // Rediriger vers le builder
+            window.location.href = 'form-builder-fixed.html?source=ai';
+        }
+
+        // Sauvegarder le formulaire généré
+        function saveGeneratedForm() {
+            if (!generatedFormData) return;
+            
+            // Sauvegarder dans le localStorage
+            const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+            const formToSave = {
+                id: Date.now().toString(),
+                ...generatedFormData,
+                created: new Date().toISOString(),
+                source: 'ai-generator',
+                version: '1.0'
+            };
+            
+            savedForms.push(formToSave);
+            localStorage.setItem('savedForms', JSON.stringify(savedForms));
+            
+            // Afficher modal de confirmation avec options
+            showSaveModal(formToSave);
+        }
+
+        // Afficher modal de sauvegarde
+        function showSaveModal(formData) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex items-center mb-4">
+                        <i class="ri-check-circle-line text-green-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold">Formulaire Sauvegardé !</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Votre formulaire "${formData.title}" a été sauvegardé localement. 
+                        Que souhaitez-vous faire ?
+                    </p>
+                    <div class="space-y-3">
+                        <button onclick="openInBuilder(); closeModal()" class="w-full tremor-Button tremor-Button-primary tremor-Button-md">
+                            <i class="ri-edit-line mr-2"></i>
+                            Ouvrir dans le Builder
+                        </button>
+                        <button onclick="downloadFormData('${formData.id}'); closeModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-download-line mr-2"></i>
+                            Télécharger le fichier JSON
+                        </button>
+                        <button onclick="closeModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-close-line mr-2"></i>
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Fermer la modal
+        function closeModal() {
+            const modal = document.querySelector('.fixed.inset-0');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Télécharger les données du formulaire
+        function downloadFormData(formId) {
+            const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+            const formData = savedForms.find(f => f.id === formId);
+            
+            if (!formData) return;
+            
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            const filename = `formease-ai-${formData.title.toLowerCase().replace(/\s+/g, '-')}-${timestamp}.json`;
+            
+            const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Système de notifications
+        function showNotification(message, type = 'info') {
+            // Supprimer les notifications existantes
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(notif => notif.remove());
+            
+            // Créer la notification
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+            
+            // Couleurs selon le type
+            switch (type) {
+                case 'success':
+                    notification.classList.add('bg-green-500', 'text-white');
+                    break;
+                case 'error':
+                    notification.classList.add('bg-red-500', 'text-white');
+                    break;
+                case 'warning':
+                    notification.classList.add('bg-yellow-500', 'text-white');
+                    break;
+                default:
+                    notification.classList.add('bg-blue-500', 'text-white');
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-information-line mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Animation de sortie
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Afficher les formulaires sauvegardés
+        function showSavedForms() {
+            const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Mes Formulaires Sauvegardés</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="ri-close-line text-xl"></i>
+                        </button>
+                    </div>
+                    ${savedForms.length === 0 ? 
+                        '<p class="text-gray-500 text-center py-8">Aucun formulaire sauvegardé</p>' :
+                        `<div class="space-y-3">
+                            ${savedForms.map(form => `
+                                <div class="border rounded-lg p-4 hover:bg-gray-50">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium">${form.title}</h4>
+                                            <p class="text-sm text-gray-500">
+                                                ${form.fields.length} champs • 
+                                                ${new Date(form.created).toLocaleDateString('fr-FR')}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="loadSavedForm('${form.id}')" class="tremor-Button tremor-Button-primary tremor-Button-sm">
+                                                <i class="ri-edit-line mr-1"></i>
+                                                Éditer
+                                            </button>
+                                            <button onclick="downloadFormData('${form.id}')" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                                                <i class="ri-download-line mr-1"></i>
+                                                JSON
+                                            </button>
+                                            <button onclick="deleteSavedForm('${form.id}')" class="tremor-Button tremor-Button-secondary tremor-Button-sm text-red-600 hover:bg-red-50">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>`
+                    }
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Charger un formulaire sauvegardé
+        function loadSavedForm(formId) {
+            const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+            const formData = savedForms.find(f => f.id === formId);
+            
+            if (formData) {
+                // Mettre à jour les données globales
+                generatedFormData = formData;
+                
+                // Afficher le preview
+                displayFormPreview(formData);
+                
+                // Afficher le bouton sauvegarder
+                document.getElementById('saveGeneratedForm').classList.remove('hidden');
+                
+                // Fermer la modal
+                closeModal();
+                
+                showNotification('Formulaire chargé avec succès !', 'success');
+            }
+        }
+
+        // Supprimer un formulaire sauvegardé
+        function deleteSavedForm(formId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
+                let savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                savedForms = savedForms.filter(f => f.id !== formId);
+                localStorage.setItem('savedForms', JSON.stringify(savedForms));
+                
+                // Mettre à jour le compteur
+                updateSavedFormsCount();
+                
+                // Fermer et rouvrir la modal pour rafraîchir
+                closeModal();
+                showSavedForms();
+                
+                showNotification('Formulaire supprimé', 'success');
+            }
+        }
+
+        // Mettre à jour le compteur de formulaires sauvegardés
+        function updateSavedFormsCount() {
+            const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+            const countElement = document.getElementById('savedFormsCount');
+            if (countElement) {
+                countElement.textContent = savedForms.length;
+            }
+        }
+    </script>
+</body>
+</html>

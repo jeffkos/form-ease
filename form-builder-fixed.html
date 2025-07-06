@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -14,12 +15,53 @@
                     colors: {
                         tremor: {
                             brand: {
-                                faint: '#eff6ff',
-                                muted: '#bfdbfe',
-                                subtle: '#60a5fa',
-                                DEFAULT: '#3b82f6',
-                                emphasis: '#1d4ed8',
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
                                 inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#0ea5e9'
+                            },
+                            border: {
+                                DEFAULT: '#e2e8f0',
+                                emphasis: '#cbd5e1'
+                            },
+                            ring: {
+                                DEFAULT: '#0ea5e9'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
                             }
                         }
                     },
@@ -602,12 +644,16 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <h1 class="tremor-Title flex items-center text-lg">
-                        <i class="ri-file-list-3-line text-blue-600 mr-2"></i>
+                        <i class="ri-file-list-3-line text-tremor-brand-emphasis mr-2"></i>
                         FormEase Builder
                     </h1>
                     <span class="tremor-Badge tremor-Badge-blue text-xs">v2.0</span>
                 </div>
                 <div class="flex items-center space-x-2">
+                    <a href="form-ai-generator.html" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                        <i class="ri-robot-line mr-1"></i>
+                        Générateur IA
+                    </a>
                     <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="openStepWizard()">
                         <i class="ri-magic-line mr-1"></i>
                         Assistant
@@ -634,8 +680,8 @@
                                 <p class="text-xs text-gray-400 mt-1">Total des éléments</p>
                             </div>
                             <div class="flex-shrink-0 ml-3">
-                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
-                                    <i class="ri-input-method-line text-xl text-blue-600"></i>
+                                <div class="w-12 h-12 bg-tremor-brand-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-brand-muted transition-colors duration-200">
+                                    <i class="ri-input-method-line text-xl text-tremor-brand-emphasis"></i>
                                 </div>
                             </div>
                         </div>
@@ -648,11 +694,11 @@
                             <div class="flex-1 min-w-0">
                                 <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Réponses</p>
                                 <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1" id="totalResponses">1,234</p>
-                                <p class="text-xs text-green-600 mt-1">↗ +12% ce mois</p>
+                                <p class="text-xs text-tremor-success-emphasis mt-1">↗ +12% ce mois</p>
                             </div>
                             <div class="flex-shrink-0 ml-3">
-                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
-                                    <i class="ri-bar-chart-line text-xl text-green-600"></i>
+                                <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-success-muted transition-colors duration-200">
+                                    <i class="ri-bar-chart-line text-xl text-tremor-success-emphasis"></i>
                                 </div>
                             </div>
                         </div>
@@ -664,12 +710,12 @@
                         <div class="flex items-center justify-between">
                             <div class="flex-1 min-w-0">
                                 <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Taux</p>
-                                <p class="tremor-Metric text-xl font-bold text-green-600 mt-1">87%</p>
+                                <p class="tremor-Metric text-xl font-bold text-tremor-success-emphasis mt-1">87%</p>
                                 <p class="text-xs text-gray-400 mt-1">Complétion</p>
                             </div>
                             <div class="flex-shrink-0 ml-3">
-                                <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center group-hover:bg-emerald-200 transition-colors duration-200">
-                                    <i class="ri-check-line text-xl text-emerald-600"></i>
+                                <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-success-muted transition-colors duration-200">
+                                    <i class="ri-check-line text-xl text-tremor-success-emphasis"></i>
                                 </div>
                             </div>
                         </div>
@@ -682,11 +728,11 @@
                             <div class="flex-1 min-w-0">
                                 <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Activité</p>
                                 <p class="tremor-Text font-bold text-lg text-gray-900 mt-1">2 min</p>
-                                <p class="text-xs text-orange-600 mt-1">Temps moyen</p>
+                                <p class="text-xs text-tremor-warning-emphasis mt-1">Temps moyen</p>
                             </div>
                             <div class="flex-shrink-0 ml-3">
-                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-200">
-                                    <i class="ri-time-line text-xl text-orange-600"></i>
+                                <div class="w-12 h-12 bg-tremor-warning-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-warning-muted transition-colors duration-200">
+                                    <i class="ri-time-line text-xl text-tremor-warning-emphasis"></i>
                                 </div>
                             </div>
                         </div>
@@ -727,9 +773,9 @@
                 </div>
                 
                 <!-- Actions sur les champs -->
-                <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <h3 class="tremor-Subtitle mb-2 text-blue-800">Actions Disponibles</h3>
-                    <div class="text-xs text-blue-700 space-y-1">
+                <div class="mb-4 p-3 bg-tremor-brand-faint rounded-lg border border-tremor-brand-muted">
+                    <h3 class="tremor-Subtitle mb-2 text-tremor-brand-emphasis">Actions Disponibles</h3>
+                    <div class="text-xs text-tremor-brand space-y-1">
                         <div class="flex items-center">
                             <i class="ri-arrow-up-line mr-2"></i>
                             <span>Monter le champ</span>
@@ -755,7 +801,7 @@
                 <!-- Champs de base -->
                 <div class="mb-6">
                     <h3 class="tremor-Subtitle mb-3 flex items-center">
-                        <i class="ri-input-method-line mr-2 text-blue-600"></i>
+                        <i class="ri-input-method-line mr-2 text-tremor-brand-emphasis"></i>
                         Champs de Base
                     </h3>
                     <div class="space-y-2">
@@ -814,7 +860,7 @@
                 <!-- Champs de sélection -->
                 <div class="mb-6">
                     <h3 class="tremor-Subtitle mb-3 flex items-center">
-                        <i class="ri-checkbox-line mr-2 text-green-600"></i>
+                        <i class="ri-checkbox-line mr-2 text-tremor-success-emphasis"></i>
                         Sélection
                     </h3>
                     <div class="space-y-2">
@@ -853,7 +899,7 @@
                 <!-- Champs avancés -->
                 <div class="mb-6">
                     <h3 class="tremor-Subtitle mb-3 flex items-center">
-                        <i class="ri-star-line mr-2 text-purple-600"></i>
+                        <i class="ri-star-line mr-2 text-tremor-brand-emphasis"></i>
                         Avancé
                     </h3>
                     <div class="space-y-2">
@@ -892,7 +938,7 @@
                 <!-- Éléments de mise en page -->
                 <div class="mb-6">
                     <h3 class="tremor-Subtitle mb-3 flex items-center">
-                        <i class="ri-layout-line mr-2 text-orange-600"></i>
+                        <i class="ri-layout-line mr-2 text-tremor-warning-emphasis"></i>
                         Mise en Page
                     </h3>
                     <div class="space-y-2">
@@ -958,6 +1004,26 @@
                     </div>
                 </div>
                 
+                <!-- Informations du formulaire -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                        <i class="ri-information-line mr-2 text-blue-600"></i>
+                        Informations du Formulaire
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Titre du formulaire *</label>
+                            <input type="text" id="formTitle" placeholder="Mon Super Formulaire" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="formDescription" placeholder="Description optionnelle du formulaire..." 
+                                     rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Zone de drop -->
                 <div id="formCanvas" class="canvas-drop-zone rounded-lg p-6 min-h-96">
                     <div class="text-center text-gray-500 mt-20" id="emptyState">
@@ -985,7 +1051,7 @@
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-gray-200">
                 <div class="tremor-CardHeader flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
                     <h3 class="tremor-Title flex items-center">
-                        <i class="ri-eye-line text-blue-600 mr-2"></i>
+                        <i class="ri-eye-line text-tremor-brand-emphasis mr-2"></i>
                         Aperçu du Formulaire
                     </h3>
                     <button onclick="closePreview()" class="text-gray-400 hover:text-gray-600 hover:bg-white rounded-full p-2 transition-all">
@@ -1006,9 +1072,9 @@
                             <i class="ri-close-line mr-2"></i>
                             Fermer
                         </button>
-                        <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="exportForm()">
-                            <i class="ri-external-link-line mr-2"></i>
-                            Publier
+                        <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="publishForm()">
+                            <i class="ri-share-line mr-2"></i>
+                            Publier & Partager
                         </button>
                     </div>
                 </div>
@@ -1023,7 +1089,7 @@
                 <!-- Header du modal -->
                 <div class="tremor-CardHeader flex items-center justify-between bg-gradient-to-r from-purple-50 to-blue-50 rounded-t-xl">
                     <h3 class="tremor-Title flex items-center">
-                        <i class="ri-magic-line text-purple-600 mr-2"></i>
+                        <i class="ri-magic-line text-tremor-brand-emphasis mr-2"></i>
                         Assistant de Création de Formulaire
                     </h3>
                     <button onclick="closeStepWizard()" class="text-gray-400 hover:text-gray-600 hover:bg-white rounded-full p-2 transition-all">
@@ -1068,9 +1134,9 @@
                         <h4 class="text-lg font-semibold mb-4">Quel type de formulaire souhaitez-vous créer ?</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div class="form-type-option" data-type="contact">
-                                <div class="p-6 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all">
-                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                        <i class="ri-phone-line text-xl text-blue-600"></i>
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-brand-muted hover:bg-tremor-brand-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-brand-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-phone-line text-xl text-tremor-brand-emphasis"></i>
                                     </div>
                                     <h5 class="font-medium mb-2">Contact</h5>
                                     <p class="text-sm text-gray-600">Formulaire de contact simple avec nom, email et message</p>
@@ -1078,9 +1144,9 @@
                             </div>
                             
                             <div class="form-type-option" data-type="survey">
-                                <div class="p-6 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 cursor-pointer transition-all">
-                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                                        <i class="ri-questionnaire-line text-xl text-green-600"></i>
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-success-muted hover:bg-tremor-success-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-success-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-questionnaire-line text-xl text-tremor-success-emphasis"></i>
                                     </div>
                                     <h5 class="font-medium mb-2">Sondage</h5>
                                     <p class="text-sm text-gray-600">Enquête avec questions à choix multiples et échelles</p>
@@ -1088,9 +1154,9 @@
                             </div>
                             
                             <div class="form-type-option" data-type="registration">
-                                <div class="p-6 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-all">
-                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                                        <i class="ri-user-add-line text-xl text-purple-600"></i>
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-brand-muted hover:bg-tremor-brand-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-brand-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-user-add-line text-xl text-tremor-brand-emphasis"></i>
                                     </div>
                                     <h5 class="font-medium mb-2">Inscription</h5>
                                     <p class="text-sm text-gray-600">Formulaire d'inscription avec informations personnelles</p>
@@ -1098,9 +1164,9 @@
                             </div>
                             
                             <div class="form-type-option" data-type="feedback">
-                                <div class="p-6 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 cursor-pointer transition-all">
-                                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                                        <i class="ri-feedback-line text-xl text-orange-600"></i>
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-warning-muted hover:bg-tremor-warning-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-warning-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-feedback-line text-xl text-tremor-warning-emphasis"></i>
                                     </div>
                                     <h5 class="font-medium mb-2">Feedback</h5>
                                     <p class="text-sm text-gray-600">Formulaire de retour client avec évaluation</p>
@@ -1108,9 +1174,9 @@
                             </div>
                             
                             <div class="form-type-option" data-type="order">
-                                <div class="p-6 border border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 cursor-pointer transition-all">
-                                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                                        <i class="ri-shopping-cart-line text-xl text-red-600"></i>
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-error-muted hover:bg-tremor-error-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-error-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-shopping-cart-line text-xl text-tremor-warning-emphasis"></i>
                                     </div>
                                     <h5 class="font-medium mb-2">Commande</h5>
                                     <p class="text-sm text-gray-600">Bon de commande avec sélection de produits</p>
@@ -1231,9 +1297,9 @@
                     <div id="step4" class="wizard-step-content hidden">
                         <h4 class="text-lg font-semibold mb-4">Finalisation du formulaire</h4>
                         <div class="space-y-6">
-                            <div class="bg-blue-50 rounded-lg p-4">
-                                <h5 class="font-medium text-blue-900 mb-2">Récapitulatif</h5>
-                                <div id="wizardSummary" class="text-sm text-blue-800">
+                            <div class="bg-tremor-brand-faint rounded-lg p-4">
+                                <h5 class="font-medium text-tremor-brand-emphasis mb-2">Récapitulatif</h5>
+                                <div id="wizardSummary" class="text-sm text-tremor-brand">
                                     <!-- Le récapitulatif sera généré ici -->
                                 </div>
                             </div>
@@ -1311,7 +1377,74 @@
             loadFromStorage();
             updateMetrics();
             initializeMetricsAnimations();
+            
+            // Vérifier si on vient du générateur IA
+            checkAIGeneratedForm();
         });
+
+        // Vérifier et charger un formulaire généré par IA
+        function checkAIGeneratedForm() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const source = urlParams.get('source');
+            
+            if (source === 'ai') {
+                const aiFormData = localStorage.getItem('aiGeneratedForm');
+                if (aiFormData) {
+                    try {
+                        const formData = JSON.parse(aiFormData);
+                        loadAIGeneratedForm(formData);
+                        localStorage.removeItem('aiGeneratedForm'); // Nettoyer après chargement
+                        showToast('Formulaire IA chargé avec succès !', 'success');
+                    } catch (error) {
+                        console.error('Erreur lors du chargement du formulaire IA:', error);
+                        showToast('Erreur lors du chargement du formulaire IA', 'error');
+                    }
+                }
+            }
+        }
+
+        // Charger un formulaire généré par IA
+        function loadAIGeneratedForm(aiFormData) {
+            // Vider le formulaire actuel
+            formFields = [];
+            fieldCounter = 0;
+            const canvas = document.getElementById('formCanvas');
+            canvas.innerHTML = `
+                <div class="empty-state text-center py-12">
+                    <i class="ri-drag-drop-line text-4xl mb-4 text-gray-400"></i>
+                    <p class="text-gray-500 mb-2">Chargement du formulaire IA...</p>
+                </div>
+            `;
+            
+            // Convertir les champs IA en champs FormEase
+            aiFormData.fields.forEach((aiField, index) => {
+                fieldCounter++;
+                const field = {
+                    id: `field_${fieldCounter}`,
+                    type: aiField.type,
+                    label: aiField.label,
+                    placeholder: aiField.placeholder || '',
+                    required: aiField.required || false,
+                    options: aiField.options || [],
+                    page: aiField.page || 1
+                };
+                
+                formFields.push(field);
+                renderField(field);
+            });
+            
+            // Mettre à jour l'interface
+            hideEmptyState();
+            updateMetrics();
+            autoSave();
+            
+            // Afficher les métadonnées IA dans une notification
+            if (aiFormData.metadata) {
+                setTimeout(() => {
+                    showToast(`Formulaire ${aiFormData.metadata.complexity.toLowerCase()} avec ${aiFormData.metadata.fieldCount} champs chargé`, 'info');
+                }, 1000);
+            }
+        }
 
         // Configuration drag & drop
         function setupDragAndDrop() {
@@ -1490,19 +1623,19 @@
                         ${field.label}${field.required ? ' *' : ''}
                     </label>
                     <div class="field-actions flex items-center space-x-1">
-                        <button onclick="moveFieldUp('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Monter">
+                        <button onclick="moveFieldUp('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Monter">
                             <i class="ri-arrow-up-line"></i>
                         </button>
-                        <button onclick="moveFieldDown('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Descendre">
+                        <button onclick="moveFieldDown('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Descendre">
                             <i class="ri-arrow-down-line"></i>
                         </button>
-                        <button onclick="duplicateField('${field.id}')" class="text-gray-400 hover:text-green-600 p-1 rounded hover:bg-green-50" title="Dupliquer">
+                        <button onclick="duplicateField('${field.id}')" class="text-gray-400 hover:text-tremor-success-emphasis p-1 rounded hover:bg-tremor-success-faint" title="Dupliquer">
                             <i class="ri-file-copy-line"></i>
                         </button>
-                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Éditer">
+                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Éditer">
                             <i class="ri-edit-line"></i>
                         </button>
-                        <button onclick="deleteField('${field.id}')" class="text-gray-400 hover:text-red-600 p-1 rounded hover:bg-red-50" title="Supprimer">
+                        <button onclick="deleteField('${field.id}')" class="text-gray-400 hover:text-tremor-error-emphasis p-1 rounded hover:bg-tremor-error-faint" title="Supprimer">
                             <i class="ri-delete-bin-line"></i>
                         </button>
                     </div>
@@ -1599,10 +1732,10 @@
                     break;
                 case 'page-break':
                     fieldHTML += `
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                            <i class="ri-page-separator text-blue-600 text-2xl mb-2"></i>
-                            <p class="text-blue-800 font-medium">${field.label}</p>
-                            <p class="text-blue-600 text-sm">Les champs suivants seront sur une nouvelle page</p>
+                        <div class="bg-tremor-brand-faint border border-tremor-brand-muted rounded-lg p-4 text-center">
+                            <i class="ri-page-separator text-tremor-brand-emphasis text-2xl mb-2"></i>
+                            <p class="text-tremor-brand-emphasis font-medium">${field.label}</p>
+                            <p class="text-tremor-brand text-sm">Les champs suivants seront sur une nouvelle page</p>
                             <div class="mt-3 flex justify-center space-x-2">
                                 <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="goToNextPage()">
                                     Suivant <i class="ri-arrow-right-line ml-1"></i>
@@ -1624,7 +1757,7 @@
                 <div class="field-in-row text-left">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         ${field.label}
-                        ${field.required ? '<span class="text-red-500">*</span>' : ''}
+                        ${field.required ? '<span class="text-tremor-error-emphasis">*</span>' : ''}
                     </label>
             `;
             
@@ -1660,10 +1793,10 @@
             
             childHTML += `
                     <div class="mt-2 flex justify-end space-x-1">
-                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50" title="Éditer">
+                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Éditer">
                             <i class="ri-edit-line text-xs"></i>
                         </button>
-                        <button onclick="removeFieldFromRow('${field.id}')" class="text-gray-400 hover:text-red-600 p-1 rounded hover:bg-red-50" title="Retirer">
+                        <button onclick="removeFieldFromRow('${field.id}')" class="text-gray-400 hover:text-tremor-error-emphasis p-1 rounded hover:bg-tremor-error-faint" title="Retirer">
                             <i class="ri-close-line text-xs"></i>
                         </button>
                     </div>
@@ -1745,7 +1878,7 @@
                                 ${field.options.map((option, index) => `
                                     <div class="flex items-center space-x-2">
                                         <input type="text" value="${option}" class="tremor-TextInput flex-1" onchange="updateFieldOption('${fieldId}', ${index}, this.value)">
-                                        <button onclick="removeFieldOption('${fieldId}', ${index})" class="text-red-600 hover:text-red-800">
+                                        <button onclick="removeFieldOption('${fieldId}', ${index})" class="text-tremor-error-emphasis hover:text-tremor-error">
                                             <i class="ri-delete-bin-line"></i>
                                         </button>
                                     </div>
@@ -2105,25 +2238,139 @@
 
         // Sauvegarder le formulaire
         function saveForm() {
+            if (formFields.length === 0) {
+                showToast('Aucun champ à sauvegarder', 'warning');
+                return;
+            }
+
+            // Récupérer titre et description depuis l'interface
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+
             try {
+                // Sauvegarder au format original (compatibilité)
                 localStorage.setItem('formEaseBuilder', JSON.stringify({
                     fields: formFields,
                     timestamp: new Date().toISOString(),
                     version: '2.0'
                 }));
-                
+
+                // Sauvegarder au format dashboard
+                const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                const formData = {
+                    id: Date.now().toString(),
+                    title: title,
+                    description: description,
+                    fields: formFields,
+                    created: new Date().toISOString(),
+                    source: 'normal',
+                    version: '2.0',
+                    views: 0
+                };
+
+                builderForms.push(formData);
+                localStorage.setItem('builderForms', JSON.stringify(builderForms));
+
                 // Feedback visuel amélioré
                 const status = document.getElementById('autoSaveStatus');
                 status.innerHTML = '<i class="ri-check-line mr-1"></i>Sauvegardé';
                 status.className = 'tremor-Badge tremor-Badge-green';
-                
-                // Toast notification
-                showToast('Formulaire sauvegardé avec succès !', 'success');
+
+                // Modal de succès avec options
+                showSaveSuccessModal(formData);
                 
             } catch (error) {
                 console.error('Erreur lors de la sauvegarde:', error);
                 showToast('Erreur lors de la sauvegarde', 'error');
             }
+        }
+
+        // Modal de succès de sauvegarde
+        function showSaveSuccessModal(formData) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex items-center mb-4">
+                        <i class="ri-check-circle-line text-green-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold">Formulaire Sauvegardé !</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Votre formulaire "${formData.title}" a été sauvegardé avec succès.
+                    </p>
+                    <div class="space-y-3">
+                        <button onclick="resetFormBuilder(); closeSaveModal()" class="w-full tremor-Button tremor-Button-primary tremor-Button-md">
+                            <i class="ri-add-line mr-2"></i>
+                            Créer un Nouveau Formulaire
+                        </button>
+                        <button onclick="previewCurrentForm('${formData.id}'); closeSaveModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-eye-line mr-2"></i>
+                            Voir l'Aperçu
+                        </button>
+                        <a href="dashboard-master.html" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md block text-center">
+                            <i class="ri-dashboard-line mr-2"></i>
+                            Aller au Dashboard
+                        </a>
+                        <button onclick="closeSaveModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-close-line mr-2"></i>
+                            Continuer l'Édition
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Fermer la modal de sauvegarde
+        function closeSaveModal() {
+            const modal = document.querySelector('.fixed.inset-0');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Réinitialiser le builder pour un nouveau formulaire
+        function resetFormBuilder() {
+            formFields = [];
+            fieldCounter = 0;
+            selectedFieldId = null;
+            
+            // Vider le canvas
+            const canvas = document.getElementById('formCanvas');
+            canvas.innerHTML = `
+                <div class="empty-state text-center py-16">
+                    <i class="ri-file-add-line text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-500 mb-2">Commencez à créer votre formulaire</h3>
+                    <p class="text-gray-400">Glissez des éléments depuis la sidebar ou utilisez les templates</p>
+                </div>
+            `;
+            
+            // Réinitialiser les champs de titre et description
+            if (document.getElementById('formTitle')) {
+                document.getElementById('formTitle').value = '';
+            }
+            if (document.getElementById('formDescription')) {
+                document.getElementById('formDescription').value = '';
+            }
+            
+            // Vider la sidebar des propriétés
+            const propertiesPanel = document.getElementById('fieldProperties');
+            if (propertiesPanel) {
+                propertiesPanel.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="ri-settings-line text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-gray-400 text-sm">Sélectionnez un champ pour voir ses propriétés</p>
+                    </div>
+                `;
+            }
+            
+            // Mettre à jour le badge de sauvegarde
+            const status = document.getElementById('autoSaveStatus');
+            status.innerHTML = '<i class="ri-save-line mr-1"></i>Nouveau';
+            status.className = 'tremor-Badge tremor-Badge-blue';
+            
+            showToast('Nouveau formulaire créé !', 'success');
         }
 
         // Sauvegarde automatique
@@ -2240,13 +2487,13 @@
             toast.className = `toast-notification fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
             
             if (type === 'success') {
-                toast.className += ' bg-green-500 text-white';
+                toast.className += ' bg-tremor-success-emphasis text-white';
                 toast.innerHTML = `<i class="ri-check-line mr-2"></i>${message}`;
             } else if (type === 'error') {
-                toast.className += ' bg-red-500 text-white';
+                toast.className += ' bg-tremor-error-emphasis text-white';
                 toast.innerHTML = `<i class="ri-error-warning-line mr-2"></i>${message}`;
             } else {
-                toast.className += ' bg-blue-500 text-white';
+                toast.className += ' bg-tremor-brand-emphasis text-white';
                 toast.innerHTML = `<i class="ri-information-line mr-2"></i>${message}`;
             }
 
@@ -2264,36 +2511,144 @@
             }, 3000);
         }
 
-        // Fonction d'export du formulaire
-        function exportForm() {
+        // Fonction de publication et partage du formulaire
+        function publishForm() {
             if (formFields.length === 0) {
-                showToast('Aucun champ à exporter', 'error');
+                showToast('Aucun champ à publier', 'error');
                 return;
             }
 
+            // Récupérer les informations du formulaire
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+
+            // Sauvegarder d'abord le formulaire
+            const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
             const formData = {
-                title: 'Mon Formulaire FormEase',
-                description: 'Formulaire créé avec FormEase Builder',
+                id: Date.now().toString(),
+                title: title,
+                description: description,
                 fields: formFields,
                 created: new Date().toISOString(),
-                version: '2.0'
+                source: 'normal',
+                version: '2.0',
+                views: 0,
+                published: true
             };
 
-            // Créer un blob JSON pour téléchargement
+            builderForms.push(formData);
+            localStorage.setItem('builderForms', JSON.stringify(builderForms));
+
+            // Afficher modal de publication
+            showPublishModal(formData);
+        }
+
+        // Modal de publication avec options de partage
+        function showPublishModal(formData) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            
+            // Générer l'URL de partage et le QR code
+            const shareUrl = `${window.location.origin}/form-preview.html?id=${formData.id}`;
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex items-center mb-4">
+                        <i class="ri-share-circle-line text-green-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold">Formulaire Publié !</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        Votre formulaire "${formData.title}" est maintenant publié et prêt à être partagé.
+                    </p>
+                    
+                    <!-- QR Code -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4 text-center">
+                        <canvas id="publishQrCode" class="mx-auto mb-2"></canvas>
+                        <p class="text-xs text-gray-500">Scannez ce QR code pour accéder au formulaire</p>
+                    </div>
+                    
+                    <!-- URL de partage -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Lien de partage</label>
+                        <div class="flex">
+                            <input type="text" id="shareUrl" value="${shareUrl}" readonly 
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50 text-sm">
+                            <button onclick="copyShareUrl()" class="px-3 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600">
+                                <i class="ri-file-copy-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="resetFormBuilder(); closePublishModal()" class="w-full tremor-Button tremor-Button-primary tremor-Button-md">
+                            <i class="ri-add-line mr-2"></i>
+                            Créer un Nouveau Formulaire
+                        </button>
+                        <button onclick="exportFormJson('${formData.id}')" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-download-line mr-2"></i>
+                            Télécharger JSON
+                        </button>
+                        <a href="dashboard-master.html" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md block text-center">
+                            <i class="ri-dashboard-line mr-2"></i>
+                            Voir dans le Dashboard
+                        </a>
+                        <button onclick="closePublishModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-close-line mr-2"></i>
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Générer le QR code
+            setTimeout(() => {
+                const canvas = document.getElementById('publishQrCode');
+                if (canvas) {
+                    QRCode.toCanvas(canvas, shareUrl, {
+                        width: 150,
+                        height: 150,
+                        margin: 1
+                    });
+                }
+            }, 100);
+        }
+
+        // Fermer la modal de publication
+        function closePublishModal() {
+            const modal = document.querySelector('.fixed.inset-0');
+            if (modal) {
+                modal.remove();
+            }
+            closePreview();
+        }
+
+        // Copier l'URL de partage
+        function copyShareUrl() {
+            const input = document.getElementById('shareUrl');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showToast('Lien copié dans le presse-papiers !', 'success');
+        }
+
+        // Exporter le JSON du formulaire
+        function exportFormJson(formId) {
+            const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+            const formData = builderForms.find(f => f.id === formId);
+            
+            if (!formData) return;
+            
             const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
-            // Créer un lien de téléchargement
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'formulaire-formease.json';
-            document.body.appendChild(a);
+            a.download = `formease-${formData.title.toLowerCase().replace(/\s+/g, '-')}.json`;
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
-            showToast('Formulaire exporté avec succès !', 'success');
-            closePreview();
+            
+            showToast('Fichier JSON téléchargé !', 'success');
         }
 
         // Fonctions de gestion des pages

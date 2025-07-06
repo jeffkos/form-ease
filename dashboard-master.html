@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Principal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#0ea5e9'
+                            },
+                            border: {
+                                DEFAULT: '#e2e8f0',
+                                emphasis: '#cbd5e1'
+                            },
+                            ring: {
+                                DEFAULT: '#0ea5e9'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .tremor-Button-primary {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            padding: 0.75rem 1.5rem;
+        }
+        .tremor-Button-primary:hover {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            transform: translateY(-1px);
+        }
+        .tremor-Button-secondary {
+            background-color: #f8fafc;
+            color: #334155;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .tremor-Button-secondary:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .qr-code {
+            max-width: 80px;
+            max-height: 80px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.8));
+        }
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="ri-dashboard-line text-tremor-brand-emphasis mr-3"></i>
+                        FormEase Dashboard
+                    </h1>
+                    <span class="px-3 py-1 bg-tremor-brand-faint text-tremor-brand-emphasis rounded-full text-sm font-medium">
+                        v2.0
+                    </span>
+                </div>
+                
+                <!-- Actions rapides -->
+                <div class="flex items-center space-x-3">
+                    <a href="form-builder-fixed.html" class="tremor-Button tremor-Button-primary">
+                        <i class="ri-add-line mr-2"></i>
+                        Nouveau Formulaire
+                    </a>
+                    <a href="form-ai-generator.html" class="tremor-Button tremor-Button-secondary">
+                        <i class="ri-robot-line mr-2"></i>
+                        Générateur IA
+                    </a>
+                    <button onclick="refreshData()" class="tremor-Button tremor-Button-secondary">
+                        <i class="ri-refresh-line mr-2"></i>
+                        Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Métriques principales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Formulaires -->
+            <div class="tremor-Card metric-card">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Formulaires</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="totalForms">0</p>
+                            <p class="text-sm text-tremor-success-emphasis mt-1 flex items-center">
+                                <i class="ri-arrow-up-line mr-1"></i>
+                                <span id="formsGrowth">0%</span> ce mois
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-tremor-brand-faint rounded-xl flex items-center justify-center">
+                            <i class="ri-file-list-3-line text-xl text-tremor-brand-emphasis"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulaires IA -->
+            <div class="tremor-Card metric-card">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Générés par IA</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="aiForms">0</p>
+                            <p class="text-sm text-tremor-brand mt-1 flex items-center">
+                                <i class="ri-robot-line mr-1"></i>
+                                <span id="aiPercentage">0%</span> du total
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center">
+                            <i class="ri-magic-line text-xl text-tremor-success-emphasis"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Réponses totales -->
+            <div class="tremor-Card metric-card">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Réponses</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="totalResponses">1,234</p>
+                            <p class="text-sm text-tremor-warning-emphasis mt-1 flex items-center">
+                                <i class="ri-bar-chart-line mr-1"></i>
+                                +12% ce mois
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-tremor-warning-faint rounded-xl flex items-center justify-center">
+                            <i class="ri-user-line text-xl text-tremor-warning-emphasis"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taux de conversion -->
+            <div class="tremor-Card metric-card">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Taux Complétion</p>
+                            <p class="text-3xl font-bold text-tremor-success-emphasis mt-2">87%</p>
+                            <p class="text-sm text-gray-500 mt-1 flex items-center">
+                                <i class="ri-check-line mr-1"></i>
+                                Très bon
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center">
+                            <i class="ri-shield-check-line text-xl text-tremor-success-emphasis"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Graphique de création -->
+            <div class="tremor-Card">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="ri-line-chart-line text-tremor-brand-emphasis mr-2"></i>
+                        Créations de Formulaires
+                    </h3>
+                    <canvas id="creationChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Répartition par type -->
+            <div class="tremor-Card">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="ri-pie-chart-line text-tremor-brand-emphasis mr-2"></i>
+                        Répartition par Type
+                    </h3>
+                    <canvas id="typeChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="tremor-Card mb-8">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="ri-rocket-line text-tremor-brand-emphasis mr-2"></i>
+                    Actions Rapides
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="form-builder-fixed.html" class="flex items-center p-4 bg-gradient-to-r from-tremor-brand-faint to-tremor-brand-muted rounded-lg hover:shadow-lg transition-all">
+                        <i class="ri-add-circle-line text-2xl text-tremor-brand-emphasis mr-3"></i>
+                        <div>
+                            <h4 class="font-medium text-tremor-brand-emphasis">Créer un Formulaire</h4>
+                            <p class="text-sm text-tremor-brand">Builder classique</p>
+                        </div>
+                    </a>
+                    
+                    <a href="form-ai-generator.html" class="flex items-center p-4 bg-gradient-to-r from-tremor-success-faint to-tremor-success-muted rounded-lg hover:shadow-lg transition-all">
+                        <i class="ri-robot-line text-2xl text-tremor-success-emphasis mr-3"></i>
+                        <div>
+                            <h4 class="font-medium text-tremor-success-emphasis">Générateur IA</h4>
+                            <p class="text-sm text-tremor-success">Création automatique</p>
+                        </div>
+                    </a>
+                    
+                    <button onclick="exportAllForms()" class="flex items-center p-4 bg-gradient-to-r from-tremor-warning-faint to-tremor-warning-muted rounded-lg hover:shadow-lg transition-all text-left">
+                        <i class="ri-download-line text-2xl text-tremor-warning-emphasis mr-3"></i>
+                        <div>
+                            <h4 class="font-medium text-tremor-warning-emphasis">Exporter Tout</h4>
+                            <p class="text-sm text-tremor-warning">Sauvegarde complète</p>
+                        </div>
+                    </button>
+                    
+                    <button onclick="showStats()" class="flex items-center p-4 bg-gradient-to-r from-purple-100 to-purple-200 rounded-lg hover:shadow-lg transition-all text-left">
+                        <i class="ri-bar-chart-box-line text-2xl text-purple-600 mr-3"></i>
+                        <div>
+                            <h4 class="font-medium text-purple-600">Statistiques</h4>
+                            <p class="text-sm text-purple-500">Analyses détaillées</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des formulaires -->
+        <div class="tremor-Card">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold flex items-center">
+                        <i class="ri-file-list-line text-tremor-brand-emphasis mr-2"></i>
+                        Mes Formulaires
+                    </h3>
+                    <div class="flex items-center space-x-3">
+                        <select id="filterType" onchange="filterForms()" class="px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="">Tous les types</option>
+                            <option value="normal">Création normale</option>
+                            <option value="ai-generator">Généré par IA</option>
+                        </select>
+                        <input type="text" id="searchForms" placeholder="Rechercher..." onkeyup="searchForms()" class="px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+                
+                <div id="formsContainer" class="space-y-4">
+                    <!-- Les formulaires seront injectés ici -->
+                </div>
+                
+                <div id="noForms" class="text-center py-12 hidden">
+                    <i class="ri-file-list-line text-4xl text-gray-300 mb-4"></i>
+                    <h4 class="text-lg font-medium text-gray-500 mb-2">Aucun formulaire trouvé</h4>
+                    <p class="text-gray-400 mb-6">Commencez par créer votre premier formulaire</p>
+                    <a href="form-builder-fixed.html" class="tremor-Button tremor-Button-primary">
+                        <i class="ri-add-line mr-2"></i>
+                        Créer mon premier formulaire
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let allForms = [];
+        let creationChart, typeChart;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadForms();
+            updateMetrics();
+            initCharts();
+        });
+
+        // Charger tous les formulaires
+        function loadForms() {
+            // Récupérer formulaires normaux
+            const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+            
+            // Récupérer formulaires IA
+            const aiForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+            
+            // Combiner tous les formulaires
+            allForms = [
+                ...builderForms.map(form => ({...form, source: form.source || 'normal'})),
+                ...aiForms.map(form => ({...form, source: form.source || 'ai-generator'}))
+            ];
+            
+            // Trier par date de création (plus récent en premier)
+            allForms.sort((a, b) => new Date(b.created || b.createdAt || 0) - new Date(a.created || a.createdAt || 0));
+            
+            displayForms();
+        }
+
+        // Afficher les formulaires
+        function displayForms() {
+            const container = document.getElementById('formsContainer');
+            const noForms = document.getElementById('noForms');
+            
+            if (allForms.length === 0) {
+                container.classList.add('hidden');
+                noForms.classList.remove('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            noForms.classList.add('hidden');
+            
+            container.innerHTML = allForms.map(form => `
+                <div class="form-item border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all" data-source="${form.source}" data-title="${(form.title || form.name || 'Sans titre').toLowerCase()}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <!-- QR Code -->
+                            <div class="qr-code-container">
+                                <canvas id="qr-${form.id}" class="qr-code"></canvas>
+                            </div>
+                            
+                            <!-- Infos formulaire -->
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    ${form.title || form.name || 'Sans titre'}
+                                    <span class="ml-2 px-2 py-1 text-xs rounded-full ${form.source === 'ai-generator' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                                        ${form.source === 'ai-generator' ? 'IA' : 'Normal'}
+                                    </span>
+                                </h4>
+                                <p class="text-sm text-gray-500 mt-1">${form.description || 'Aucune description'}</p>
+                                <div class="flex items-center text-xs text-gray-400 mt-2 space-x-4">
+                                    <span><i class="ri-calendar-line mr-1"></i>${formatDate(form.created || form.createdAt)}</span>
+                                    <span><i class="ri-input-method-line mr-1"></i>${(form.fields || []).length} champs</span>
+                                    <span><i class="ri-eye-line mr-1"></i>${form.views || 0} vues</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewForm('${form.id}')" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded">
+                                <i class="ri-eye-line mr-1"></i>Aperçu
+                            </button>
+                            <button onclick="editForm('${form.id}')" class="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 rounded">
+                                <i class="ri-edit-line mr-1"></i>Éditer
+                            </button>
+                            <button onclick="duplicateForm('${form.id}')" class="px-3 py-1 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded">
+                                <i class="ri-file-copy-line mr-1"></i>Dupliquer
+                            </button>
+                            <button onclick="deleteForm('${form.id}')" class="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded">
+                                <i class="ri-delete-bin-line mr-1"></i>Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Générer les QR codes
+            setTimeout(() => {
+                allForms.forEach(form => {
+                    generateQRCode(form.id, form.title || form.name || 'Formulaire');
+                });
+            }, 100);
+        }
+
+        // Générer QR Code
+        function generateQRCode(formId, title) {
+            const canvas = document.getElementById(`qr-${formId}`);
+            if (canvas) {
+                const url = `${window.location.origin}/form-preview.html?id=${formId}`;
+                QRCode.toCanvas(canvas, url, {
+                    width: 80,
+                    height: 80,
+                    margin: 1,
+                    color: {
+                        dark: '#334155',
+                        light: '#ffffff'
+                    }
+                });
+            }
+        }
+
+        // Mettre à jour les métriques
+        function updateMetrics() {
+            const totalForms = allForms.length;
+            const aiForms = allForms.filter(f => f.source === 'ai-generator').length;
+            const normalForms = totalForms - aiForms;
+            const aiPercentage = totalForms > 0 ? Math.round((aiForms / totalForms) * 100) : 0;
+            
+            document.getElementById('totalForms').textContent = totalForms;
+            document.getElementById('aiForms').textContent = aiForms;
+            document.getElementById('aiPercentage').textContent = aiPercentage;
+            
+            // Calcul de la croissance (simulation)
+            const growth = totalForms > 0 ? Math.floor(Math.random() * 20) + 5 : 0;
+            document.getElementById('formsGrowth').textContent = growth;
+        }
+
+        // Initialiser les graphiques
+        function initCharts() {
+            // Graphique de création
+            const ctx1 = document.getElementById('creationChart').getContext('2d');
+            creationChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Formulaires créés',
+                        data: [12, 19, 8, 15, 22, 18, allForms.length],
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Graphique de répartition
+            const ctx2 = document.getElementById('typeChart').getContext('2d');
+            const aiForms = allForms.filter(f => f.source === 'ai-generator').length;
+            const normalForms = allForms.length - aiForms;
+            
+            typeChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Création normale', 'Généré par IA'],
+                    datasets: [{
+                        data: [normalForms, aiForms],
+                        backgroundColor: ['#0ea5e9', '#22c55e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fonctions utilitaires
+        function formatDate(dateString) {
+            if (!dateString) return 'Date inconnue';
+            return new Date(dateString).toLocaleDateString('fr-FR');
+        }
+
+        function filterForms() {
+            const filterValue = document.getElementById('filterType').value;
+            const items = document.querySelectorAll('.form-item');
+            
+            items.forEach(item => {
+                if (!filterValue || item.dataset.source === filterValue) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function searchForms() {
+            const searchValue = document.getElementById('searchForms').value.toLowerCase();
+            const items = document.querySelectorAll('.form-item');
+            
+            items.forEach(item => {
+                if (item.dataset.title.includes(searchValue)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Actions sur les formulaires
+        function previewForm(id) {
+            window.open(`form-preview.html?id=${id}`, '_blank');
+        }
+
+        function editForm(id) {
+            const form = allForms.find(f => f.id === id);
+            if (form.source === 'ai-generator') {
+                localStorage.setItem('editForm', JSON.stringify(form));
+                window.location.href = 'form-ai-generator.html?edit=' + id;
+            } else {
+                localStorage.setItem('editForm', JSON.stringify(form));
+                window.location.href = 'form-builder-fixed.html?edit=' + id;
+            }
+        }
+
+        function duplicateForm(id) {
+            const form = allForms.find(f => f.id === id);
+            const duplicate = {
+                ...form,
+                id: Date.now().toString(),
+                title: (form.title || form.name) + ' (Copie)',
+                created: new Date().toISOString()
+            };
+            
+            if (form.source === 'ai-generator') {
+                const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                savedForms.push(duplicate);
+                localStorage.setItem('savedForms', JSON.stringify(savedForms));
+            } else {
+                const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                builderForms.push(duplicate);
+                localStorage.setItem('builderForms', JSON.stringify(builderForms));
+            }
+            
+            refreshData();
+            showNotification('Formulaire dupliqué avec succès !', 'success');
+        }
+
+        function deleteForm(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
+                const form = allForms.find(f => f.id === id);
+                
+                if (form.source === 'ai-generator') {
+                    let savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                    savedForms = savedForms.filter(f => f.id !== id);
+                    localStorage.setItem('savedForms', JSON.stringify(savedForms));
+                } else {
+                    let builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                    builderForms = builderForms.filter(f => f.id !== id);
+                    localStorage.setItem('builderForms', JSON.stringify(builderForms));
+                }
+                
+                refreshData();
+                showNotification('Formulaire supprimé', 'success');
+            }
+        }
+
+        function refreshData() {
+            loadForms();
+            updateMetrics();
+            creationChart.data.datasets[0].data[6] = allForms.length;
+            creationChart.update();
+            
+            const aiForms = allForms.filter(f => f.source === 'ai-generator').length;
+            const normalForms = allForms.length - aiForms;
+            typeChart.data.datasets[0].data = [normalForms, aiForms];
+            typeChart.update();
+        }
+
+        function exportAllForms() {
+            const data = {
+                forms: allForms,
+                exported: new Date().toISOString(),
+                total: allForms.length
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `formease-export-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Export terminé !', 'success');
+        }
+
+        function showStats() {
+            alert('Fonctionnalité de statistiques détaillées à venir !');
+        }
+
+        // Système de notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+            
+            switch (type) {
+                case 'success':
+                    notification.classList.add('bg-green-500', 'text-white');
+                    break;
+                case 'error':
+                    notification.classList.add('bg-red-500', 'text-white');
+                    break;
+                default:
+                    notification.classList.add('bg-blue-500', 'text-white');
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-check-line mr-2"></i>
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Principal</title>
+    
+    <!-- Tremor React CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- Tremor Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: "#eff6ff",
+                                muted: "#bfdbfe", 
+                                subtle: "#60a5fa",
+                                DEFAULT: "#3b82f6",
+                                emphasis: "#1d4ed8",
+                                inverted: "#ffffff",
+                            },
+                            background: {
+                                muted: "#f9fafb",
+                                subtle: "#f3f4f6", 
+                                DEFAULT: "#ffffff",
+                                emphasis: "#374151",
+                            },
+                            border: {
+                                DEFAULT: "#e5e7eb",
+                                emphasis: "#d1d5db",
+                            },
+                            content: {
+                                subtle: "#9ca3af",
+                                DEFAULT: "#6b7280", 
+                                emphasis: "#374151",
+                                strong: "#111827",
+                                inverted: "#ffffff",
+                            },
+                            ring: {
+                                DEFAULT: "#e5e7eb",
+                            }
+                        }
+                    },
+                    borderRadius: {
+                        "tremor-small": "0.375rem",
+                        "tremor-default": "0.5rem",
+                        "tremor-full": "9999px",
+                    },
+                    fontSize: {
+                        "tremor-label": ["0.75rem", { lineHeight: "1rem" }],
+                        "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
+                        "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
+                        "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
+                    },
+                    boxShadow: {
+                        "tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+                        "tremor-card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+                        "tremor-dropdown": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                    },
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        /* Tremor Typography Classes */
+        .tremor-metric { 
+            font-size: 1.875rem; 
+            line-height: 2.25rem; 
+            font-weight: 700; 
+            color: #111827;
+        }
+        .tremor-title { 
+            font-size: 1.125rem; 
+            line-height: 1.75rem; 
+            font-weight: 600; 
+            color: #374151;
+        }
+        .tremor-label { 
+            font-size: 0.75rem; 
+            line-height: 1rem; 
+            font-weight: 500; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+        }
+        .tremor-default { 
+            font-size: 0.875rem; 
+            line-height: 1.25rem; 
+            color: #374151;
+        }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Boutons avec effets de ripple */
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple-effect:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .ripple-effect:active:before {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Tremor Components
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white rounded-tremor-default shadow-tremor-card border border-tremor-border p-6 ${className}`}>
+                {children}
+            </div>
+        );
+
+        const Title = ({ children, className = "" }) => (
+            <h3 className={`tremor-title text-tremor-content-strong ${className}`}>{children}</h3>
+        );
+
+        const Text = ({ children, className = "" }) => (
+            <p className={`tremor-default text-tremor-content ${className}`}>{children}</p>
+        );
+
+        const Metric = ({ children, className = "" }) => (
+            <p className={`tremor-metric text-tremor-content-strong ${className}`}>{children}</p>
+        );
+
+        const Badge = ({ children, color = "blue", className = "" }) => {
+            const colors = {
+                blue: "bg-blue-100 text-blue-800",
+                green: "bg-green-100 text-green-800", 
+                red: "bg-red-100 text-red-800",
+                gray: "bg-gray-100 text-gray-800"
+            };
+            return (
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-tremor-full text-xs font-medium ${colors[color]} ${className}`}>
+                    {children}
+                </span>
+            );
+        };
+
+        const Button = ({ children, onClick, variant = "primary", size = "sm", className = "", icon, ...props }) => {
+            const baseClasses = "inline-flex items-center justify-center rounded-tremor-default font-medium transition-colors focus:ring-2 focus:ring-blue-500 ripple-effect";
+            const variants = {
+                primary: "bg-tremor-brand text-tremor-brand-inverted hover:bg-tremor-brand-emphasis",
+                secondary: "bg-tremor-background-muted text-tremor-content-emphasis hover:bg-tremor-background-subtle border border-tremor-border",
+                ghost: "bg-transparent text-tremor-content-emphasis hover:bg-tremor-background-muted"
+            };
+            const sizes = {
+                sm: "px-3 py-2 text-sm",
+                md: "px-4 py-2 text-sm",
+                lg: "px-6 py-3 text-base"
+            };
+            
+            return (
+                <button
+                    onClick={onClick}
+                    className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+                    {...props}
+                >
+                    {icon && <i className={`${icon} mr-2`}></i>}
+                    {children}
+                </button>
+            );
+        };
+
+        const TextInput = ({ placeholder, value, onChange, className = "", ...props }) => (
+            <input
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                className={`flex w-full rounded-tremor-default bg-tremor-background border border-tremor-border px-3 py-2 text-tremor-default text-tremor-content-emphasis placeholder-tremor-content-subtle focus:border-tremor-brand focus:ring-1 focus:ring-tremor-brand shadow-tremor-input ${className}`}
+                {...props}
+            />
+        );
+
+        const Select = ({ value, onChange, children, className = "" }) => (
+            <select
+                value={value}
+                onChange={onChange}
+                className={`flex w-full rounded-tremor-default bg-tremor-background border border-tremor-border px-3 py-2 text-tremor-default text-tremor-content-emphasis focus:border-tremor-brand focus:ring-1 focus:ring-tremor-brand shadow-tremor-input ${className}`}
+            >
+                {children}
+            </select>
+        );
+
+        // Tremor Chart Components (légers)
+        const DonutChart = ({ data, category, index, colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"] }) => {
+            const total = data.reduce((sum, item) => sum + item[category], 0);
+            let cumulativePercentage = 0;
+            
+            return (
+                <div className="relative w-full h-64 flex items-center justify-center">
+                    <svg className="w-48 h-48 transform -rotate-90">
+                        <circle
+                            cx="96"
+                            cy="96"
+                            r="80"
+                            fill="none"
+                            stroke="#f3f4f6"
+                            strokeWidth="16"
+                        />
+                        {data.map((item, idx) => {
+                            const percentage = (item[category] / total) * 100;
+                            const strokeDasharray = `${percentage * 5.02} 502`;
+                            const strokeDashoffset = -cumulativePercentage * 5.02;
+                            cumulativePercentage += percentage;
+                            
+                            return (
+                                <circle
+                                    key={idx}
+                                    cx="96"
+                                    cy="96"
+                                    r="80"
+                                    fill="none"
+                                    stroke={colors[idx % colors.length]}
+                                    strokeWidth="16"
+                                    strokeDasharray={strokeDasharray}
+                                    strokeDashoffset={strokeDashoffset}
+                                    strokeLinecap="round"
+                                />
+                            );
+                        })}
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-tremor-content-strong">{total}</div>
+                            <div className="text-sm text-tremor-content">Total</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ComboChart = ({ data, categories, index, colors = ["#3b82f6", "#10b981"] }) => {
+            const maxValue = Math.max(...data.map(item => Math.max(...categories.map(cat => item[cat] || 0))));
+            
+            return (
+                <div className="w-full h-64">
+                    <svg className="w-full h-full" viewBox="0 0 400 200">
+                        {/* Grid lines */}
+                        {[0, 1, 2, 3, 4].map(i => (
+                            <line
+                                key={i}
+                                x1="40"
+                                y1={40 + i * 32}
+                                x2="380"
+                                y2={40 + i * 32}
+                                stroke="#e5e7eb"
+                                strokeWidth="1"
+                            />
+                        ))}
+                        
+                        {/* Bars */}
+                        {data.map((item, idx) => {
+                            const x = 60 + idx * (320 / data.length);
+                            const barWidth = (320 / data.length) * 0.6;
+                            
+                            return categories.map((category, catIdx) => {
+                                const value = item[category] || 0;
+                                const height = (value / maxValue) * 120;
+                                const barX = x + (catIdx * barWidth / categories.length);
+                                const barWidthSingle = barWidth / categories.length * 0.8;
+                                
+                                return (
+                                    <rect
+                                        key={`${idx}-${catIdx}`}
+                                        x={barX}
+                                        y={160 - height}
+                                        width={barWidthSingle}
+                                        height={height}
+                                        fill={colors[catIdx % colors.length]}
+                                        rx="2"
+                                    />
+                                );
+                            });
+                        })}
+                        
+                        {/* X-axis labels */}
+                        {data.map((item, idx) => (
+                            <text
+                                key={idx}
+                                x={60 + idx * (320 / data.length) + (320 / data.length) * 0.3}
+                                y="185"
+                                textAnchor="middle"
+                                className="fill-tremor-content text-xs"
+                            >
+                                {item[index]}
+                            </text>
+                        ))}
+                    </svg>
+                </div>
+            );
+        };
+
+        const AreaChart = ({ data, categories, index, colors = ["#3b82f6"] }) => {
+            const maxValue = Math.max(...data.map(item => Math.max(...categories.map(cat => item[cat] || 0))));
+            const points = data.map((item, idx) => {
+                const x = 40 + idx * (320 / (data.length - 1));
+                const y = 160 - ((item[categories[0]] || 0) / maxValue) * 120;
+                return `${x},${y}`;
+            }).join(' ');
+            
+            const areaPoints = `40,160 ${points} ${40 + (data.length - 1) * (320 / (data.length - 1))},160`;
+            
+            return (
+                <div className="w-full h-64">
+                    <svg className="w-full h-full" viewBox="0 0 400 200">
+                        {/* Grid */}
+                        {[0, 1, 2, 3, 4].map(i => (
+                            <line
+                                key={i}
+                                x1="40"
+                                y1={40 + i * 32}
+                                x2="360"
+                                y2={40 + i * 32}
+                                stroke="#e5e7eb"
+                                strokeWidth="1"
+                            />
+                        ))}
+                        
+                        {/* Area */}
+                        <polygon
+                            points={areaPoints}
+                            fill={`${colors[0]}20`}
+                            stroke="none"
+                        />
+                        
+                        {/* Line */}
+                        <polyline
+                            points={points}
+                            fill="none"
+                            stroke={colors[0]}
+                            strokeWidth="3"
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                        />
+                        
+                        {/* Points */}
+                        {data.map((item, idx) => {
+                            const x = 40 + idx * (320 / (data.length - 1));
+                            const y = 160 - ((item[categories[0]] || 0) / maxValue) * 120;
+                            return (
+                                <circle
+                                    key={idx}
+                                    cx={x}
+                                    cy={y}
+                                    r="4"
+                                    fill={colors[0]}
+                                    stroke="#ffffff"
+                                    strokeWidth="2"
+                                />
+                            );
+                        })}
+                        
+                        {/* X-axis labels */}
+                        {data.map((item, idx) => (
+                            <text
+                                key={idx}
+                                x={40 + idx * (320 / (data.length - 1))}
+                                y="185"
+                                textAnchor="middle"
+                                className="fill-tremor-content text-xs"
+                            >
+                                {item[index]}
+                            </text>
+                        ))}
+                    </svg>
+                </div>
+            );
+        };
+
+        const Legend = ({ categories, colors }) => (
+            <div className="flex flex-wrap gap-4 justify-center mt-4">
+                {categories.map((category, idx) => (
+                    <div key={category} className="flex items-center">
+                        <div 
+                            className="w-3 h-3 rounded-full mr-2" 
+                            style={{backgroundColor: colors[idx % colors.length]}}
+                        ></div>
+                        <span className="text-sm text-tremor-content">{category}</span>
+                    </div>
+                ))}
+            </div>
+        );
+
+        // Fonction pour préparer les données des graphiques
+        const prepareChartData = (forms) => {
+            const aiCount = forms.filter(f => f.source === 'ai-generator').length;
+            const normalCount = forms.length - aiCount;
+            
+            // Données pour le donut chart
+            const distributionData = [
+                { name: 'Formulaires IA', value: aiCount },
+                { name: 'Formulaires Classiques', value: normalCount }
+            ];
+            
+            // Données pour l'activité des 7 derniers jours
+            const activityData = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' });
+                
+                const formsOnDate = forms.filter(form => {
+                    const formDate = new Date(form.created || form.createdAt);
+                    return formDate.toISOString().split('T')[0] === dateStr;
+                }).length;
+                
+                activityData.push({
+                    day: dayName,
+                    normal: Math.floor(formsOnDate * 0.6) || Math.floor(Math.random() * 3),
+                    ai: Math.ceil(formsOnDate * 0.4) || Math.floor(Math.random() * 2)
+                });
+            }
+            
+            return { distributionData, activityData };
+        };
+
+        // Main Dashboard Component
+        const Dashboard = () => {
+            const [forms, setForms] = useState([]);
+            const [filteredForms, setFilteredForms] = useState([]);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [filterType, setFilterType] = useState('all');
+            const [currentPage, setCurrentPage] = useState(1);
+            const [chartData, setChartData] = useState({ distributionData: [], activityData: [] });
+            const itemsPerPage = 5;
+            
+            const [metrics, setMetrics] = useState({
+                totalForms: 0,
+                aiForms: 0,
+                normalForms: 0,
+                aiPercentage: 0,
+                conversionRate: 65
+            });
+
+            // Load data from localStorage
+            useEffect(() => {
+                loadFormsData();
+            }, []);
+
+            // Filter forms based on search and type
+            useEffect(() => {
+                let filtered = forms;
+                
+                // Filter by type
+                if (filterType !== 'all') {
+                    filtered = filtered.filter(form => form.source === filterType);
+                }
+                
+                // Filter by search term
+                if (searchTerm) {
+                    filtered = filtered.filter(form => 
+                        (form.title || form.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (form.description || '').toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                }
+                
+                setFilteredForms(filtered);
+                setCurrentPage(1); // Reset to first page when filtering
+            }, [forms, searchTerm, filterType]);
+
+            // Pagination logic
+            const totalPages = Math.ceil(filteredForms.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentForms = filteredForms.slice(startIndex, endIndex);
+
+            const goToPage = (page) => {
+                setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+            };
+
+            const loadFormsData = () => {
+                // Récupérer formulaires normaux
+                const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                
+                // Récupérer formulaires IA
+                const aiForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                
+                // Ajouter des données de test si aucun formulaire n'existe
+                if (builderForms.length === 0 && aiForms.length === 0) {
+                    const testForms = [
+                        {
+                            id: 'test_1',
+                            title: 'Formulaire de Contact',
+                            description: 'Formulaire de contact client standard',
+                            source: 'normal',
+                            fields: [
+                                { label: 'Nom', type: 'text' },
+                                { label: 'Email', type: 'email' },
+                                { label: 'Message', type: 'textarea' }
+                            ],
+                            created: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                            views: 45
+                        },
+                        {
+                            id: 'test_2',
+                            title: 'Enquête de Satisfaction',
+                            description: 'Collecte des avis clients sur nos services',
+                            source: 'ai-generator',
+                            fields: [
+                                { label: 'Note', type: 'number' },
+                                { label: 'Commentaires', type: 'textarea' },
+                                { label: 'Recommanderiez-vous ?', type: 'select' }
+                            ],
+                            created: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                            views: 78
+                        },
+                        {
+                            id: 'test_3',
+                            title: 'Inscription Newsletter',
+                            description: 'Abonnement à notre newsletter hebdomadaire',
+                            source: 'normal',
+                            fields: [
+                                { label: 'Email', type: 'email' },
+                                { label: 'Préférences', type: 'checkbox' }
+                            ],
+                            created: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                            views: 123
+                        },
+                        {
+                            id: 'test_4',
+                            title: 'Demande de Devis',
+                            description: 'Formulaire pour demandes de devis personnalisées',
+                            source: 'ai-generator',
+                            fields: [
+                                { label: 'Entreprise', type: 'text' },
+                                { label: 'Budget', type: 'select' },
+                                { label: 'Description du projet', type: 'textarea' }
+                            ],
+                            created: new Date().toISOString(),
+                            views: 12
+                        },
+                        {
+                            id: 'test_5',
+                            title: 'Candidature Emploi',
+                            description: 'Formulaire de candidature pour postes ouverts',
+                            source: 'normal',
+                            fields: [
+                                { label: 'CV', type: 'file' },
+                                { label: 'Lettre de motivation', type: 'textarea' },
+                                { label: 'Disponibilité', type: 'date' }
+                            ],
+                            created: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                            views: 67
+                        },
+                        {
+                            id: 'test_6',
+                            title: 'Réservation Événement',
+                            description: 'Inscription aux événements de l\'entreprise',
+                            source: 'ai-generator',
+                            fields: [
+                                { label: 'Nom complet', type: 'text' },
+                                { label: 'Nombre de participants', type: 'number' },
+                                { label: 'Régime alimentaire', type: 'select' }
+                            ],
+                            created: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+                            views: 89
+                        },
+                        {
+                            id: 'test_7',
+                            title: 'Support Technique',
+                            description: 'Signalement de problèmes techniques',
+                            source: 'normal',
+                            fields: [
+                                { label: 'Type de problème', type: 'select' },
+                                { label: 'Description', type: 'textarea' },
+                                { label: 'Urgence', type: 'radio' }
+                            ],
+                            created: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+                            views: 34
+                        }
+                    ];
+                    
+                    // Sauvegarder les formulaires de test
+                    const testNormalForms = testForms.filter(f => f.source === 'normal');
+                    const testAiForms = testForms.filter(f => f.source === 'ai-generator');
+                    
+                    localStorage.setItem('builderForms', JSON.stringify(testNormalForms));
+                    localStorage.setItem('savedForms', JSON.stringify(testAiForms));
+                }
+                
+                // Récupérer toutes les données (incluant les données de test)
+                const finalBuilderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                const finalAiForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                
+                // Combiner tous les formulaires
+                const allForms = [
+                    ...finalBuilderForms.map(form => ({...form, source: form.source || 'normal'})),
+                    ...finalAiForms.map(form => ({...form, source: form.source || 'ai-generator'}))
+                ];
+                
+                // Trier par date de création (plus récent en premier)
+                allForms.sort((a, b) => new Date(b.created || b.createdAt || 0) - new Date(a.created || a.createdAt || 0));
+                
+                setForms(allForms);
+                setFilteredForms(allForms);
+                
+                // Calculer métriques
+                const totalForms = allForms.length;
+                const aiFormsCount = allForms.filter(f => f.source === 'ai-generator').length;
+                const normalFormsCount = totalForms - aiFormsCount;
+                const aiPercentage = totalForms > 0 ? Math.round((aiFormsCount / totalForms) * 100) : 0;
+                
+                // Calculer taux de conversion simulé basé sur les données réelles
+                const baseConversion = 65;
+                const aiBonus = aiFormsCount > 0 ? Math.min(15, aiFormsCount * 2) : 0;
+                const conversionRate = Math.min(95, baseConversion + aiBonus + Math.floor(Math.random() * 10));
+                
+                setMetrics({
+                    totalForms,
+                    aiForms: aiFormsCount,
+                    normalForms: normalFormsCount,
+                    aiPercentage,
+                    conversionRate
+                });
+                
+                // Mettre à jour les graphiques
+                const newChartData = prepareChartData(allForms);
+                setChartData(newChartData);
+            };
+
+            const handleEditForm = (form) => {
+                if (form.source === 'ai-generator') {
+                    localStorage.setItem('editForm', JSON.stringify(form));
+                    window.location.href = 'form-ai-generator.html?edit=' + form.id;
+                } else {
+                    localStorage.setItem('editForm', JSON.stringify(form));
+                    window.location.href = 'form-builder-fixed.html?edit=' + form.id;
+                }
+            };
+
+            const handleDeleteForm = (formId) => {
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
+                    const form = forms.find(f => f.id === formId);
+                    
+                    if (form.source === 'ai-generator') {
+                        let savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                        savedForms = savedForms.filter(f => f.id !== formId);
+                        localStorage.setItem('savedForms', JSON.stringify(savedForms));
+                    } else {
+                        let builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                        builderForms = builderForms.filter(f => f.id !== formId);
+                        localStorage.setItem('builderForms', JSON.stringify(builderForms));
+                    }
+                    
+                    loadFormsData();
+                    showNotification('Formulaire supprimé', 'success');
+                }
+            };
+
+            const showNotification = (message, type) => {
+                // Simple notification
+                alert(message);
+            };
+
+            const formatDate = (dateString) => {
+                if (!dateString) return 'Date inconnue';
+                return new Date(dateString).toLocaleDateString('fr-FR');
+            };
+
+            const handlePreviewForm = (form) => {
+                // Créer une prévisualisation du formulaire
+                const previewWindow = window.open('', '_blank', 'width=800,height=600');
+                const formUrl = `${window.location.origin}/${form.source === 'ai-generator' ? 'form-ai-generator.html' : 'form-builder-fixed.html'}?preview=${form.id}`;
+                
+                previewWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Aperçu - ${form.title || form.name || 'Sans titre'}</title>
+                            <style>
+                                body { font-family: system-ui, -apple-system, sans-serif; margin: 20px; background: #f9fafb; }
+                                .preview-header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                                .preview-content { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+                                .field { margin-bottom: 15px; }
+                                .field label { display: block; font-weight: 500; margin-bottom: 5px; color: #374151; }
+                                .field input, .field textarea, .field select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; }
+                                .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+                                .badge.ai { background: #dcfce7; color: #166534; }
+                                .badge.normal { background: #dbeafe; color: #1e40af; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="preview-header">
+                                <h1>${form.title || form.name || 'Sans titre'}</h1>
+                                <p>${form.description || 'Aucune description'}</p>
+                                <span class="badge ${form.source === 'ai-generator' ? 'ai' : 'normal'}">
+                                    ${form.source === 'ai-generator' ? 'Généré par IA' : 'Création classique'}
+                                </span>
+                            </div>
+                            <div class="preview-content">
+                                <h3>Champs du formulaire (${(form.fields || []).length} champs):</h3>
+                                ${(form.fields || []).map(field => `
+                                    <div class="field">
+                                        <label>${field.label || field.name || 'Champ sans nom'}</label>
+                                        ${field.type === 'textarea' ? '<textarea placeholder="Saisie..."></textarea>' :
+                                          field.type === 'select' ? '<select><option>Sélectionner...</option></select>' :
+                                          `<input type="${field.type || 'text'}" placeholder="Saisie...">`}
+                                    </div>
+                                `).join('')}
+                                <button style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 6px; margin-top: 20px;">
+                                    Soumettre le formulaire
+                                </button>
+                            </div>
+                        </body>
+                    </html>
+                `);
+                previewWindow.document.close();
+            };
+
+            const handleGenerateQR = (form) => {
+                const formUrl = `${window.location.origin}/${form.source === 'ai-generator' ? 'form-ai-generator.html' : 'form-builder-fixed.html'}?form=${form.id}`;
+                
+                // Créer modal QR
+                const qrModal = document.createElement('div');
+                qrModal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000;
+                `;
+                
+                qrModal.innerHTML = `
+                    <div style="background: white; padding: 30px; border-radius: 12px; text-align: center; max-width: 400px;">
+                        <h3 style="margin: 0 0 20px 0; color: #374151;">QR Code - ${form.title || form.name || 'Sans titre'}</h3>
+                        <div id="qrcode" style="margin: 20px 0;"></div>
+                        <p style="color: #6b7280; margin: 10px 0; font-size: 14px;">Scannez ce code pour accéder au formulaire</p>
+                        <button onclick="this.closest('div').remove()" 
+                                style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; margin-top: 15px;">
+                            Fermer
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(qrModal);
+                
+                // Générer QR Code
+                QRCode.toCanvas(qrModal.querySelector('#qrcode'), formUrl, {
+                    width: 200,
+                    height: 200,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff'
+                });
+                
+                // Fermer modal en cliquant sur le fond
+                qrModal.addEventListener('click', (e) => {
+                    if (e.target === qrModal) {
+                        qrModal.remove();
+                    }
+                });
+            };
+
+            const handleDuplicateForm = (form) => {
+                if (confirm(`Dupliquer le formulaire "${form.title || form.name || 'Sans titre'}" ?`)) {
+                    const duplicatedForm = {
+                        ...form,
+                        id: 'form_' + Date.now(),
+                        title: (form.title || form.name || 'Sans titre') + ' (Copie)',
+                        name: (form.title || form.name || 'Sans titre') + ' (Copie)',
+                        created: new Date().toISOString(),
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    if (form.source === 'ai-generator') {
+                        const savedForms = JSON.parse(localStorage.getItem('savedForms') || '[]');
+                        savedForms.push(duplicatedForm);
+                        localStorage.setItem('savedForms', JSON.stringify(savedForms));
+                    } else {
+                        const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                        builderForms.push(duplicatedForm);
+                        localStorage.setItem('builderForms', JSON.stringify(builderForms));
+                    }
+                    
+                    loadFormsData();
+                    showMessage('Formulaire dupliqué avec succès !');
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-tremor-background-muted">
+                    {/* Header */}
+                    <header className="bg-tremor-background border-b border-tremor-border sticky top-0 z-40">
+                        <div className="max-w-7xl mx-auto px-4 py-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                    <Title className="text-xl flex items-center">
+                                        <i className="ri-dashboard-line text-tremor-brand mr-3"></i>
+                                        FormEase Dashboard
+                                    </Title>
+                                    <Badge color="blue">v2.0</Badge>
+                                </div>
+                                
+                                <div className="flex items-center space-x-3">
+                                    <Button 
+                                        variant="primary" 
+                                        icon="ri-add-line"
+                                        onClick={() => window.location.href = 'form-builder-fixed.html'}
+                                    >
+                                        Nouveau Formulaire
+                                    </Button>
+                                    <Button 
+                                        variant="secondary"
+                                        icon="ri-robot-line"
+                                        onClick={() => window.location.href = 'form-ai-generator.html'}
+                                    >
+                                        Générateur IA
+                                    </Button>
+                                    <Button 
+                                        variant="ghost"
+                                        icon="ri-refresh-line"
+                                        onClick={loadFormsData}
+                                    >
+                                        Actualiser
+                                    </Button>
+                                    <Button 
+                                        variant="ghost"
+                                        icon="ri-delete-bin-line"
+                                        onClick={() => {
+                                            if (confirm('Supprimer tous les formulaires de test ?')) {
+                                                localStorage.removeItem('builderForms');
+                                                localStorage.removeItem('savedForms');
+                                                loadFormsData();
+                                            }
+                                        }}
+                                        className="text-red-600 hover:text-red-700"
+                                    >
+                                        Effacer test
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="max-w-7xl mx-auto px-4 py-8">
+                        {/* Métriques */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <Card>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <Text className="tremor-label">Total Formulaires</Text>
+                                        <Metric>{metrics.totalForms}</Metric>
+                                        <Text className="text-tremor-brand flex items-center mt-1">
+                                            <i className="ri-arrow-up-line mr-1"></i>
+                                            +5% ce mois
+                                        </Text>
+                                    </div>
+                                    <div className="w-12 h-12 bg-tremor-brand-faint rounded-tremor-default flex items-center justify-center">
+                                        <i className="ri-file-list-3-line text-xl text-tremor-brand"></i>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <Text className="tremor-label">Générés par IA</Text>
+                                        <Metric>{metrics.aiForms}</Metric>
+                                        <Text className="text-tremor-content flex items-center mt-1">
+                                            <i className="ri-robot-line mr-1"></i>
+                                            {metrics.aiPercentage}% du total
+                                        </Text>
+                                    </div>
+                                    <div className="w-12 h-12 bg-green-100 rounded-tremor-default flex items-center justify-center">
+                                        <i className="ri-magic-line text-xl text-green-600"></i>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <Text className="tremor-label">Réponses</Text>
+                                        <Metric>1,234</Metric>
+                                        <Text className="text-orange-600 flex items-center mt-1">
+                                            <i className="ri-bar-chart-line mr-1"></i>
+                                            +12% ce mois
+                                        </Text>
+                                    </div>
+                                    <div className="w-12 h-12 bg-orange-100 rounded-tremor-default flex items-center justify-center">
+                                        <i className="ri-user-line text-xl text-orange-600"></i>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <Card>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <Text className="tremor-label">Taux Complétion</Text>
+                                        <Metric className="text-green-600">{metrics.conversionRate}%</Metric>
+                                        <Text className="text-tremor-content flex items-center mt-1">
+                                            <i className="ri-check-line mr-1"></i>
+                                            {metrics.conversionRate >= 80 ? 'Excellent' : metrics.conversionRate >= 65 ? 'Très bon' : 'Bon'}
+                                        </Text>
+                                    </div>
+                                    <div className="w-12 h-12 bg-green-100 rounded-tremor-default flex items-center justify-center">
+                                        <i className="ri-shield-check-line text-xl text-green-600"></i>
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
+
+                        {/* Charts Section */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <Card>
+                                <div className="mb-4">
+                                    <Title>Répartition des Formulaires</Title>
+                                    <Text>Types de formulaires créés</Text>
+                                </div>
+                                <DonutChart 
+                                    data={chartData.distributionData}
+                                    category="value"
+                                    index="name"
+                                    colors={["#10b981", "#3b82f6"]}
+                                />
+                                <Legend 
+                                    categories={chartData.distributionData.map(d => d.name)}
+                                    colors={["#10b981", "#3b82f6"]}
+                                />
+                            </Card>
+
+                            <Card>
+                                <div className="mb-4">
+                                    <Title>Activité des 7 derniers jours</Title>
+                                    <Text>Formulaires créés par jour</Text>
+                                </div>
+                                <ComboChart 
+                                    data={chartData.activityData}
+                                    categories={["normal", "ai"]}
+                                    index="day"
+                                    colors={["#3b82f6", "#10b981"]}
+                                />
+                                <Legend 
+                                    categories={["Formulaires Classiques", "Formulaires IA"]}
+                                    colors={["#3b82f6", "#10b981"]}
+                                />
+                            </Card>
+                        </div>
+
+                        {/* Actions Rapides */}
+                        <Card className="mb-8">
+                            <Title className="mb-4 flex items-center">
+                                <i className="ri-rocket-line text-tremor-brand mr-2"></i>
+                                Actions Rapides
+                            </Title>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="flex items-center p-4 bg-tremor-brand-faint rounded-tremor-default hover:bg-tremor-brand-muted transition-colors cursor-pointer"
+                                     onClick={() => window.location.href = 'form-builder-fixed.html'}>
+                                    <i className="ri-add-circle-line text-2xl text-tremor-brand mr-3"></i>
+                                    <div>
+                                        <Text className="font-medium text-tremor-brand-emphasis">Créer un Formulaire</Text>
+                                        <Text className="text-sm text-tremor-content">Builder classique</Text>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center p-4 bg-green-50 rounded-tremor-default hover:bg-green-100 transition-colors cursor-pointer"
+                                     onClick={() => window.location.href = 'form-ai-generator.html'}>
+                                    <i className="ri-robot-line text-2xl text-green-600 mr-3"></i>
+                                    <div>
+                                        <Text className="font-medium text-green-700">Générateur IA</Text>
+                                        <Text className="text-sm text-green-600">Création automatique</Text>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center p-4 bg-orange-50 rounded-tremor-default hover:bg-orange-100 transition-colors cursor-pointer">
+                                    <i className="ri-download-line text-2xl text-orange-600 mr-3"></i>
+                                    <div>
+                                        <Text className="font-medium text-orange-700">Exporter Tout</Text>
+                                        <Text className="text-sm text-orange-600">Sauvegarde complète</Text>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center p-4 bg-purple-50 rounded-tremor-default hover:bg-purple-100 transition-colors cursor-pointer">
+                                    <i className="ri-bar-chart-box-line text-2xl text-purple-600 mr-3"></i>
+                                    <div>
+                                        <Text className="font-medium text-purple-700">Statistiques</Text>
+                                        <Text className="text-sm text-purple-600">Analyses détaillées</Text>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+
+                        {/* Liste des Formulaires */}
+                        <Card>
+                            <div className="flex items-center justify-between mb-6">
+                                <Title className="flex items-center">
+                                    <i className="ri-file-list-line text-tremor-brand mr-2"></i>
+                                    Mes Formulaires
+                                </Title>
+                                <div className="flex items-center space-x-3">
+                                    <Select 
+                                        value={filterType} 
+                                        onChange={(e) => setFilterType(e.target.value)}
+                                        className="w-48"
+                                    >
+                                        <option value="all">Tous les types</option>
+                                        <option value="normal">Création normale</option>
+                                        <option value="ai-generator">Généré par IA</option>
+                                    </Select>
+                                    <TextInput 
+                                        placeholder="Rechercher..." 
+                                        className="w-64"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    <Badge color="gray">{filteredForms.length} résultat{filteredForms.length !== 1 ? 's' : ''}</Badge>
+                                </div>
+                            </div>
+                            
+                            {filteredForms.length === 0 ? (
+                                forms.length === 0 ? (
+                                    <div className="text-center py-12">
+                                        <i className="ri-file-list-line text-4xl text-tremor-content-subtle mb-4"></i>
+                                        <Title className="text-tremor-content-subtle mb-2">Aucun formulaire trouvé</Title>
+                                        <Text className="text-tremor-content-subtle mb-6">Commencez par créer votre premier formulaire</Text>
+                                        <Button variant="primary" icon="ri-add-line" onClick={() => window.location.href = 'form-builder-fixed.html'}>
+                                            Créer mon premier formulaire
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12">
+                                        <i className="ri-search-line text-4xl text-tremor-content-subtle mb-4"></i>
+                                        <Title className="text-tremor-content-subtle mb-2">Aucun résultat trouvé</Title>
+                                        <Text className="text-tremor-content-subtle mb-6">Essayez de modifier vos critères de recherche</Text>
+                                        <Button variant="secondary" icon="ri-refresh-line" onClick={() => { setSearchTerm(''); setFilterType('all'); }}>
+                                            Réinitialiser les filtres
+                                        </Button>
+                                    </div>
+                                )
+                            ) : (
+                                <div className="space-y-4">
+                                    {currentForms.map(form => (
+                                        <div key={form.id} className="border border-tremor-border rounded-tremor-default p-4 hover:shadow-tremor-card transition-shadow">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="w-16 h-16 bg-tremor-background-subtle rounded-tremor-default flex items-center justify-center">
+                                                        <i className="ri-qr-code-line text-2xl text-tremor-content"></i>
+                                                    </div>
+                                                    
+                                                    <div>
+                                                        <div className="flex items-center space-x-2 mb-1">
+                                                            <Title className="text-base">{form.title || form.name || 'Sans titre'}</Title>
+                                                            <Badge color={form.source === 'ai-generator' ? 'green' : 'blue'}>
+                                                                {form.source === 'ai-generator' ? 'IA' : 'Normal'}
+                                                            </Badge>
+                                                        </div>
+                                                        <Text className="text-sm mb-2">{form.description || 'Aucune description'}</Text>
+                                                        <div className="flex items-center text-xs text-tremor-content-subtle space-x-4">
+                                                            <span className="flex items-center">
+                                                                <i className="ri-calendar-line mr-1"></i>
+                                                                {formatDate(form.created || form.createdAt)}
+                                                            </span>
+                                                            <span className="flex items-center">
+                                                                <i className="ri-input-method-line mr-1"></i>
+                                                                {(form.fields || []).length} champs
+                                                            </span>
+                                                            <span className="flex items-center">
+                                                                <i className="ri-eye-line mr-1"></i>
+                                                                {form.views || 0} vues
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex items-center space-x-2">
+                                                    <Button variant="ghost" size="sm" icon="ri-eye-line" onClick={() => handlePreviewForm(form)}>
+                                                        Aperçu
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" icon="ri-qr-code-line" onClick={() => handleGenerateQR(form)}>
+                                                        QR Code
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" icon="ri-edit-line" onClick={() => handleEditForm(form)}>
+                                                        Éditer
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" icon="ri-file-copy-line" onClick={() => handleDuplicateForm(form)}>
+                                                        Dupliquer
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" icon="ri-delete-bin-line" className="text-red-600 hover:text-red-700" onClick={() => handleDeleteForm(form.id)}>
+                                                        Supprimer
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            
+                            {/* Pagination */}
+                            {filteredForms.length > itemsPerPage && (
+                                <div className="flex items-center justify-between mt-6 pt-6 border-t border-tremor-border">
+                                    <div className="flex items-center text-sm text-tremor-content">
+                                        <span>
+                                            Affichage de {startIndex + 1} à {Math.min(endIndex, filteredForms.length)} sur {filteredForms.length} formulaires
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            icon="ri-arrow-left-line"
+                                            onClick={() => goToPage(currentPage - 1)}
+                                            className={currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
+                                            disabled={currentPage === 1}
+                                        >
+                                            Précédent
+                                        </Button>
+                                        
+                                        <div className="flex items-center space-x-1">
+                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                                <button
+                                                    key={page}
+                                                    onClick={() => goToPage(page)}
+                                                    className={`px-3 py-1 rounded-tremor-default text-sm transition-colors ${
+                                                        currentPage === page 
+                                                            ? 'bg-tremor-brand text-tremor-brand-inverted' 
+                                                            : 'text-tremor-content hover:bg-tremor-background-subtle'
+                                                    }`}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            icon="ri-arrow-right-line"
+                                            onClick={() => goToPage(currentPage + 1)}
+                                            className={currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}
+                                            disabled={currentPage === totalPages}
+                                        >
+                                            Suivant
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </Card>
+                    </main>
+                </div>
+            );
+        };
+
+        // Render the Dashboard
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
