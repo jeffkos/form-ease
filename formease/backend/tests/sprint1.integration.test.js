@@ -1,6 +1,7 @@
 // Suite complète de tests d'intégration Sprint 1
 const request = require('supertest');
 const app = require('../src/app');
+const { setTestUser, resetTestUser } = require('./helpers/authTestHelper');
 
 describe('🚀 SPRINT 1 - Suite Complète d\'Intégration', () => {
   let authTokenFree, authTokenPremium;
@@ -17,11 +18,8 @@ describe('🚀 SPRINT 1 - Suite Complète d\'Intégration', () => {
 
   describe('🎯 Scenario Complet: Conversion FREE → PREMIUM', () => {
     test('1. Utilisateur FREE atteint ses limites', async () => {
-      // Mock utilisateur FREE
-      jest.spyOn(require('../src/middleware/auth'), 'auth').mockImplementation((req, res, next) => {
-        req.user = { id: 1, email: 'free@example.com', plan: 'free' };
-        next();
-      });
+      // Configure utilisateur FREE
+      global.setTestUser({ id: 1, email: 'free@example.com', plan: 'free' });
 
       // Mock: utilisateur a déjà 1 formulaire (limite FREE)
       mockPrisma.user.findUnique.mockResolvedValue({ id: 1, plan: 'free' });
@@ -110,11 +108,8 @@ describe('🚀 SPRINT 1 - Suite Complète d\'Intégration', () => {
     });
 
     test('5. Utilisateur PREMIUM peut créer plus de formulaires', async () => {
-      // Mock utilisateur maintenant PREMIUM
-      jest.spyOn(require('../src/middleware/auth'), 'auth').mockImplementation((req, res, next) => {
-        req.user = { id: 1, email: 'premium@example.com', plan: 'premium' };
-        next();
-      });
+      // Configure utilisateur maintenant PREMIUM
+      global.setTestUser({ id: 1, email: 'premium@example.com', plan: 'premium' });
 
       mockPrisma.user.findUnique.mockResolvedValue({ id: 1, plan: 'premium' });
       mockPrisma.form.count.mockResolvedValue(5); // Maintenant 5 formulaires
@@ -340,11 +335,8 @@ describe('🚀 SPRINT 1 - Suite Complète d\'Intégration', () => {
 
   describe('🔒 Tests de Sécurité Cross-Feature', () => {
     test('Utilisateur FREE ne peut pas configurer formulaires payants', async () => {
-      // Mock utilisateur FREE essayant d'activer paiement
-      jest.spyOn(require('../src/middleware/auth'), 'auth').mockImplementation((req, res, next) => {
-        req.user = { id: 3, email: 'free@example.com', plan: 'free' };
-        next();
-      });
+      // Configure utilisateur FREE essayant d'activer paiement
+      global.setTestUser({ id: 3, email: 'free@example.com', plan: 'free' });
 
       // Normalement, seuls les utilisateurs PREMIUM devraient pouvoir
       // activer les formulaires payants (business logic à implémenter)

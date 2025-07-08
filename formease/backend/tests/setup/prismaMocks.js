@@ -1,64 +1,205 @@
-// Mock complet de Prisma pour les tests
+// Mock complet et robuste de Prisma pour les tests
 const mockPrisma = {
+  // Modèle Contact
   contact: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    count: jest.fn()
+    create: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com' }),
+    groupBy: jest.fn().mockResolvedValue([])
   },
   
+  // Modèle Feedback
   feedback: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    count: jest.fn()
+    create: jest.fn().mockResolvedValue({ id: 1, message: 'Test feedback' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, message: 'Test feedback' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, message: 'Test feedback' }),
+    groupBy: jest.fn().mockResolvedValue([])
   },
   
+  // Modèle User
   user: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    count: jest.fn()
+    create: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com', plan: 'free' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com', plan: 'free' }),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com', plan: 'premium' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(1),
+    upsert: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com' }),
+    groupBy: jest.fn().mockResolvedValue([])
   },
   
+  // Modèle Form
   form: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    count: jest.fn()
+    create: jest.fn().mockResolvedValue({ id: 1, title: 'Test Form', user_id: 1 }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue({ 
+      id: 1, 
+      title: 'Test Form', 
+      user_id: 1, 
+      status: 'active',
+      user: { id: 1, plan: 'free' },
+      created_at: new Date()
+    }),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, title: 'Updated Form' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, title: 'Test Form' }),
+    groupBy: jest.fn().mockResolvedValue([])
   },
   
+  // Modèle Submission
+  submission: {
+    create: jest.fn().mockResolvedValue({ id: 1, form_id: 1, data: {} }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, form_id: 1 }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, form_id: 1 }),
+    groupBy: jest.fn().mockResolvedValue([])
+  },
+  
+  // Modèle Payment
   payment: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    updateMany: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
-    count: jest.fn()
+    create: jest.fn().mockResolvedValue({ id: 1, user_id: 1, amount: 1200 }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, status: 'completed' }),
+    updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, user_id: 1 }),
+    groupBy: jest.fn().mockResolvedValue([])
   },
   
-  $disconnect: jest.fn(),
-  $connect: jest.fn()
+  // Modèle EmailCampaign
+  emailCampaign: {
+    create: jest.fn().mockResolvedValue({ id: 1, user_id: 1, subject: 'Test Campaign' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, status: 'sent' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, user_id: 1 }),
+    groupBy: jest.fn().mockResolvedValue([])
+  },
+  
+  // Modèle EmailTracking
+  emailTracking: {
+    create: jest.fn().mockResolvedValue({ id: 1, campaign_id: 1, contact_id: 1 }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, status: 'opened' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, campaign_id: 1 }),
+    groupBy: jest.fn().mockResolvedValue([])
+  },
+  
+  // Modèle EmailTrack (si différent)
+  emailTrack: {
+    create: jest.fn().mockResolvedValue({ id: 1, userId: 1, recipientEmail: 'test@example.com' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, status: 'delivered' }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, userId: 1 }),
+    groupBy: jest.fn().mockResolvedValue([])
+  },
+  
+  // Modèle EmailTemplate
+  emailTemplate: {
+    create: jest.fn().mockResolvedValue({ id: 1, name: 'Test Template', type: 'validation' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue({
+      id: 1,
+      type: 'validation',
+      subject: 'Test Subject {{nom}}',
+      html: '<p>Hello {{nom}}</p>',
+      language: 'fr',
+      active: true
+    }),
+    update: jest.fn().mockResolvedValue({ id: 1, active: false }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, name: 'Test Template' }),
+    groupBy: jest.fn().mockResolvedValue([])
+  },
+  
+  // Modèles supplémentaires pour Sprint 2
+  exportLog: {
+    create: jest.fn().mockResolvedValue({ id: 1, user_id: 1, type: 'csv' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    count: jest.fn().mockResolvedValue(0)
+  },
+  
+  emailLog: {
+    create: jest.fn().mockResolvedValue({ id: 1, user_id: 1, recipient: 'test@example.com' }),
+    findMany: jest.fn().mockResolvedValue([]),
+    count: jest.fn().mockResolvedValue(0)
+  },
+  
+  formPayment: {
+    create: jest.fn().mockResolvedValue({ id: 1, form_id: 1, enabled: true }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, enabled: false }),
+    upsert: jest.fn().mockResolvedValue({ id: 1, form_id: 1, enabled: true, amount: 25.00 })
+  },
+  
+  formPaymentTransaction: {
+    create: jest.fn().mockResolvedValue({ id: 1, form_payment_id: 1, amount: 1000 }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+    groupBy: jest.fn().mockResolvedValue([]),
+    aggregate: jest.fn().mockResolvedValue({ _sum: { amount: 0 }, _count: 0 })
+  },
+  
+  // Méthodes de transaction
+  $transaction: jest.fn().mockImplementation((callback) => callback(mockPrisma)),
+  $connect: jest.fn().mockResolvedValue(undefined),
+  $disconnect: jest.fn().mockResolvedValue(undefined),
+  $queryRaw: jest.fn().mockResolvedValue([]),
+  $executeRaw: jest.fn().mockResolvedValue(0)
 };
 
 // Mock du PrismaClient
 jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn(() => mockPrisma)
 }));
+
+// Configuration du mock global
+global.mockPrisma = mockPrisma;
 
 // Configuration par défaut des mocks
 beforeEach(() => {
@@ -99,3 +240,5 @@ beforeEach(() => {
 });
 
 module.exports = { mockPrisma };
+
+console.log('📦 Mocks Prisma configurés avec succès');

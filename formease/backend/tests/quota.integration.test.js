@@ -2,6 +2,7 @@
 const request = require('supertest');
 const app = require('../src/app');
 const { PrismaClient } = require('@prisma/client');
+const { setTestUser, resetTestUser } = require('./helpers/authTestHelper');
 
 describe('🎯 SPRINT 1 - Tests Quotas et Limitations', () => {
   let authToken;
@@ -13,11 +14,9 @@ describe('🎯 SPRINT 1 - Tests Quotas et Limitations', () => {
     // Mock JWT token valide
     authToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTYxNjIzOTAyMn0.test';
     
-    // Mock utilisateur dans middleware auth
-    jest.spyOn(require('../src/middleware/auth'), 'auth').mockImplementation((req, res, next) => {
-      req.user = { id: 1, email: 'test@example.com', plan: 'free' };
-      next();
-    });
+    // Reset et configure l'utilisateur test
+    global.resetTestUser();
+    global.setTestUser({ id: 1, email: 'test@example.com', plan: 'free' });
   });
 
   describe('✅ Quotas FREE - Limitations', () => {
@@ -112,11 +111,8 @@ describe('🎯 SPRINT 1 - Tests Quotas et Limitations', () => {
 
   describe('🚀 Quotas PREMIUM - Illimités', () => {
     beforeEach(() => {
-      // Mock utilisateur PREMIUM
-      jest.spyOn(require('../src/middleware/auth'), 'default').mockImplementation((req, res, next) => {
-        req.user = { id: 2, email: 'premium@example.com', plan: 'premium' };
-        next();
-      });
+      // Configure utilisateur PREMIUM
+      global.setTestUser({ id: 2, email: 'premium@example.com', plan: 'premium' });
     });
 
     test('Formulaires illimités pour PREMIUM', async () => {

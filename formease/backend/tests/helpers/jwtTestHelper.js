@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_TEST_SECRET = 'test-secret-formease-2024';
+// Utilise le secret global de test
+const getJWTSecret = () => {
+  return global.JWT_TEST_SECRET || process.env.JWT_SECRET || 'test-secret-formease-2024';
+};
 
 class JWTTestHelper {
   static generateValidToken(payload = {}) {
@@ -15,7 +18,7 @@ class JWTTestHelper {
 
     return jwt.sign(
       { ...defaultPayload, ...payload },
-      JWT_TEST_SECRET,
+      getJWTSecret(),
       { algorithm: 'HS256' }
     );
   }
@@ -45,7 +48,7 @@ class JWTTestHelper {
         exp: Math.floor(Date.now() / 1000) - 3600, // -1h (expiré)
         ...payload
       },
-      JWT_TEST_SECRET,
+      getJWTSecret(),
       { algorithm: 'HS256' }
     );
   }

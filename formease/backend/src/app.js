@@ -98,6 +98,10 @@ app.use('/api/contacts', contactRoutes);
 const feedbackRoute = require('./routes/feedback');
 app.use('/api/feedback', feedbackRoute);
 
+// Importation de la route de gestion des coupons
+// const couponRoutes = require('./routes/coupon');
+// app.use('/api', couponRoutes);
+
 // Documentation Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./docs/swagger');
