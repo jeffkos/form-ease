@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#0ea5e9'
+                            },
+                            border: {
+                                DEFAULT: '#e2e8f0',
+                                emphasis: '#cbd5e1'
+                            },
+                            ring: {
+                                DEFAULT: '#0ea5e9'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .tremor-CardHeader {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .tremor-Button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .tremor-Button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .tremor-Button-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .tremor-Button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .tremor-Button-secondary {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .tremor-Button-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        .tremor-Button-sm {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-md {
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-lg {
+            height: 3rem;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+        }
+        .tremor-TextInput {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-TextInput::placeholder {
+            color: #9ca3af;
+        }
+        .tremor-TextInput:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0;
+        }
+        .tremor-Subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+        }
+        .tremor-Text {
+            font-size: 0.875rem;
+            color: #374151;
+            margin: 0;
+        }
+        .tremor-Metric {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0;
+        }
+        .tremor-BadgeItem {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tremor-BadgeItem-success {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        .tremor-BadgeItem-warning {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .tremor-BadgeItem-error {
+            background-color: #fecaca;
+            color: #dc2626;
+        }
+        .tremor-BadgeItem-neutral {
+            background-color: #f3f4f6;
+            color: #6b7280;
+        }
+        .tremor-List {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .tremor-ListItem {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .tremor-ListItem:last-child {
+            border-bottom: none;
+        }
+        .tremor-ProgressBar {
+            width: 100%;
+            height: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        .tremor-ProgressBar-fill {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        .sidebar-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 0.375rem;
+            margin: 0.125rem 0.5rem;
+        }
+        .sidebar-nav a:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+        }
+        .sidebar-nav a.active {
+            background-color: #2563eb;
+            color: white;
+        }
+        .sidebar-nav a i {
+            margin-right: 0.75rem;
+            font-size: 1.125rem;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .floating-card {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Sidebar Overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar fixed left-0 top-0 w-64 h-full bg-white shadow-lg z-50" id="sidebar">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="ri-file-text-line text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">FormEase</h1>
+                    <p class="text-sm text-gray-600">Pro Dashboard</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav mt-6">
+            <a href="#" class="active">
+                <i class="ri-dashboard-3-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="form-ai-generator.html">
+                <i class="ri-robot-line"></i>
+                <span>IA Generator</span>
+            </a>
+            <a href="form-builder-fixed.html">
+                <i class="ri-tools-line"></i>
+                <span>Form Builder</span>
+            </a>
+            <a href="#">
+                <i class="ri-file-list-3-line"></i>
+                <span>Mes Formulaires</span>
+            </a>
+            <a href="#">
+                <i class="ri-bar-chart-line"></i>
+                <span>Analytiques</span>
+            </a>
+            <a href="#">
+                <i class="ri-team-line"></i>
+                <span>Équipe</span>
+            </a>
+            <a href="#">
+                <i class="ri-settings-3-line"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="#">
+                <i class="ri-customer-service-line"></i>
+                <span>Support</span>
+            </a>
+        </nav>
+        
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <i class="ri-user-line text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">John Doe</p>
+                    <p class="text-xs text-gray-600">john@example.com</p>
+                </div>
+                <button class="p-1 hover:bg-gray-100 rounded">
+                    <i class="ri-more-2-line text-gray-400"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button class="md:hidden p-2 hover:bg-gray-100 rounded-lg" id="sidebarToggle">
+                        <i class="ri-menu-line text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                        <p class="text-sm text-gray-600">Bienvenue ! Voici un aperçu de vos formulaires</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Rechercher..." class="tremor-TextInput w-80 pl-10">
+                        <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button class="p-2 hover:bg-gray-100 rounded-lg relative">
+                        <i class="ri-notification-3-line text-xl text-gray-600"></i>
+                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                            <span class="text-xs text-white font-medium">3</span>
+                        </span>
+                    </button>
+                    <button class="tremor-Button tremor-Button-primary tremor-Button-md">
+                        <i class="ri-add-line mr-2"></i>
+                        Nouveau formulaire
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="p-6">
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Forms -->
+                <div class="tremor-Card floating-card">
+                    <div class="tremor-CardContent">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Subtitle">Total des formulaires</p>
+                                <p class="tremor-Metric">247</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="ri-arrow-up-line text-green-500 text-sm mr-1"></i>
+                                    <span class="text-sm text-green-600 font-medium">+12%</span>
+                                    <span class="text-sm text-gray-500 ml-2">ce mois</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-file-text-line text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Forms -->
+                <div class="tremor-Card floating-card">
+                    <div class="tremor-CardContent">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Subtitle">Formulaires actifs</p>
+                                <p class="tremor-Metric">89</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="ri-arrow-up-line text-green-500 text-sm mr-1"></i>
+                                    <span class="text-sm text-green-600 font-medium">+5%</span>
+                                    <span class="text-sm text-gray-500 ml-2">cette semaine</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-check-line text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Responses -->
+                <div class="tremor-Card floating-card">
+                    <div class="tremor-CardContent">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Subtitle">Réponses totales</p>
+                                <p class="tremor-Metric">12,847</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="ri-arrow-up-line text-green-500 text-sm mr-1"></i>
+                                    <span class="text-sm text-green-600 font-medium">+23%</span>
+                                    <span class="text-sm text-gray-500 ml-2">ce mois</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-user-voice-line text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversion Rate -->
+                <div class="tremor-Card floating-card">
+                    <div class="tremor-CardContent">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="tremor-Subtitle">Taux de conversion</p>
+                                <p class="tremor-Metric">73.2%</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="ri-arrow-down-line text-red-500 text-sm mr-1"></i>
+                                    <span class="text-sm text-red-600 font-medium">-2%</span>
+                                    <span class="text-sm text-gray-500 ml-2">ce mois</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-line-chart-line text-orange-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Responses Chart -->
+                <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                        <h3 class="tremor-Title">Réponses par mois</h3>
+                        <p class="tremor-Subtitle">Évolution des réponses sur les 12 derniers mois</p>
+                    </div>
+                    <div class="tremor-CardContent">
+                        <div class="chart-container">
+                            <canvas id="responsesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forms by Category -->
+                <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                        <h3 class="tremor-Title">Formulaires par catégorie</h3>
+                        <p class="tremor-Subtitle">Répartition de vos formulaires</p>
+                    </div>
+                    <div class="tremor-CardContent">
+                        <div class="chart-container">
+                            <canvas id="categoriesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Forms and Quick Actions -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Recent Forms -->
+                <div class="lg:col-span-2">
+                    <div class="tremor-Card">
+                        <div class="tremor-CardHeader">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="tremor-Title">Formulaires récents</h3>
+                                    <p class="tremor-Subtitle">Vos derniers formulaires créés</p>
+                                </div>
+                                <button class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                                    <i class="ri-more-2-line mr-2"></i>
+                                    Voir tout
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tremor-CardContent">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-file-text-line text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">Formulaire de contact</h4>
+                                            <p class="text-sm text-gray-600">Créé il y a 2 heures • 45 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="tremor-BadgeItem tremor-BadgeItem-success">Actif</span>
+                                        <div class="flex items-center space-x-1">
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-eye-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-edit-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-more-2-line text-gray-400"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-survey-line text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">Enquête de satisfaction</h4>
+                                            <p class="text-sm text-gray-600">Créé il y a 1 jour • 127 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="tremor-BadgeItem tremor-BadgeItem-success">Actif</span>
+                                        <div class="flex items-center space-x-1">
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-eye-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-edit-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-more-2-line text-gray-400"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-user-add-line text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">Inscription événement</h4>
+                                            <p class="text-sm text-gray-600">Créé il y a 3 jours • 89 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="tremor-BadgeItem tremor-BadgeItem-warning">En attente</span>
+                                        <div class="flex items-center space-x-1">
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-eye-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-edit-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-more-2-line text-gray-400"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-feedback-line text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">Feedback produit</h4>
+                                            <p class="text-sm text-gray-600">Créé il y a 5 jours • 234 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="tremor-BadgeItem tremor-BadgeItem-error">Fermé</span>
+                                        <div class="flex items-center space-x-1">
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-eye-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-edit-line text-gray-400"></i>
+                                            </button>
+                                            <button class="p-1 hover:bg-gray-200 rounded">
+                                                <i class="ri-more-2-line text-gray-400"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="space-y-6">
+                    <!-- Quick Create -->
+                    <div class="tremor-Card">
+                        <div class="tremor-CardHeader">
+                            <h3 class="tremor-Title">Actions rapides</h3>
+                            <p class="tremor-Subtitle">Créez rapidement</p>
+                        </div>
+                        <div class="tremor-CardContent">
+                            <div class="space-y-3">
+                                <button class="w-full tremor-Button tremor-Button-primary tremor-Button-md">
+                                    <i class="ri-robot-line mr-2"></i>
+                                    Créer avec l'IA
+                                </button>
+                                <button class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                                    <i class="ri-tools-line mr-2"></i>
+                                    Form Builder
+                                </button>
+                                <button class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                                    <i class="ri-file-copy-line mr-2"></i>
+                                    Dupliquer un formulaire
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance -->
+                    <div class="tremor-Card">
+                        <div class="tremor-CardHeader">
+                            <h3 class="tremor-Title">Performance</h3>
+                            <p class="tremor-Subtitle">Cette semaine</p>
+                        </div>
+                        <div class="tremor-CardContent">
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Vues</span>
+                                        <span class="text-sm font-medium text-gray-900">2,847</span>
+                                    </div>
+                                    <div class="tremor-ProgressBar">
+                                        <div class="tremor-ProgressBar-fill" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Réponses</span>
+                                        <span class="text-sm font-medium text-gray-900">1,234</span>
+                                    </div>
+                                    <div class="tremor-ProgressBar">
+                                        <div class="tremor-ProgressBar-fill bg-green-500" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Conversion</span>
+                                        <span class="text-sm font-medium text-gray-900">43.4%</span>
+                                    </div>
+                                    <div class="tremor-ProgressBar">
+                                        <div class="tremor-ProgressBar-fill bg-purple-500" style="width: 43%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="tremor-Card">
+                        <div class="tremor-CardHeader">
+                            <h3 class="tremor-Title">Activité récente</h3>
+                            <p class="tremor-Subtitle">Dernières actions</p>
+                        </div>
+                        <div class="tremor-CardContent">
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full pulse-dot"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900">Nouveau formulaire créé</p>
+                                        <p class="text-xs text-gray-500">Il y a 2 heures</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900">15 nouvelles réponses</p>
+                                        <p class="text-xs text-gray-500">Il y a 4 heures</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900">Formulaire publié</p>
+                                        <p class="text-xs text-gray-500">Il y a 1 jour</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900">Rapport généré</p>
+                                        <p class="text-xs text-gray-500">Il y a 2 jours</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Responses Chart
+        const responsesCtx = document.getElementById('responsesChart').getContext('2d');
+        new Chart(responsesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+                datasets: [{
+                    label: 'Réponses',
+                    data: [750, 800, 900, 850, 1100, 1200, 1350, 1400, 1250, 1300, 1450, 1500],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f3f4f6'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Categories Chart
+        const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+        new Chart(categoriesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Contact', 'Enquête', 'Inscription', 'Feedback', 'Support'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#3b82f6',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Real-time updates simulation
+        setInterval(() => {
+            const notifications = document.querySelector('.ri-notification-3-line').nextElementSibling;
+            const currentCount = parseInt(notifications.textContent);
+            if (Math.random() > 0.95) {
+                notifications.textContent = currentCount + 1;
+            }
+        }, 5000);
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

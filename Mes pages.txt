@@ -1,0 +1,48 @@
+git add . //pour ajouter toutes les modifications faites dans l'index git
+
+git stash //pour sauvegarder toutes tes modifications dans ajoutédans l'index "quelque part" et restaurer le projet à l'état du dernier commit
+---------------------------------------------------------
+
+Revois les interface, en suivant notre charte nous nous conformons que a tremor voici ça documentation : https://tremor.so/docs/getting-started/installation Nous utiliser que le UX/UI de tremor pour les icone nous utilisont seuelement les icone de https://remixicon.com/
+
+il faut jamais utiliser charts.js seulement tremors avec les couleur pardefaut, le font la taille et la couleur de police. les chart des tremor, les element que des tremor.
+
+
+-- corrige le couleur l'arrière plan #ffffff et le bouton de #2563eb avec les icone de  remixicon toujours
+
+----------------------------------------------------------------------
+Mes page : 
+1. Génération formulaire par IA : file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/form-ai-generator.html
+2. Créé un formulaire : file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/form-builder-fixed.html
+3. Gestion de reponse : file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/responses-manager.html
+4. Dashboard premium : file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/dashboard-tremor-officiel-final.html
+----------------------------------------------------------------------
+
+Veuiller adatpter les fonctionnalités suivantes pour le USERPREMIUM : 
+- acces IA generateur de formulaire
+- les statistiques des formulaire (generer par IA et normal)
+- Pour le formulaire payant lui donner la possibilité des géré et voirs les inscrits qui on payer et valiser le formulaire
+- listes de formulaire et chaque formulaire doit avoirs les actions suivant( QRcode, visualisation, édite,Réponses, telecharger Json, dupliquer,supprimer, et un statut : publier, en brouillons)
+- Gestion de réponse, une liste , qui va géré les donnée entrant, qui donne la possiblister de bien filtre, exporter par les type des fichier xls, csv et JSON, possibilité de les envoyer des mail, et faire le trackers de ses mails, mails lu, non lus, arriver et non arriver
+- créé un newsletter
+-------------------------------------------------------------------------
+
+1. USERPREMIUM 12$ le mois : 
+
+Voici mon idée de départ, et toi tu regarde ce qui est déjà crée et ce qui n'est pas encore crée : 
+
+j'ai besoin d'un formulaire pour : Une formation, Sondage, enquête, inscription pour une formation et autres, les formulaires peuvent être payant avant de l'envoyer ou gratuit sa dépendant de l'objectif que si j'ai besoin que les inscrit paye avant de finir l'inscription c'est juste à moi de le définir quand je vais crée mon formulaire.
+
+- La création de formulaire rien que par un prompt et IA fait tous, mis après je peux aussi le modifier manuellement, mais aussi je peut moi même crée mon formulaire.et que j'ai la possibilité de le partager par un QRCODE
+
+- La gestion des inscrits que j'ai la possibilité de géré les informations d'un formulaires la possibilité de filtre chaque élément de mon formulaire (Ex: les gens qui son résider à Kinshasa) je vois que les inscrit de Kinshasa et j'ai l possibilité des les envoyer les mails, ou sélection tous pour les envoyer les mail. Mais aussi les inscrit de tous mes formulaire qui sont à Kinshasa pour les envoyer les mails en gros
+
+- Suivi des mails envoyé trackers les mails envoyé. Lu non lu et échouer pour après recommencer l'actions.
+
+- Je constitue une base de données, des mail et des numeros de téléphones, pour en fins crée un Newsletter pour des campagne Marketing.
+
+2. USERFREE : Il crée juste sont formulaire, à la limite 100 inscrit, un formulaire limite par les element, pas de fichiers joint, pas l'accès à génération de formulaire par IA, les formulaires seront supprimer dans 18 jours, acces qu'a 50 mails à envoyer au s'inscrit
+
+3. ADMINISTRATEUR : Gestion des Utilisateur, suppression et archivages des données, gestion des abonnements, gestions de Bugs et des erreurs rencontrer par les USER, et les chars des tous les données 
+
+

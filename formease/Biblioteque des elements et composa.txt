@@ -1,0 +1,48 @@
+Biblioteque des elements et composants TREMOR BLOCKS : 
+
+charte et palettes des couleur : corrige le couleur l'arrière plan #ffffff et le bouton de #2563eb avec les icone de  remixicon toujours
+
+GitHub : https://github.com/tremorlabs/tremor-blocks
+
+1. Charts & Helpers
+Area Charts : https://blocks.tremor.so/blocks/area-charts
+Line Charts : https://blocks.tremor.so/blocks/line-charts
+Bar Charts : https://blocks.tremor.so/blocks/bar-charts
+Donut Charts : https://blocks.tremor.so/blocks/donut-charts
+Chart Tooltips : https://blocks.tremor.so/blocks/chart-tooltips
+
+2. Advanced Visualizations
+Bar Lists : https://blocks.tremor.so/blocks/bar-lists
+Status Monitoring : https://blocks.tremor.so/blocks/status-monitoring
+Spark Charts : https://blocks.tremor.so/blocks/spark-charts
+KPI Cards : https://blocks.tremor.so/blocks/kpi-cards
+Chart Compositions : https://blocks.tremor.so/blocks/chart-compositions
+
+3. Inputs & Forms
+Standard Forms : https://blocks.tremor.so/blocks/form-layouts
+File Uploads : https://blocks.tremor.so/blocks/file-upload
+
+4. Tables
+Standard Tables : https://blocks.tremor.so/blocks/tables
+Table Actions : https://blocks.tremor.so/blocks/table-actions
+Table Pagination : https://blocks.tremor.so/blocks/table-pagination
+
+5. Layout & Forms
+Page Shells : https://blocks.tremor.so/blocks/page-shells
+Filterbar : https://blocks.tremor.so/blocks/filterbar
+Empty States :https://blocks.tremor.so/blocks/empty-states
+Dialogs : https://blocks.tremor.so/blocks/dialogs
+Grid Lists : https://blocks.tremor.so/blocks/grid-lists
+Banner : https://blocks.tremor.so/blocks/banners
+Badges : https://blocks.tremor.so/blocks/badges
+
+6. Marketing
+Pricing Sections : https://blocks.tremor.so/blocks/pricing-sections
+Logins : https://blocks.tremor.so/blocks/logins
+User Management : https://blocks.tremor.so/blocks/account-and-user-management
+Onboarding & Feed : https://blocks.tremor.so/blocks/onboarding-feed
+Billing & Usage : https://blocks.tremor.so/blocks/billing-usage
+----------------------------------------------------------------
+1. Beautiful website templates built with Tailwind CSS : https://blocks.tremor.so/templates
+2. Blocks Categories : https://blocks.tremor.so/blocks
+3. Getting Started : https://blocks.tremor.so/getting-started
