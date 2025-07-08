@@ -1,6 +1,7 @@
 // Contrôleur de paiement pour FormEase avec Stripe
 const { PrismaClient } = require('@prisma/client');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const logger = require('../utils/logger');
 const prisma = new PrismaClient();
 
 // Configuration des plans

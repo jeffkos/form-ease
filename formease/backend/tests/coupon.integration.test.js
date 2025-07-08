@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../src/app');
 const { generateTestToken, generateUserMock } = require('./helpers/jwtTestHelper');
-const { setTestUser, resetTestUser } = require('./helpers/authTestHelper');
+const { setAdminUser, setFreeUser, resetTestUser, getValidAuthToken } = require('./helpers/authTestHelper');
 
 describe('🎟️ SPRINT 4 - Tests Gestion des Coupons', () => {
   let authTokenAdmin, authTokenUser;
@@ -9,23 +9,21 @@ describe('🎟️ SPRINT 4 - Tests Gestion des Coupons', () => {
 
   beforeEach(() => {
     // Reset et configure l'utilisateur test admin
-    global.resetTestUser();
+    resetTestUser();
     
-    // Mock utilisateur admin
-    const adminUser = generateUserMock({ id: 1, role: 'SUPERADMIN' });
-    global.setTestUser(adminUser);
-    authTokenAdmin = generateTestToken(adminUser);
+    // Génère les tokens avec les nouveaux helpers
+    const adminSetup = setAdminUser();
+    authTokenAdmin = adminSetup.authHeader;
 
-    // Mock utilisateur normal
-    const normalUser = generateUserMock({ id: 2, role: 'USER' });
-    authTokenUser = generateTestToken(normalUser);
+    const userSetup = setFreeUser();
+    authTokenUser = userSetup.authHeader;
 
     // Mock Prisma
     mockPrisma = global.mockPrisma;
   });
 
   afterEach(() => {
-    global.resetTestUser();
+    resetTestUser();
     jest.clearAllMocks();
   });
 

@@ -185,6 +185,30 @@ const mockPrisma = {
     aggregate: jest.fn().mockResolvedValue({ _sum: { amount: 0 }, _count: 0 })
   },
   
+  // Modèle Coupon
+  coupon: {
+    create: jest.fn().mockResolvedValue({ id: 1, code: 'TEST20', discount_type: 'percentage', discount_value: 20 }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    update: jest.fn().mockResolvedValue({ id: 1, code: 'TEST20', is_active: false }),
+    delete: jest.fn().mockResolvedValue({ id: 1 }),
+    deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    count: jest.fn().mockResolvedValue(0),
+    upsert: jest.fn().mockResolvedValue({ id: 1, code: 'TEST20' }),
+    groupBy: jest.fn().mockResolvedValue([]),
+    aggregate: jest.fn().mockResolvedValue({ _sum: { discount_value: 0 }, _count: 0 })
+  },
+  
+  // Modèle CouponUsage  
+  couponUsage: {
+    create: jest.fn().mockResolvedValue({ id: 1, coupon_id: 1, user_id: 1 }),
+    findMany: jest.fn().mockResolvedValue([]),
+    findUnique: jest.fn().mockResolvedValue(null),
+    findFirst: jest.fn().mockResolvedValue(null),
+    count: jest.fn().mockResolvedValue(0)
+  },
+  
   // Méthodes de transaction
   $transaction: jest.fn().mockImplementation((callback) => callback(mockPrisma)),
   $connect: jest.fn().mockResolvedValue(undefined),

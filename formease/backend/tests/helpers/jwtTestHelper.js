@@ -87,3 +87,10 @@ class JWTTestHelper {
 }
 
 module.exports = JWTTestHelper;
+
+// Exports individuels pour compatibilité
+module.exports.generateTestToken = JWTTestHelper.generateValidToken;
+module.exports.generateUserMock = JWTTestHelper.getMockUser;
+module.exports.generateAdminToken = JWTTestHelper.generateAdminToken;
+module.exports.generatePremiumToken = JWTTestHelper.generatePremiumToken;
+module.exports.formatAuthHeader = JWTTestHelper.formatAuthHeader;

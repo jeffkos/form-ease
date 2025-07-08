@@ -2,7 +2,7 @@
 const request = require('supertest');
 const app = require('../src/app');
 const { PrismaClient } = require('@prisma/client');
-const { setTestUser, resetTestUser } = require('./helpers/authTestHelper');
+const { getValidAuthToken, setFreeUser, resetTestUser } = require('./helpers/authTestHelper');
 
 describe('💳 SPRINT 1 - Tests Paiements Stripe', () => {
   let authToken;
@@ -12,12 +12,9 @@ describe('💳 SPRINT 1 - Tests Paiements Stripe', () => {
   beforeEach(() => {
     mockPrisma = global.mockPrisma;
     
-    // Mock JWT token valide
-    authToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTYxNjIzOTAyMn0.test';
-    
-    // Reset et configure l'utilisateur test
-    global.resetTestUser();
-    global.setTestUser({ id: 1, email: 'test@example.com', plan: 'free' });
+    // Génère un token valide avec les nouveaux helpers
+    const authSetup = setFreeUser();
+    authToken = authSetup.authHeader;
 
     // Mock Stripe instance
     mockStripe = require('stripe')();

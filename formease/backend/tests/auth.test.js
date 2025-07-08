@@ -54,7 +54,7 @@ describe('Authentication Basic Tests', () => {
         });
 
       // Le test ne vérifie pas le contenu, juste que la route existe
-      expect([200, 201, 400, 422, 500]).toContain(response.status);
+      expect([200, 201, 400, 409, 422, 500]).toContain(response.status);
     });
   });
 

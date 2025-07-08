@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { auth } = require('../middleware/auth');
+const auth = require('../middleware/auth');
 const requireRole = require('../middleware/requireRole');
 const {
   createCoupon,
@@ -20,14 +20,14 @@ const {
  * @desc Valider un coupon
  * @access Public
  */
-router.post('/validate', validateCoupon);
+router.post('/coupons/validate', validateCoupon);
 
 /**
  * @route POST /api/coupons/apply
  * @desc Appliquer un coupon (utilisé par le système de paiement)
  * @access Internal/Webhook
  */
-router.post('/apply', applyCoupon);
+router.post('/coupons/apply', applyCoupon);
 
 // Routes admin uniquement
 /**
