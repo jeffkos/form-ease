@@ -82,6 +82,22 @@ app.use('/api/rgpd', rgpdRoutes);
 const actionLogRoutes = require('./routes/actionLog');
 app.use('/api/action-logs', actionLogRoutes);
 
+// Importation de la route de gestion des formulaires payants
+const formPaymentRoutes = require('./routes/formPayment');
+app.use('/api/form-payments', formPaymentRoutes);
+
+// Importation de la route de gestion des emails
+const emailRoutes = require('./routes/emails');
+app.use('/api/emails', emailRoutes);
+
+// Importation de la route de gestion des contacts
+const contactRoutes = require('./routes/contact');
+app.use('/api/contacts', contactRoutes);
+
+// Importation de la route de gestion des feedbacks
+const feedbackRoute = require('./routes/feedback');
+app.use('/api/feedback', feedbackRoute);
+
 // Documentation Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./docs/swagger');

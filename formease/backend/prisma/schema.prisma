@@ -31,12 +31,16 @@ model User {
   language        Language @default(FR)
   plan            String   // free, premium
   plan_expiration DateTime?
+  stripe_customer_id String? // ID client Stripe
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
   payments        Payment[]
   forms           Form[]
   archiveLogs     ArchiveLog[]
   actionLogs      ActionLog[]
+  exportLogs      ExportLog[]
+  emailLogs       EmailLog[]
+  emailCampaigns  EmailCampaign[]
 }
 
 model Payment {
@@ -65,6 +69,8 @@ model Form {
   fields         FormField[]
   archived    Boolean   @default(false)
   archived_at DateTime?
+  exportLogs     ExportLog[]
+  formPayment    FormPayment?
 }
 
 model Submission {
@@ -80,6 +86,7 @@ model Submission {
   form         Form     @relation(fields: [form_id], references: [id])
   archived    Boolean   @default(false)
   archived_at DateTime?
+  paymentTransaction FormPaymentTransaction?
 }
 
 model FormField {
@@ -129,4 +136,106 @@ model ActionLog {
   details   Json?
   date      DateTime @default(now())
   user      User?    @relation(fields: [user_id], references: [id])
+}
+
+model ExportLog {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  form_id   Int?
+  type      String   // 'csv', 'pdf'
+  filename  String
+  created_at DateTime @default(now())
+  user      User     @relation(fields: [user_id], references: [id])
+  form      Form?    @relation(fields: [form_id], references: [id])
+}
+
+model EmailLog {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  recipient   String
+  subject     String
+  type        String   // 'notification', 'validation', 'marketing'
+  status      String   // 'sent', 'failed', 'bounced'
+  sent_at     DateTime @default(now())
+  user        User     @relation(fields: [user_id], references: [id])
+}
+
+model FormPayment {
+  id             Int      @id @default(autoincrement())
+  form_id        Int      @unique
+  enabled        Boolean  @default(false)
+  amount         Float    // Montant en euros
+  currency       String   @default("EUR")
+  description    String?
+  success_url    String?
+  cancel_url     String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  form           Form     @relation(fields: [form_id], references: [id])
+  transactions   FormPaymentTransaction[]
+}
+
+model FormPaymentTransaction {
+  id              Int         @id @default(autoincrement())
+  form_payment_id Int
+  submission_id   Int?        @unique
+  payer_email     String
+  amount          Float
+  currency        String
+  status          String      // 'pending', 'completed', 'failed', 'refunded'
+  provider        String      // 'stripe', 'paypal'
+  transaction_ref String
+  created_at      DateTime    @default(now())
+  formPayment     FormPayment @relation(fields: [form_payment_id], references: [id])
+  submission      Submission? @relation(fields: [submission_id], references: [id])
+}
+
+model Contact {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  phone        String?
+  first_name   String?
+  last_name    String?
+  city         String?
+  country      String?
+  tags         String[]
+  source_form_id Int?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  emailTrackings EmailTracking[]
+}
+
+model EmailCampaign {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  subject    String
+  content    String
+  recipients Int[]
+  sent_at    DateTime?
+  status     String   // 'draft', 'sending', 'sent'
+  user       User     @relation(fields: [user_id], references: [id])
+  trackings   EmailTracking[]
+}
+
+model EmailTracking {
+  id          Int      @id @default(autoincrement())
+  campaign_id Int
+  contact_id  Int
+  status      String   // 'sent', 'delivered', 'opened', 'clicked', 'failed'
+  tracked_at  DateTime @default(now())
+  campaign    EmailCampaign @relation(fields: [campaign_id], references: [id])
+  contact     Contact      @relation(fields: [contact_id], references: [id])
+}
+
+model Feedback {
+  id         Int      @id @default(autoincrement())
+  email      String?
+  message    String
+  type       String
+  page       String?
+  importance String?
+  userIp     String?
+  userAgent  String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

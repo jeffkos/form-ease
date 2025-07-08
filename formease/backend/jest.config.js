@@ -12,7 +12,11 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
-  testTimeout: 10000,
-  verbose: true
+  setupFiles: ['<rootDir>/tests/setup/env.js'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup/setupTests.js'],
+  testTimeout: 15000,
+  verbose: true,
+  testEnvironmentOptions: {
+    NODE_ENV: 'test'
+  }
 };
