@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Backend FormEase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background-color: #0056b3; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Backend FormEase</h1>
+
+    <div class="test">
+        <h3>1. Test de Santé du Serveur</h3>
+        <button onclick="testHealth()">🔍 Tester /api/health</button>
+        <div id="healthResult"></div>
+    </div>
+
+    <div class="test">
+        <h3>2. Test de Parsing JSON</h3>
+        <button onclick="testJsonParsing()">🧪 Tester /api/test-login</button>
+        <div id="parseResult"></div>
+    </div>
+
+    <div class="test">
+        <h3>3. Test de Connexion Premium</h3>
+        <p><strong>Email :</strong> jeff.kosi@formease.com</p>
+        <p><strong>Mot de passe :</strong> FormEase2025!</p>
+        <button onclick="testRealLogin()">🔐 Tester Connexion Réelle</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.innerHTML = '<p>🔄 Test en cours...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:4000/api/health');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h4>✅ Serveur accessible !</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Serveur inaccessible</h4>
+                        <p>Erreur : ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testJsonParsing() {
+            const resultDiv = document.getElementById('parseResult');
+            resultDiv.innerHTML = '<p>🔄 Test en cours...</p>';
+            
+            const testData = {
+                email: 'jeff.kosi@formease.com',
+                password: 'FormEase2025!'
+            };
+            
+            try {
+                const response = await fetch('http://localhost:4000/api/test-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h4>✅ Parsing JSON OK !</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Erreur de parsing JSON</h4>
+                        <p>Erreur : ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testRealLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '<p>🔄 Test de connexion en cours...</p>';
+            
+            const loginData = {
+                email: 'jeff.kosi@formease.com',
+                password: 'FormEase2025!'
+            };
+            
+            try {
+                const response = await fetch('http://localhost:4000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4>✅ Connexion Premium Réussie !</h4>
+                            <p><strong>Token :</strong> ${data.token ? data.token.substring(0, 50) + '...' : 'Non disponible'}</p>
+                            <p><strong>Utilisateur :</strong> ${data.user ? data.user.firstName + ' ' + data.user.lastName : 'Non disponible'}</p>
+                            <p><strong>Email :</strong> ${data.user ? data.user.email : 'Non disponible'}</p>
+                            <p><strong>Rôle :</strong> ${data.user ? data.user.role : 'Non disponible'}</p>
+                            <p><strong>Plan :</strong> ${data.user ? data.user.plan : 'Non disponible'}</p>
+                            <button onclick="openDashboard()">🚀 Ouvrir le Dashboard</button>
+                        </div>
+                    `;
+                    
+                    // Stocker le token
+                    localStorage.setItem('token', data.token);
+                    
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4>❌ Erreur de connexion</h4>
+                            <p><strong>Status :</strong> ${response.status}</p>
+                            <p><strong>Message :</strong> ${data.message || 'Erreur inconnue'}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Erreur de connexion au serveur</h4>
+                        <p>Erreur : ${error.message}</p>
+                        <p>Vérifiez que le serveur backend fonctionne sur le port 4000</p>
+                    </div>
+                `;
+            }
+        }
+
+        function openDashboard() {
+            window.open('frontend/pages/dashboard/home.html', '_blank');
+        }
+
+        // Auto-test au chargement
+        window.onload = function() {
+            console.log('Page de test chargée');
+            // testHealth(); // Décommentez pour un test automatique
+        };
+    </script>
+</body>
+</html>

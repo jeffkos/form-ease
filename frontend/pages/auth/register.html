@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Inscription</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-white/20 backdrop-blur-3xl"></div>
+    
+    <!-- Main Container -->
+    <div class="relative flex items-center justify-center min-h-screen px-4 py-8">
+        <!-- Register Card -->
+        <div class="tremor-Card w-full max-w-md p-8 shadow-xl">
+            <!-- Logo & Title -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mb-4">
+                    <i class="ri-file-list-3-line text-2xl text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Rejoindre FormEase</h1>
+                <p class="text-gray-600">Créez votre compte et commencez à créer des formulaires</p>
+            </div>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="space-y-6">
+                <!-- Name Fields -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="ri-user-line mr-2"></i>Prénom
+                        </label>
+                        <input 
+                            type="text" 
+                            id="firstName" 
+                            name="firstName" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            placeholder="John"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="ri-user-line mr-2"></i>Nom
+                        </label>
+                        <input 
+                            type="text" 
+                            id="lastName" 
+                            name="lastName" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            placeholder="Doe"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="ri-mail-line mr-2"></i>Email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        placeholder="votre@email.com"
+                        required
+                    />
+                    <div id="emailError" class="text-red-500 text-sm mt-1 hidden"></div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="ri-lock-line mr-2"></i>Mot de passe
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 pr-12"
+                            placeholder="Minimum 8 caractères"
+                            required
+                        />
+                        <button 
+                            type="button" 
+                            id="togglePassword"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        >
+                            <i class="ri-eye-line" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                    <!-- Password Strength Indicator -->
+                    <div class="mt-2">
+                        <div class="flex space-x-1">
+                            <div class="h-1 bg-gray-300 rounded flex-1" id="strength1"></div>
+                            <div class="h-1 bg-gray-300 rounded flex-1" id="strength2"></div>
+                            <div class="h-1 bg-gray-300 rounded flex-1" id="strength3"></div>
+                            <div class="h-1 bg-gray-300 rounded flex-1" id="strength4"></div>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1" id="strengthText">Force du mot de passe</p>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="ri-lock-line mr-2"></i>Confirmer le mot de passe
+                    </label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        placeholder="Répétez votre mot de passe"
+                        required
+                    />
+                    <div id="confirmPasswordError" class="text-red-500 text-sm mt-1 hidden"></div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <input 
+                        type="checkbox" 
+                        id="terms" 
+                        name="terms"
+                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                        required
+                    />
+                    <label for="terms" class="ml-2 text-sm text-gray-700">
+                        J'accepte les <a href="#" class="text-blue-600 hover:text-blue-800">conditions d'utilisation</a> 
+                        et la <a href="#" class="text-blue-600 hover:text-blue-800">politique de confidentialité</a>
+                    </label>
+                </div>
+
+                <!-- Register Button -->
+                <button 
+                    type="submit" 
+                    id="registerBtn"
+                    class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center"
+                >
+                    <span id="registerBtnText">Créer mon compte</span>
+                    <i class="ri-arrow-right-line ml-2" id="registerBtnIcon"></i>
+                    <i class="ri-loader-4-line animate-spin ml-2 hidden" id="registerBtnLoader"></i>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="my-6 flex items-center">
+                <div class="flex-1 border-t border-gray-300"></div>
+                <span class="px-4 text-sm text-gray-500">ou</span>
+                <div class="flex-1 border-t border-gray-300"></div>
+            </div>
+
+            <!-- Social Register -->
+            <div class="space-y-3">
+                <button class="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 flex items-center justify-center">
+                    <i class="ri-google-fill text-red-500 mr-2"></i>
+                    S'inscrire avec Google
+                </button>
+                <button class="w-full bg-gray-800 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-900 transition-all duration-200 flex items-center justify-center">
+                    <i class="ri-github-fill mr-2"></i>
+                    S'inscrire avec GitHub
+                </button>
+            </div>
+
+            <!-- Login Link -->
+            <div class="text-center mt-6">
+                <p class="text-sm text-gray-600">
+                    Déjà un compte ? 
+                    <a href="login.html" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                        Se connecter
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script src="../../scripts/core.js"></script>
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.className = 'ri-eye-off-line';
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.className = 'ri-eye-line';
+            }
+        });
+
+        // Password strength checker
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            updatePasswordStrength(strength);
+        });
+
+        function checkPasswordStrength(password) {
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+            return Math.min(score, 4);
+        }
+
+        function updatePasswordStrength(strength) {
+            const indicators = ['strength1', 'strength2', 'strength3', 'strength4'];
+            const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+            const texts = ['Très faible', 'Faible', 'Moyen', 'Fort'];
+            
+            indicators.forEach((id, index) => {
+                const element = document.getElementById(id);
+                element.className = `h-1 rounded flex-1 ${index < strength ? colors[strength - 1] : 'bg-gray-300'}`;
+            });
+            
+            document.getElementById('strengthText').textContent = 
+                strength > 0 ? `Force: ${texts[strength - 1]}` : 'Force du mot de passe';
+        }
+
+        // Confirm password validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const errorDiv = document.getElementById('confirmPasswordError');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                errorDiv.textContent = 'Les mots de passe ne correspondent pas';
+                errorDiv.classList.remove('hidden');
+                this.classList.add('border-red-500');
+            } else {
+                errorDiv.classList.add('hidden');
+                this.classList.remove('border-red-500');
+            }
+        });
+
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const registerBtnText = document.getElementById('registerBtnText');
+            const registerBtnIcon = document.getElementById('registerBtnIcon');
+            const registerBtnLoader = document.getElementById('registerBtnLoader');
+            
+            // Validate passwords match
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showMessage('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+            
+            // Show loading state
+            registerBtn.disabled = true;
+            registerBtnText.textContent = 'Création du compte...';
+            registerBtnIcon.classList.add('hidden');
+            registerBtnLoader.classList.remove('hidden');
+            
+            const formData = new FormData(this);
+            const data = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            try {
+                const response = await fetch('http://localhost:4000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Success
+                    showMessage('Compte créé avec succès ! Vérifiez votre email.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    // Error
+                    showMessage(result.message || 'Erreur lors de la création du compte', 'error');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showMessage('Erreur de connexion au serveur', 'error');
+            } finally {
+                // Reset button state
+                registerBtn.disabled = false;
+                registerBtnText.textContent = 'Créer mon compte';
+                registerBtnIcon.classList.remove('hidden');
+                registerBtnLoader.classList.add('hidden');
+            }
+        });
+
+        // Show message function
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const messageEl = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+            const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
+            
+            messageEl.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center`;
+            messageEl.innerHTML = `
+                <i class="${icon} mr-2"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(messageEl);
+            
+            // Remove message after 5 seconds
+            setTimeout(() => {
+                messageEl.remove();
+            }, 5000);
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            window.location.href = '../dashboard/home.html';
+        }
+    </script>
+</body>
+</html>

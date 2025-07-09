@@ -1,0 +1,19 @@
+/* FORMEASE TREMOR CSS - Basé sur les modèles existants */ 
+:root { 
+  --tremor-brand-faint: #f0f9ff; 
+  --tremor-brand-muted: #bae6fd; 
+  --tremor-brand-subtle: #38bdf8; 
+  --tremor-brand-default: #0ea5e9; 
+  --tremor-brand-emphasis: #0284c7; 
+  --tremor-brand-inverted: #ffffff; 
+  --tremor-background-default: #ffffff; 
+} 
+ 
+.tremor-Card { 
+  backdrop-filter: blur(12px); 
+  background: rgba(255, 255, 255, 0.9); 
+  border-radius: 0.5rem; 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+  transition: all 0.3s ease; 
+} 

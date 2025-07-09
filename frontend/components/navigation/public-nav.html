@@ -1,0 +1,103 @@
+<!-- 
+  NAVIGATION PUBLIQUE - Pour les pages non-authentifiées
+  Usage: Pages landing, login, register, about, pricing
+-->
+<nav class="tremor-Card sticky top-0 z-40 border-0 border-b border-tremor-border-default">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            
+            <!-- Logo et nom -->
+            <div class="flex items-center space-x-4">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i class="ri-file-text-line text-white text-lg"></i>
+                    </div>
+                    <span class="tremor-Title text-tremor-content-strong">FormEase</span>
+                </a>
+                
+                <!-- Version badge -->
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-tremor-brand-faint text-tremor-brand-emphasis">
+                    v2.0
+                </span>
+            </div>
+            
+            <!-- Navigation desktop -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/public/about.html" class="tremor-Text hover:text-tremor-content-emphasis transition-colors">
+                    À propos
+                </a>
+                <a href="/public/pricing.html" class="tremor-Text hover:text-tremor-content-emphasis transition-colors">
+                    Tarifs
+                </a>
+                <a href="/utils/help.html" class="tremor-Text hover:text-tremor-content-emphasis transition-colors">
+                    Aide
+                </a>
+                
+                <div class="w-px h-6 bg-tremor-border-default"></div>
+                
+                <a href="/auth/login.html" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                    <i class="ri-login-box-line"></i>
+                    Connexion
+                </a>
+                <a href="/auth/register.html" class="tremor-Button tremor-Button-primary tremor-Button-sm">
+                    <i class="ri-user-add-line"></i>
+                    Inscription
+                </a>
+            </div>
+            
+            <!-- Menu mobile -->
+            <div class="md:hidden">
+                <button 
+                    onclick="toggleMobileMenu()" 
+                    class="tremor-Button tremor-Button-ghost tremor-Button-sm"
+                    aria-label="Menu"
+                >
+                    <i class="ri-menu-line text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menu mobile dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-tremor-border-default bg-tremor-background-default">
+        <div class="px-4 py-3 space-y-3">
+            <a href="/public/about.html" class="block tremor-Text hover:text-tremor-content-emphasis transition-colors">
+                À propos
+            </a>
+            <a href="/public/pricing.html" class="block tremor-Text hover:text-tremor-content-emphasis transition-colors">
+                Tarifs
+            </a>
+            <a href="/utils/help.html" class="block tremor-Text hover:text-tremor-content-emphasis transition-colors">
+                Aide
+            </a>
+            
+            <div class="pt-3 border-t border-tremor-border-default space-y-2">
+                <a href="/auth/login.html" class="block w-full tremor-Button tremor-Button-secondary tremor-Button-sm text-center">
+                    <i class="ri-login-box-line"></i>
+                    Connexion
+                </a>
+                <a href="/auth/register.html" class="block w-full tremor-Button tremor-Button-primary tremor-Button-sm text-center">
+                    <i class="ri-user-add-line"></i>
+                    Inscription
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+}
+
+// Fermer le menu mobile si on clique ailleurs
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('mobile-menu');
+    const button = e.target.closest('button[aria-label="Menu"]');
+    
+    if (!button && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
+</script>

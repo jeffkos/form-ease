@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Créateur de Formulaires Intelligent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white font-sans">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i class="ri-file-list-3-line text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">FormEase</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-gray-900 transition-colors">Fonctionnalités</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition-colors">Tarifs</a>
+                    <a href="#about" class="text-gray-600 hover:text-gray-900 transition-colors">À propos</a>
+                    <a href="../auth/login.html" class="text-gray-600 hover:text-gray-900 transition-colors">Connexion</a>
+                    <a href="../auth/register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Commencer gratuitement
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button class="md:hidden" id="mobileMenuBtn">
+                    <i class="ri-menu-line text-2xl text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden" id="mobileMenu">
+            <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+                <a href="#features" class="block px-3 py-2 text-gray-600 hover:text-gray-900">Fonctionnalités</a>
+                <a href="#pricing" class="block px-3 py-2 text-gray-600 hover:text-gray-900">Tarifs</a>
+                <a href="#about" class="block px-3 py-2 text-gray-600 hover:text-gray-900">À propos</a>
+                <a href="../auth/login.html" class="block px-3 py-2 text-gray-600 hover:text-gray-900">Connexion</a>
+                <a href="../auth/register.html" class="block px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center">
+                    Commencer gratuitement
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+                    Créez des formulaires
+                    <span class="text-blue-600">intelligents</span>
+                    en quelques minutes
+                </h1>
+                <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                    FormEase révolutionne la création de formulaires avec l'intelligence artificielle. 
+                    Générez, personnalisez et déployez vos formulaires sans effort.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="../auth/register.html" class="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700 transition-all duration-200 flex items-center">
+                        <i class="ri-rocket-line mr-2"></i>
+                        Commencer gratuitement
+                    </a>
+                    <button class="text-gray-600 px-8 py-4 rounded-lg text-lg font-medium hover:text-gray-900 transition-colors flex items-center" id="demoBtn">
+                        <i class="ri-play-line mr-2"></i>
+                        Voir la démo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hero Image/Demo -->
+            <div class="mt-16 relative">
+                <div class="tremor-Card p-8 max-w-4xl mx-auto">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Générateur IA de FormEase</h3>
+                        <div class="flex items-center space-x-2 text-green-600">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm">En ligne</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                <i class="ri-robot-line text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-700 mb-2">Décrivez le formulaire que vous souhaitez créer :</p>
+                                <div class="bg-white border border-gray-300 rounded-lg p-3 text-gray-600" id="demoText">
+                                    "Je veux créer un formulaire de contact pour mon site web avec nom, email, sujet et message..."
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Tout ce dont vous avez besoin
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Des fonctionnalités avancées pour créer, gérer et analyser vos formulaires comme jamais auparavant.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="tremor-Card p-8 text-center hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-robot-line text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Génération par IA</h3>
+                    <p class="text-gray-600">
+                        Décrivez simplement ce que vous voulez et notre IA génère le formulaire parfait en quelques secondes.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="tremor-Card p-8 text-center hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-drag-drop-line text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Éditeur Visuel</h3>
+                    <p class="text-gray-600">
+                        Interface drag & drop intuitive pour personnaliser vos formulaires sans aucune compétence technique.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="tremor-Card p-8 text-center hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-bar-chart-line text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Analytics Avancés</h3>
+                    <p class="text-gray-600">
+                        Suivez les performances de vos formulaires avec des métriques détaillées et des insights automatiques.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="tremor-Card p-8 text-center hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-smartphone-line text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Responsive Design</h3>
+                    <p class="text-gray-600">
+                        Vos formulaires s'adaptent parfaitement à tous les appareils : mobile, tablette et desktop.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="tremor-Card p-8 text-center hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-links-line text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Intégrations</h3>
+                    <p class="text-gray-600">
+                        Connectez vos formulaires à vos outils favoris : Zapier, Webhooks, API REST et bien plus.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="tremor-Card p-8 text-center hover:shadow-xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-shield-check-line text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Sécurité Renforcée</h3>
+                    <p class="text-gray-600">
+                        Protection des données RGPD, chiffrement SSL et validation anti-spam intégrée.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Tarifs transparents
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Choisissez le plan qui correspond à vos besoins. Commencez gratuitement, évoluez quand vous voulez.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="tremor-Card p-8 relative">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Gratuit</h3>
+                        <div class="text-4xl font-bold text-gray-900 mb-2">0€</div>
+                        <p class="text-gray-600">Pour commencer</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">3 formulaires</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">100 réponses/mois</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Génération IA basique</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Support email</span>
+                        </li>
+                    </ul>
+                    <a href="../auth/register.html" class="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors text-center block">
+                        Commencer gratuitement
+                    </a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="tremor-Card p-8 relative border-2 border-blue-500">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">Populaire</span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
+                        <div class="text-4xl font-bold text-gray-900 mb-2">29€</div>
+                        <p class="text-gray-600">par mois</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Formulaires illimités</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">10,000 réponses/mois</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">IA avancée</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Analytics complets</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Intégrations</span>
+                        </li>
+                    </ul>
+                    <a href="../auth/register.html" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors text-center block">
+                        Essayer Pro
+                    </a>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="tremor-Card p-8 relative">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                        <div class="text-4xl font-bold text-gray-900 mb-2">99€</div>
+                        <p class="text-gray-600">par mois</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Tout de Pro</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Réponses illimitées</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Support prioritaire</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">API dédiée</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span class="text-gray-700">SSO & conformité</span>
+                        </li>
+                    </ul>
+                    <a href="../auth/register.html" class="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors text-center block">
+                        Contacter l'équipe
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-blue-600">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                Prêt à révolutionner vos formulaires ?
+            </h2>
+            <p class="text-xl text-blue-100 mb-8">
+                Rejoignez des milliers d'utilisateurs qui font confiance à FormEase pour leurs formulaires.
+            </p>
+            <a href="../auth/register.html" class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors inline-flex items-center">
+                <i class="ri-rocket-line mr-2"></i>
+                Commencer gratuitement maintenant
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Logo & Description -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i class="ri-file-list-3-line text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">FormEase</span>
+                    </div>
+                    <p class="text-gray-400 mb-4 max-w-md">
+                        La plateforme de création de formulaires alimentée par l'IA. 
+                        Créez, gérez et analysez vos formulaires comme jamais auparavant.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-twitter-line text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-linkedin-line text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-github-line text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Produit</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Fonctionnalités</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white transition-colors">Tarifs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Intégrations</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Guides</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Statut du service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    © 2025 FormEase. Tous droits réservés.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Confidentialité</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Conditions</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../scripts/core.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Demo text animation
+        const demoTexts = [
+            "Je veux créer un formulaire de contact pour mon site web avec nom, email, sujet et message...",
+            "Créez un formulaire d'inscription à un événement avec nom, téléphone, allergies alimentaires...",
+            "J'ai besoin d'un sondage de satisfaction client avec des étoiles et commentaires...",
+            "Formulaire de candidature avec CV, lettre de motivation et informations personnelles..."
+        ];
+
+        let currentTextIndex = 0;
+        const demoTextElement = document.getElementById('demoText');
+
+        function animateText() {
+            demoTextElement.style.opacity = '0';
+            setTimeout(() => {
+                demoTextElement.textContent = demoTexts[currentTextIndex];
+                demoTextElement.style.opacity = '1';
+                currentTextIndex = (currentTextIndex + 1) % demoTexts.length;
+            }, 300);
+        }
+
+        // Start text animation
+        setInterval(animateText, 4000);
+
+        // Demo button
+        document.getElementById('demoBtn').addEventListener('click', function() {
+            // Scroll to features section
+            document.getElementById('features').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

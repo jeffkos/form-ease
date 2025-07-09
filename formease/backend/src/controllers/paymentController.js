@@ -1,6 +1,6 @@
 // Contrôleur de paiement pour FormEase avec Stripe
 const { PrismaClient } = require('@prisma/client');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
 const logger = require('../utils/logger');
 const prisma = new PrismaClient();
 
@@ -17,6 +17,12 @@ const PLANS = {
 // Créer une session de paiement Stripe
 exports.createCheckoutSession = async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(503).json({ 
+        message: 'Service de paiement temporairement indisponible. Vous pouvez toujours utiliser les fonctionnalités gratuites.' 
+      });
+    }
+
     const { planType = 'premium' } = req.body;
     const plan = PLANS[planType];
     

@@ -1,6 +1,8 @@
 git add . //pour ajouter toutes les modifications faites dans l'index git
 
 git stash //pour sauvegarder toutes tes modifications dans ajoutédans l'index "quelque part" et restaurer le projet à l'état du dernier commit
+
+Gestion des coupons
 ---------------------------------------------------------
 
 Revois les interface, en suivant notre charte nous nous conformons que a tremor voici ça documentation : https://tremor.so/docs/getting-started/installation Nous utiliser que le UX/UI de tremor pour les icone nous utilisont seuelement les icone de https://remixicon.com/

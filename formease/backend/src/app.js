@@ -23,12 +23,27 @@ app.use(checkCriticalSecrets);
 // Middleware de sécurité
 app.use(securityHeaders);
 
-// Configuration CORS
+// Configuration CORS - Permissive pour le développement
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    // En développement, accepter toutes les origines
+    if (process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      // En production, utiliser une liste d'origines autorisées
+      const allowedOrigins = [
+        process.env.FRONTEND_URL || 'http://localhost:3000',
+        'http://localhost:4000',
+        'http://localhost:8080',
+        'http://localhost:5173'
+      ];
+      callback(null, allowedOrigins.indexOf(origin) !== -1 || !origin);
+    }
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
 }));
 
 // Rate limiting global
@@ -38,9 +53,80 @@ app.use('/api', apiLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Route de test de santé
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    port: process.env.PORT || 4000,
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Route de test de parsing JSON
+app.post('/api/test-login', (req, res) => {
+  console.log('Body reçu:', req.body);
+  res.json({ 
+    message: 'Test réussi', 
+    receivedData: req.body,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Route de test de connexion avec données statiques
+app.post('/api/test-auth', (req, res) => {
+  const { email, password } = req.body;
+  
+  if (email === 'jeff.kosi@formease.com' && password === 'FormEase2025!') {
+    res.json({
+      success: true,
+      message: 'Connexion de test réussie',
+      token: 'test-token-123',
+      user: {
+        id: 3,
+        firstName: 'Jeff',
+        lastName: 'KOSI',
+        email: 'jeff.kosi@formease.com',
+        role: 'PREMIUM',
+        plan: 'premium'
+      }
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Identifiants de test invalides'
+    });
+  }
+});
+
+// Route de test simple
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'FormEase backend is running',
+    timestamp: new Date().toISOString(),
+    port: process.env.PORT || 4000
+  });
+});
+
+// Route de test pour la connexion (sans validation pour debug)
+app.post('/api/test-login', (req, res) => {
+  console.log('Body reçu:', req.body);
+  console.log('Headers:', req.headers);
+  res.json({ 
+    message: 'Test OK', 
+    body: req.body,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Importation des routes
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+
+// Importation des routes dashboard
+const dashboardRoutes = require('./routes/dashboard');
+app.use('/api/dashboard', dashboardRoutes);
 
 // Importation de la route de paiement
 const paymentRoutes = require('./routes/payment');

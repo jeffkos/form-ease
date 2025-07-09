@@ -79,6 +79,9 @@ router.post('/login',
 // Route pour récupérer le profil utilisateur
 router.get('/profile', auth, authController.getProfile);
 
+// Route pour récupérer le profil utilisateur (alias pour compatibilité frontend)
+router.get('/me', auth, authController.getProfile);
+
 // Route pour mettre à jour le profil utilisateur
 router.put('/profile', 
   auth, 
