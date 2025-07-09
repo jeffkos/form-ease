@@ -22,6 +22,47 @@
                                 DEFAULT: '#0ea5e9',
                                 emphasis: '#0284c7',
                                 inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#0ea5e9'
+                            },
+                            border: {
+                                DEFAULT: '#e2e8f0',
+                                emphasis: '#cbd5e1'
+                            },
+                            ring: {
+                                DEFAULT: '#0ea5e9'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
                             }
                         }
                     },
@@ -32,6 +73,40 @@
             }
         }
     </script>
+    <style>
+        .tremor-CardHeader {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1rem 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            min-width: 0; /* Permet au contenu de se rétrécir */
+            overflow: hidden; /* Évite le débordement */
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .metric-card .tremor-CardContent {
+            padding: 0.75rem 1rem;
+        }
+        .tremor-Metric {
+            line-height: 1.25;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans">
     <!-- Layout principal en grid avec container élargi -->
@@ -51,28 +126,59 @@
                 <!-- Dashboard -->
                 <a href="home.html" class="flex items-center px-3 py-2 text-blue-600 bg-blue-50 rounded-lg mb-2">
                     <i class="ri-dashboard-line mr-3 text-sm"></i>
-                    <span class="text-sm font-medium">Overview</span>
+                    <span class="text-sm font-medium" data-i18n="dashboard">Tableau de bord</span>
                 </a>
 
                 <!-- Forms -->
                 <div class="mt-4">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Formulaires</h3>
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="forms">Formulaires</h3>
                     <a href="../forms/list.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
                         <i class="ri-file-list-2-line mr-3 text-sm"></i>
-                        <span class="text-sm">Mes formulaires</span>
+                        <span class="text-sm" data-i18n="formsList">Mes formulaires</span>
                     </a>
                     <a href="../forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
                         <i class="ri-tools-line mr-3 text-sm"></i>
-                        <span class="text-sm">Créateur</span>
+                        <span class="text-sm" data-i18n="formBuilder">Créateur de formulaires</span>
+                    </a>
+                    <a href="../forms/ai-generator.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-robot-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formAI">Formulaire généré IA</span>
                     </a>
                 </div>
 
                 <!-- Analytics -->
                 <div class="mt-4">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Analytics</h3>
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="analytics">Analytics</h3>
                     <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
                         <i class="ri-bar-chart-line mr-3 text-sm"></i>
-                        <span class="text-sm">Statistiques</span>
+                        <span class="text-sm" data-i18n="analytics">Analytics</span>
+                    </a>
+                </div>
+
+                <!-- Subscription -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="subscription">Abonnement</h3>
+                    <a href="../subscription/manage.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-vip-crown-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="manageSubscription">Gérer l'abonnement</span>
+                    </a>
+                </div>
+
+                <!-- Templates -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="templates">Modèles</h3>
+                </div>
+
+                <!-- Marketing & Communication -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="marketing">Marketing</h3>
+                    <a href="../newsletters/list.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-mail-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="newsletters">Newsletters</span>
+                    </a>
+                    <a href="../tracking/email-tracker.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-radar-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="emailTracking">Trackers de mails</span>
                     </a>
                 </div>
 
@@ -85,33 +191,43 @@
                     </a>
                     <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
                         <i class="ri-settings-3-line mr-3 text-sm"></i>
-                        <span class="text-sm">Paramètres système</span>
+                        <span class="text-sm" data-i18n="settings">Paramètres</span>
                     </a>
                 </div>
 
-                <!-- Shortcuts -->
+                <!-- User Profile & Actions -->
                 <div class="mt-6 pt-4 border-t border-gray-200">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Shortcuts</h3>
-                    <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-user-add-line mr-3 text-sm"></i>
-                        <span class="text-sm">Add new user</span>
-                    </a>
-                    <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-settings-line mr-3 text-sm"></i>
-                        <span class="text-sm">Settings</span>
-                    </a>
-                </div>
-
-                <!-- User Profile -->
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                    <div class="flex items-center px-3 py-2">
-                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <!-- User Info -->
+                    <div class="flex items-center justify-start px-3 py-2 mb-4">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-start pl-2 mr-3">
                             <span class="text-white text-xs font-medium">JK</span>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-900">Jeff KOSI</p>
-                            <p class="text-xs text-gray-600">Member</p>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">Jeff KOSI</p>
+                            <p class="text-xs text-blue-600 font-medium">Premium</p>
                         </div>
+                    </div>
+
+                    <!-- User Actions -->
+                    <div class="space-y-1">
+                        <button id="sidebarProfileBtn" class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="ri-user-settings-line mr-3 text-sm"></i>
+                            <span class="text-sm" data-i18n="profile">Mon profil</span>
+                        </button>
+                        
+                        <button id="sidebarNotifBtn" class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="ri-notification-line mr-3 text-sm"></i>
+                            <span class="text-sm" data-i18n="notifications">Notifications</span>
+                        </button>
+                        
+                        <!-- Séparateur -->
+                        <div class="border-t border-gray-200 my-2"></div>
+                        
+                        <!-- Déconnexion -->
+                        <button id="sidebarLogoutBtn" class="flex items-center w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <i class="ri-logout-box-line mr-3 text-sm"></i>
+                            <span class="text-sm">Déconnexion</span>
+                        </button>
                     </div>
                 </div>
             </nav>
@@ -123,20 +239,40 @@
             <div class="border-b border-gray-200 px-6 py-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-                        <p class="text-gray-600 text-sm mt-1" id="dashboard-subtitle">Vue d'ensemble de vos performances</p>
+                        <h1 class="text-2xl font-bold text-gray-900" data-i18n="dashboardTitle">Tableau de Bord Avancé</h1>
+                        <p class="text-gray-600 text-sm mt-1" id="dashboard-subtitle" data-i18n="dashboardSubtitle">Vue d'ensemble de votre activité FormEase</p>
                     </div>
                     <div class="flex items-center space-x-3">
                         <button class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
                             Edit
                         </button>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                <span class="text-white text-xs font-medium">JK</span>
+                        <div class="relative">
+                            <div class="flex items-center space-x-2 cursor-pointer" id="userProfileBtn">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-start pl-2">
+                                    <span class="text-white text-xs font-medium">JK</span>
+                                </div>
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-gray-900" id="userName">Jeff KOSI</p>
-                                <p class="text-xs font-medium px-2 py-1 rounded" id="userRole">Premium</p>
+                            <!-- User Dropdown Menu -->
+                            <div id="userDropdown" class="absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 hidden z-10">
+                                <!-- User Actions -->
+                                <div class="py-1">
+                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        <i class="ri-user-line mr-3 w-4 h-4 flex-shrink-0"></i>
+                                        <span data-i18n="profile">Mon profil</span>
+                                    </a>
+                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        <i class="ri-notification-line mr-3 w-4 h-4 flex-shrink-0"></i>
+                                        <span data-i18n="notifications">Notifications</span>
+                                    </a>
+                                </div>
+                                <!-- Logout -->
+                                <div class="py-1">
+                                    <button id="logoutBtn" class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                        <i class="ri-logout-box-line mr-3 w-4 h-4 flex-shrink-0"></i>
+                                        <span data-i18n="disconnect">Déconnexion</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -146,7 +282,7 @@
             <!-- Contenu du dashboard -->
             <div class="p-6">
                 <!-- Stats Cards basées sur le rôle -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="main-stats">
+                <div class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 mb-2" id="main-stats">
                     <!-- Les métriques seront générées dynamiquement -->
                 </div>
 
@@ -190,7 +326,7 @@
                             <i class="ri-admin-line text-2xl text-red-600"></i>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div class="text-center">
+                            <div class="text-center"></div>
                                 <p class="text-2xl font-bold text-red-700" id="total-users">0</p>
                                 <p class="text-sm text-gray-600">Utilisateurs totaux</p>
                             </div>
@@ -263,6 +399,157 @@
                             </div>
                         </div>
                     </div>
+                </div>            <!-- Section Graphique -->
+            <div class="mb-8">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900" id="main-chart-title">Activité & Engagement Premium</h3>
+                            <p class="text-sm text-gray-600 mt-1">Vue d'ensemble de l'activité</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <select id="chart-period" class="text-sm border border-gray-300 rounded-md px-3 py-1">
+                                <option value="month">Ce mois</option>
+                                <option value="quarter" selected>Ce trimestre</option>
+                                <option value="year">Cette année</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="tremor-Card">
+                            <div class="tremor-CardContent">
+                                <div id="tremor-combo-chart" class="h-80"></div>
+                                <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                                        <span class="text-sm text-gray-500">Formulaires créés</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                                        <span class="text-sm text-gray-500">Réponses reçues</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-3 h-3 bg-amber-500 rounded-full"></span>
+                                        <span class="text-sm text-gray-500">Taux de conversion</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
+                                        <span class="text-sm text-gray-500">Temps de complétion</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Modale de profil utilisateur (cachée par défaut) -->
+                <div id="userProfileModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden">
+                    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <!-- En-tête de la modale -->
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900" data-i18n="profileSettings">Paramètres du profil</h3>
+                            <button id="closeProfileModal" class="text-gray-400 hover:text-gray-500">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+
+                        <!-- Contenu de la modale -->
+                        <div class="p-6">
+                            <!-- En-tête profil -->
+                            <div class="flex items-center mb-6">
+                                <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-white text-2xl font-medium">JK</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900" id="profileUserName">Jeff KOSI</h2>
+                                    <p class="text-sm text-gray-600" id="profileUserEmail">jeff.kosi@example.com</p>
+                                    <p class="mt-1">
+                                        <span id="profileUserRole" class="text-xs font-medium px-2 py-1 rounded bg-blue-100 text-blue-800">Premium</span>
+                                        <span class="text-xs text-gray-500 ml-2">Membre depuis: Jan 2025</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Formulaire profil -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 mb-3" data-i18n="personalInfo">Informations personnelles</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-600 mb-1" data-i18n="name">Nom complet</label>
+                                            <input type="text" id="profileName" value="Jeff KOSI" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-600 mb-1" data-i18n="email">Email</label>
+                                            <input type="email" id="profileEmail" value="jeff.kosi@example.com" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-600 mb-1">Téléphone</label>
+                                            <input type="tel" id="profilePhone" value="+33 6 12 34 56 78" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-700 mb-3" data-i18n="preferences">Préférences</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-600 mb-1" data-i18n="theme">Thème</label>
+                                            <select id="profileTheme" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="light" data-i18n="light">Clair</option>
+                                                <option value="dark" data-i18n="dark">Sombre</option>
+                                                <option value="system" data-i18n="system">Système</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-600 mb-1" data-i18n="language">Langue</label>
+                                            <select id="profileLanguage" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="fr">Français</option>
+                                                <option value="en">English</option>
+                                                <option value="es">Español</option>
+                                                <option value="de">Deutsch</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="profileNotifications" class="w-4 h-4 text-blue-600 rounded">
+                                            <label for="profileNotifications" class="ml-2 text-sm text-gray-600" data-i18n="enableNotifications">
+                                                Activer les notifications par email
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Abonnement -->
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-700 mb-3">Abonnement</h4>
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p class="font-medium text-gray-900">Premium</p>
+                                            <p class="text-sm text-gray-600 mt-1">Prochain renouvellement: 15 août 2025</p>
+                                        </div>
+                                        <button id="manageSubscriptionBtn" onclick="handleSubscriptionManagement()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md">
+                                            Gérer l'abonnement
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
+                                <button id="cancelProfileChanges" onclick="handleCancelProfile()" class="px-4 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md" data-i18n="cancel">
+                                    Annuler
+                                </button>
+                                <button id="saveProfileChanges" onclick="saveUserProfileChanges()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md" data-i18n="saveChanges">
+                                    Enregistrer les modifications
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -299,6 +586,7 @@
                     responses: 45230,
                     revenue: 156780,
                     conversionRate: 96.8,
+                    avgTime: 1.8,
                     totalUsers: 5847,
                     systemHealth: 99.9,
                     activeProjects: 324,
@@ -316,6 +604,7 @@
                     responses: 8934,
                     revenue: 45230,
                     conversionRate: 94.2,
+                    avgTime: 2.1,
                     totalUsers: 247,
                     systemHealth: 99.7,
                     activeProjects: 23,
@@ -333,6 +622,7 @@
                     responses: 2847,
                     revenue: 12847,
                     conversionRate: 87.5,
+                    avgTime: 2.5,
                     monthlyGoal: 18000,
                     engagementRate: 94.2
                 },
@@ -347,6 +637,7 @@
                     activeForms: 2,
                     responses: 156,
                     conversionRate: 76.3,
+                    avgTime: 3.2,
                     formsLimit: 5,
                     responsesThisMonth: 156,
                     upgradeDiscount: 30
@@ -360,13 +651,11 @@
         function initializeInterface() {
             const userData = roleData[currentUser.role];
             
-            // Mise à jour du badge utilisateur
-            const roleElement = document.getElementById('userRole');
-            roleElement.textContent = userData.badge.text;
-            roleElement.className = `text-xs font-medium px-2 py-1 rounded ${userData.badge.class}`;
-            
             // Mise à jour du sous-titre
             document.getElementById('dashboard-subtitle').textContent = userData.subtitle;
+            
+            // Mise à jour des informations utilisateur dans la sidebar
+            updateSidebarUserInfo(userData);
             
             // Affichage des sections conditionnelles
             userData.sections.forEach(section => {
@@ -392,57 +681,101 @@
             generateChart();
         }
 
+        // Fonction pour mettre à jour les informations utilisateur dans la sidebar
+        function updateSidebarUserInfo(userData) {
+            // Mettre à jour le nom d'utilisateur
+            const userName = document.querySelector('.mt-6.pt-4 .flex-1 .text-sm.font-medium');
+            if (userName) {
+                userName.textContent = currentUser.name;
+            }
+            
+            // Mettre à jour le statut avec la couleur appropriée
+            const userStatus = document.querySelector('.mt-6.pt-4 .flex-1 .text-xs');
+            if (userStatus) {
+                userStatus.textContent = userData.badge.text;
+                // Retirer les anciennes classes de couleur
+                userStatus.className = userStatus.className.replace(/text-\w+-\d+/g, '');
+                // Ajouter les nouvelles classes
+                userStatus.className = `text-xs font-medium ${userData.badge.class.split(' ')[0]}`;
+            }
+        }
+
         function generateMainStats(stats) {
             const statsContainer = document.getElementById('main-stats');
             let statsHTML = '';
             
-            // Statistiques communes
+            // Statistiques communes avec le design de builder.html
             statsHTML += `
-                <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Total Formulaires</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">${stats.totalForms}</p>
-                            <p class="text-sm text-emerald-600 mt-1">
-                                <i class="ri-arrow-up-line"></i> Actifs: ${stats.activeForms || 'N/A'}
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                            <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide" data-i18n="totalForms">Formulaires créés</p>
+                                <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1">${stats.totalForms}</p>
+                                <p class="text-xs text-gray-400 mt-1">Actifs: ${stats.activeForms || 'N/A'}</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-brand-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-brand-muted transition-colors duration-200">
+                                    <i class="ri-file-list-3-line text-xl text-tremor-brand-emphasis"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
             
             statsHTML += `
-                <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Réponses</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">${stats.responses.toLocaleString()}</p>
-                            <p class="text-sm text-emerald-600 mt-1">
-                                <i class="ri-arrow-up-line"></i> Ce mois
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center">
-                            <i class="ri-message-2-line text-emerald-600 text-xl"></i>
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide" data-i18n="totalResponses">Réponses reçues</p>
+                                <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1">${stats.responses.toLocaleString()}</p>
+                                <p class="text-xs text-tremor-success-emphasis mt-1">↗ +12% ce mois</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-success-muted transition-colors duration-200">
+                                    <i class="ri-bar-chart-line text-xl text-tremor-success-emphasis"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
             
             statsHTML += `
-                <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Taux de Conversion</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">${stats.conversionRate}%</p>
-                            <p class="text-sm text-emerald-600 mt-1">
-                                <i class="ri-arrow-up-line"></i> Excellent
-                            </p>
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide" data-i18n="conversionRate">Taux de conversion</p>
+                                <p class="tremor-Metric text-xl font-bold text-tremor-success-emphasis mt-1">${stats.conversionRate}%</p>
+                                <p class="text-xs text-gray-400 mt-1">Excellent</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-success-muted transition-colors duration-200">
+                                    <i class="ri-check-line text-xl text-tremor-success-emphasis"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center">
-                            <i class="ri-trophy-line text-amber-600 text-xl"></i>
+                    </div>
+                </div>
+            `;
+            
+            statsHTML += `
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide" data-i18n="avgTime">Temps moyen</p>
+                                <p class="tremor-Text font-bold text-lg text-gray-900 mt-1">${stats.avgTime || '2.5'} min</p>
+                                <p class="text-xs text-tremor-warning-emphasis mt-1">Temps moyen</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-warning-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-warning-muted transition-colors duration-200">
+                                    <i class="ri-time-line text-xl text-tremor-warning-emphasis"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -477,42 +810,996 @@
         }
 
         function generateChart() {
-            // Données simplifiées pour le graphique
-            const chartData = [45, 52, 48, 61, 55, 67, 59, 73, 68, 82, 75, 89];
-            const chartOptions = {
-                chart: {
-                    type: 'area',
-                    height: 384,
-                    toolbar: { show: false }
+            // Données pour le graphique combo
+            const chartData = [
+                {
+                    date: "Jan",
+                    "Formulaires": 10,
+                    "Réponses": 145,
+                    "Conversion": 68,
+                    "Temps moyen": 2.2
                 },
-                series: [{
-                    name: 'Activité',
-                    data: chartData
-                }],
-                xaxis: {
-                    categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
+                {
+                    date: "Fév",
+                    "Formulaires": 12,
+                    "Réponses": 168,
+                    "Conversion": 73,
+                    "Temps moyen": 2.1
                 },
-                colors: ['#3b82f6'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 0.25,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.1
+                {
+                    date: "Mar",
+                    "Formulaires": 15,
+                    "Réponses": 189,
+                    "Conversion": 78,
+                    "Temps moyen": 1.9
+                },
+                {
+                    date: "Avr",
+                    "Formulaires": 18,
+                    "Réponses": 224,
+                    "Conversion": 82,
+                    "Temps moyen": 1.8
+                },
+                {
+                    date: "Mai",
+                    "Formulaires": 16,
+                    "Réponses": 215,
+                    "Conversion": 85,
+                    "Temps moyen": 1.7
+                },
+                {
+                    date: "Juin",
+                    "Formulaires": 20,
+                    "Réponses": 287,
+                    "Conversion": 89,
+                    "Temps moyen": 1.5
+                }
+            ];
+
+            // Configuration du graphique avec ApexCharts (plus fiable que D3 dans ce contexte)
+            try {
+                // Récupérer l'élément conteneur
+                const chartElement = document.getElementById('tremor-combo-chart');
+                if (!chartElement) {
+                    console.error("Élément de graphique non trouvé");
+                    return;
+                }
+
+                // Configuration du graphique avec ApexCharts
+                const options = {
+                    series: [
+                        {
+                            name: 'Formulaires',
+                            type: 'column',
+                            data: chartData.map(d => d.Formulaires)
+                        },
+                        {
+                            name: 'Réponses (÷10)',
+                            type: 'column',
+                            data: chartData.map(d => Math.round(d.Réponses / 10))
+                        },
+                        {
+                            name: 'Conversion (%)',
+                            type: 'line',
+                            data: chartData.map(d => d.Conversion)
+                        },
+                        {
+                            name: 'Temps moyen (min)',
+                            type: 'line',
+                            data: chartData.map(d => d["Temps moyen"])
+                        }
+                    ],
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        stacked: false,
+                        toolbar: {
+                            show: false
+                        },
+                        fontFamily: 'Inter, sans-serif',
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        width: [0, 0, 3, 3],
+                        curve: 'smooth'
+                    },
+                    colors: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'],
+                    title: {
+                        text: '',
+                        align: 'left'
+                    },
+                    xaxis: {
+                        categories: chartData.map(d => d.date),
+                    },
+                    yaxis: [
+                        {
+                            title: {
+                                text: 'Formulaires',
+                                style: {
+                                    color: '#3b82f6'
+                                }
+                            },
+                        },
+                        {
+                            opposite: true,
+                            title: {
+                                text: 'Réponses (÷10)',
+                                style: {
+                                    color: '#10b981'
+                                }
+                            },
+                        },
+                        {
+                            opposite: true,
+                            title: {
+                                text: 'Conversion (%)',
+                                style: {
+                                    color: '#f59e0b'
+                                }
+                            },
+                            min: 0,
+                            max: 100
+                        },
+                        {
+                            opposite: true,
+                            title: {
+                                text: 'Temps moyen (min)',
+                                style: {
+                                    color: '#8b5cf6'
+                                }
+                            },
+                            min: 0,
+                            max: 5
+                        }
+                    ],
+                    tooltip: {
+                        enabled: true,
+                        shared: true,
+                        intersect: false
+                    },
+                    legend: {
+                        horizontalAlign: 'center',
+                        position: 'bottom'
+                    },
+                    fill: {
+                        opacity: [0.85, 0.85, 1, 1],
+                        gradient: {
+                            inverseColors: false,
+                            shade: 'light',
+                            type: "vertical",
+                            opacityFrom: 0.85,
+                            opacityTo: 0.55,
+                        }
                     }
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 2
+                };
+
+                // Rendre le graphique
+                const chart = new ApexCharts(chartElement, options);
+                chart.render();
+                
+                // Ajouter un gestionnaire d'événements pour le sélecteur de période
+                const periodSelector = document.getElementById('chart-period');
+                if (periodSelector) {
+                    periodSelector.addEventListener('change', function() {
+                        const period = this.value;
+                        console.log(`Période sélectionnée: ${period}`);
+                        
+                        // Simuler un chargement
+                        chartElement.classList.add('opacity-50');
+                        setTimeout(() => {
+                            chartElement.classList.remove('opacity-50');
+                            
+                            // Dans une implémentation réelle, on mettrait à jour le graphique avec de nouvelles données
+                            // chart.updateSeries([...]) - pour une implémentation réelle
+                            
+                            alert(`Données actualisées pour la période: ${period}`);
+                        }, 800);
+                    });
+                }
+            } catch (error) {
+                console.error("Erreur lors de la génération du graphique:", error);
+                document.getElementById('tremor-combo-chart').innerHTML = 
+                    '<div class="flex items-center justify-center h-full text-red-500">'+
+                    '<i class="ri-error-warning-line mr-2"></i> Erreur de chargement du graphique</div>';
+            }
+        }
+
+        // ============================================
+        // GESTION DES INTERACTIONS UTILISATEUR
+        // ============================================
+
+        function initializeUserActions() {
+            // Toggle du dropdown utilisateur dans l'header
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userProfileBtn && userDropdown) {
+                userProfileBtn.addEventListener('click', function() {
+                    userDropdown.classList.toggle('hidden');
+                    
+                    // Mettre en cache les préférences utilisateur lors de l'ouverture du menu
+                    if (!userDropdown.classList.contains('hidden')) {
+                        cacheUserPreferences();
+                    }
+                });
+                
+                // Fermer dropdown quand on clique ailleurs sur la page
+                document.addEventListener('click', function(event) {
+                    if (!userProfileBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Gestion des boutons de la sidebar
+            const sidebarProfileBtn = document.getElementById('sidebarProfileBtn');
+            const sidebarNotifBtn = document.getElementById('sidebarNotifBtn');
+            const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+            
+            if (sidebarProfileBtn) {
+                sidebarProfileBtn.addEventListener('click', function() {
+                    handleUserAction('Mon profil');
+                });
+            }
+            
+            if (sidebarNotifBtn) {
+                sidebarNotifBtn.addEventListener('click', function() {
+                    handleUserAction('Notifications');
+                });
+            }
+            
+            if (sidebarLogoutBtn) {
+                sidebarLogoutBtn.addEventListener('click', handleLogout);
+            }
+
+            // Gestion de la déconnexion dans le dropdown
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+
+            // Gestion des liens utilisateur dans le dropdown
+            const userLinks = document.querySelectorAll('#userDropdown a[href="#"]');
+            userLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const action = this.querySelector('span').textContent;
+                    handleUserAction(action);
+                    userDropdown.classList.add('hidden');
+                });
+            });
+
+            // Gestion de la modale de profil utilisateur
+            const userProfileModal = document.getElementById('userProfileModal');
+            const closeProfileModal = document.getElementById('closeProfileModal');
+            
+            if (userProfileBtn && userProfileModal) {
+                userProfileBtn.addEventListener('click', function() {
+                    userProfileModal.classList.remove('hidden');
+                });
+            }
+            
+            if (closeProfileModal) {
+                closeProfileModal.addEventListener('click', function() {
+                    userProfileModal.classList.add('hidden');
+                });
+            }
+        }
+        
+        // Fonction pour mettre en cache les préférences utilisateur
+        function cacheUserPreferences() {
+            // Vérifier si des préférences existantes sont déjà sauvegardées
+            let userPrefs = {};
+            try {
+                const savedPrefs = localStorage.getItem('userPreferences');
+                if (savedPrefs) {
+                    userPrefs = JSON.parse(savedPrefs);
+                }
+            } catch (e) {
+                console.error('Erreur lors du chargement des préférences:', e);
+            }
+            
+            // Mettre à jour ou définir les préférences si elles n'existent pas
+            const updatedPrefs = {
+                // Informations de base
+                name: userPrefs.name || 'Jeff KOSI',
+                email: userPrefs.email || 'jeff.kosi@example.com',
+                phone: userPrefs.phone || '+33 6 12 34 56 78',
+                
+                // Préférences
+                theme: userPrefs.theme || localStorage.getItem('userTheme') || 'light',
+                language: userPrefs.language || localStorage.getItem('userLanguage') || 'fr',
+                notifications: userPrefs.notifications !== undefined ? userPrefs.notifications : 
+                              (localStorage.getItem('notificationsEnabled') === 'true'),
+                
+                // Métadonnées
+                role: currentUser.role,
+                memberSince: userPrefs.memberSince || 'Janvier 2025',
+                subscriptionEnd: userPrefs.subscriptionEnd || '15 août 2025',
+                
+                // Horodatage
+                lastVisit: new Date().toISOString()
+            };
+            
+            // Sauvegarder dans localStorage pour simuler la mise en cache
+            localStorage.setItem('userPreferences', JSON.stringify(updatedPrefs));
+            console.log('Préférences utilisateur mises en cache:', updatedPrefs);
+            
+            // Dans une implémentation réelle, vous pourriez aussi faire un appel API
+            // pour synchroniser ces préférences avec le serveur
+        }
+
+        function handleLogout() {
+            // Confirmation de déconnexion
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                // Nettoyage du cache utilisateur
+                localStorage.removeItem('userPreferences');
+                
+                // Simulation de la déconnexion
+                console.log('Déconnexion en cours...');
+                
+                // Ici vous pourriez ajouter :
+                // - Appel API pour invalider la session
+                // - Nettoyage du localStorage/sessionStorage
+                // - Redirection vers la page de connexion
+                
+                // Pour la démo, on affiche un message
+                alert('Déconnexion réussie ! Redirection vers la page de connexion...');
+                
+                // Redirection vers la page de connexion (exemple)
+                // window.location.href = '/login.html';
+            }
+        }
+
+        function handleUserAction(action) {
+            console.log(`Action utilisateur: ${action}`);
+            
+            // Récupérer les préférences en cache si elles existent
+            let cachedPrefs = {};
+            try {
+                const prefsStr = localStorage.getItem('userPreferences');
+                if (prefsStr) {
+                    cachedPrefs = JSON.parse(prefsStr);
+                    console.log('Préférences en cache chargées:', cachedPrefs);
+                }
+            } catch (e) {
+                console.error('Erreur lors du chargement des préférences:', e);
+            }
+            
+            switch(action) {
+                case 'Mon profil':
+                    // Afficher la modale de profil utilisateur
+                    showUserProfileModal(cachedPrefs);
+                    break;
+                    
+                case 'Notifications':
+                    // Utiliser les préférences en cache
+                    const notifStatus = cachedPrefs.notifications ? 'activées' : 'désactivées';
+                    alert(`Vos notifications sont actuellement ${notifStatus}`);
+                    break;
+                    
+                default:
+                    console.log(`Action non gérée: ${action}`);
+            }
+        }
+
+        // Gestion de la modale du profil utilisateur
+        function showUserProfileModal(userPrefs) {
+            const modal = document.getElementById('userProfileModal');
+            
+            if (!modal) return;
+            
+            // Pré-remplir les champs avec les préférences utilisateur
+            const themeSelect = document.getElementById('profileTheme');
+            const langSelect = document.getElementById('profileLanguage');
+            const notifCheck = document.getElementById('profileNotifications');
+            
+            if (themeSelect) themeSelect.value = userPrefs.theme || 'light';
+            if (langSelect) langSelect.value = userPrefs.language || 'fr';
+            if (notifCheck) notifCheck.checked = userPrefs.notifications || false;
+            
+            // Afficher la modale
+            modal.classList.remove('hidden');
+            
+            // Ajouter uniquement le gestionnaire pour fermer la modale en cliquant à l'extérieur
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    closeUserProfileModal();
                 }
             };
             
-            const chart = new ApexCharts(document.querySelector('#mainChart'), chartOptions);
-            chart.render();
+            // Ajouter le gestionnaire pour le bouton de fermeture (X)
+            const closeBtn = document.getElementById('closeProfileModal');
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    closeUserProfileModal();
+                };
+            }
+        }
+        
+        function closeUserProfileModal() {
+            const modal = document.getElementById('userProfileModal');
+            if (modal) modal.classList.add('hidden');
+        }
+        
+        function saveUserProfileChanges() {
+            console.log('Fonction saveUserProfileChanges appelée');
+            
+            // Récupérer les valeurs des champs
+            const name = document.getElementById('profileName');
+            const email = document.getElementById('profileEmail');
+            const phone = document.getElementById('profilePhone');
+            const theme = document.getElementById('profileTheme');
+            const language = document.getElementById('profileLanguage');
+            const notifications = document.getElementById('profileNotifications');
+            
+            // Vérifier que tous les éléments existent
+            if (!name || !email || !phone || !theme || !language || !notifications) {
+                console.error('Un ou plusieurs éléments du formulaire sont introuvables');
+                alert('Erreur : Impossible de récupérer les données du formulaire');
+                return;
+            }
+            
+            // Récupérer les valeurs
+            const nameValue = name.value;
+            const emailValue = email.value;
+            const phoneValue = phone.value;
+            const themeValue = theme.value;
+            const languageValue = language.value;
+            const notificationsValue = notifications.checked;
+            
+            console.log('Valeurs récupérées:', {
+                name: nameValue,
+                email: emailValue,
+                phone: phoneValue,
+                theme: themeValue,
+                language: languageValue,
+                notifications: notificationsValue
+            });
+            
+            // Mettre à jour les préférences en cache
+            const userPrefs = {
+                name: nameValue,
+                email: emailValue,
+                phone: phoneValue,
+                theme: themeValue,
+                language: languageValue,
+                notifications: notificationsValue,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            // Sauvegarder dans localStorage
+            localStorage.setItem('userPreferences', JSON.stringify(userPrefs));
+            console.log('Préférences sauvegardées:', userPrefs);
+            
+            // Mettre à jour les éléments visibles de l'interface
+            const profileUserName = document.getElementById('profileUserName');
+            const profileUserEmail = document.getElementById('profileUserEmail');
+            
+            if (profileUserName) {
+                profileUserName.textContent = nameValue;
+                console.log('Nom utilisateur mis à jour dans la modale');
+            }
+            
+            if (profileUserEmail) {
+                profileUserEmail.textContent = emailValue;
+                console.log('Email utilisateur mis à jour dans la modale');
+            }
+            
+            // Mettre à jour les éléments de l'interface selon les préférences
+            if (themeValue !== (userPrefs.theme || 'light')) {
+                console.log('Thème modifié de', userPrefs.theme, 'vers', themeValue);
+                // Dans une vraie application, on appliquerait le thème ici
+            }
+            
+            // Changer la langue si elle est différente de la langue actuelle
+            if (languageValue !== currentLanguage) {
+                console.log('Langue modifiée de', currentLanguage, 'vers', languageValue);
+                changeLanguage(languageValue);
+            }
+            
+            // Feedback à l'utilisateur
+            alert(t('saveSuccess'));
+            
+            // Dans une implémentation réelle, on enverrait ces données au serveur
+            console.log('Préférences utilisateur mises à jour:', userPrefs);
+            
+            // Fermer la modale
+            closeUserProfileModal();
         }
 
-        // Initialisation au chargement de la page
-        document.addEventListener('DOMContentLoaded', initializeInterface);
+        // Gestion de l'abonnement utilisateur
+        function handleSubscriptionManagement() {
+            console.log('Fonction handleSubscriptionManagement appelée');
+            
+            // Rediriger vers la page de gestion des abonnements
+            window.location.href = '../subscription/manage.html';
+        }
+
+        // Système de traductions
+        const translations = {
+            fr: {
+                // Navigation
+                dashboard: 'Tableau de bord',
+                forms: 'Formulaires',
+                formsList: 'Mes formulaires',
+                formBuilder: 'Créateur de formulaires',
+                formAI: 'Formulaire généré IA',
+                analytics: 'Analytics',
+                subscription: 'Abonnement',
+                templates: 'Modèles',
+                marketing: 'Marketing',
+                newsletters: 'Newsletters',
+                emailTracking: 'Trackers de mails',
+                settings: 'Paramètres',
+                
+                // Dashboard
+                dashboardTitle: 'Tableau de Bord Avancé',
+                dashboardSubtitle: 'Vue d\'ensemble de votre activité FormEase',
+                
+                // Metrics
+                totalForms: 'Formulaires créés',
+                totalResponses: 'Réponses reçues',
+                conversionRate: 'Taux de conversion',
+                avgTime: 'Temps moyen',
+                todayViews: 'Vues aujourd\'hui',
+                activeForm: 'Formulaire actif',
+                revenue: 'Revenus totaux',
+                
+                // Charts
+                chartTitle: 'Activité & Engagement',
+                forms: 'Formulaires',
+                responses: 'Réponses',
+                views: 'Vues',
+                conversions: 'Conversions',
+                
+                // Actions
+                createForm: 'Créer un formulaire',
+                viewReports: 'Voir les rapports',
+                manageSubscription: 'Gérer l\'abonnement',
+                
+                // User menu
+                profile: 'Mon profil',
+                notifications: 'Notifications',
+                shortcuts: 'Raccourcis',
+                addUser: 'Ajouter un utilisateur',
+                disconnect: 'Déconnexion',
+                
+                // Profile modal
+                profileSettings: 'Paramètres du profil',
+                personalInfo: 'Informations personnelles',
+                name: 'Nom complet',
+                email: 'Adresse e-mail',
+                preferences: 'Préférences',
+                theme: 'Thème',
+                language: 'Langue',
+                light: 'Clair',
+                dark: 'Sombre',
+                system: 'Système',
+                enableNotifications: 'Activer les notifications par email',
+                saveChanges: 'Enregistrer les modifications',
+                cancel: 'Annuler',
+                
+                // Messages
+                saveSuccess: 'Modifications enregistrées avec succès !',
+                themeChanged: 'Thème modifié',
+                languageChanged: 'Langue modifiée',
+                
+                // Other
+                member: 'Membre',
+                loading: 'Chargement...',
+                error: 'Erreur'
+            },
+            en: {
+                // Navigation
+                dashboard: 'Dashboard',
+                forms: 'Forms',
+                formsList: 'My forms',
+                formBuilder: 'Form builder',
+                formAI: 'AI generated form',
+                analytics: 'Analytics',
+                subscription: 'Subscription',
+                templates: 'Templates',
+                marketing: 'Marketing',
+                newsletters: 'Newsletters',
+                emailTracking: 'Email tracking',
+                settings: 'Settings',
+                
+                // Dashboard
+                dashboardTitle: 'Advanced Dashboard',
+                dashboardSubtitle: 'Overview of your FormEase activity',
+                
+                // Metrics
+                totalForms: 'Forms created',
+                totalResponses: 'Responses received',
+                conversionRate: 'Conversion rate',
+                avgTime: 'Average time',
+                todayViews: 'Views today',
+                activeForm: 'Active form',
+                revenue: 'Total revenue',
+                
+                // Charts
+                chartTitle: 'Activity & Engagement',
+                forms: 'Forms',
+                responses: 'Responses',
+                views: 'Views',
+                conversions: 'Conversions',
+                
+                // Actions
+                createForm: 'Create form',
+                viewReports: 'View reports',
+                manageSubscription: 'Manage subscription',
+                
+                // User menu
+                profile: 'My profile',
+                notifications: 'Notifications',
+                shortcuts: 'Shortcuts',
+                addUser: 'Add user',
+                disconnect: 'Logout',
+                
+                // Profile modal
+                profileSettings: 'Profile settings',
+                personalInfo: 'Personal information',
+                name: 'Full name',
+                email: 'Email address',
+                preferences: 'Preferences',
+                theme: 'Theme',
+                language: 'Language',
+                light: 'Light',
+                dark: 'Dark',
+                system: 'System',
+                enableNotifications: 'Enable email notifications',
+                saveChanges: 'Save changes',
+                cancel: 'Cancel',
+                
+                // Messages
+                saveSuccess: 'Changes saved successfully!',
+                themeChanged: 'Theme changed',
+                languageChanged: 'Language changed',
+                
+                // Other
+                member: 'Member',
+                loading: 'Loading...',
+                error: 'Error'
+            },
+            es: {
+                // Navigation
+                dashboard: 'Panel de control',
+                forms: 'Formularios',
+                formsList: 'Mis formularios',
+                formBuilder: 'Constructor de formularios',
+                formAI: 'Formulario generado por IA',
+                analytics: 'Analíticas',
+                subscription: 'Suscripción',
+                templates: 'Plantillas',
+                marketing: 'Marketing',
+                newsletters: 'Boletines',
+                emailTracking: 'Seguimiento de emails',
+                settings: 'Configuración',
+                
+                // Dashboard
+                dashboardTitle: 'Panel de Control Avanzado',
+                dashboardSubtitle: 'Resumen de tu actividad en FormEase',
+                
+                // Metrics
+                totalForms: 'Formularios creados',
+                totalResponses: 'Respuestas recibidas',
+                conversionRate: 'Tasa de conversión',
+                avgTime: 'Tiempo promedio',
+                todayViews: 'Vistas hoy',
+                activeForm: 'Formulario activo',
+                revenue: 'Ingresos totales',
+                
+                // Charts
+                chartTitle: 'Actividad y Compromiso',
+                forms: 'Formularios',
+                responses: 'Respuestas',
+                views: 'Vistas',
+                conversions: 'Conversiones',
+                
+                // Actions
+                createForm: 'Crear formulario',
+                viewReports: 'Ver informes',
+                manageSubscription: 'Gestionar suscripción',
+                
+                // User menu
+                profile: 'Mi perfil',
+                notifications: 'Notificaciones',
+                shortcuts: 'Atajos',
+                addUser: 'Añadir usuario',
+                disconnect: 'Cerrar sesión',
+                
+                // Profile modal
+                profileSettings: 'Configuración del perfil',
+                personalInfo: 'Información personal',
+                name: 'Nombre completo',
+                email: 'Dirección de correo',
+                preferences: 'Preferencias',
+                theme: 'Tema',
+                language: 'Idioma',
+                light: 'Claro',
+                dark: 'Oscuro',
+                system: 'Sistema',
+                enableNotifications: 'Activar notificaciones por correo',
+                saveChanges: 'Guardar cambios',
+                cancel: 'Cancelar',
+                
+                // Messages
+                saveSuccess: '¡Cambios guardados con éxito!',
+                themeChanged: 'Tema cambiado',
+                languageChanged: 'Idioma cambiado',
+                
+                // Other
+                member: 'Miembro',
+                loading: 'Cargando...',
+                error: 'Error'
+            },
+            de: {
+                // Navigation
+                dashboard: 'Dashboard',
+                forms: 'Formulare',
+                formsList: 'Meine Formulare',
+                formBuilder: 'Formular-Builder',
+                formAI: 'KI-generiertes Formular',
+                analytics: 'Analytics',
+                subscription: 'Abonnement',
+                templates: 'Vorlagen',
+                marketing: 'Marketing',
+                newsletters: 'Newsletter',
+                emailTracking: 'E-Mail-Tracking',
+                settings: 'Einstellungen',
+                
+                // Dashboard
+                dashboardTitle: 'Erweiterte Dashboard',
+                dashboardSubtitle: 'Übersicht Ihrer FormEase-Aktivität',
+                
+                // Metrics
+                totalForms: 'Erstellte Formulare',
+                totalResponses: 'Erhaltene Antworten',
+                conversionRate: 'Conversion-Rate',
+                avgTime: 'Durchschnittszeit',
+                todayViews: 'Heute angesehen',
+                activeForm: 'Aktive Formulare',
+                revenue: 'Gesamtumsatz',
+                
+                // Charts
+                chartTitle: 'Aktivität & Engagement',
+                forms: 'Formulare',
+                responses: 'Antworten',
+                views: 'Ansichten',
+                conversions: 'Conversions',
+                
+                // Actions
+                createForm: 'Formular erstellen',
+                viewReports: 'Berichte anzeigen',
+                manageSubscription: 'Abonnement verwalten',
+                
+                // User menu
+                profile: 'Mein Profil',
+                notifications: 'Benachrichtigungen',
+                shortcuts: 'Verknüpfungen',
+                addUser: 'Benutzer hinzufügen',
+                disconnect: 'Abmelden',
+                
+                // Profile modal
+                profileSettings: 'Profil-Einstellungen',
+                personalInfo: 'Persönliche Informationen',
+                name: 'Vollständiger Name',
+                email: 'E-Mail-Adresse',
+                preferences: 'Einstellungen',
+                theme: 'Design',
+                language: 'Sprache',
+                light: 'Hell',
+                dark: 'Dunkel',
+                system: 'System',
+                enableNotifications: 'E-Mail-Benachrichtigungen aktivieren',
+                saveChanges: 'Änderungen speichern',
+                cancel: 'Abbrechen',
+                
+                // Messages
+                saveSuccess: 'Änderungen erfolgreich gespeichert!',
+                themeChanged: 'Design geändert',
+                languageChanged: 'Sprache geändert',
+                
+                // Other
+                member: 'Mitglied',
+                loading: 'Lädt...',
+                error: 'Fehler'
+            }
+        };
+
+        // Langue actuelle
+        let currentLanguage = 'fr';
+
+        // Fonction pour obtenir une traduction
+        function t(key) {
+            return translations[currentLanguage]?.[key] || translations['fr'][key] || key;
+        }
+
+        // Fonction pour changer la langue
+        function changeLanguage(newLanguage) {
+            if (translations[newLanguage]) {
+                currentLanguage = newLanguage;
+                updateInterfaceLanguage();
+                
+                // Sauvegarder dans les préférences utilisateur
+                const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+                userPrefs.language = newLanguage;
+                localStorage.setItem('userPreferences', JSON.stringify(userPrefs));
+                
+                console.log('Langue changée vers:', newLanguage);
+            }
+        }
+
+        // Fonction pour mettre à jour tous les textes de l'interface
+        function updateInterfaceLanguage() {
+            // Navigation sidebar
+            updateElementText('[data-i18n="dashboard"]', t('dashboard'));
+            updateElementText('[data-i18n="forms"]', t('forms'));
+            updateElementText('[data-i18n="formsList"]', t('formsList'));
+            updateElementText('[data-i18n="formBuilder"]', t('formBuilder'));
+            updateElementText('[data-i18n="formAI"]', t('formAI'));
+            updateElementText('[data-i18n="analytics"]', t('analytics'));
+            updateElementText('[data-i18n="subscription"]', t('subscription'));
+            updateElementText('[data-i18n="templates"]', t('templates'));
+            updateElementText('[data-i18n="settings"]', t('settings'));
+            
+            // Dashboard principal
+            updateElementText('[data-i18n="dashboardTitle"]', t('dashboardTitle'));
+            updateElementText('[data-i18n="dashboardSubtitle"]', t('dashboardSubtitle'));
+            
+            // Métriques
+            updateElementText('[data-i18n="totalForms"]', t('totalForms'));
+            updateElementText('[data-i18n="totalResponses"]', t('totalResponses'));
+            updateElementText('[data-i18n="conversionRate"]', t('conversionRate'));
+            updateElementText('[data-i18n="avgTime"]', t('avgTime'));
+            updateElementText('[data-i18n="todayViews"]', t('todayViews'));
+            updateElementText('[data-i18n="activeForm"]', t('activeForm'));
+            updateElementText('[data-i18n="revenue"]', t('revenue'));
+            
+            // Actions
+            updateElementText('[data-i18n="createForm"]', t('createForm'));
+            updateElementText('[data-i18n="viewReports"]', t('viewReports'));
+            updateElementText('[data-i18n="manageSubscription"]', t('manageSubscription'));
+            
+            // Menu utilisateur
+            updateElementText('[data-i18n="profile"]', t('profile'));
+            updateElementText('[data-i18n="notifications"]', t('notifications'));
+            updateElementText('[data-i18n="shortcuts"]', t('shortcuts'));
+            updateElementText('[data-i18n="addUser"]', t('addUser'));
+            updateElementText('[data-i18n="disconnect"]', t('disconnect'));
+            
+            // Modale profil
+            updateElementText('[data-i18n="profileSettings"]', t('profileSettings'));
+            updateElementText('[data-i18n="personalInfo"]', t('personalInfo'));
+            updateElementText('[data-i18n="name"]', t('name'));
+            updateElementText('[data-i18n="email"]', t('email'));
+            updateElementText('[data-i18n="preferences"]', t('preferences'));
+            updateElementText('[data-i18n="theme"]', t('theme'));
+            updateElementText('[data-i18n="language"]', t('language'));
+            updateElementText('[data-i18n="light"]', t('light'));
+            updateElementText('[data-i18n="dark"]', t('dark'));
+            updateElementText('[data-i18n="system"]', t('system'));
+            updateElementText('[data-i18n="enableNotifications"]', t('enableNotifications'));
+            updateElementText('[data-i18n="saveChanges"]', t('saveChanges'));
+            updateElementText('[data-i18n="cancel"]', t('cancel'));
+            
+            // Mettre à jour le graphique
+            if (window.mainChart) {
+                updateChartLanguage();
+            }
+        }
+
+        // Fonction utilitaire pour mettre à jour le texte d'un élément
+        function updateElementText(selector, text) {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.textContent = text;
+            }
+        }
+
+        // Fonction pour mettre à jour les labels du graphique
+        function updateChartLanguage() {
+            const newOptions = {
+                ...window.mainChart.w.config,
+                chart: {
+                    ...window.mainChart.w.config.chart,
+                    locales: [{
+                        name: currentLanguage,
+                        options: {
+                            months: currentLanguage === 'fr' ? 
+                                ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] :
+                                currentLanguage === 'es' ?
+                                ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] :
+                                currentLanguage === 'de' ?
+                                ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'] :
+                                ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                            shortMonths: currentLanguage === 'fr' ? 
+                                ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'] :
+                                currentLanguage === 'es' ?
+                                ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'] :
+                                currentLanguage === 'de' ?
+                                ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'] :
+                                ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                            days: currentLanguage === 'fr' ? 
+                                ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'] :
+                                currentLanguage === 'es' ?
+                                ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'] :
+                                currentLanguage === 'de' ?
+                                ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'] :
+                                ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                            shortDays: currentLanguage === 'fr' ? 
+                                ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'] :
+                                currentLanguage === 'es' ?
+                                ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] :
+                                currentLanguage === 'de' ?
+                                ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'] :
+                                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                        }
+                    }],
+                    defaultLocale: currentLanguage
+                },
+                series: [
+                    {
+                        name: t('forms'),
+                        type: 'column',
+                        data: window.mainChart.w.config.series[0].data
+                    },
+                    {
+                        name: t('responses'),
+                        type: 'column', 
+                        data: window.mainChart.w.config.series[1].data
+                    },
+                    {
+                        name: t('views'),
+                        type: 'line',
+                        data: window.mainChart.w.config.series[2].data
+                    },
+                    {
+                        name: t('conversions'),
+                        type: 'line',
+                        data: window.mainChart.w.config.series[3].data
+                    }
+                ]
+            };
+            
+            window.mainChart.updateOptions(newOptions);
+        }
+
+        // Gestionnaire d'événement principal pour l'initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser l'interface selon le rôle utilisateur (cela génère tout)
+            initializeInterface();
+            
+            // Initialiser les gestionnaires d'événements
+            initializeUserActions();
+            
+            // Mettre en cache les préférences utilisateur
+            cacheUserPreferences();
+            
+            // Charger la langue sauvegardée si elle existe (APRÈS l'initialisation)
+            const savedPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            if (savedPrefs.language && translations[savedPrefs.language]) {
+                currentLanguage = savedPrefs.language;
+                updateInterfaceLanguage();
+            }
+            
+            // Configurer le sélecteur de langue
+            const languageSelect = document.getElementById('profileLanguage');
+            if (languageSelect) {
+                languageSelect.value = currentLanguage;
+                languageSelect.addEventListener('change', function() {
+                    const newLanguage = this.value;
+                    if (newLanguage !== currentLanguage) {
+                        changeLanguage(newLanguage);
+                    }
+                });
+            }
+        });
+
+        // ...existing code...
     </script>
 </body>
 </html>

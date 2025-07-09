@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Plans et Tarifs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard/advanced.html" class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="ri-file-list-3-line text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">FormEase</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="../dashboard/advanced.html" class="text-gray-600 hover:text-gray-900">Retour au Dashboard</a>
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-xs font-medium">JK</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl font-bold mb-4">Choisissez le plan parfait pour vous</h1>
+            <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+                Des solutions flexibles pour tous vos besoins de création de formulaires
+            </p>
+        </div>
+    </div>
+
+    <!-- Pricing Table -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Freemium Plan -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900">Freemium</h3>
+                    <p class="text-gray-600 mt-2">Parfait pour commencer</p>
+                    <div class="mt-6 flex items-baseline">
+                        <span class="text-5xl font-bold text-gray-900">0€</span>
+                        <span class="text-gray-600 ml-2">/mois</span>
+                    </div>
+                    <button class="w-full mt-8 bg-gray-100 text-gray-800 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                        Commencer gratuitement
+                    </button>
+                </div>
+                <div class="px-8 pb-8">
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>5 formulaires maximum</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>100 réponses par mois</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Analytics de base</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Support email</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>1 GB de stockage</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-blue-500 relative">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">Le plus populaire</span>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900">Premium</h3>
+                    <p class="text-gray-600 mt-2">Pour les professionnels</p>
+                    <div class="mt-6 flex items-baseline">
+                        <span class="text-5xl font-bold text-gray-900">29€</span>
+                        <span class="text-gray-600 ml-2">/mois</span>
+                    </div>
+                    <button class="w-full mt-8 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                        Démarrer l'essai gratuit
+                    </button>
+                </div>
+                <div class="px-8 pb-8">
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Formulaires illimités</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Réponses illimitées</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Analytics avancées</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Support prioritaire</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>100 GB de stockage</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>10 collaborateurs</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Intégrations tierces</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Export des données</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900">Enterprise</h3>
+                    <p class="text-gray-600 mt-2">Pour les grandes équipes</p>
+                    <div class="mt-6 flex items-baseline">
+                        <span class="text-5xl font-bold text-gray-900">99€</span>
+                        <span class="text-gray-600 ml-2">/mois</span>
+                    </div>
+                    <button class="w-full mt-8 bg-gray-900 text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                        Contactez-nous
+                    </button>
+                </div>
+                <div class="px-8 pb-8">
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Tout Premium inclus</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Utilisateurs illimités</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Stockage illimité</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>API complète</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Support dédié 24/7</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Formation personnalisée</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>SLA garantie</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-check-line text-green-500 mr-3"></i>
+                            <span>Sécurité avancée</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mt-16">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Questions Fréquentes</h2>
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Puis-je changer de plan à tout moment ?</h3>
+                    <p class="text-gray-600">Oui, vous pouvez upgrader ou downgrader votre plan à tout moment. Les changements prennent effet immédiatement.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Y a-t-il une période d'essai gratuite ?</h3>
+                    <p class="text-gray-600">Oui, tous les plans premium incluent un essai gratuit de 14 jours, sans engagement.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">Que se passe-t-il si je dépasse mes limites ?</h3>
+                    <p class="text-gray-600">Nous vous notifierons avant d'atteindre vos limites et vous proposerons de upgrader votre plan.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 FormEase. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -3,97 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FormEase - Mes Formulaires</title>
+    <title>Mes Formulaires - FormEase</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../styles/tremor-base.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe',
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .tremor-Card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .form-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b, #10b981);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .form-card:hover::before {
+            opacity: 1;
+        }
+        
+        .badge-free {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .badge-paid {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .badge-ai {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .dropdown-menu {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .form-actions-btn:hover {
+            background-color: rgba(107, 114, 128, 0.1);
+        }
+        
+        /* Suppression du système de grille - style pour liste */
+        .form-list-item {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .form-list-item:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .form-list-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b, #10b981);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        
+        .form-list-item:hover::before {
+            opacity: 1;
+        }
+        
+        /* Pagination styles */
+        .pagination-btn {
+            min-width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #6b7280;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .pagination-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Stats grid similaire pour cohérence */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Amélioration de l'alignement des cartes */
+        .form-card .flex-1 {
+            flex: 1;
+        }
+        
+        /* Responsive sidebar pour mobile */
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                transition: left 0.3s ease;
+                z-index: 50;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans">
-    <div class="min-h-screen">
-        <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center">
-                        <a href="../dashboard/home.html" class="flex items-center">
-                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-                                <i class="ri-file-list-3-line text-white"></i>
+    <!-- Layout principal en grid avec container élargi -->
+    <div class="min-h-screen max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-7 p-4 md:p-6 lg:p-8">
+        <!-- Navigation Sidebar -->
+        <aside class="bg-white rounded-lg shadow-sm border border-gray-200 h-fit">
+            <!-- Logo -->
+            <div class="flex items-center px-4 py-4 border-b border-gray-200">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="ri-file-list-3-line text-white text-lg"></i>
+                </div>
+                <span class="ml-3 text-lg font-bold text-gray-900">FormEase</span>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4">
+                <!-- Dashboard -->
+                <a href="../dashboard/advanced.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-2">
+                    <i class="ri-dashboard-line mr-3 text-sm"></i>
+                    <span class="text-sm font-medium" data-i18n="dashboard">Tableau de bord</span>
+                </a>
+
+                <!-- Forms -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="forms">Formulaires</h3>
+                    <a href="list.html" class="flex items-center px-3 py-2 text-blue-600 bg-blue-50 rounded-lg mb-1">
+                        <i class="ri-file-list-2-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formsList">Mes formulaires</span>
+                    </a>
+                    <a href="builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-tools-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formBuilder">Créateur de formulaires</span>
+                    </a>
+                    <a href="ai-generator.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-robot-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formAI">Formulaire généré IA</span>
+                    </a>
+                </div>
+
+                <!-- Analytics -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="analytics">Analytics</h3>
+                    <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-bar-chart-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="analytics">Analytics</span>
+                    </a>
+                </div>
+
+                <!-- Subscription -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="subscription">Abonnement</h3>
+                    <a href="../subscription/manage.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-vip-crown-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="manageSubscription">Gérer l'abonnement</span>
+                    </a>
+                </div>
+
+                <!-- Templates -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="templates">Modèles</h3>
+                </div>
+
+                <!-- Marketing & Communication -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="marketing">Marketing</h3>
+                    <a href="../newsletters/list.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-mail-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="newsletters">Newsletters</span>
+                    </a>
+                    <a href="../tracking/email-tracker.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-radar-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="emailTracking">Trackers de mails</span>
+                    </a>
+                </div>
+
+                <!-- User Profile & Actions -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <!-- User Info -->
+                    <div class="flex items-center justify-start px-3 py-2 mb-4">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-start pl-2 mr-3">
+                            <span class="text-white text-xs font-medium">JK</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">Jeff KOSI</p>
+                            <p class="text-xs text-blue-600 font-medium">Premium</p>
+                        </div>
+                    </div>
+
+                    <!-- User Actions -->
+                    <div class="space-y-1">
+                        <button class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="ri-user-settings-line mr-3 text-sm"></i>
+                            <span class="text-sm" data-i18n="profile">Mon profil</span>
+                        </button>
+                        
+                        <button class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="ri-notification-line mr-3 text-sm"></i>
+                            <span class="text-sm" data-i18n="notifications">Notifications</span>
+                        </button>
+                        
+                        <!-- Séparateur -->
+                        <div class="border-t border-gray-200 my-2"></div>
+                        
+                        <!-- Déconnexion -->
+                        <button class="flex items-center w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <i class="ri-logout-box-line mr-3 text-sm"></i>
+                            <span class="text-sm">Déconnexion</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[calc(100vh-4rem)]">
+            <!-- Header -->
+            <div class="border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Mes Formulaires</h1>
+                        <p class="text-gray-600 text-sm mt-1">Gérez et organisez tous vos formulaires</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <!-- Filtres -->
+                        <select id="filterType" class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                            <option value="all">Tous les types</option>
+                            <option value="manual">Créés manuellement</option>
+                            <option value="ai">Générés IA</option>
+                            <option value="free">Gratuits</option>
+                            <option value="paid">Payants</option>
+                        </select>
+                        
+                        <select id="filterStatus" class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white">
+                            <option value="all">Tous les statuts</option>
+                            <option value="active">Actifs</option>
+                            <option value="draft">Brouillons</option>
+                            <option value="archived">Archivés</option>
+                        </select>
+
+                        <!-- Bouton créer -->
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i class="ri-add-line mr-2"></i>
+                            Nouveau formulaire
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats rapides -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="stats-container">
+                    <div class="tremor-Card p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Total formulaires</p>
+                                <p class="text-xl font-bold text-gray-900" id="totalForms">12</p>
                             </div>
-                            <span class="text-xl font-bold text-gray-900">FormEase</span>
-                        </a>
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-file-list-line text-blue-600"></i>
+                            </div>
+                        </div>
                     </div>
-                    <nav class="flex items-center space-x-4">
-                        <a href="../dashboard/home.html" class="text-gray-600 hover:text-blue-600">
-                            <i class="ri-dashboard-line mr-1"></i>Dashboard
-                        </a>
-                        <a href="/form-ai-generator.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                            <i class="ri-magic-line mr-1"></i>Nouveau Formulaire
-                        </a>
-                    </nav>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Mes Formulaires</h1>
-                <p class="text-gray-600">Gérez tous vos formulaires en un seul endroit</p>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <a href="/form-ai-generator.html" class="p-6 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all">
-                    <div class="flex items-center mb-3">
-                        <i class="ri-magic-line text-blue-600 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-semibold text-blue-900">Générateur IA</h3>
+                    
+                    <div class="tremor-Card p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Formulaires actifs</p>
+                                <p class="text-xl font-bold text-green-600" id="activeForms">8</p>
+                            </div>
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-check-line text-green-600"></i>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-blue-700">Créez des formulaires intelligents avec l'IA</p>
-                </a>
-
-                <a href="/form-builder-fixed.html" class="p-6 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-all">
-                    <div class="flex items-center mb-3">
-                        <i class="ri-tools-line text-green-600 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-semibold text-green-900">Constructeur</h3>
+                    
+                    <div class="tremor-Card p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Réponses totales</p>
+                                <p class="text-xl font-bold text-purple-600" id="totalResponses">2,847</p>
+                            </div>
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-bar-chart-line text-purple-600"></i>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-green-700">Créez des formulaires personnalisés</p>
-                </a>
-
-                <a href="../dashboard/home.html" class="p-6 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
-                    <div class="flex items-center mb-3">
-                        <i class="ri-dashboard-line text-gray-600 text-2xl mr-3"></i>
-                        <h3 class="text-lg font-semibold text-gray-900">Dashboard</h3>
-                    </div>
-                    <p class="text-gray-700">Retour au tableau de bord</p>
-                </a>
-            </div>
-
-            <!-- Forms List -->
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-6 border-b border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-900">Formulaires Récents</h2>
-                </div>
-                <div class="p-6">
-                    <div id="formsList" class="space-y-4">
-                        <!-- Les formulaires seront chargés ici -->
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="ri-file-list-line text-4xl mb-2"></i>
-                            <p>Aucun formulaire trouvé</p>
-                            <p class="text-sm mb-4">Créez votre premier formulaire pour commencer</p>
-                            <div class="flex justify-center space-x-4">
-                                <a href="/form-ai-generator.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                                    <i class="ri-magic-line mr-1"></i>Générateur IA
-                                </a>
-                                <a href="/form-builder-fixed.html" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
-                                    <i class="ri-tools-line mr-1"></i>Constructeur
-                                </a>
+                    
+                    <div class="tremor-Card p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Taux de conversion</p>
+                                <p class="text-xl font-bold text-orange-600" id="conversionRate">87.5%</p>
+                            </div>
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-rocket-line text-orange-600"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Liste des formulaires -->
+            <div class="p-6">
+                <div class="space-y-4" id="formsList">
+                    <!-- Les formulaires seront générés dynamiquement -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+                    <div class="text-sm text-gray-700">
+                        Affichage de <span id="startItem">1</span> à <span id="endItem">10</span> sur <span id="totalItems">0</span> formulaires
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="prevPage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="ri-arrow-left-s-line mr-1"></i>Précédent
+                        </button>
+                        <div id="pageNumbers" class="flex space-x-1">
+                            <!-- Les numéros de page seront générés ici -->
+                        </div>
+                        <button id="nextPage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Suivant<i class="ri-arrow-right-s-line ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </main>
+    </div>
+
+    <!-- Modal QR Code -->
+    <div id="qrModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">QR Code du formulaire</h3>
+                <button id="closeQrModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <div class="text-center">
+                <div id="qrCodeContainer" class="bg-gray-50 rounded-lg p-6 mb-4">
+                    <!-- QR Code sera généré ici -->
+                    <div class="w-48 h-48 bg-gray-200 rounded-lg mx-auto flex items-center justify-center">
+                        <i class="ri-qr-code-line text-6xl text-gray-400"></i>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Scannez ce code pour accéder au formulaire</p>
+                <button id="downloadQr" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="ri-download-line mr-2"></i>Télécharger
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="ri-delete-bin-line text-red-600 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Supprimer le formulaire</h3>
+                    <p class="text-sm text-gray-600">Cette action est irréversible</p>
+                </div>
+            </div>
+            <p class="text-gray-700 mb-6">Êtes-vous sûr de vouloir supprimer ce formulaire ? Toutes les données et réponses associées seront définitivement perdues.</p>
+            <div class="flex justify-end space-x-3">
+                <button id="cancelDelete" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                    Annuler
+                </button>
+                <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    Supprimer définitivement
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -148,8 +553,572 @@
             }
         }
 
-        // Charger les formulaires au chargement de la page
-        loadForms();
+        // Données de formulaires d'exemple
+        const formsData = [
+            {
+                id: 1,
+                title: "Formulaire de Contact Client",
+                description: "Collecte des informations de contact et feedbacks clients",
+                type: "manual",
+                paymentType: "free",
+                status: "active",
+                responses: 245,
+                views: 1256,
+                conversionRate: 19.5,
+                createdAt: "2024-12-15",
+                lastResponse: "2025-01-08",
+                isAI: false
+            },
+            {
+                id: 2,
+                title: "Commande Premium - Service Web",
+                description: "Formulaire de commande pour services web premium",
+                type: "manual",
+                paymentType: "paid",
+                status: "active",
+                responses: 89,
+                views: 467,
+                conversionRate: 19.1,
+                createdAt: "2024-11-20",
+                lastResponse: "2025-01-07",
+                isAI: false,
+                price: 299.99
+            },
+            {
+                id: 3,
+                title: "Enquête Satisfaction Client IA",
+                description: "Questionnaire intelligent adaptatif généré par IA",
+                type: "ai",
+                paymentType: "free",
+                status: "active",
+                responses: 523,
+                views: 891,
+                conversionRate: 58.7,
+                createdAt: "2024-12-01",
+                lastResponse: "2025-01-08",
+                isAI: true
+            },
+            {
+                id: 4,
+                title: "Inscription Formation Avancée",
+                description: "Inscription payante pour formation professionnelle",
+                type: "manual",
+                paymentType: "paid",
+                status: "active",
+                responses: 156,
+                views: 789,
+                conversionRate: 19.8,
+                createdAt: "2024-10-15",
+                lastResponse: "2025-01-06",
+                isAI: false,
+                price: 499.00
+            },
+            {
+                id: 5,
+                title: "Newsletter Inscription",
+                description: "Inscription simple à la newsletter mensuelle",
+                type: "ai",
+                paymentType: "free",
+                status: "active",
+                responses: 1247,
+                views: 2156,
+                conversionRate: 57.8,
+                createdAt: "2024-09-10",
+                lastResponse: "2025-01-08",
+                isAI: true
+            },
+            {
+                id: 6,
+                title: "Feedback Produit Beta",
+                description: "Collecte de retours sur la version bêta du produit",
+                type: "manual",
+                paymentType: "free",
+                status: "draft",
+                responses: 0,
+                views: 12,
+                conversionRate: 0,
+                createdAt: "2025-01-05",
+                lastResponse: null,
+                isAI: false
+            },
+            {
+                id: 7,
+                title: "Consultation Personnalisée",
+                description: "Réservation de consultations one-to-one payantes",
+                type: "ai",
+                paymentType: "paid",
+                status: "active",
+                responses: 67,
+                views: 234,
+                conversionRate: 28.6,
+                createdAt: "2024-11-30",
+                lastResponse: "2025-01-04",
+                isAI: true,
+                price: 150.00
+            },
+            {
+                id: 8,
+                title: "Event Registration 2025",
+                description: "Inscription pour l'événement annuel de l'entreprise",
+                type: "manual",
+                paymentType: "free",
+                status: "archived",
+                responses: 892,
+                views: 1456,
+                conversionRate: 61.3,
+                createdAt: "2024-08-15",
+                lastResponse: "2024-12-20",
+                isAI: false
+            }
+        ];
+
+        // Variables de pagination
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let filteredForms = [...formsData];
+
+        // Fonction pour générer la liste des formulaires
+        function generateFormsList(forms, page = 1) {
+            const list = document.getElementById('formsList');
+            
+            if (forms.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="ri-file-list-line text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun formulaire trouvé</h3>
+                        <p class="text-gray-500">Essayez de modifier vos filtres ou créez votre premier formulaire.</p>
+                    </div>
+                `;
+                updatePagination(0, page);
+                return;
+            }
+
+            // Calcul de la pagination
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedForms = forms.slice(startIndex, endIndex);
+
+            const listHTML = paginatedForms.map(form => {
+                const statusBadge = getStatusBadge(form.status);
+                const typeBadge = getTypeBadge(form);
+                const paymentBadge = getPaymentBadge(form);
+                
+                return `
+                    <div class="form-list-item relative p-6" data-form-id="${form.id}">
+                        <div class="flex items-start justify-between">
+                            <!-- Informations principales -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start space-x-4">
+                                    <!-- Icône du formulaire -->
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                                    </div>
+                                    
+                                    <!-- Détails du formulaire -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h3 class="text-lg font-semibold text-gray-900 truncate">${form.title}</h3>
+                                            <div class="flex items-center space-x-2">
+                                                ${statusBadge}
+                                                ${typeBadge}
+                                                ${paymentBadge}
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${form.description}</p>
+                                        
+                                        <!-- Statistiques en ligne -->
+                                        <div class="flex items-center space-x-6 text-sm text-gray-500">
+                                            <div class="flex items-center">
+                                                <i class="ri-eye-line mr-1"></i>
+                                                <span class="font-medium text-gray-900">${form.views}</span> vues
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="ri-message-2-line mr-1"></i>
+                                                <span class="font-medium text-gray-900">${form.responses}</span> réponses
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="ri-percent-line mr-1"></i>
+                                                <span class="font-medium text-gray-900">${form.conversionRate}%</span> conversion
+                                            </div>
+                                            ${form.price ? `
+                                                <div class="flex items-center text-green-600">
+                                                    <i class="ri-money-euro-line mr-1"></i>
+                                                    <span class="font-medium">${form.price}€</span>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                        
+                                        <!-- Métadonnées -->
+                                        <div class="flex items-center space-x-4 mt-3 text-xs text-gray-400">
+                                            <span>Créé le ${formatDate(form.createdAt)}</span>
+                                            ${form.lastResponse ? `<span>•</span><span>Dernière réponse: ${formatDate(form.lastResponse)}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="viewForm(${form.id})" title="Visualiser">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="showQRCode(${form.id})" title="QR Code">
+                                    <i class="ri-qr-code-line"></i>
+                                </button>
+                                <button class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="editForm(${form.id})" title="Éditer">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <div class="relative">
+                                    <button class="form-actions-btn p-2 text-gray-400 hover:bg-gray-50 rounded-lg transition-colors" data-form-id="${form.id}" title="Plus d'actions">
+                                        <i class="ri-more-2-line"></i>
+                                    </button>
+                                    <!-- Menu d'actions -->
+                                    <div class="form-actions-menu absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-gray-200 z-10 hidden dropdown-menu">
+                                        <div class="py-1">
+                                            <button class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="duplicateForm(${form.id})">
+                                                <i class="ri-file-copy-line mr-2"></i>Dupliquer
+                                            </button>
+                                            <button class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="downloadForm(${form.id})">
+                                                <i class="ri-download-line mr-2"></i>Télécharger
+                                            </button>
+                                            <div class="border-t border-gray-100 my-1"></div>
+                                            <button class="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50" onclick="confirmDeleteForm(${form.id})">
+                                                <i class="ri-delete-bin-line mr-2"></i>Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            list.innerHTML = listHTML;
+            updatePagination(forms.length, page);
+        }
+
+        // Fonction pour mettre à jour la pagination
+        function updatePagination(totalItems, currentPageNum) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            currentPage = currentPageNum;
+            
+            // Mise à jour des informations
+            const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            
+            document.getElementById('startItem').textContent = startItem;
+            document.getElementById('endItem').textContent = endItem;
+            document.getElementById('totalItems').textContent = totalItems;
+            
+            // Boutons précédent/suivant
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            
+            // Génération des numéros de page
+            const pageNumbers = document.getElementById('pageNumbers');
+            let pagesHTML = '';
+            
+            // Logique pour afficher les numéros de page
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (endPage - startPage < 4) {
+                if (startPage === 1) {
+                    endPage = Math.min(totalPages, startPage + 4);
+                } else {
+                    startPage = Math.max(1, endPage - 4);
+                }
+            }
+            
+            // Page 1 si pas dans la plage
+            if (startPage > 1) {
+                pagesHTML += `<button class="pagination-btn" onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    pagesHTML += `<span class="px-2 text-gray-400">...</span>`;
+                }
+            }
+            
+            // Pages dans la plage
+            for (let i = startPage; i <= endPage; i++) {
+                pagesHTML += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            
+            // Dernière page si pas dans la plage
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    pagesHTML += `<span class="px-2 text-gray-400">...</span>`;
+                }
+                pagesHTML += `<button class="pagination-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            pageNumbers.innerHTML = pagesHTML;
+        }
+
+        // Fonctions de navigation
+        function goToPage(page) {
+            generateFormsList(filteredForms, page);
+        }
+
+        function goToPreviousPage() {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        }
+
+        function goToNextPage() {
+            const totalPages = Math.ceil(filteredForms.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
+        }
+
+        // Fonctions utilitaires pour les badges
+        function getStatusBadge(status) {
+            const badges = {
+                active: '<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Actif</span>',
+                draft: '<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Brouillon</span>',
+                archived: '<span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Archivé</span>'
+            };
+            return badges[status] || '';
+        }
+
+        function getTypeBadge(form) {
+            if (form.isAI) {
+                return '<span class="px-2 py-1 text-xs font-medium text-white rounded-full badge-ai flex items-center"><i class="ri-robot-line mr-1"></i>IA</span>';
+            }
+            return '<span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">Manuel</span>';
+        }
+
+        function getPaymentBadge(form) {
+            if (form.paymentType === 'paid') {
+                return '<span class="px-2 py-1 text-xs font-medium text-white rounded-full badge-paid flex items-center"><i class="ri-money-euro-line mr-1"></i>Payant</span>';
+            }
+            return '<span class="px-2 py-1 text-xs font-medium text-white rounded-full badge-free flex items-center"><i class="ri-gift-line mr-1"></i>Gratuit</span>';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Fonctions d'actions
+        function viewForm(formId) {
+            const form = formsData.find(f => f.id === formId);
+            console.log(`Visualiser le formulaire ${form.title}`);
+            showNotification(`Ouverture du formulaire "${form.title}"...`, 'info');
+            // Simuler l'ouverture dans un nouvel onglet
+            setTimeout(() => {
+                // window.open(`/forms/preview/${formId}`, '_blank');
+            }, 1000);
+        }
+
+        function showQRCode(formId) {
+            const form = formsData.find(f => f.id === formId);
+            console.log(`Afficher QR Code pour ${form.title}`);
+            document.getElementById('qrModal').classList.remove('hidden');
+        }
+
+        function editForm(formId) {
+            const form = formsData.find(f => f.id === formId);
+            console.log(`Éditer le formulaire ${form.title}`);
+            showNotification(`Redirection vers l'éditeur...`, 'info');
+            // window.location.href = `builder.html?edit=${formId}`;
+        }
+
+        function duplicateForm(formId) {
+            const form = formsData.find(f => f.id === formId);
+            console.log(`Dupliquer le formulaire ${form.title}`);
+            
+            // Créer une copie
+            const duplicate = {
+                ...form,
+                id: Date.now(), // Nouvel ID temporaire
+                title: `${form.title} (Copie)`,
+                status: 'draft',
+                responses: 0,
+                views: 0,
+                conversionRate: 0,
+                createdAt: new Date().toISOString().split('T')[0],
+                lastResponse: null
+            };
+            
+            formsData.push(duplicate);
+            filteredForms = [...formsData]; // Mettre à jour les formes filtrées
+            filterAndDisplayForms();
+            updateStats();
+            
+            // Notification
+            showNotification('Formulaire dupliqué avec succès !', 'success');
+        }
+
+        function downloadForm(formId) {
+            const form = formsData.find(f => f.id === formId);
+            console.log(`Télécharger le formulaire ${form.title}`);
+            
+            // Simulation du téléchargement
+            const dataStr = JSON.stringify(form, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `formulaire_${form.id}_${form.title.replace(/\s+/g, '_')}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Formulaire téléchargé !', 'success');
+        }
+
+        function confirmDeleteForm(formId) {
+            window.formToDelete = formId;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function deleteForm(formId) {
+            const formIndex = formsData.findIndex(f => f.id === formId);
+            if (formIndex > -1) {
+                const form = formsData[formIndex];
+                formsData.splice(formIndex, 1);
+                filteredForms = [...formsData]; // Mettre à jour les formes filtrées
+                filterAndDisplayForms();
+                updateStats();
+                showNotification(`Formulaire "${form.title}" supprimé`, 'success');
+            }
+        }
+
+        // Système de filtrage
+        function filterAndDisplayForms() {
+            const typeFilter = document.getElementById('filterType').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            filteredForms = [...formsData];
+            
+            if (typeFilter !== 'all') {
+                filteredForms = filteredForms.filter(form => {
+                    switch(typeFilter) {
+                        case 'manual': return !form.isAI;
+                        case 'ai': return form.isAI;
+                        case 'free': return form.paymentType === 'free';
+                        case 'paid': return form.paymentType === 'paid';
+                        default: return true;
+                    }
+                });
+            }
+            
+            if (statusFilter !== 'all') {
+                filteredForms = filteredForms.filter(form => form.status === statusFilter);
+            }
+            
+            generateFormsList(filteredForms, 1); // Retour à la page 1 lors du filtrage
+        }
+
+        // Mise à jour des statistiques
+        function updateStats() {
+            const totalForms = formsData.length;
+            const activeForms = formsData.filter(f => f.status === 'active').length;
+            const totalResponses = formsData.reduce((sum, f) => sum + f.responses, 0);
+            const avgConversionRate = formsData.length > 0 ? 
+                (formsData.reduce((sum, f) => sum + f.conversionRate, 0) / formsData.length).toFixed(1) : 0;
+            
+            document.getElementById('totalForms').textContent = totalForms;
+            document.getElementById('activeForms').textContent = activeForms;
+            document.getElementById('totalResponses').textContent = totalResponses.toLocaleString();
+            document.getElementById('conversionRate').textContent = avgConversionRate + '%';
+        }
+
+        // Notification système
+        function showNotification(message, type = 'info') {
+            // Créer et afficher une notification toast
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 flex items-center ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            
+            const icon = type === 'success' ? 'ri-check-line' : 
+                         type === 'error' ? 'ri-close-line' : 'ri-information-line';
+            
+            notification.innerHTML = `
+                <i class="${icon} mr-2"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Gestionnaires d'événements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation des formes filtrées
+            filteredForms = [...formsData];
+            
+            // Génération initiale
+            generateFormsList(filteredForms);
+            updateStats();
+            
+            // Filtres
+            document.getElementById('filterType').addEventListener('change', filterAndDisplayForms);
+            document.getElementById('filterStatus').addEventListener('change', filterAndDisplayForms);
+            
+            // Pagination
+            document.getElementById('prevPage').addEventListener('click', goToPreviousPage);
+            document.getElementById('nextPage').addEventListener('click', goToNextPage);
+            
+            // Gestionnaire pour les menus d'actions
+            document.addEventListener('click', function(e) {
+                // Fermer tous les menus d'actions
+                document.querySelectorAll('.form-actions-menu').forEach(menu => {
+                    if (!menu.closest('.relative').contains(e.target)) {
+                        menu.classList.add('hidden');
+                    }
+                });
+                
+                // Ouvrir le menu cliqué
+                if (e.target.closest('.form-actions-btn')) {
+                    e.preventDefault();
+                    const btn = e.target.closest('.form-actions-btn');
+                    const menu = btn.nextElementSibling;
+                    menu.classList.toggle('hidden');
+                }
+            });
+            
+            // Modal QR Code
+            document.getElementById('closeQrModal').addEventListener('click', function() {
+                document.getElementById('qrModal').classList.add('hidden');
+            });
+            
+            // Modal de suppression
+            document.getElementById('cancelDelete').addEventListener('click', function() {
+                document.getElementById('deleteModal').classList.add('hidden');
+            });
+            
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                if (window.formToDelete) {
+                    deleteForm(window.formToDelete);
+                    document.getElementById('deleteModal').classList.add('hidden');
+                    window.formToDelete = null;
+                }
+            });
+            
+            // Bouton nouveau formulaire
+            document.querySelector('.bg-blue-600').addEventListener('click', function() {
+                showNotification('Redirection vers le créateur de formulaires...', 'info');
+                // Rediriger vers le builder ou IA generator
+            });
+        });
     </script>
 </body>
 </html>
