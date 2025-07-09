@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Mes Formulaires</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <a href="../dashboard/home.html" class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="ri-file-list-3-line text-white"></i>
+                            </div>
+                            <span class="text-xl font-bold text-gray-900">FormEase</span>
+                        </a>
+                    </div>
+                    <nav class="flex items-center space-x-4">
+                        <a href="../dashboard/home.html" class="text-gray-600 hover:text-blue-600">
+                            <i class="ri-dashboard-line mr-1"></i>Dashboard
+                        </a>
+                        <a href="/form-ai-generator.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                            <i class="ri-magic-line mr-1"></i>Nouveau Formulaire
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Mes Formulaires</h1>
+                <p class="text-gray-600">Gérez tous vos formulaires en un seul endroit</p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <a href="/form-ai-generator.html" class="p-6 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all">
+                    <div class="flex items-center mb-3">
+                        <i class="ri-magic-line text-blue-600 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold text-blue-900">Générateur IA</h3>
+                    </div>
+                    <p class="text-blue-700">Créez des formulaires intelligents avec l'IA</p>
+                </a>
+
+                <a href="/form-builder-fixed.html" class="p-6 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-all">
+                    <div class="flex items-center mb-3">
+                        <i class="ri-tools-line text-green-600 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold text-green-900">Constructeur</h3>
+                    </div>
+                    <p class="text-green-700">Créez des formulaires personnalisés</p>
+                </a>
+
+                <a href="../dashboard/home.html" class="p-6 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                    <div class="flex items-center mb-3">
+                        <i class="ri-dashboard-line text-gray-600 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Dashboard</h3>
+                    </div>
+                    <p class="text-gray-700">Retour au tableau de bord</p>
+                </a>
+            </div>
+
+            <!-- Forms List -->
+            <div class="bg-white rounded-lg shadow-sm">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Formulaires Récents</h2>
+                </div>
+                <div class="p-6">
+                    <div id="formsList" class="space-y-4">
+                        <!-- Les formulaires seront chargés ici -->
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-file-list-line text-4xl mb-2"></i>
+                            <p>Aucun formulaire trouvé</p>
+                            <p class="text-sm mb-4">Créez votre premier formulaire pour commencer</p>
+                            <div class="flex justify-center space-x-4">
+                                <a href="/form-ai-generator.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                    <i class="ri-magic-line mr-1"></i>Générateur IA
+                                </a>
+                                <a href="/form-builder-fixed.html" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
+                                    <i class="ri-tools-line mr-1"></i>Constructeur
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Vérifier l'authentification
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '../auth/login.html';
+        }
+
+        // Charger les formulaires de l'utilisateur
+        async function loadForms() {
+            try {
+                const response = await fetch('http://localhost:4000/api/forms', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const forms = await response.json();
+                    const container = document.getElementById('formsList');
+                    
+                    if (forms.length > 0) {
+                        container.innerHTML = forms.map(form => `
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="ri-file-list-line text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">${form.title}</h3>
+                                        <p class="text-sm text-gray-600">${form.responses || 0} réponses • Créé le ${new Date(form.createdAt).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="px-2 py-1 text-xs rounded-full ${form.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                        ${form.status === 'active' ? 'Actif' : 'Inactif'}
+                                    </span>
+                                    <a href="/form-ai-generator.html" class="text-blue-600 hover:text-blue-700 p-1">
+                                        <i class="ri-eye-line"></i>
+                                    </a>
+                                    <a href="/form-builder-fixed.html" class="text-green-600 hover:text-green-700 p-1">
+                                        <i class="ri-edit-line"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des formulaires:', error);
+            }
+        }
+
+        // Charger les formulaires au chargement de la page
+        loadForms();
+    </script>
+</body>
+</html>

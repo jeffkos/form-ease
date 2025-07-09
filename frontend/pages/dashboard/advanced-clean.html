@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Tableau de Bord Avancé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Layout principal en grid avec container limité -->
+    <div class="min-h-screen max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 p-4 md:p-6 lg:p-8">
+        <!-- Navigation Sidebar -->
+        <aside class="bg-white rounded-lg shadow-sm border border-gray-200 h-fit">
+            <!-- Logo -->
+            <div class="flex items-center px-4 py-4 border-b border-gray-200">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="ri-file-list-3-line text-white text-lg"></i>
+                </div>
+                <span class="ml-3 text-lg font-bold text-gray-900">FormEase</span>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4">
+                <!-- Dashboard -->
+                <a href="home.html" class="flex items-center px-3 py-2 text-blue-600 bg-blue-50 rounded-lg mb-2">
+                    <i class="ri-dashboard-line mr-3 text-sm"></i>
+                    <span class="text-sm font-medium">Overview</span>
+                </a>
+
+                <!-- Forms -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Formulaires</h3>
+                    <a href="../forms/list.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-file-list-2-line mr-3 text-sm"></i>
+                        <span class="text-sm">Mes formulaires</span>
+                    </a>
+                    <a href="../forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-tools-line mr-3 text-sm"></i>
+                        <span class="text-sm">Créateur</span>
+                    </a>
+                </div>
+
+                <!-- Analytics -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Analytics</h3>
+                    <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-bar-chart-line mr-3 text-sm"></i>
+                        <span class="text-sm">Statistiques</span>
+                    </a>
+                </div>
+
+                <!-- Shortcuts -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Shortcuts</h3>
+                    <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-user-add-line mr-3 text-sm"></i>
+                        <span class="text-sm">Add new user</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-settings-line mr-3 text-sm"></i>
+                        <span class="text-sm">Settings</span>
+                    </a>
+                </div>
+
+                <!-- User Profile -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex items-center px-3 py-2">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs font-medium">JK</span>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Jeff KOSI</p>
+                            <p class="text-xs text-gray-600">Member</p>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[calc(100vh-4rem)]">
+            <!-- Header avec titre et informations utilisateur -->
+            <div class="border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Overview</h1>
+                        <p class="text-gray-600 text-sm mt-1">16 Apr, 2024 - 16 May, 2024 compared to Last year</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Edit
+                        </button>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-xs font-medium">JK</span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900" id="userName">Jeff KOSI</p>
+                                <p class="text-xs text-gray-600" id="userEmail">Member</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenu du dashboard -->
+            <div class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Forms -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="tremor-Text text-sm font-medium text-gray-600">Total Formulaires</h3>
+                                    <p class="tremor-Metric text-2xl font-bold text-gray-900" id="totalForms">23</p>
+                                    <p class="tremor-Text text-sm text-green-600 mt-1">↗ +12% ce mois</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Forms -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="tremor-Text text-sm font-medium text-gray-600">Formulaires Actifs</h3>
+                                    <p class="tremor-Metric text-2xl font-bold text-gray-900" id="activeForms">18</p>
+                                    <p class="tremor-Text text-sm text-green-600 mt-1">↗ +8% ce mois</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-play-circle-line text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Responses -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="tremor-Text text-sm font-medium text-gray-600">Total Réponses</h3>
+                                    <p class="tremor-Metric text-2xl font-bold text-gray-900" id="totalResponses">1,247</p>
+                                    <p class="tremor-Text text-sm text-green-600 mt-1">↗ +23% ce mois</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-message-2-line text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversion Rate -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="tremor-Text text-sm font-medium text-gray-600">Taux de Conversion</h3>
+                                    <p class="tremor-Metric text-2xl font-bold text-gray-900" id="conversionRate">78.2%</p>
+                                    <p class="tremor-Text text-sm text-green-600 mt-1">↗ +5.2% ce mois</p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-trophy-line text-orange-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Réponses par jour -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="tremor-Title text-lg font-semibold text-gray-900">Réponses par jour</h3>
+                                <div class="text-right">
+                                    <p class="tremor-Metric text-2xl font-bold text-gray-900">1,247</p>
+                                    <p class="tremor-Text text-sm text-gray-600">Total réponses</p>
+                                </div>
+                            </div>
+                            <div id="responseChart" class="h-64"></div>
+                        </div>
+                    </div>
+
+                    <!-- Types de formulaires -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="tremor-Title text-lg font-semibold text-gray-900">Types de formulaires</h3>
+                                <div class="text-right">
+                                    <p class="tremor-Metric text-2xl font-bold text-gray-900">23</p>
+                                    <p class="tremor-Text text-sm text-gray-600">Total formulaires</p>
+                                </div>
+                            </div>
+                            <div id="formsChart" class="h-64"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Combo Chart - Réponses et Conversions -->
+                    <div class="lg:col-span-2 tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="tremor-Title text-lg font-semibold text-gray-900">Performance Mensuelle</h3>
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Réponses</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Conversions</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="comboChart" class="h-80"></div>
+                        </div>
+                    </div>
+
+                    <!-- Top Formulaires -->
+                    <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                        <div class="tremor-CardContent">
+                            <h3 class="tremor-Title text-lg font-semibold text-gray-900 mb-6">Top Formulaires</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-file-text-line text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Contact Form</p>
+                                            <p class="text-xs text-gray-600">234 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium text-gray-900">85.2%</p>
+                                        <p class="text-xs text-gray-600">Taux</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-survey-line text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Survey 2024</p>
+                                            <p class="text-xs text-gray-600">189 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium text-gray-900">78.9%</p>
+                                        <p class="text-xs text-gray-600">Taux</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <i class="ri-user-add-line text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">Registration</p>
+                                            <p class="text-xs text-gray-600">156 réponses</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium text-gray-900">92.1%</p>
+                                        <p class="text-xs text-gray-600">Taux</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="tremor-Card tremor-Card-rounded tremor-Card-shadow">
+                    <div class="tremor-CardContent">
+                        <h3 class="tremor-Title text-lg font-semibold text-gray-900 mb-6">Activité Récente</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="ri-file-add-line text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Nouveau formulaire créé</p>
+                                    <p class="text-xs text-gray-600">Formulaire "Feedback Client" - Il y a 2 heures</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="ri-check-line text-green-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">15 nouvelles réponses</p>
+                                    <p class="text-xs text-gray-600">Formulaire "Contact" - Il y a 4 heures</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <i class="ri-settings-line text-orange-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Paramètres mis à jour</p>
+                                    <p class="text-xs text-gray-600">Notifications email activées - Il y a 1 jour</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Données statiques pour les graphiques
+        const chartData = {
+            responses: [
+                { date: '2024-04-01', value: 45 },
+                { date: '2024-04-02', value: 52 },
+                { date: '2024-04-03', value: 48 },
+                { date: '2024-04-04', value: 61 },
+                { date: '2024-04-05', value: 55 },
+                { date: '2024-04-06', value: 67 },
+                { date: '2024-04-07', value: 59 },
+                { date: '2024-04-08', value: 73 },
+                { date: '2024-04-09', value: 68 },
+                { date: '2024-04-10', value: 82 },
+                { date: '2024-04-11', value: 75 },
+                { date: '2024-04-12', value: 89 },
+                { date: '2024-04-13', value: 94 },
+                { date: '2024-04-14', value: 87 }
+            ],
+            forms: [
+                { type: 'Contact', count: 8 },
+                { type: 'Survey', count: 6 },
+                { type: 'Registration', count: 4 },
+                { type: 'Feedback', count: 3 },
+                { type: 'Newsletter', count: 2 }
+            ]
+        };
+
+        // Graphique des réponses par jour
+        const responseChartOptions = {
+            chart: {
+                type: 'area',
+                height: 256,
+                toolbar: { show: false },
+                background: 'transparent'
+            },
+            series: [{
+                name: 'Réponses',
+                data: chartData.responses.map(item => item.value)
+            }],
+            xaxis: {
+                categories: chartData.responses.map(item => new Date(item.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
+                labels: {
+                    style: {
+                        colors: '#6B7280',
+                        fontSize: '12px'
+                    }
+                },
+                axisBorder: { show: false },
+                axisTicks: { show: false }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        colors: '#6B7280',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            colors: ['#3B82F6'],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'light',
+                    type: 'vertical',
+                    shadeIntensity: 0.25,
+                    gradientToColors: ['#DBEAFE'],
+                    inverseColors: false,
+                    opacityFrom: 0.8,
+                    opacityTo: 0.1
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2
+            },
+            grid: {
+                show: true,
+                borderColor: '#F3F4F6',
+                strokeDashArray: 4
+            },
+            tooltip: {
+                theme: 'light',
+                style: {
+                    fontSize: '12px'
+                }
+            }
+        };
+
+        // Graphique des types de formulaires
+        const formsChartOptions = {
+            chart: {
+                type: 'donut',
+                height: 256,
+                toolbar: { show: false }
+            },
+            series: chartData.forms.map(item => item.count),
+            labels: chartData.forms.map(item => item.type),
+            colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '60%'
+                    }
+                }
+            },
+            legend: {
+                position: 'bottom',
+                fontSize: '12px',
+                labels: {
+                    colors: '#6B7280'
+                }
+            },
+            tooltip: {
+                theme: 'light',
+                style: {
+                    fontSize: '12px'
+                }
+            }
+        };
+
+        // Combo Chart - Réponses et Conversions
+        const comboChartOptions = {
+            chart: {
+                type: 'line',
+                height: 320,
+                toolbar: { show: false }
+            },
+            series: [
+                {
+                    name: 'Réponses',
+                    type: 'column',
+                    data: [45, 52, 48, 61, 55, 67, 59, 73, 68, 82, 75, 89]
+                },
+                {
+                    name: 'Conversions',
+                    type: 'line',
+                    data: [38, 44, 41, 52, 47, 58, 51, 63, 58, 71, 65, 77]
+                }
+            ],
+            xaxis: {
+                categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+                labels: {
+                    style: {
+                        colors: '#6B7280',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            yaxis: [
+                {
+                    title: {
+                        text: 'Réponses',
+                        style: {
+                            color: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    },
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                {
+                    opposite: true,
+                    title: {
+                        text: 'Conversions',
+                        style: {
+                            color: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    },
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
+                }
+            ],
+            colors: ['#3B82F6', '#10B981'],
+            stroke: {
+                width: [0, 2],
+                curve: 'smooth'
+            },
+            grid: {
+                show: true,
+                borderColor: '#F3F4F6',
+                strokeDashArray: 4
+            },
+            tooltip: {
+                theme: 'light',
+                style: {
+                    fontSize: '12px'
+                }
+            }
+        };
+
+        // Initialisation des graphiques
+        document.addEventListener('DOMContentLoaded', function() {
+            // Graphique des réponses
+            const responseChart = new ApexCharts(document.querySelector('#responseChart'), responseChartOptions);
+            responseChart.render();
+
+            // Graphique des formulaires
+            const formsChart = new ApexCharts(document.querySelector('#formsChart'), formsChartOptions);
+            formsChart.render();
+
+            // Combo Chart
+            const comboChart = new ApexCharts(document.querySelector('#comboChart'), comboChartOptions);
+            comboChart.render();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Aperçu Direct - FormEase</title>
+    <link href="frontend/styles/tremor-base.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">🔍 Test du Bouton Aperçu</h1>
+            
+            <div class="space-y-4">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">Instructions de Test :</h3>
+                    <ol class="list-decimal list-inside text-blue-700 text-sm space-y-1">
+                        <li>Cliquez sur "Ouvrir Form Builder" ci-dessous</li>
+                        <li>Ajoutez quelques champs à votre formulaire</li>
+                        <li>Cliquez sur le bouton "Aperçu" dans l'en-tête</li>
+                        <li>Vérifiez que l'aperçu s'ouvre dans un nouvel onglet</li>
+                        <li>Testez aussi "Sauvegarder" puis "Voir l'Aperçu" dans le modal</li>
+                    </ol>
+                </div>
+
+                <div class="space-y-3">
+                    <a href="http://localhost:8080/frontend/pages/forms/builder.html" 
+                       target="_blank" 
+                       class="tremor-Button tremor-Button-primary tremor-Button-lg w-full block text-center">
+                        <i class="ri-hammer-line mr-2"></i>
+                        Ouvrir Form Builder
+                    </a>
+
+                    <button onclick="testPreviewDirect()" 
+                            class="tremor-Button tremor-Button-secondary tremor-Button-lg w-full">
+                        <i class="ri-eye-line mr-2"></i>
+                        Test Aperçu avec Données d'Exemple
+                    </button>
+
+                    <a href="http://localhost:8080/frontend/pages/dashboard/home.html" 
+                       target="_blank" 
+                       class="tremor-Button tremor-Button-secondary tremor-Button-lg w-full block text-center">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        Ouvrir Dashboard
+                    </a>
+                </div>
+
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-green-800 mb-2">✅ Résultat Attendu :</h3>
+                    <ul class="list-disc list-inside text-green-700 text-sm space-y-1">
+                        <li>Le bouton "Aperçu" ouvre un nouvel onglet</li>
+                        <li>La page d'aperçu affiche les champs du formulaire</li>
+                        <li>Les champs sont désactivés (lecture seule)</li>
+                        <li>Il y a un bouton "Fermer" et "Retour à l'Édition"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testPreviewDirect() {
+            // Données d'exemple pour tester l'aperçu
+            const testData = {
+                title: 'Formulaire de Contact Test',
+                description: 'Ceci est un formulaire d\'exemple pour tester l\'aperçu',
+                fields: [
+                    {
+                        id: 'name',
+                        type: 'text',
+                        label: 'Nom complet',
+                        placeholder: 'Entrez votre nom complet',
+                        required: true
+                    },
+                    {
+                        id: 'email',
+                        type: 'email',
+                        label: 'Adresse email',
+                        placeholder: 'votre@email.com',
+                        required: true
+                    },
+                    {
+                        id: 'service',
+                        type: 'select',
+                        label: 'Service concerné',
+                        options: ['Support technique', 'Service commercial', 'Facturation', 'Autre'],
+                        required: false
+                    },
+                    {
+                        id: 'priority',
+                        type: 'radio',
+                        label: 'Priorité',
+                        options: ['Faible', 'Normale', 'Élevée', 'Urgente'],
+                        required: true
+                    },
+                    {
+                        id: 'message',
+                        type: 'textarea',
+                        label: 'Message',
+                        placeholder: 'Décrivez votre demande...',
+                        required: true
+                    }
+                ]
+            };
+
+            // Construire l'URL de prévisualisation
+            const previewUrl = `http://localhost:8080/frontend/pages/forms/preview.html?title=${encodeURIComponent(testData.title)}&description=${encodeURIComponent(testData.description)}&fields=${encodeURIComponent(JSON.stringify(testData.fields))}`;
+            
+            // Ouvrir dans un nouvel onglet
+            window.open(previewUrl, '_blank');
+        }
+    </script>
+</body>
+</html>

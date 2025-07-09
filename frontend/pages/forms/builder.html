@@ -1,0 +1,3468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Créateur de Formulaires Avancé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#0ea5e9'
+                            },
+                            border: {
+                                DEFAULT: '#e2e8f0',
+                                emphasis: '#cbd5e1'
+                            },
+                            ring: {
+                                DEFAULT: '#0ea5e9'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            min-width: 0; /* Permet au contenu de se rétrécir */
+            overflow: hidden; /* Évite le débordement */
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .tremor-CardHeader {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1rem 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .tremor-Button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .tremor-Button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .tremor-Button-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .tremor-Button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .tremor-Button-secondary {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .tremor-Button-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        .tremor-Button-sm {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+        }
+        .tremor-Button-md {
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+        .tremor-TextInput {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-TextInput::placeholder {
+            color: #9ca3af;
+        }
+        .tremor-TextInput:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Select {
+            display: block;
+            width: 100%;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            background-color: white;
+        }
+        .tremor-Select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .tremor-Badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .tremor-Badge-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .tremor-Badge-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .tremor-Badge-yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .tremor-Title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .tremor-Subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .tremor-Metric {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        .tremor-Text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .tremor-Metric {
+            color: #111827;
+            font-weight: 600;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Styles responsifs pour les métriques */
+        @media (max-width: 768px) {
+            .metric-card .tremor-CardContent {
+                padding: 0.75rem 1rem !important;
+            }
+            .metric-card .tremor-Metric {
+                font-size: 1.25rem !important;
+            }
+            .metric-card .tremor-Text {
+                font-size: 0.625rem !important;
+            }
+            .metric-card .w-12 {
+                width: 2.5rem !important;
+                height: 2.5rem !important;
+            }
+            .metric-card .w-12 i {
+                font-size: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .metrics-container {
+                gap: 0.75rem !important;
+                margin-top: 0.75rem !important;
+            }
+            .metric-card .tremor-CardContent {
+                padding: 0.5rem 0.75rem !important;
+            }
+            .metric-card .tremor-Metric {
+                font-size: 1.125rem !important;
+            }
+            .metric-card .flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            .metric-card .flex-shrink-0 {
+                margin-left: 0 !important;
+                margin-top: 0.5rem;
+                align-self: flex-end;
+            }
+            .metric-card .w-12 {
+                width: 2rem !important;
+                height: 2rem !important;
+            }
+        }
+        
+        /* Animation fluide pour le responsive */
+        .metrics-container {
+            transition: grid-template-columns 0.3s ease, gap 0.3s ease;
+        }
+        
+        /* Amélioration des hover effects sur mobile */
+        @media (hover: none) {
+            .metric-card:hover {
+                transform: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Styles pour l'assistant étape par étape */
+        .wizard-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .wizard-step.active {
+            opacity: 1;
+        }
+        
+        .wizard-step.completed {
+            opacity: 1;
+            color: #10b981;
+        }
+        
+        .step-circle {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        
+        .wizard-step.active .step-circle {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .wizard-step.completed .step-circle {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step-label {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .step-divider {
+            width: 2rem;
+            height: 2px;
+            background: #e5e7eb;
+            margin: 0 1rem;
+            align-self: center;
+            margin-top: -1rem;
+        }
+        
+        .wizard-step.completed + .step-divider {
+            background: #10b981;
+        }
+        
+        .wizard-step-content {
+            display: none;
+            animation: fadeInSlide 0.4s ease-out;
+        }
+        
+        .wizard-step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .form-type-option.selected > div {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .field-checkbox {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        
+        .field-checkbox:hover {
+            background-color: #f9fafb;
+        }
+        
+        .field-checkbox input:checked + i,
+        .field-checkbox input:checked + i + span {
+            color: #3b82f6;
+        }
+        
+        /* Responsive pour l'assistant */
+        @media (max-width: 768px) {
+            .wizard-step {
+                transform: scale(0.85);
+            }
+            
+            .step-divider {
+                width: 1rem;
+            }
+            
+            .step-label {
+                font-size: 0.625rem;
+            }
+        }
+        
+        /* Amélioration de l'affichage des icônes dans les métriques */
+        .tremor-Card i {
+            flex-shrink: 0;
+        }
+
+        /* Styles améliorés pour les cartes métriques */
+        .metrics-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .metric-card {
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #ef4444);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .metric-card:nth-child(1):hover::before {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+        
+        .metric-card:nth-child(2):hover::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        
+        .metric-card:nth-child(3):hover::before {
+            background: linear-gradient(90deg, #10b981, #047857);
+        }
+        
+        .metric-card:nth-child(4):hover::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        
+        /* Animation pour les icônes des métriques */
+        .metric-card .w-12 {
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover .w-12 {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        /* Animation fadeInUp pour les métriques */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Animation échelonnée pour chaque carte */
+        .metric-card:nth-child(1) { animation-delay: 0ms; }
+        .metric-card:nth-child(2) { animation-delay: 100ms; }
+        .metric-card:nth-child(3) { animation-delay: 200ms; }
+        .metric-card:nth-child(4) { animation-delay: 300ms; }
+        
+        .metric-card {
+            animation: cardSlideIn 0.5s ease-out both;
+        }
+        
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Styles pour les zones de drop dans les lignes */
+        .row-drop-zone {
+            transition: all 0.3s ease;
+        }
+        
+        .row-drop-zone:hover {
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+        }
+        
+        .row-drop-zone.drag-over {
+            border-color: #2563eb;
+            background-color: #dbeafe;
+            transform: scale(1.02);
+        }
+        
+        .field-in-row {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .field-in-row:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive pour les lignes */
+        @media (max-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .row-drop-zone {
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-over {
+            animation: slideOver 0.3s ease-out;
+        }
+        
+        @keyframes slideOver {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% { transform: scale(0.33); }
+            40%, 50% { opacity: 1; }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+        
+        .field-item {
+            transition: all 0.2s ease;
+        }
+        
+        .field-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .canvas-drop-zone {
+            min-height: 400px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-drop-zone.drag-over {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        .form-field {
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0;
+            transition: all 0.2s ease;
+        }
+        
+        .form-field:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        
+        .form-field.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        
+        /* Styles pour les notifications toast */
+        .toast-notification {
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        /* Styles pour les boutons d'action des champs */
+        .form-field .field-actions button {
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+        
+        .form-field:hover .field-actions button {
+            opacity: 1;
+        }
+        
+        .form-field .field-actions button:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Animation pour les champs déplacés */
+        .field-moving {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            border-color: #3b82f6;
+            transition: all 0.3s ease;
+        }
+        
+        .toolbar-glass {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header avec métriques -->
+    <header class="toolbar-glass border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <h1 class="tremor-Title flex items-center text-lg">
+                        <i class="ri-file-list-3-line text-tremor-brand-emphasis mr-2"></i>
+                        FormEase Builder
+                    </h1>
+                    <span class="tremor-Badge tremor-Badge-blue text-xs">v2.0</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <a href="form-ai-generator.html" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                        <i class="ri-robot-line mr-1"></i>
+                        Générateur IA
+                    </a>
+                    <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="openStepWizard()">
+                        <i class="ri-magic-line mr-1"></i>
+                        Assistant
+                    </button>
+                    <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="saveForm()">
+                        <i class="ri-save-line mr-1"></i>
+                        Sauvegarder
+                    </button>
+                    <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="previewForm()">
+                        <i class="ri-eye-line mr-1"></i>
+                        Aperçu
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Métriques Dashboard améliorées -->
+            <div class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 mb-2">
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Champs</p>
+                                <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1" id="totalFields">0</p>
+                                <p class="text-xs text-gray-400 mt-1">Total des éléments</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-brand-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-brand-muted transition-colors duration-200">
+                                    <i class="ri-input-method-line text-xl text-tremor-brand-emphasis"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Réponses</p>
+                                <p class="tremor-Metric text-xl font-bold text-gray-900 mt-1" id="totalResponses">1,234</p>
+                                <p class="text-xs text-tremor-success-emphasis mt-1">↗ +12% ce mois</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-success-muted transition-colors duration-200">
+                                    <i class="ri-bar-chart-line text-xl text-tremor-success-emphasis"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Taux</p>
+                                <p class="tremor-Metric text-xl font-bold text-tremor-success-emphasis mt-1">87%</p>
+                                <p class="text-xs text-gray-400 mt-1">Complétion</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-success-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-success-muted transition-colors duration-200">
+                                    <i class="ri-check-line text-xl text-tremor-success-emphasis"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card metric-card group">
+                    <div class="tremor-CardContent !py-3 !px-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="tremor-Text text-xs text-gray-500 font-medium uppercase tracking-wide">Activité</p>
+                                <p class="tremor-Text font-bold text-lg text-gray-900 mt-1">2 min</p>
+                                <p class="text-xs text-tremor-warning-emphasis mt-1">Temps moyen</p>
+                            </div>
+                            <div class="flex-shrink-0 ml-3">
+                                <div class="w-12 h-12 bg-tremor-warning-faint rounded-xl flex items-center justify-center group-hover:bg-tremor-warning-muted transition-colors duration-200">
+                                    <i class="ri-time-line text-xl text-tremor-warning-emphasis"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout principal avec largeur limitée -->
+    <div class="max-w-7xl mx-auto flex h-screen pt-0">
+        <!-- Sidebar - Composants -->
+        <div class="w-80 toolbar-glass border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="tremor-Title mb-4">Composants</h2>
+                
+                <!-- Templates rapides -->
+                <div class="mb-4">
+                    <h3 class="tremor-Subtitle mb-2">Templates Rapides</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('contact')">
+                            <i class="ri-phone-line mr-1"></i>
+                            Contact
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('survey')">
+                            <i class="ri-questionnaire-line mr-1"></i>
+                            Sondage
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('registration')">
+                            <i class="ri-user-add-line mr-1"></i>
+                            Inscription
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full" onclick="loadTemplate('feedback')">
+                            <i class="ri-feedback-line mr-1"></i>
+                            Feedback
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Actions sur les champs -->
+                <div class="mb-4 p-3 bg-tremor-brand-faint rounded-lg border border-tremor-brand-muted">
+                    <h3 class="tremor-Subtitle mb-2 text-tremor-brand-emphasis">Actions Disponibles</h3>
+                    <div class="text-xs text-tremor-brand space-y-1">
+                        <div class="flex items-center">
+                            <i class="ri-arrow-up-line mr-2"></i>
+                            <span>Monter le champ</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-arrow-down-line mr-2"></i>
+                            <span>Descendre le champ</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-file-copy-line mr-2"></i>
+                            <span>Dupliquer le champ</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-edit-line mr-2"></i>
+                            <span>Éditer les propriétés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Catégories de champs -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <!-- Champs de base -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-input-method-line mr-2 text-tremor-brand-emphasis"></i>
+                        Champs de Base
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="text">
+                            <div class="flex items-center">
+                                <i class="ri-text text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Texte Court</p>
+                                    <p class="text-xs text-gray-500">Champ de saisie simple</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="textarea">
+                            <div class="flex items-center">
+                                <i class="ri-file-text-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Texte Long</p>
+                                    <p class="text-xs text-gray-500">Zone de texte étendue</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="email">
+                            <div class="flex items-center">
+                                <i class="ri-mail-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Email</p>
+                                    <p class="text-xs text-gray-500">Adresse électronique</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="tel">
+                            <div class="flex items-center">
+                                <i class="ri-phone-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Téléphone</p>
+                                    <p class="text-xs text-gray-500">Numéro de téléphone</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="number">
+                            <div class="flex items-center">
+                                <i class="ri-hashtag text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Nombre</p>
+                                    <p class="text-xs text-gray-500">Valeur numérique</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Champs de sélection -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-checkbox-line mr-2 text-tremor-success-emphasis"></i>
+                        Sélection
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="select">
+                            <div class="flex items-center">
+                                <i class="ri-arrow-down-s-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Liste Déroulante</p>
+                                    <p class="text-xs text-gray-500">Choix unique</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="radio">
+                            <div class="flex items-center">
+                                <i class="ri-radio-button-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Boutons Radio</p>
+                                    <p class="text-xs text-gray-500">Choix unique visible</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="checkbox">
+                            <div class="flex items-center">
+                                <i class="ri-checkbox-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Cases à Cocher</p>
+                                    <p class="text-xs text-gray-500">Choix multiples</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Champs avancés -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-star-line mr-2 text-tremor-brand-emphasis"></i>
+                        Avancé
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="date">
+                            <div class="flex items-center">
+                                <i class="ri-calendar-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Date</p>
+                                    <p class="text-xs text-gray-500">Sélecteur de date</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="file">
+                            <div class="flex items-center">
+                                <i class="ri-upload-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Fichier</p>
+                                    <p class="text-xs text-gray-500">Upload de document</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="rating">
+                            <div class="flex items-center">
+                                <i class="ri-star-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Notation</p>
+                                    <p class="text-xs text-gray-500">Étoiles ou échelle</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Éléments de mise en page -->
+                <div class="mb-6">
+                    <h3 class="tremor-Subtitle mb-3 flex items-center">
+                        <i class="ri-layout-line mr-2 text-tremor-warning-emphasis"></i>
+                        Mise en Page
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="row">
+                            <div class="flex items-center">
+                                <i class="ri-layout-row-line text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Ligne 2 colonnes</p>
+                                    <p class="text-xs text-gray-500">Champs côte à côte</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="section">
+                            <div class="flex items-center">
+                                <i class="ri-separator text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Section</p>
+                                    <p class="text-xs text-gray-500">Séparateur avec titre</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-item tremor-Card p-3 cursor-pointer" draggable="true" data-field-type="page-break">
+                            <div class="flex items-center">
+                                <i class="ri-page-separator text-gray-600 mr-3"></i>
+                                <div>
+                                    <p class="font-medium text-sm">Saut de Page</p>
+                                    <p class="text-xs text-gray-500">Nouvelle page/étape</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone centrale - Canvas + Propriétés -->
+        <div class="flex-1 flex">
+            <!-- Canvas de construction -->
+            <div class="flex-1 p-6">
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="tremor-Title">Conception du Formulaire</h2>
+                        <!-- Contrôles de pagination -->
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-500">Page</span>
+                            <select id="currentPage" class="tremor-Select w-20" onchange="changePage()">
+                                <option value="1">1</option>
+                            </select>
+                            <span class="text-sm text-gray-500">sur <span id="totalPages">1</span></span>
+                            <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="addPage()">
+                                <i class="ri-add-line mr-1"></i>
+                                Page
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="tremor-Badge tremor-Badge-green" id="autoSaveStatus">
+                            <i class="ri-check-line mr-1"></i>
+                            Sauvegardé
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Informations du formulaire -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                        <i class="ri-information-line mr-2 text-blue-600"></i>
+                        Informations du Formulaire
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Titre du formulaire *</label>
+                            <input type="text" id="formTitle" placeholder="Mon Super Formulaire" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="formDescription" placeholder="Description optionnelle du formulaire..." 
+                                     rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Zone de drop -->
+                <div id="formCanvas" class="canvas-drop-zone rounded-lg p-6 min-h-96">
+                    <div class="text-center text-gray-500 mt-20" id="emptyState">
+                        <i class="ri-drag-drop-line text-4xl mb-4 text-gray-400"></i>
+                        <h3 class="text-lg font-medium mb-2">Commencez à créer votre formulaire</h3>
+                        <p>Glissez-déposez des champs depuis la sidebar ou utilisez un template</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel des propriétés -->
+            <div class="w-80 toolbar-glass border-l border-gray-200 p-4" id="propertiesPanel">
+                <h3 class="tremor-Title mb-4">Propriétés</h3>
+                <div class="text-center text-gray-500 mt-8">
+                    <i class="ri-settings-3-line text-2xl mb-2 text-gray-400"></i>
+                    <p>Sélectionnez un champ pour voir ses propriétés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'aperçu amélioré -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden z-50">
+        <div class="flex items-center justify-center h-full p-6">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-gray-200">
+                <div class="tremor-CardHeader flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
+                    <h3 class="tremor-Title flex items-center">
+                        <i class="ri-eye-line text-tremor-brand-emphasis mr-2"></i>
+                        Aperçu du Formulaire
+                    </h3>
+                    <button onclick="closePreview()" class="text-gray-400 hover:text-gray-600 hover:bg-white rounded-full p-2 transition-all">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+                <div class="tremor-CardContent bg-gray-50">
+                    <div id="previewContent" class="bg-white rounded-lg p-6 shadow-sm">
+                        <!-- Le formulaire sera généré ici -->
+                    </div>
+                </div>
+                <div class="tremor-CardHeader border-t border-gray-200 flex justify-between items-center bg-gray-50 rounded-b-xl">
+                    <div class="text-xs text-gray-500">
+                        <i class="ri-eye-line mr-1"></i>
+                        Aperçu interactif du formulaire
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="previewCurrentForm()">
+                            <i class="ri-external-link-line mr-2"></i>
+                            Nouvel Onglet
+                        </button>
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="closePreview()">
+                            <i class="ri-close-line mr-2"></i>
+                            Fermer
+                        </button>
+                        <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="publishForm()">
+                            <i class="ri-share-line mr-2"></i>
+                            Publier & Partager
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Assistant Étape par Étape -->
+    <div id="stepWizardModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden z-50">
+        <div class="flex items-center justify-center h-full p-6">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200">
+                <!-- Header du modal -->
+                <div class="tremor-CardHeader flex items-center justify-between bg-gradient-to-r from-purple-50 to-blue-50 rounded-t-xl">
+                    <h3 class="tremor-Title flex items-center">
+                        <i class="ri-magic-line text-tremor-brand-emphasis mr-2"></i>
+                        Assistant de Création de Formulaire
+                    </h3>
+                    <button onclick="closeStepWizard()" class="text-gray-400 hover:text-gray-600 hover:bg-white rounded-full p-2 transition-all">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Indicateur d'étapes -->
+                <div class="px-6 py-4 bg-white border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="wizard-step active" data-step="1">
+                                <div class="step-circle">1</div>
+                                <span class="step-label">Type</span>
+                            </div>
+                            <div class="step-divider"></div>
+                            <div class="wizard-step" data-step="2">
+                                <div class="step-circle">2</div>
+                                <span class="step-label">Configuration</span>
+                            </div>
+                            <div class="step-divider"></div>
+                            <div class="wizard-step" data-step="3">
+                                <div class="step-circle">3</div>
+                                <span class="step-label">Champs</span>
+                            </div>
+                            <div class="step-divider"></div>
+                            <div class="wizard-step" data-step="4">
+                                <div class="step-circle">4</div>
+                                <span class="step-label">Finition</span>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Étape <span id="currentStepNumber">1</span> sur 4
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenu des étapes -->
+                <div class="wizard-content p-6">
+                    <!-- Étape 1: Type de formulaire -->
+                    <div id="step1" class="wizard-step-content active">
+                        <h4 class="text-lg font-semibold mb-4">Quel type de formulaire souhaitez-vous créer ?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="form-type-option" data-type="contact">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-brand-muted hover:bg-tremor-brand-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-brand-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-phone-line text-xl text-tremor-brand-emphasis"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Contact</h5>
+                                    <p class="text-sm text-gray-600">Formulaire de contact simple avec nom, email et message</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="survey">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-success-muted hover:bg-tremor-success-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-success-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-questionnaire-line text-xl text-tremor-success-emphasis"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Sondage</h5>
+                                    <p class="text-sm text-gray-600">Enquête avec questions à choix multiples et échelles</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="registration">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-brand-muted hover:bg-tremor-brand-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-brand-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-user-add-line text-xl text-tremor-brand-emphasis"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Inscription</h5>
+                                    <p class="text-sm text-gray-600">Formulaire d'inscription avec informations personnelles</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="feedback">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-warning-muted hover:bg-tremor-warning-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-warning-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-feedback-line text-xl text-tremor-warning-emphasis"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Feedback</h5>
+                                    <p class="text-sm text-gray-600">Formulaire de retour client avec évaluation</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="order">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-tremor-error-muted hover:bg-tremor-error-faint cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-tremor-error-faint rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-shopping-cart-line text-xl text-tremor-warning-emphasis"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Commande</h5>
+                                    <p class="text-sm text-gray-600">Bon de commande avec sélection de produits</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-type-option" data-type="custom">
+                                <div class="p-6 border border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                                        <i class="ri-settings-line text-xl text-gray-600"></i>
+                                    </div>
+                                    <h5 class="font-medium mb-2">Personnalisé</h5>
+                                    <p class="text-sm text-gray-600">Créer un formulaire sur mesure</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Configuration -->
+                    <div id="step2" class="wizard-step-content hidden">
+                        <h4 class="text-lg font-semibold mb-4">Configuration du formulaire</h4>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Titre du formulaire</label>
+                                <input type="text" id="formTitle" class="tremor-TextInput" placeholder="Ex: Formulaire de contact">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea id="formDescription" class="tremor-TextInput" rows="3" placeholder="Décrivez brièvement votre formulaire..."></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre d'étapes</label>
+                                    <select id="formSteps" class="tremor-Select">
+                                        <option value="1">1 étape</option>
+                                        <option value="2">2 étapes</option>
+                                        <option value="3">3 étapes</option>
+                                        <option value="4">4 étapes</option>
+                                        <option value="5">5 étapes</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Style visuel</label>
+                                    <select id="formStyle" class="tremor-Select">
+                                        <option value="modern">Moderne</option>
+                                        <option value="classic">Classique</option>
+                                        <option value="minimal">Minimal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="requireAuth" class="mr-2">
+                                    <span class="text-sm">Authentification requise</span>
+                                </label>
+                                
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="enableSave" class="mr-2" checked>
+                                    <span class="text-sm">Sauvegarde brouillon</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Sélection des champs -->
+                    <div id="step3" class="wizard-step-content hidden">
+                        <h4 class="text-lg font-semibold mb-4">Quels champs souhaitez-vous inclure ?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h5 class="font-medium mb-3">Champs suggérés</h5>
+                                <div id="suggestedFields" class="space-y-3">
+                                    <!-- Les champs suggérés seront générés dynamiquement -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-medium mb-3">Champs supplémentaires</h5>
+                                <div class="space-y-3">
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="phone" class="mr-3">
+                                        <i class="ri-phone-line mr-2 text-gray-600"></i>
+                                        <span>Téléphone</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="address" class="mr-3">
+                                        <i class="ri-map-pin-line mr-2 text-gray-600"></i>
+                                        <span>Adresse</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="company" class="mr-3">
+                                        <i class="ri-building-line mr-2 text-gray-600"></i>
+                                        <span>Entreprise</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="website" class="mr-3">
+                                        <i class="ri-global-line mr-2 text-gray-600"></i>
+                                        <span>Site web</span>
+                                    </label>
+                                    
+                                    <label class="flex items-center field-checkbox">
+                                        <input type="checkbox" data-field="file" class="mr-3">
+                                        <i class="ri-attachment-line mr-2 text-gray-600"></i>
+                                        <span>Pièce jointe</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 4: Finition -->
+                    <div id="step4" class="wizard-step-content hidden">
+                        <h4 class="text-lg font-semibold mb-4">Finalisation du formulaire</h4>
+                        <div class="space-y-6">
+                            <div class="bg-tremor-brand-faint rounded-lg p-4">
+                                <h5 class="font-medium text-tremor-brand-emphasis mb-2">Récapitulatif</h5>
+                                <div id="wizardSummary" class="text-sm text-tremor-brand">
+                                    <!-- Le récapitulatif sera généré ici -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message de confirmation</label>
+                                <textarea id="confirmationMessage" class="tremor-TextInput" rows="3" placeholder="Merci pour votre soumission !"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email de notification</label>
+                                <input type="email" id="notificationEmail" class="tremor-TextInput" placeholder="admin@exemple.com">
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="enableNotifications" class="mr-2" checked>
+                                    <span class="text-sm">Notifications par email</span>
+                                </label>
+                                
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="enableAnalytics" class="mr-2">
+                                    <span class="text-sm">Suivi analytique</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer du modal -->
+                <div class="tremor-CardHeader border-t border-gray-200 flex justify-between items-center bg-gray-50 rounded-b-xl">
+                    <button id="prevStepBtn" class="tremor-Button tremor-Button-secondary tremor-Button-sm hidden" onclick="previousStep()">
+                        <i class="ri-arrow-left-line mr-2"></i>
+                        Précédent
+                    </button>
+                    <div></div>
+                    <div class="flex space-x-2">
+                        <button class="tremor-Button tremor-Button-secondary tremor-Button-sm" onclick="closeStepWizard()">
+                            Annuler
+                        </button>
+                        <button id="nextStepBtn" class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="nextStep()">
+                            Suivant
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </button>
+                        <button id="finishBtn" class="tremor-Button tremor-Button-primary tremor-Button-sm hidden" onclick="finishWizard()">
+                            <i class="ri-check-line mr-2"></i>
+                            Créer le formulaire
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // État global de l'application
+        let formFields = [];
+        let selectedField = null;
+        let draggedElement = null;
+        let fieldCounter = 0;
+        let currentPageNumber = 1;
+        let totalPagesCount = 1;
+
+        // Variables pour l'assistant étape par étape
+        let wizardData = {
+            currentStep: 1,
+            selectedType: null,
+            formConfig: {},
+            selectedFields: []
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop();
+            loadFromStorage();
+            updateMetrics();
+            initializeMetricsAnimations();
+            
+            // Vérifier si on vient du générateur IA
+            checkAIGeneratedForm();
+        });
+
+        // Vérifier et charger un formulaire généré par IA
+        function checkAIGeneratedForm() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const source = urlParams.get('source');
+            
+            if (source === 'ai') {
+                const aiFormData = localStorage.getItem('aiGeneratedForm');
+                if (aiFormData) {
+                    try {
+                        const formData = JSON.parse(aiFormData);
+                        loadAIGeneratedForm(formData);
+                        localStorage.removeItem('aiGeneratedForm'); // Nettoyer après chargement
+                        showToast('Formulaire IA chargé avec succès !', 'success');
+                    } catch (error) {
+                        console.error('Erreur lors du chargement du formulaire IA:', error);
+                        showToast('Erreur lors du chargement du formulaire IA', 'error');
+                    }
+                }
+            }
+        }
+
+        // Charger un formulaire généré par IA
+        function loadAIGeneratedForm(aiFormData) {
+            // Vider le formulaire actuel
+            formFields = [];
+            fieldCounter = 0;
+            const canvas = document.getElementById('formCanvas');
+            canvas.innerHTML = `
+                <div class="empty-state text-center py-12">
+                    <i class="ri-drag-drop-line text-4xl mb-4 text-gray-400"></i>
+                    <p class="text-gray-500 mb-2">Chargement du formulaire IA...</p>
+                </div>
+            `;
+            
+            // Convertir les champs IA en champs FormEase
+            aiFormData.fields.forEach((aiField, index) => {
+                fieldCounter++;
+                const field = {
+                    id: `field_${fieldCounter}`,
+                    type: aiField.type,
+                    label: aiField.label,
+                    placeholder: aiField.placeholder || '',
+                    required: aiField.required || false,
+                    options: aiField.options || [],
+                    page: aiField.page || 1
+                };
+                
+                formFields.push(field);
+                renderField(field);
+            });
+            
+            // Mettre à jour l'interface
+            hideEmptyState();
+            updateMetrics();
+            autoSave();
+            
+            // Afficher les métadonnées IA dans une notification
+            if (aiFormData.metadata) {
+                setTimeout(() => {
+                    showToast(`Formulaire ${aiFormData.metadata.complexity.toLowerCase()} avec ${aiFormData.metadata.fieldCount} champs chargé`, 'info');
+                }, 1000);
+            }
+        }
+
+        // Configuration drag & drop
+        function setupDragAndDrop() {
+            const fieldItems = document.querySelectorAll('.field-item');
+            const canvas = document.getElementById('formCanvas');
+
+            fieldItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    e.dataTransfer.effectAllowed = 'copy';
+                });
+            });
+
+            canvas.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                
+                // Vérifier si on survole une zone de ligne
+                const dropZone = e.target.closest('.row-drop-zone');
+                if (dropZone) {
+                    dropZone.classList.add('drag-over');
+                    // Retirer la classe drag-over des autres zones
+                    document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                        if (zone !== dropZone) zone.classList.remove('drag-over');
+                    });
+                } else {
+                    this.classList.add('drag-over');
+                    // Retirer la classe drag-over de toutes les zones de ligne
+                    document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                        zone.classList.remove('drag-over');
+                    });
+                }
+            });
+
+            canvas.addEventListener('dragleave', function(e) {
+                // Ne retirer que si on quitte vraiment la zone
+                if (!canvas.contains(e.relatedTarget)) {
+                    this.classList.remove('drag-over');
+                    document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                        zone.classList.remove('drag-over');
+                    });
+                }
+            });
+
+            canvas.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                document.querySelectorAll('.row-drop-zone').forEach(zone => {
+                    zone.classList.remove('drag-over');
+                });
+                
+                if (draggedElement) {
+                    const fieldType = draggedElement.getAttribute('data-field-type');
+                    
+                    // Vérifier si on drop dans une zone de ligne
+                    const dropTarget = e.target.closest('.row-drop-zone');
+                    if (dropTarget && fieldType !== 'row' && fieldType !== 'section' && fieldType !== 'page-break') {
+                        addFieldToRow(fieldType, dropTarget);
+                    } else {
+                        addField(fieldType);
+                    }
+                    draggedElement = null;
+                }
+            });
+        }
+
+        // Ajouter un champ dans une ligne existante
+        function addFieldToRow(fieldType, dropZone) {
+            const rowElement = dropZone.closest('.form-field[data-field-type="row"]');
+            if (!rowElement) return;
+
+            const rowFieldId = rowElement.getAttribute('data-field-id');
+            const rowField = formFields.find(f => f.id === rowFieldId);
+            
+            if (!rowField || !rowField.children) {
+                rowField.children = [];
+            }
+
+            // Déterminer dans quelle colonne insérer
+            const columnIndex = dropZone.dataset.column ? parseInt(dropZone.dataset.column) : 0;
+            
+            fieldCounter++;
+            const fieldId = `field_${fieldCounter}`;
+            
+            const field = {
+                id: fieldId,
+                type: fieldType,
+                label: getDefaultLabel(fieldType),
+                placeholder: getDefaultPlaceholder(fieldType),
+                required: false,
+                options: fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox' ? ['Option 1', 'Option 2'] : [],
+                page: currentPageNumber || 1,
+                width: '100%',
+                parentRow: rowFieldId,
+                column: columnIndex
+            };
+            
+            formFields.push(field);
+            rowField.children.push(fieldId);
+            
+            // Rerender la ligne complète
+            renderField(rowField);
+            updateMetrics();
+            autoSave();
+            showToast(`Champ ajouté dans la ligne`, 'success');
+        }
+
+        // Ajouter un champ au formulaire
+        function addField(type) {
+            fieldCounter++;
+            const fieldId = `field_${fieldCounter}`;
+            
+            const field = {
+                id: fieldId,
+                type: type,
+                label: getDefaultLabel(type),
+                placeholder: getDefaultPlaceholder(type),
+                required: false,
+                options: type === 'select' || type === 'radio' || type === 'checkbox' ? ['Option 1', 'Option 2'] : [],
+                page: currentPageNumber || 1,
+                width: type === 'row' ? '50%' : '100%'
+            };
+            
+            formFields.push(field);
+            renderField(field);
+            hideEmptyState();
+            updateMetrics();
+            autoSave();
+        }
+
+        // Obtenir le label par défaut
+        function getDefaultLabel(type) {
+            const labels = {
+                'text': 'Texte Court',
+                'textarea': 'Texte Long', 
+                'email': 'Adresse Email',
+                'tel': 'Numéro de Téléphone',
+                'number': 'Nombre',
+                'select': 'Liste de Choix',
+                'radio': 'Choix Unique',
+                'checkbox': 'Choix Multiples',
+                'date': 'Date',
+                'file': 'Fichier',
+                'rating': 'Notation',
+                'row': 'Ligne 2 colonnes',
+                'section': 'Section',
+                'page-break': 'Nouvelle Page'
+            };
+            return labels[type] || 'Champ';
+        }
+
+        // Obtenir le placeholder par défaut
+        function getDefaultPlaceholder(type) {
+            const placeholders = {
+                'text': 'Saisissez votre texte...',
+                'textarea': 'Votre message...',
+                'email': 'exemple@email.com',
+                'tel': '+33 1 23 45 67 89',
+                'number': '0',
+                'date': 'Sélectionnez une date',
+                'file': 'Choisir un fichier'
+            };
+            return placeholders[type] || '';
+        }
+
+        // Render un champ dans le canvas
+        function renderField(field) {
+            const canvas = document.getElementById('formCanvas');
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'form-field fade-in';
+            fieldDiv.setAttribute('data-field-id', field.id);
+            
+            let fieldHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                        ${field.label}${field.required ? ' *' : ''}
+                    </label>
+                    <div class="field-actions flex items-center space-x-1">
+                        <button onclick="moveFieldUp('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Monter">
+                            <i class="ri-arrow-up-line"></i>
+                        </button>
+                        <button onclick="moveFieldDown('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Descendre">
+                            <i class="ri-arrow-down-line"></i>
+                        </button>
+                        <button onclick="duplicateField('${field.id}')" class="text-gray-400 hover:text-tremor-success-emphasis p-1 rounded hover:bg-tremor-success-faint" title="Dupliquer">
+                            <i class="ri-file-copy-line"></i>
+                        </button>
+                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Éditer">
+                            <i class="ri-edit-line"></i>
+                        </button>
+                        <button onclick="deleteField('${field.id}')" class="text-gray-400 hover:text-tremor-error-emphasis p-1 rounded hover:bg-tremor-error-faint" title="Supprimer">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Générer le HTML selon le type
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'tel':
+                    fieldHTML += `<input type="${field.type}" class="tremor-TextInput" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'textarea':
+                    fieldHTML += `<textarea class="tremor-TextInput" rows="3" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}></textarea>`;
+                    break;
+                case 'number':
+                    fieldHTML += `<input type="number" class="tremor-TextInput" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'select':
+                    fieldHTML += `<select class="tremor-Select" ${field.required ? 'required' : ''}>
+                        <option value="">Choisissez une option</option>`;
+                    field.options.forEach(option => {
+                        fieldHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    fieldHTML += `</select>`;
+                    break;
+                case 'radio':
+                    field.options.forEach((option, index) => {
+                        fieldHTML += `
+                            <div class="flex items-center">
+                                <input type="radio" id="${field.id}_${index}" name="${field.id}" value="${option}" class="mr-2" ${field.required ? 'required' : ''}>
+                                <label for="${field.id}_${index}" class="text-sm">${option}</label>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'checkbox':
+                    field.options.forEach((option, index) => {
+                        fieldHTML += `
+                            <div class="flex items-center">
+                                <input type="checkbox" id="${field.id}_${index}" name="${field.id}[]" value="${option}" class="mr-2">
+                                <label for="${field.id}_${index}" class="text-sm">${option}</label>
+                            </div>
+                        `;
+                    });
+                    break;
+                case 'date':
+                    fieldHTML += `<input type="date" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'file':
+                    fieldHTML += `<input type="file" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'rating':
+                    fieldHTML += `
+                        <div class="flex items-center space-x-1">
+                            ${[1,2,3,4,5].map(i => `<i class="ri-star-line text-yellow-400 text-xl cursor-pointer hover:text-yellow-500"></i>`).join('')}
+                        </div>
+                    `;
+                    break;
+                case 'row':
+                    // Récupérer les champs enfants de cette ligne
+                    const childFields = formFields.filter(f => f.parentRow === field.id);
+                    const leftField = childFields.find(f => f.column === 0);
+                    const rightField = childFields.find(f => f.column === 1);
+                    
+                    fieldHTML += `
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="row-drop-zone p-4 border border-dashed border-gray-300 rounded text-center text-gray-500 min-h-24" data-column="0">
+                                ${leftField ? renderChildField(leftField) : `
+                                    <i class="ri-drag-drop-line text-2xl mb-2"></i>
+                                    <p class="text-sm">Glissez un champ ici</p>
+                                `}
+                            </div>
+                            <div class="row-drop-zone p-4 border border-dashed border-gray-300 rounded text-center text-gray-500 min-h-24" data-column="1">
+                                ${rightField ? renderChildField(rightField) : `
+                                    <i class="ri-drag-drop-line text-2xl mb-2"></i>
+                                    <p class="text-sm">Glissez un champ ici</p>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'section':
+                    fieldHTML += `
+                        <div class="border-t border-gray-300 pt-4">
+                            <div class="flex items-center">
+                                <div class="flex-1 border-t border-gray-300"></div>
+                                <span class="px-3 text-gray-500 bg-white text-sm font-medium">${field.label}</span>
+                                <div class="flex-1 border-t border-gray-300"></div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'page-break':
+                    fieldHTML += `
+                        <div class="bg-tremor-brand-faint border border-tremor-brand-muted rounded-lg p-4 text-center">
+                            <i class="ri-page-separator text-tremor-brand-emphasis text-2xl mb-2"></i>
+                            <p class="text-tremor-brand-emphasis font-medium">${field.label}</p>
+                            <p class="text-tremor-brand text-sm">Les champs suivants seront sur une nouvelle page</p>
+                            <div class="mt-3 flex justify-center space-x-2">
+                                <button class="tremor-Button tremor-Button-primary tremor-Button-sm" onclick="goToNextPage()">
+                                    Suivant <i class="ri-arrow-right-line ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            fieldDiv.innerHTML = fieldHTML;
+            fieldDiv.addEventListener('click', () => selectField(field.id));
+            canvas.appendChild(fieldDiv);
+        }
+
+        // Fonction pour rendre un champ enfant dans une ligne
+        function renderChildField(field) {
+            let childHTML = `
+                <div class="field-in-row text-left">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        ${field.label}
+                        ${field.required ? '<span class="text-tremor-error-emphasis">*</span>' : ''}
+                    </label>
+            `;
+            
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'tel':
+                    childHTML += `<input type="${field.type}" class="tremor-TextInput w-full" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'textarea':
+                    childHTML += `<textarea class="tremor-TextInput w-full" rows="2" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}></textarea>`;
+                    break;
+                case 'number':
+                    childHTML += `<input type="number" class="tremor-TextInput w-full" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'select':
+                    childHTML += `<select class="tremor-Select w-full" ${field.required ? 'required' : ''}>
+                        <option value="">Choisissez une option</option>`;
+                    field.options.forEach(option => {
+                        childHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    childHTML += `</select>`;
+                    break;
+                case 'date':
+                    childHTML += `<input type="date" class="tremor-TextInput w-full" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'file':
+                    childHTML += `<input type="file" class="tremor-TextInput w-full" ${field.required ? 'required' : ''}>`;
+                    break;
+                default:
+                    childHTML += `<input type="text" class="tremor-TextInput w-full" placeholder="${field.placeholder}">`;
+            }
+            
+            childHTML += `
+                    <div class="mt-2 flex justify-end space-x-1">
+                        <button onclick="editField('${field.id}')" class="text-gray-400 hover:text-tremor-brand-emphasis p-1 rounded hover:bg-tremor-brand-faint" title="Éditer">
+                            <i class="ri-edit-line text-xs"></i>
+                        </button>
+                        <button onclick="removeFieldFromRow('${field.id}')" class="text-gray-400 hover:text-tremor-error-emphasis p-1 rounded hover:bg-tremor-error-faint" title="Retirer">
+                            <i class="ri-close-line text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return childHTML;
+        }
+
+        // Fonction pour retirer un champ d'une ligne
+        function removeFieldFromRow(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex !== -1) {
+                const field = formFields[fieldIndex];
+                const parentRowField = formFields.find(f => f.id === field.parentRow);
+                
+                // Retirer le champ de la liste des enfants de la ligne
+                if (parentRowField && parentRowField.children) {
+                    parentRowField.children = parentRowField.children.filter(id => id !== fieldId);
+                }
+                
+                // Supprimer le champ
+                formFields.splice(fieldIndex, 1);
+                
+                // Rerender la ligne parent
+                if (parentRowField) {
+                    renderField(parentRowField);
+                }
+                
+                updateMetrics();
+                autoSave();
+                showToast('Champ retiré de la ligne', 'success');
+            }
+        }
+
+        // Sélectionner un champ
+        function selectField(fieldId) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.form-field').forEach(f => f.classList.remove('selected'));
+            
+            // Ajouter la sélection
+            const fieldElement = document.querySelector(`[data-field-id="${fieldId}"]`);
+            if (fieldElement) {
+                fieldElement.classList.add('selected');
+                selectedField = fieldId;
+                showFieldProperties(fieldId);
+            }
+        }
+
+        // Afficher les propriétés d'un champ
+        function showFieldProperties(fieldId) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (!field) return;
+            
+            const panel = document.getElementById('propertiesPanel');
+            panel.innerHTML = `
+                <h3 class="tremor-Title mb-4">Propriétés - ${field.label}</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+                        <input type="text" value="${field.label}" class="tremor-TextInput" onchange="updateFieldProperty('${fieldId}', 'label', this.value)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Placeholder</label>
+                        <input type="text" value="${field.placeholder}" class="tremor-TextInput" onchange="updateFieldProperty('${fieldId}', 'placeholder', this.value)">
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" ${field.required ? 'checked' : ''} class="mr-2" onchange="updateFieldProperty('${fieldId}', 'required', this.checked)">
+                        <label class="text-sm">Champ obligatoire</label>
+                    </div>
+                    
+                    ${field.options && field.options.length > 0 ? `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Options</label>
+                            <div class="space-y-2">
+                                ${field.options.map((option, index) => `
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" value="${option}" class="tremor-TextInput flex-1" onchange="updateFieldOption('${fieldId}', ${index}, this.value)">
+                                        <button onclick="removeFieldOption('${fieldId}', ${index})" class="text-tremor-error-emphasis hover:text-tremor-error">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                                <button onclick="addFieldOption('${fieldId}')" class="tremor-Button tremor-Button-secondary tremor-Button-sm w-full">
+                                    <i class="ri-add-line mr-2"></i>
+                                    Ajouter une option
+                                </button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Mettre à jour une propriété de champ
+        function updateFieldProperty(fieldId, property, value) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field) {
+                field[property] = value;
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Mettre à jour une option de champ
+        function updateFieldOption(fieldId, optionIndex, value) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field && field.options) {
+                field.options[optionIndex] = value;
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Ajouter une option à un champ
+        function addFieldOption(fieldId) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field && field.options) {
+                field.options.push(`Option ${field.options.length + 1}`);
+                showFieldProperties(fieldId);
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Supprimer une option d'un champ
+        function removeFieldOption(fieldId, optionIndex) {
+            const field = formFields.find(f => f.id === fieldId);
+            if (field && field.options && field.options.length > 1) {
+                field.options.splice(optionIndex, 1);
+                showFieldProperties(fieldId);
+                refreshField(fieldId);
+                autoSave();
+            }
+        }
+
+        // Rafraîchir l'affichage d'un champ
+        function refreshField(fieldId) {
+            const fieldElement = document.querySelector(`[data-field-id="${fieldId}"]`);
+            const field = formFields.find(f => f.id === fieldId);
+            if (fieldElement && field) {
+                fieldElement.remove();
+                renderField(field);
+                selectField(fieldId);
+            }
+        }
+
+        // Éditer un champ (alias pour sélectionner)
+        function editField(fieldId) {
+            selectField(fieldId);
+        }
+
+        // Supprimer un champ
+        function deleteField(fieldId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce champ ?')) {
+                formFields = formFields.filter(f => f.id !== fieldId);
+                const fieldElement = document.querySelector(`[data-field-id="${fieldId}"]`);
+                if (fieldElement) {
+                    fieldElement.remove();
+                }
+                
+                if (formFields.length === 0) {
+                    showEmptyState();
+                }
+                
+                // Réinitialiser le panel des propriétés
+                document.getElementById('propertiesPanel').innerHTML = `
+                    <h3 class="tremor-Title mb-4">Propriétés</h3>
+                    <div class="text-center text-gray-500 mt-8">
+                        <i class="ri-settings-3-line text-2xl mb-2 text-gray-400"></i>
+                        <p>Sélectionnez un champ pour voir ses propriétés</p>
+                    </div>
+                `;
+                
+                updateMetrics();
+                autoSave();
+            }
+        }
+
+        // Dupliquer un champ
+        function duplicateField(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex === -1) return;
+            
+            const originalField = formFields[fieldIndex];
+            fieldCounter++;
+            
+            // Créer une copie du champ avec un nouvel ID
+            const duplicatedField = {
+                ...originalField,
+                id: `field_${fieldCounter}`,
+                label: `${originalField.label} (Copie)`,
+                options: originalField.options ? [...originalField.options] : []
+            };
+            
+            // Insérer le champ dupliqué juste après l'original
+            formFields.splice(fieldIndex + 1, 0, duplicatedField);
+            
+            // Re-render tous les champs pour maintenir l'ordre
+            refreshAllFields();
+            
+            showToast('Champ dupliqué avec succès !', 'success');
+            updateMetrics();
+            autoSave();
+        }
+
+        // Monter un champ dans la liste
+        function moveFieldUp(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex <= 0) {
+                showToast('Le champ est déjà en première position', 'info');
+                return;
+            }
+            
+            // Échanger avec le champ précédent
+            [formFields[fieldIndex - 1], formFields[fieldIndex]] = [formFields[fieldIndex], formFields[fieldIndex - 1]];
+            
+            // Re-render tous les champs pour maintenir l'ordre
+            refreshAllFields();
+            
+            // Maintenir la sélection sur le champ déplacé
+            setTimeout(() => selectField(fieldId), 100);
+            
+            showToast('Champ déplacé vers le haut', 'success');
+            autoSave();
+        }
+
+        // Descendre un champ dans la liste
+        function moveFieldDown(fieldId) {
+            const fieldIndex = formFields.findIndex(f => f.id === fieldId);
+            if (fieldIndex === -1 || fieldIndex >= formFields.length - 1) {
+                showToast('Le champ est déjà en dernière position', 'info');
+                return;
+            }
+            
+            // Échanger avec le champ suivant
+            [formFields[fieldIndex], formFields[fieldIndex + 1]] = [formFields[fieldIndex + 1], formFields[fieldIndex]];
+            
+            // Re-render tous les champs pour maintenir l'ordre
+            refreshAllFields();
+            
+            // Maintenir la sélection sur le champ déplacé
+            setTimeout(() => selectField(fieldId), 100);
+            
+            showToast('Champ déplacé vers le bas', 'success');
+            autoSave();
+        }
+
+        // Fonction pour re-render tous les champs dans le bon ordre
+        function refreshAllFields() {
+            const canvas = document.getElementById('formCanvas');
+            
+            // Supprimer tous les champs existants
+            const existingFields = canvas.querySelectorAll('.form-field');
+            existingFields.forEach(field => field.remove());
+            
+            // Re-render dans l'ordre correct
+            formFields.forEach(field => {
+                renderField(field);
+            });
+            
+            // Cacher l'état vide si il y a des champs
+            if (formFields.length > 0) {
+                hideEmptyState();
+            }
+        }
+
+        // Cacher l'état vide
+        function hideEmptyState() {
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        // Afficher l'état vide
+        function showEmptyState() {
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // Charger un template
+        function loadTemplate(templateType) {
+            if (formFields.length > 0 && !confirm('Cela va remplacer votre formulaire actuel. Continuer ?')) {
+                return;
+            }
+            
+            formFields = [];
+            document.getElementById('formCanvas').innerHTML = `
+                <div class="text-center text-gray-500 mt-20" id="emptyState">
+                    <i class="ri-drag-drop-line text-4xl mb-4 text-gray-400"></i>
+                    <h3 class="text-lg font-medium mb-2">Commencez à créer votre formulaire</h3>
+                    <p>Glissez-déposez des champs depuis la sidebar ou utilisez un template</p>
+                </div>
+            `;
+            
+            const templates = {
+                contact: [
+                    {type: 'text', label: 'Nom complet', required: true},
+                    {type: 'email', label: 'Adresse email', required: true},
+                    {type: 'tel', label: 'Téléphone'},
+                    {type: 'select', label: 'Sujet', options: ['Question générale', 'Support technique', 'Ventes', 'Autre'], required: true},
+                    {type: 'textarea', label: 'Message', required: true}
+                ],
+                survey: [
+                    {type: 'text', label: 'Votre nom'},
+                    {type: 'rating', label: 'Satisfaction globale', required: true},
+                    {type: 'radio', label: 'Recommanderiez-vous nos services ?', options: ['Oui, certainement', 'Probablement', 'Peu probable', 'Non'], required: true},
+                    {type: 'checkbox', label: 'Quels aspects appréciez-vous ?', options: ['Qualité', 'Prix', 'Service client', 'Rapidité']},
+                    {type: 'textarea', label: 'Commentaires additionnels'}
+                ],
+                registration: [
+                    {type: 'text', label: 'Prénom', required: true},
+                    {type: 'text', label: 'Nom', required: true},
+                    {type: 'email', label: 'Email', required: true},
+                    {type: 'tel', label: 'Téléphone', required: true},
+                    {type: 'select', label: 'Type de participation', options: ['Individuel', 'Groupe', 'Entreprise'], required: true},
+                    {type: 'checkbox', label: 'Services supplémentaires', options: ['Hébergement', 'Transport', 'Repas']}
+                ],
+                feedback: [
+                    {type: 'text', label: 'Nom du produit/service'},
+                    {type: 'rating', label: 'Note globale', required: true},
+                    {type: 'textarea', label: 'Ce qui vous a plu', required: true},
+                    {type: 'textarea', label: 'Points d\'amélioration'},
+                    {type: 'radio', label: 'Rachèteriez-vous ?', options: ['Oui', 'Non', 'Peut-être'], required: true}
+                ]
+            };
+            
+            if (templates[templateType]) {
+                templates[templateType].forEach(fieldConfig => {
+                    fieldCounter++;
+                    const field = {
+                        id: `field_${fieldCounter}`,
+                        type: fieldConfig.type,
+                        label: fieldConfig.label,
+                        placeholder: getDefaultPlaceholder(fieldConfig.type),
+                        required: fieldConfig.required || false,
+                        options: fieldConfig.options || []
+                    };
+                    formFields.push(field);
+                    renderField(field);
+                });
+                hideEmptyState();
+                updateMetrics();
+                autoSave();
+            }
+        }
+
+        // Aperçu du formulaire
+        function previewForm() {
+            if (formFields.length === 0) {
+                showToast('Aucun champ à prévisualiser', 'warning');
+                return;
+            }
+
+            const modal = document.getElementById('previewModal');
+            const content = document.getElementById('previewContent');
+            
+            // Récupérer le titre et la description
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+            
+            let formHTML = `
+                <div class="form-header mb-6">
+                    <h2 class="tremor-Title text-2xl mb-2">${title}</h2>
+                    ${description ? `<p class="text-gray-600 mb-4">${description}</p>` : ''}
+                </div>
+                <form class="space-y-6">
+            `;
+            
+            formFields.forEach(field => {
+                // Ignorer les champs de type structurel pour l'aperçu
+                if (field.type === 'section' || field.type === 'page-break') {
+                    if (field.type === 'section') {
+                        formHTML += `<div class="border-t border-gray-200 pt-6 mt-8">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">${field.label}</h3>
+                        </div>`;
+                    }
+                    return;
+                }
+
+                // Gérer les lignes (colonnes)
+                if (field.type === 'row') {
+                    const childFields = formFields.filter(f => f.parentRow === field.id);
+                    if (childFields.length > 0) {
+                        formHTML += `<div class="grid grid-cols-2 gap-4">`;
+                        childFields.forEach(childField => {
+                            formHTML += `<div class="space-y-2">`;
+                            formHTML += `<label class="block text-sm font-medium text-gray-700">${childField.label}${childField.required ? ' <span class="text-red-500">*</span>' : ''}</label>`;
+                            formHTML += generateFieldHTML(childField);
+                            formHTML += `</div>`;
+                        });
+                        formHTML += `</div>`;
+                    }
+                    return;
+                }
+
+                formHTML += `<div class="space-y-2">`;
+                formHTML += `<label class="block text-sm font-medium text-gray-700">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>`;
+                formHTML += generateFieldHTML(field);
+                formHTML += `</div>`;
+            });
+            
+            formHTML += `
+                    <div class="flex justify-end space-x-2 pt-6 border-t border-gray-200">
+                        <button type="reset" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                            <i class="ri-refresh-line mr-2"></i>
+                            Réinitialiser
+                        </button>
+                        <button type="submit" class="tremor-Button tremor-Button-primary tremor-Button-sm">
+                            <i class="ri-send-plane-line mr-2"></i>
+                            Envoyer
+                        </button>
+                    </div>
+                </form>
+            `;
+            
+            content.innerHTML = formHTML;
+            modal.classList.remove('hidden');
+        }
+
+        // Fonction utilitaire pour générer le HTML d'un champ
+        function generateFieldHTML(field) {
+            let fieldHTML = '';
+            
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'tel':
+                case 'number':
+                    fieldHTML = `<input type="${field.type}" class="tremor-TextInput" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'textarea':
+                    fieldHTML = `<textarea class="tremor-TextInput" rows="3" placeholder="${field.placeholder}" ${field.required ? 'required' : ''}></textarea>`;
+                    break;
+                case 'select':
+                    fieldHTML = `<select class="tremor-Select" ${field.required ? 'required' : ''}>
+                        <option value="">Choisissez une option</option>`;
+                    if (field.options) {
+                        field.options.forEach(option => {
+                            fieldHTML += `<option value="${option}">${option}</option>`;
+                        });
+                    }
+                    fieldHTML += `</select>`;
+                    break;
+                case 'radio':
+                    fieldHTML = `<div class="space-y-2">`;
+                    if (field.options) {
+                        field.options.forEach((option, index) => {
+                            fieldHTML += `
+                                <div class="flex items-center">
+                                    <input type="radio" id="preview_${field.id}_${index}" name="${field.id}" value="${option}" class="h-4 w-4 text-tremor-brand-emphasis focus:ring-tremor-brand-emphasis border-gray-300 mr-3" ${field.required ? 'required' : ''}>
+                                    <label for="preview_${field.id}_${index}" class="text-sm text-gray-700">${option}</label>
+                                </div>
+                            `;
+                        });
+                    }
+                    fieldHTML += `</div>`;
+                    break;
+                case 'checkbox':
+                    if (field.options && field.options.length > 1) {
+                        fieldHTML = `<div class="space-y-2">`;
+                        field.options.forEach((option, index) => {
+                            fieldHTML += `
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="preview_${field.id}_${index}" name="${field.id}[]" value="${option}" class="h-4 w-4 text-tremor-brand-emphasis focus:ring-tremor-brand-emphasis border-gray-300 rounded mr-3">
+                                    <label for="preview_${field.id}_${index}" class="text-sm text-gray-700">${option}</label>
+                                </div>
+                            `;
+                        });
+                        fieldHTML += `</div>`;
+                    } else {
+                        fieldHTML = `<div class="flex items-center">
+                            <input type="checkbox" id="preview_${field.id}" class="h-4 w-4 text-tremor-brand-emphasis focus:ring-tremor-brand-emphasis border-gray-300 rounded mr-3" ${field.required ? 'required' : ''}>
+                            <label for="preview_${field.id}" class="text-sm text-gray-700">Cochez cette case</label>
+                        </div>`;
+                    }
+                    break;
+                case 'date':
+                    fieldHTML = `<input type="date" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'file':
+                    fieldHTML = `<input type="file" class="tremor-TextInput" ${field.required ? 'required' : ''}>`;
+                    break;
+                case 'rating':
+                    fieldHTML = `
+                        <div class="flex items-center space-x-1">
+                            ${[1,2,3,4,5].map(i => `<i class="ri-star-line text-yellow-400 text-xl cursor-pointer hover:text-yellow-500 transition-colors" onclick="highlightStars(this, ${i})"></i>`).join('')}
+                            <span class="ml-3 text-sm text-gray-500">Cliquez pour noter</span>
+                        </div>
+                    `;
+                    break;
+                default:
+                    fieldHTML = `<input type="text" class="tremor-TextInput" placeholder="Type de champ: ${field.type}" disabled>`;
+            }
+            
+            return fieldHTML;
+        }
+
+        // Fermer l'aperçu
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // Fonction pour les étoiles interactives
+        function highlightStars(starElement, rating) {
+            const container = starElement.parentElement;
+            const stars = container.querySelectorAll('i[class*="ri-star"]');
+            
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.className = 'ri-star-fill text-yellow-400 text-xl cursor-pointer';
+                } else {
+                    star.className = 'ri-star-line text-yellow-400 text-xl cursor-pointer hover:text-yellow-500 transition-colors';
+                }
+            });
+        }
+
+        // Sauvegarder le formulaire manuellement (avec modal)
+        function saveForm(showModal = true) {
+            if (formFields.length === 0) {
+                showToast('Aucun champ à sauvegarder', 'warning');
+                return;
+            }
+
+            // Récupérer titre et description depuis l'interface
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+
+            try {
+                // Sauvegarder au format original (compatibilité)
+                localStorage.setItem('formEaseBuilder', JSON.stringify({
+                    fields: formFields,
+                    timestamp: new Date().toISOString(),
+                    version: '2.0'
+                }));
+
+                // Sauvegarder au format dashboard
+                const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                const formData = {
+                    id: Date.now().toString(),
+                    title: title,
+                    description: description,
+                    fields: formFields,
+                    created: new Date().toISOString(),
+                    source: 'normal',
+                    version: '2.0',
+                    views: 0
+                };
+
+                builderForms.push(formData);
+                localStorage.setItem('builderForms', JSON.stringify(builderForms));
+
+                // Feedback visuel
+                const status = document.getElementById('autoSaveStatus');
+                status.innerHTML = '<i class="ri-check-line mr-1"></i>Sauvegardé';
+                status.className = 'tremor-Badge tremor-Badge-green';
+
+                // Modal de succès SEULEMENT pour sauvegarde MANUELLE
+                if (showModal) {
+                    showSaveSuccessModal(formData);
+                } else {
+                    // Toast discret pour sauvegarde automatique
+                    showToast('Sauvegarde automatique', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde:', error);
+                showToast('Erreur lors de la sauvegarde', 'error');
+            }
+        }
+
+        // Modal de succès de sauvegarde
+        function showSaveSuccessModal(formData) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex items-center mb-4">
+                        <i class="ri-check-circle-line text-green-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold">Formulaire Sauvegardé !</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Votre formulaire "${formData.title}" a été sauvegardé avec succès.
+                    </p>
+                    <div class="space-y-3">
+                        <button onclick="resetFormBuilder(); closeSaveModal()" class="w-full tremor-Button tremor-Button-primary tremor-Button-md">
+                            <i class="ri-add-line mr-2"></i>
+                            Créer un Nouveau Formulaire
+                        </button>
+                        <button onclick="previewCurrentForm('${formData.id}'); closeSaveModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-eye-line mr-2"></i>
+                            Voir l'Aperçu
+                        </button>
+                        <a href="../dashboard/home.html" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md block text-center">
+                            <i class="ri-dashboard-line mr-2"></i>
+                            Aller au Dashboard
+                        </a>
+                        <button onclick="closeSaveModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-close-line mr-2"></i>
+                            Continuer l'Édition
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Fermer la modal de sauvegarde
+        function closeSaveModal() {
+            const modal = document.querySelector('.fixed.inset-0');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Réinitialiser le builder pour un nouveau formulaire
+        function resetFormBuilder() {
+            formFields = [];
+            fieldCounter = 0;
+            selectedFieldId = null;
+            window.currentFormId = null; // Réinitialiser l'ID du formulaire
+            
+            // Vider le canvas
+            const canvas = document.getElementById('formCanvas');
+            canvas.innerHTML = `
+                <div class="empty-state text-center py-16">
+                    <i class="ri-file-add-line text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-500 mb-2">Commencez à créer votre formulaire</h3>
+                    <p class="text-gray-400">Glissez des éléments depuis la sidebar ou utilisez les templates</p>
+                </div>
+            `;
+            
+            // Réinitialiser les champs de titre et description
+            if (document.getElementById('formTitle')) {
+                document.getElementById('formTitle').value = '';
+                document.getElementById('formTitle').placeholder = 'Nom de votre formulaire';
+            }
+            if (document.getElementById('formDescription')) {
+                document.getElementById('formDescription').value = '';
+                document.getElementById('formDescription').placeholder = 'Description de votre formulaire (optionnel)';
+            }
+            
+            // Vider la sidebar des propriétés
+            const propertiesPanel = document.getElementById('fieldProperties');
+            if (propertiesPanel) {
+                propertiesPanel.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="ri-settings-line text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-gray-400 text-sm">Sélectionnez un champ pour voir ses propriétés</p>
+                    </div>
+                `;
+            }
+            
+            // Mettre à jour le badge de sauvegarde
+            const status = document.getElementById('autoSaveStatus');
+            if (status) {
+                status.innerHTML = '<i class="ri-save-line mr-1"></i>Nouveau';
+                status.className = 'tremor-Badge tremor-Badge-blue';
+            }
+            
+            // Supprimer la sauvegarde locale temporaire
+            localStorage.removeItem('formEaseBuilder');
+            
+            showToast('Nouveau formulaire créé !', 'success');
+        }
+
+        // Aperçu du formulaire courant
+        function previewCurrentForm(formId) {
+            if (formFields.length === 0) {
+                showToast('Aucun champ à prévisualiser', 'warning');
+                return;
+            }
+
+            // Récupérer le titre et la description
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+
+            // Construire l'URL de prévisualisation
+            const previewUrl = `preview.html?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&fields=${encodeURIComponent(JSON.stringify(formFields))}`;
+            
+            // Ouvrir dans un nouvel onglet
+            window.open(previewUrl, '_blank');
+            
+            showToast('Aperçu ouvert dans un nouvel onglet', 'info');
+        }
+
+        // Sauvegarde automatique (silencieuse, sans modal)
+        function autoSave() {
+            if (formFields.length === 0) return;
+
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+
+            try {
+                // Sauvegarder au format original (compatibilité)
+                localStorage.setItem('formEaseBuilder', JSON.stringify({
+                    fields: formFields,
+                    timestamp: new Date().toISOString(),
+                    version: '2.0'
+                }));
+
+                // Sauvegarder au format dashboard
+                const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                const existingFormIndex = builderForms.findIndex(f => f.id === window.currentFormId);
+                
+                const formData = {
+                    id: window.currentFormId || Date.now().toString(),
+                    title: title,
+                    description: description,
+                    fields: formFields,
+                    created: existingFormIndex !== -1 ? builderForms[existingFormIndex].created : new Date().toISOString(),
+                    modified: new Date().toISOString(),
+                    source: 'normal',
+                    version: '2.0',
+                    views: existingFormIndex !== -1 ? builderForms[existingFormIndex].views : 0
+                };
+
+                if (existingFormIndex !== -1) {
+                    builderForms[existingFormIndex] = formData;
+                } else {
+                    builderForms.push(formData);
+                    window.currentFormId = formData.id;
+                }
+                
+                localStorage.setItem('builderForms', JSON.stringify(builderForms));
+
+                // Feedback visuel discret (uniquement status badge, PAS de toast)
+                const status = document.getElementById('autoSaveStatus');
+                if (status) {
+                    status.innerHTML = '<i class="ri-check-line mr-1"></i>Auto-sauvegardé';
+                    status.className = 'tremor-Badge tremor-Badge-gray';
+                }
+                
+                // PAS de toast pour auto-save (complètement silencieux)
+                console.log('Sauvegarde automatique effectuée');
+                
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde automatique:', error);
+                // PAS de toast d'erreur pour auto-save (silencieux)
+            }
+        }
+
+        // Charger depuis le stockage
+        function loadFromStorage() {
+            const saved = localStorage.getItem('formEaseBuilder');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.fields && Array.isArray(data.fields)) {
+                        formFields = data.fields;
+                        
+                        // Trouver le plus grand ID pour continuer la numérotation
+                        const maxId = formFields.reduce((max, field) => {
+                            const id = parseInt(field.id.replace('field_', ''));
+                            return id > max ? id : max;
+                        }, 0);
+                        fieldCounter = maxId;
+                        
+                        // Rendre tous les champs
+                        formFields.forEach(field => renderField(field));
+                        if (formFields.length > 0) {
+                            hideEmptyState();
+                        }
+                    }
+                } catch (e) {
+                    console.error('Erreur lors du chargement:', e);
+                }
+            }
+        }
+
+        // Mettre à jour les métriques
+        // Mettre à jour les métriques avec animation
+        function updateMetrics() {
+            const totalFields = formFields.length;
+            const fieldsElement = document.getElementById('totalFields');
+            
+            if (fieldsElement) {
+                // Animation de compteur
+                animateCounter(fieldsElement, parseInt(fieldsElement.textContent) || 0, totalFields);
+            }
+            
+            // Animer les cartes métriques
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 200);
+                }, index * 100);
+            });
+        }
+
+        // Animation de compteur pour les métriques
+        function animateCounter(element, start, end, duration = 500) {
+            const range = end - start;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function pour un effet plus naturel
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(start + (range * easeOutCubic));
+                
+                element.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Initialiser les animations des métriques
+        function initializeMetricsAnimations() {
+            const metricCards = document.querySelectorAll('.metric-card');
+            
+            // Observer d'intersection pour animer au scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            metricCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(card);
+            });
+        }
+
+        // Fonction toast pour les notifications
+        function showToast(message, type = 'info') {
+            // Supprimer les toasts existants
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => toast.remove());
+
+            // Créer le toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+            
+            if (type === 'success') {
+                toast.className += ' bg-tremor-success-emphasis text-white';
+                toast.innerHTML = `<i class="ri-check-line mr-2"></i>${message}`;
+            } else if (type === 'error') {
+                toast.className += ' bg-tremor-error-emphasis text-white';
+                toast.innerHTML = `<i class="ri-error-warning-line mr-2"></i>${message}`;
+            } else {
+                toast.className += ' bg-tremor-brand-emphasis text-white';
+                toast.innerHTML = `<i class="ri-information-line mr-2"></i>${message}`;
+            }
+
+            document.body.appendChild(toast);
+
+            // Animation d'entrée
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+
+            // Suppression automatique
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Fonction de publication et partage du formulaire
+        function publishForm() {
+            if (formFields.length === 0) {
+                showToast('Aucun champ à publier', 'error');
+                return;
+            }
+
+            // Récupérer les informations du formulaire
+            const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+            const description = document.getElementById('formDescription')?.value || '';
+
+            // Sauvegarder d'abord le formulaire
+            const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+            const formData = {
+                id: Date.now().toString(),
+                title: title,
+                description: description,
+                fields: formFields,
+                created: new Date().toISOString(),
+                source: 'normal',
+                version: '2.0',
+                views: 0,
+                published: true
+            };
+
+            builderForms.push(formData);
+            localStorage.setItem('builderForms', JSON.stringify(builderForms));
+
+            // Afficher modal de publication
+            showPublishModal(formData);
+        }
+
+        // Modal de publication avec options de partage
+        function showPublishModal(formData) {
+            const modal = document.createElement('div');
+            modal.id = 'publishModal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            
+            // Générer l'URL de partage correcte
+            const shareUrl = `${window.location.origin}/frontend/pages/forms/preview.html?title=${encodeURIComponent(formData.title)}&description=${encodeURIComponent(formData.description)}&fields=${encodeURIComponent(JSON.stringify(formData.fields))}`;
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex items-center mb-4">
+                        <i class="ri-share-circle-line text-green-500 text-2xl mr-3"></i>
+                        <h3 class="text-lg font-semibold">Formulaire Publié !</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        Votre formulaire "${formData.title}" est maintenant publié et prêt à être partagé.
+                    </p>
+                    
+                    <!-- QR Code -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4 text-center">
+                        <div id="publishQrCode" class="mx-auto mb-2 flex items-center justify-center" style="width: 150px; height: 150px; border: 2px dashed #cbd5e0; border-radius: 8px;">
+                            <div class="text-center">
+                                <i class="ri-qr-code-line text-4xl text-gray-400 mb-2"></i>
+                                <p class="text-xs text-gray-500">QR Code</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500">Scannez ce QR code pour accéder au formulaire</p>
+                    </div>
+                    
+                    <!-- URL de partage -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Lien de partage</label>
+                        <div class="flex">
+                            <input type="text" id="shareUrl" value="${shareUrl}" readonly 
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50 text-sm">
+                            <button onclick="copyShareUrl()" class="px-3 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition-colors">
+                                <i class="ri-file-copy-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="createNewFormFromModal()" class="w-full tremor-Button tremor-Button-primary tremor-Button-md">
+                            <i class="ri-add-line mr-2"></i>
+                            Créer un Nouveau Formulaire
+                        </button>
+                        <button onclick="exportFormJson('${formData.id}')" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-download-line mr-2"></i>
+                            Télécharger JSON
+                        </button>
+                        <button onclick="openDashboardFromModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-dashboard-line mr-2"></i>
+                            Voir dans le Dashboard
+                        </button>
+                        <button onclick="closePublishModal()" class="w-full tremor-Button tremor-Button-secondary tremor-Button-md">
+                            <i class="ri-close-line mr-2"></i>
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Générer le QR code avec une méthode alternative
+            setTimeout(() => {
+                generateQRCodeAlternative(shareUrl);
+            }, 100);
+        }
+
+        // Fermer la modal de publication
+        function closePublishModal() {
+            const publishModal = document.getElementById('publishModal');
+            if (publishModal) {
+                publishModal.remove();
+            }
+        }
+
+        // Créer un nouveau formulaire depuis le modal de publication
+        function createNewFormFromModal() {
+            closePublishModal();
+            resetFormBuilder();
+        }
+
+        // Ouvrir le dashboard depuis le modal de publication
+        function openDashboardFromModal() {
+            window.open('../dashboard/home.html', '_blank');
+            closePublishModal();
+        }
+
+        // Générer un QR code alternatif (sans bibliothèque externe)
+        function generateQRCodeAlternative(url) {
+            const qrContainer = document.getElementById('publishQrCode');
+            if (qrContainer) {
+                // Utiliser un service en ligne pour générer le QR code
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+                qrContainer.innerHTML = `
+                    <img src="${qrUrl}" alt="QR Code" class="mx-auto rounded" style="width: 150px; height: 150px;" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none;" class="text-center">
+                        <i class="ri-qr-code-line text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-xs text-gray-500">QR Code non disponible</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Copier l'URL de partage (méthode moderne)
+        function copyShareUrl() {
+            const input = document.getElementById('shareUrl');
+            const url = input.value;
+            
+            // Méthode moderne avec l'API Clipboard
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('Lien copié dans le presse-papiers !', 'success');
+                    // Animation sur le bouton
+                    const button = event.target.closest('button');
+                    button.innerHTML = '<i class="ri-check-line text-green-500"></i>';
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="ri-file-copy-line"></i>';
+                    }, 2000);
+                }).catch(() => {
+                    fallbackCopyToClipboard(url);
+                });
+            } else {
+                fallbackCopyToClipboard(url);
+            }
+        }
+
+        // Méthode de fallback pour copier
+        function fallbackCopyToClipboard(text) {
+            const input = document.getElementById('shareUrl');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showToast('Lien copié dans le presse-papiers !', 'success');
+                // Animation sur le bouton
+                const button = event.target.closest('button');
+                button.innerHTML = '<i class="ri-check-line text-green-500"></i>';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="ri-file-copy-line"></i>';
+                }, 2000);
+            } catch (err) {
+                showToast('Impossible de copier. Copiez manuellement le lien.', 'error');
+            }
+        }
+
+        // Exporter le JSON du formulaire
+        function exportFormJson(formId) {
+            try {
+                const builderForms = JSON.parse(localStorage.getItem('builderForms') || '[]');
+                let formData = builderForms.find(f => f.id === formId);
+                
+                // Si pas trouvé par ID, utiliser le formulaire actuel
+                if (!formData) {
+                    const title = document.getElementById('formTitle')?.value || 'Formulaire sans titre';
+                    const description = document.getElementById('formDescription')?.value || '';
+                    
+                    formData = {
+                        id: formId || Date.now().toString(),
+                        title: title,
+                        description: description,
+                        fields: formFields,
+                        created: new Date().toISOString(),
+                        source: 'builder',
+                        version: '2.0',
+                        views: 0,
+                        published: true
+                    };
+                }
+                
+                if (!formData) {
+                    showToast('Aucun formulaire à exporter', 'error');
+                    return;
+                }
+                
+                // Créer un nom de fichier sûr
+                const safeName = formData.title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '') || 'formulaire';
+                
+                // Créer le blob et télécharger
+                const jsonData = JSON.stringify(formData, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `formease-${safeName}-${formData.id}.json`;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('Fichier JSON téléchargé !', 'success');
+                
+                // Animation sur le bouton
+                const button = event.target.closest('button');
+                if (button) {
+                    const originalContent = button.innerHTML;
+                    button.innerHTML = '<i class="ri-check-line mr-2 text-green-500"></i>Téléchargé !';
+                    setTimeout(() => {
+                        button.innerHTML = originalContent;
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('Erreur lors de l\'export:', error);
+                showToast('Erreur lors du téléchargement', 'error');
+            }
+        }
+
+        // Fonctions de gestion des pages
+        function addPage() {
+            totalPagesCount++;
+            updatePageControls();
+            
+            // Ajouter une option dans le select
+            const pageSelect = document.getElementById('currentPage');
+            const option = document.createElement('option');
+            option.value = totalPagesCount;
+            option.textContent = totalPagesCount;
+            pageSelect.appendChild(option);
+            
+            showToast(`Page ${totalPagesCount} ajoutée`, 'success');
+        }
+
+        function changePage() {
+            const pageSelect = document.getElementById('currentPage');
+            currentPageNumber = parseInt(pageSelect.value);
+            
+            // Filtrer les champs de la page actuelle
+            filterFieldsByPage();
+            showToast(`Page ${currentPageNumber} sélectionnée`, 'info');
+        }
+
+        function goToNextPage() {
+            if (currentPageNumber < totalPagesCount) {
+                currentPageNumber++;
+                document.getElementById('currentPage').value = currentPageNumber;
+                filterFieldsByPage();
+                showToast(`Passage à la page ${currentPageNumber}`, 'info');
+            } else {
+                showToast('Vous êtes déjà sur la dernière page', 'info');
+            }
+        }
+
+        function filterFieldsByPage() {
+            const canvas = document.getElementById('formCanvas');
+            const allFields = canvas.querySelectorAll('.form-field');
+            
+            allFields.forEach(fieldElement => {
+                const fieldId = fieldElement.getAttribute('data-field-id');
+                const field = formFields.find(f => f.id === fieldId);
+                
+                if (field && (field.page === currentPageNumber || !field.page)) {
+                    fieldElement.style.display = 'block';
+                } else {
+                    fieldElement.style.display = 'none';
+                }
+            });
+        }
+
+        function updatePageControls() {
+            document.getElementById('totalPages').textContent = totalPagesCount;
+            
+            // Mettre à jour le select si nécessaire
+            const pageSelect = document.getElementById('currentPage');
+            if (pageSelect.children.length < totalPagesCount) {
+                for (let i = pageSelect.children.length + 1; i <= totalPagesCount; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    pageSelect.appendChild(option);
+                }
+            }
+        }
+
+        // Gestionnaire pour fermer le modal en cliquant à l'extérieur
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreview();
+            }
+        });
+
+        // Gestion du redimensionnement de la fenêtre pour les métriques
+        function handleWindowResize() {
+            // Forcer le recalcul des dimensions des cartes métriques
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach(card => {
+                // Trigger reflow pour recalculer les dimensions
+                card.style.width = 'auto';
+                card.offsetHeight; // Force reflow
+            });
+
+            // Ajuster les métriques selon la taille d'écran
+            const metricsContainer = document.querySelector('.metrics-container');
+            if (metricsContainer) {
+                const windowWidth = window.innerWidth;
+                
+                // Responsive breakpoints améliorés
+                if (windowWidth < 640) {
+                    metricsContainer.className = 'metrics-container grid grid-cols-1 gap-3 mt-4 mb-2';
+                } else if (windowWidth < 768) {
+                    metricsContainer.className = 'metrics-container grid grid-cols-2 gap-3 mt-4 mb-2';
+                } else if (windowWidth < 1024) {
+                    metricsContainer.className = 'metrics-container grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-2';
+                } else {
+                    metricsContainer.className = 'metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 mb-2';
+                }
+            }
+
+            // Mettre à jour les dimensions du canvas
+            const canvas = document.getElementById('formCanvas');
+            if (canvas) {
+                canvas.style.minHeight = `${window.innerHeight - 200}px`;
+            }
+
+            // Mettre à jour la sidebar si nécessaire
+            const sidebar = document.querySelector('.w-80.toolbar-glass');
+            if (sidebar && window.innerWidth < 1024) {
+                sidebar.style.width = '280px';
+            } else if (sidebar) {
+                sidebar.style.width = '320px';
+            }
+
+            // Animation des cartes lors du redimensionnement
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 150);
+                }, index * 50);
+            });
+        }
+
+        // Gestionnaire d'événement pour le redimensionnement
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            // Debounce pour éviter trop d'appels
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleWindowResize, 150);
+        });
+
+        // Appel initial pour configurer l'affichage
+        window.addEventListener('load', handleWindowResize);
+        
+        // Gestionnaire pour l'orientation mobile
+        window.addEventListener('orientationchange', function() {
+            setTimeout(handleWindowResize, 300);
+        });
+
+        // ===== FONCTIONS ASSISTANT ÉTAPE PAR ÉTAPE =====
+
+        // Ouvrir l'assistant
+        function openStepWizard() {
+            document.getElementById('stepWizardModal').classList.remove('hidden');
+            resetWizard();
+            setupWizardEventListeners();
+        }
+
+        // Fermer l'assistant
+        function closeStepWizard() {
+            document.getElementById('stepWizardModal').classList.add('hidden');
+            resetWizard();
+        }
+
+        // Réinitialiser l'assistant
+        function resetWizard() {
+            wizardData = {
+                currentStep: 1,
+                selectedType: null,
+                formConfig: {},
+                selectedFields: []
+            };
+            updateWizardStep(1);
+            clearFormTypeSelection();
+        }
+
+        // Configurer les event listeners de l'assistant
+        function setupWizardEventListeners() {
+            // Sélection du type de formulaire
+            document.querySelectorAll('.form-type-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectFormType(this.getAttribute('data-type'));
+                });
+            });
+        }
+
+        // Sélectionner un type de formulaire
+        function selectFormType(type) {
+            wizardData.selectedType = type;
+            
+            // Mettre à jour l'interface
+            document.querySelectorAll('.form-type-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+            
+            // Préremplir les champs selon le type
+            fillDefaultConfig(type);
+        }
+
+        // Préremplir la configuration selon le type
+        function fillDefaultConfig(type) {
+            const configs = {
+                contact: {
+                    title: 'Formulaire de Contact',
+                    description: 'Contactez-nous facilement via ce formulaire',
+                    steps: 1,
+                    fields: ['name', 'email', 'message']
+                },
+                survey: {
+                    title: 'Enquête de Satisfaction',
+                    description: 'Aidez-nous à améliorer nos services',
+                    steps: 3,
+                    fields: ['name', 'email', 'rating', 'feedback']
+                },
+                registration: {
+                    title: 'Formulaire d\'Inscription',
+                    description: 'Inscrivez-vous à notre service',
+                    steps: 2,
+                    fields: ['name', 'email', 'phone', 'company']
+                },
+                feedback: {
+                    title: 'Retour Client',
+                    description: 'Partagez votre expérience avec nous',
+                    steps: 2,
+                    fields: ['name', 'email', 'rating', 'comments']
+                },
+                order: {
+                    title: 'Bon de Commande',
+                    description: 'Passez votre commande en ligne',
+                    steps: 3,
+                    fields: ['name', 'email', 'phone', 'address', 'products']
+                },
+                custom: {
+                    title: 'Formulaire Personnalisé',
+                    description: 'Créez votre formulaire sur mesure',
+                    steps: 1,
+                    fields: []
+                }
+            };
+            
+            wizardData.formConfig = configs[type] || configs.custom;
+        }
+
+        // Aller à l'étape suivante
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (wizardData.currentStep < 4) {
+                    wizardData.currentStep++;
+                    updateWizardStep(wizardData.currentStep);
+                    populateStepContent();
+                }
+            }
+        }
+
+        // Aller à l'étape précédente
+        function previousStep() {
+            if (wizardData.currentStep > 1) {
+                wizardData.currentStep--;
+                updateWizardStep(wizardData.currentStep);
+            }
+        }
+
+        // Valider l'étape actuelle
+        function validateCurrentStep() {
+            switch (wizardData.currentStep) {
+                case 1:
+                    if (!wizardData.selectedType) {
+                        showToast('Veuillez sélectionner un type de formulaire', 'error');
+                        return false;
+                    }
+                    return true;
+                case 2:
+                    const title = document.getElementById('formTitle').value.trim();
+                    if (!title) {
+                        showToast('Veuillez saisir un titre pour le formulaire', 'error');
+                        return false;
+                    }
+                    wizardData.formConfig.title = title;
+                    wizardData.formConfig.description = document.getElementById('formDescription').value.trim();
+                    wizardData.formConfig.steps = parseInt(document.getElementById('formSteps').value);
+                    wizardData.formConfig.style = document.getElementById('formStyle').value;
+                    return true;
+                case 3:
+                    const selectedFields = document.querySelectorAll('#step3 input[type="checkbox"]:checked');
+                    wizardData.selectedFields = Array.from(selectedFields).map(cb => cb.getAttribute('data-field') || cb.value);
+                    return true;
+                case 4:
+                    return true;
+                default:
+                    return true;
+            }
+        }
+
+        // Mettre à jour l'affichage de l'étape
+        function updateWizardStep(stepNumber) {
+            // Mettre à jour l'indicateur d'étapes
+            document.querySelectorAll('.wizard-step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < stepNumber) {
+                    step.classList.add('completed');
+                } else if (index + 1 === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Mettre à jour le contenu
+            document.querySelectorAll('.wizard-step-content').forEach((content, index) => {
+                content.classList.remove('active');
+                if (index + 1 === stepNumber) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Mettre à jour les boutons
+            document.getElementById('prevStepBtn').classList.toggle('hidden', stepNumber === 1);
+            document.getElementById('nextStepBtn').classList.toggle('hidden', stepNumber === 4);
+            document.getElementById('finishBtn').classList.toggle('hidden', stepNumber !== 4);
+
+            // Mettre à jour le numéro d'étape
+            document.getElementById('currentStepNumber').textContent = stepNumber;
+        }
+
+        // Remplir le contenu de l'étape
+        function populateStepContent() {
+            switch (wizardData.currentStep) {
+                case 2:
+                    if (wizardData.formConfig.title) {
+                        document.getElementById('formTitle').value = wizardData.formConfig.title;
+                    }
+                    if (wizardData.formConfig.description) {
+                        document.getElementById('formDescription').value = wizardData.formConfig.description;
+                    }
+                    if (wizardData.formConfig.steps) {
+                        document.getElementById('formSteps').value = wizardData.formConfig.steps;
+                    }
+                    break;
+                case 3:
+                    populateSuggestedFields();
+                    break;
+                case 4:
+                    populateWizardSummary();
+                    break;
+            }
+        }
+
+        // Remplir les champs suggérés
+        function populateSuggestedFields() {
+            const suggestedContainer = document.getElementById('suggestedFields');
+            const fieldLabels = {
+                name: 'Nom complet',
+                email: 'Adresse email',
+                phone: 'Téléphone',
+                message: 'Message',
+                rating: 'Évaluation',
+                feedback: 'Commentaires',
+                company: 'Entreprise',
+                address: 'Adresse',
+                products: 'Produits',
+                comments: 'Remarques'
+            };
+
+            const fieldIcons = {
+                name: 'ri-user-line',
+                email: 'ri-mail-line',
+                phone: 'ri-phone-line',
+                message: 'ri-message-line',
+                rating: 'ri-star-line',
+                feedback: 'ri-feedback-line',
+                company: 'ri-building-line',
+                address: 'ri-map-pin-line',
+                products: 'ri-shopping-bag-line',
+                comments: 'ri-chat-1-line'
+            };
+
+            suggestedContainer.innerHTML = '';
+            
+            wizardData.formConfig.fields.forEach(fieldType => {
+                const label = document.createElement('label');
+                label.className = 'flex items-center field-checkbox';
+                label.innerHTML = `
+                    <input type="checkbox" data-field="${fieldType}" class="mr-3" checked>
+                    <i class="${fieldIcons[fieldType] || 'ri-input-method-line'} mr-2 text-gray-600"></i>
+                    <span>${fieldLabels[fieldType] || fieldType}</span>
+                `;
+                suggestedContainer.appendChild(label);
+            });
+        }
+
+        // Remplir le récapitulatif
+        function populateWizardSummary() {
+            const summary = document.getElementById('wizardSummary');
+            const allCheckedFields = document.querySelectorAll('#step3 input[type="checkbox"]:checked');
+            const fieldCount = allCheckedFields.length;
+            
+            summary.innerHTML = `
+                <div class="space-y-2">
+                    <p><strong>Type:</strong> ${getTypeLabel(wizardData.selectedType)}</p>
+                    <p><strong>Titre:</strong> ${wizardData.formConfig.title}</p>
+                    <p><strong>Nombre d'étapes:</strong> ${wizardData.formConfig.steps}</p>
+                    <p><strong>Champs sélectionnés:</strong> ${fieldCount} champ(s)</p>
+                    <p><strong>Style:</strong> ${wizardData.formConfig.style}</p>
+                </div>
+            `;
+        }
+
+        // Obtenir le label du type
+        function getTypeLabel(type) {
+            const labels = {
+                contact: 'Formulaire de Contact',
+                survey: 'Sondage',
+                registration: 'Inscription',
+                feedback: 'Feedback',
+                order: 'Commande',
+                custom: 'Personnalisé'
+            };
+            return labels[type] || type;
+        }
+
+        // Finaliser l'assistant et créer le formulaire
+        function finishWizard() {
+            validateCurrentStep();
+            
+            // Sauvegarder les paramètres de confirmation
+            wizardData.formConfig.confirmationMessage = document.getElementById('confirmationMessage').value.trim();
+            wizardData.formConfig.notificationEmail = document.getElementById('notificationEmail').value.trim();
+            wizardData.formConfig.enableNotifications = document.getElementById('enableNotifications').checked;
+            wizardData.formConfig.enableAnalytics = document.getElementById('enableAnalytics').checked;
+
+            // Générer le formulaire
+            generateFormFromWizard();
+            
+            // Fermer l'assistant
+            closeStepWizard();
+            
+            showToast('Formulaire créé avec succès !', 'success');
+        }
+
+        // Générer le formulaire à partir des données de l'assistant
+        function generateFormFromWizard() {
+            // Vider le formulaire actuel
+            formFields = [];
+            fieldCounter = 0;
+            currentPageNumber = 1;
+            totalPagesCount = wizardData.formConfig.steps;
+
+            // Créer les champs selon les sélections
+            const allCheckedFields = document.querySelectorAll('#step3 input[type="checkbox"]:checked');
+            let currentPage = 1;
+            let fieldsPerPage = Math.ceil(allCheckedFields.length / wizardData.formConfig.steps);
+            let currentFieldInPage = 0;
+
+            allCheckedFields.forEach((checkbox, index) => {
+                const fieldType = checkbox.getAttribute('data-field');
+                const field = createFieldFromType(fieldType, currentPage);
+                
+                if (field) {
+                    formFields.push(field);
+                    renderField(field);
+                    
+                    currentFieldInPage++;
+                    if (currentFieldInPage >= fieldsPerPage && currentPage < totalPagesCount) {
+                        currentPage++;
+                        currentFieldInPage = 0;
+                    }
+                }
+            });
+
+            // Ajouter des sauts de page si nécessaire
+            if (wizardData.formConfig.steps > 1) {
+                for (let page = 1; page < totalPagesCount; page++) {
+                    fieldCounter++;
+                    const pageBreak = {
+                        id: `field_${fieldCounter}`,
+                        type: 'page-break',
+                        label: `Étape ${page + 1}`,
+                        page: page,
+                        required: false
+                    };
+                    formFields.push(pageBreak);
+                    renderField(pageBreak);
+                }
+            }
+
+            // Mettre à jour l'interface
+            updateMetrics();
+            updatePageControls();
+            hideEmptyState();
+            autoSave();
+        }
+
+        // Créer un champ à partir du type
+        function createFieldFromType(fieldType, page) {
+            fieldCounter++;
+            const fieldId = `field_${fieldCounter}`;
+            
+            const fieldMappings = {
+                name: { type: 'text', label: 'Nom complet', placeholder: 'Votre nom complet' },
+                email: { type: 'email', label: 'Adresse email', placeholder: 'votre@email.com' },
+                phone: { type: 'tel', label: 'Téléphone', placeholder: '+33 1 23 45 67 89' },
+                message: { type: 'textarea', label: 'Message', placeholder: 'Votre message...' },
+                rating: { type: 'rating', label: 'Évaluation', placeholder: '' },
+                feedback: { type: 'textarea', label: 'Commentaires', placeholder: 'Vos commentaires...' },
+                company: { type: 'text', label: 'Entreprise', placeholder: 'Nom de votre entreprise' },
+                address: { type: 'textarea', label: 'Adresse', placeholder: 'Votre adresse complète' },
+                website: { type: 'text', label: 'Site web', placeholder: 'https://votre-site.com' },
+                file: { type: 'file', label: 'Pièce jointe', placeholder: '' }
+            };
+
+            const mapping = fieldMappings[fieldType];
+            if (!mapping) return null;
+
+            return {
+                id: fieldId,
+                type: mapping.type,
+                label: mapping.label,
+                placeholder: mapping.placeholder,
+                required: fieldType === 'name' || fieldType === 'email',
+                page: page,
+                options: mapping.type === 'select' || mapping.type === 'radio' || mapping.type === 'checkbox' ? ['Option 1', 'Option 2'] : []
+            };
+        }
+
+        // Supprimer la sélection du type de formulaire
+        function clearFormTypeSelection() {
+            document.querySelectorAll('.form-type-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        // Gestionnaire pour fermer les modals en cliquant à l'extérieur
+        document.getElementById('stepWizardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeStepWizard();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Dashboard Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="p-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">FormEase - Dashboard Test</h1>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-600">Total Formulaires</h3>
+                        <p class="text-2xl font-bold text-gray-900" id="totalForms">23</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-600">Réponses</h3>
+                        <p class="text-2xl font-bold text-gray-900" id="totalResponses">1,247</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="ri-chat-3-line text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-600">Taux de conversion</h3>
+                        <p class="text-2xl font-bold text-gray-900" id="conversionRate">48.9%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="ri-arrow-up-line text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-600">Formulaires actifs</h3>
+                        <p class="text-2xl font-bold text-gray-900" id="activeForms">18</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="ri-play-circle-line text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Combo Chart -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Formulaires & Réponses</h3>
+            <div id="comboChart" style="height: 300px;"></div>
+        </div>
+        
+        <!-- Performance Chart -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Temporelle</h3>
+            <div id="performanceChart" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Combo Chart
+        function initComboChart() {
+            const options = {
+                series: [{
+                    name: 'Formulaires créés',
+                    type: 'column',
+                    data: [23, 34, 28, 45, 38, 29, 41]
+                }, {
+                    name: 'Réponses reçues',
+                    type: 'line',
+                    data: [18, 26, 22, 35, 29, 23, 32]
+                }],
+                chart: {
+                    height: 300,
+                    type: 'line',
+                    toolbar: { show: false }
+                },
+                stroke: {
+                    width: [0, 3]
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                colors: ['#3B82F6', '#10B981'],
+                xaxis: {
+                    type: 'category'
+                },
+                yaxis: [{
+                    title: {
+                        text: 'Formulaires créés'
+                    }
+                }, {
+                    opposite: true,
+                    title: {
+                        text: 'Réponses reçues'
+                    }
+                }]
+            };
+
+            const chart = new ApexCharts(document.querySelector("#comboChart"), options);
+            chart.render();
+        }
+
+        // Performance Chart
+        function initPerformanceChart() {
+            const options = {
+                series: [{
+                    name: 'Créations',
+                    type: 'column',
+                    data: [45, 52, 38, 65, 49, 23, 41]
+                }, {
+                    name: 'Réponses',
+                    type: 'column',
+                    data: [38, 42, 31, 48, 39, 18, 33]
+                }, {
+                    name: 'Taux de conversion (%)',
+                    type: 'line',
+                    data: [84, 81, 82, 74, 80, 78, 80]
+                }],
+                chart: {
+                    height: 400,
+                    type: 'line',
+                    toolbar: { show: true }
+                },
+                stroke: {
+                    width: [0, 0, 4]
+                },
+                dataLabels: {
+                    enabled: true,
+                    enabledOnSeries: [2]
+                },
+                labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                colors: ['#3B82F6', '#10B981', '#8B5CF6'],
+                yaxis: [{
+                    title: {
+                        text: 'Nombre'
+                    }
+                }, {
+                    opposite: true,
+                    title: {
+                        text: 'Taux (%)'
+                    }
+                }]
+            };
+
+            const chart = new ApexCharts(document.querySelector("#performanceChart"), options);
+            chart.render();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing charts...');
+            
+            setTimeout(() => {
+                initComboChart();
+                initPerformanceChart();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

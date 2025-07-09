@@ -567,3 +567,152 @@
 {"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T00:51:26.714Z"}
 {"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T00:51:37.208Z"}
 {"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T00:51:54.530Z"}
+{"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T00:53:02.865Z"}
+{"ip":"::1","level":"info","message":"Security-sensitive request","method":"POST","timestamp":"2025-07-09T00:53:03.959Z","url":"/api/auth/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.22631; fr-CD) PowerShell/7.5.2"}
+{"email":"jeff.kosi@formease.com","ip":"::1","level":"info","message":"User login successful","timestamp":"2025-07-09T00:53:04.079Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:53:04.174Z","userId":3}
+{"endpoint":"/api/auth/me","error":"JsonWebTokenError","ip":"::1","level":"warn","message":"Token verification failed invalid signature","timestamp":"2025-07-09T00:53:15.449Z","userAgent":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.22631; fr-CD) PowerShell/7.5.2"}
+{"endpoint":"/api/auth/me","error":"JsonWebTokenError","ip":"::1","level":"warn","message":"Token verification failed invalid signature","timestamp":"2025-07-09T00:53:26.072Z","userAgent":"curl/8.13.0"}
+{"ip":"::1","level":"info","message":"Security-sensitive request","method":"POST","timestamp":"2025-07-09T00:53:33.804Z","url":"/api/auth/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.22631; fr-CD) PowerShell/7.5.2"}
+{"email":"jeff.kosi@formease.com","ip":"::1","level":"info","message":"User login successful","timestamp":"2025-07-09T00:53:33.871Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:53:34.010Z","userId":3}
+{"error":"Expected property name or '}' in JSON at position 1 (line 1 column 2)","ip":"::1","level":"error","message":"Application error","method":"POST","stack":"SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n    at JSON.parse (<anonymous>)\n    at parse (C:\\Users\\Jeff KOSI\\Desktop\\FormEase\\formease\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at C:\\Users\\Jeff KOSI\\Desktop\\FormEase\\formease\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (C:\\Users\\Jeff KOSI\\Desktop\\FormEase\\formease\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\Users\\Jeff KOSI\\Desktop\\FormEase\\formease\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\Users\\Jeff KOSI\\Desktop\\FormEase\\formease\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:518:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)","timestamp":"2025-07-09T00:53:41.172Z","url":"/api/auth/login","userAgent":"curl/8.13.0"}
+{"ip":"::1","level":"info","message":"Security-sensitive request","method":"POST","timestamp":"2025-07-09T00:54:35.105Z","url":"/api/auth/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
+{"email":"jeff.kosi@formease.com","ip":"::1","level":"info","message":"User login successful","timestamp":"2025-07-09T00:54:35.183Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:54:36.500Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:54:36.502Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:54:36.505Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T00:54:36.595Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:55:47.996Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:55:47.998Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T00:55:48.000Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T00:55:48.009Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T07:58:57.831Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T07:58:57.837Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T07:58:57.840Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T07:58:57.934Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:21:47.793Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:21:47.796Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:21:47.798Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:21:47.882Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:22:14.130Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:22:14.133Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:22:14.138Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:22:14.144Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:25:01.413Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:25:01.415Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:25:01.417Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:25:01.424Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:33:42.371Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:33:42.374Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:33:42.379Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:33:42.463Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:33:53.072Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:33:53.075Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:33:53.077Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:33:53.083Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:47:15.716Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:47:15.717Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:47:15.719Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:47:15.779Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:47:25.543Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:47:25.545Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:47:25.548Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:47:25.551Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:48:58.077Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:48:58.081Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:48:58.084Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:48:58.089Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:58:35.130Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:58:35.132Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T08:58:35.135Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T08:58:35.215Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:12.705Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:12.707Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:12.709Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:00:12.716Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:14.676Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:14.681Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:14.683Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:00:14.689Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:15.590Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:15.592Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:00:15.594Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:00:15.599Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:50.270Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:50.273Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:50.275Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:50.347Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.238Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.241Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.243Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:51.251Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.645Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.647Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.649Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:51.653Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.925Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.927Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:51.930Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:51.935Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:52.221Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:52.224Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:52.226Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:52.231Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:52.757Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:52.759Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:52.760Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:52.768Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:53.242Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:53.244Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:03:53.246Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:03:53.250Z","userId":3}
+{"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T09:33:34.122Z"}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.091Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.100Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.105Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.405Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.558Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:34:00.571Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.626Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:34:00.648Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.736Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.775Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:00.780Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:34:00.787Z","userId":3}
+{"endpoint":"/api/forms","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:34:19.772Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:34:19.775Z","userId":3}
+{"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T09:35:07.383Z"}
+{"level":"info","message":"FormEase backend server started on port 4000","timestamp":"2025-07-09T09:35:32.561Z"}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:43:55.274Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:43:55.283Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T09:43:55.287Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T09:43:55.374Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:00:52.253Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:00:52.259Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:00:52.265Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:00:52.366Z","userId":3}
+{"endpoint":"/api/forms","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:01:29.699Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:01:29.707Z","userId":3}
+{"endpoint":"/api/forms","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:01:44.444Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:01:44.446Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:04:04.083Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:04:04.086Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:04:04.088Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:04:04.091Z","userId":3}
+{"endpoint":"/api/forms","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:04:10.424Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:04:10.427Z","userId":3}
+{"endpoint":"/api/forms","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:04:14.743Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:04:14.748Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:11:13.892Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:11:13.895Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:11:13.897Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:11:13.987Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:21:53.390Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:21:53.392Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:21:53.396Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:21:53.461Z","userId":3}
+{"endpoint":"/api/auth/me","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:25:28.507Z","userId":3}
+{"endpoint":"/api/dashboard/stats","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:25:28.510Z","userId":3}
+{"endpoint":"/api/forms?limit=5","ip":"::1","level":"info","message":"Token validation successful","timestamp":"2025-07-09T10:25:28.512Z","userId":3}
+{"count":3,"ip":"::1","level":"info","message":"Forms listed","page":1,"timestamp":"2025-07-09T10:25:28.516Z","userId":3}

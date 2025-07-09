@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu du Formulaire - FormEase</title>
+    <link href="../../styles/tremor-base.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .preview-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-field label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .form-field input,
+        .form-field textarea,
+        .form-field select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+        
+        .form-field input:focus,
+        .form-field textarea:focus,
+        .form-field select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .required {
+            color: #ef4444;
+        }
+        
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item,
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-header {
+            background: #f8fafc;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .back-button {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header de prévisualisation -->
+    <div class="preview-header">
+        <div>
+            <h1 class="text-xl font-semibold text-gray-800">Aperçu du Formulaire</h1>
+            <p class="text-sm text-gray-600">Ceci est un aperçu en lecture seule de votre formulaire</p>
+        </div>
+        <button onclick="window.close()" class="back-button">
+            <i class="ri-close-line"></i>
+            Fermer l'aperçu
+        </button>
+    </div>
+
+    <!-- Conteneur du formulaire -->
+    <div class="preview-container">
+        <div id="formPreview">
+            <div class="text-center py-8">
+                <i class="ri-loader-4-line text-4xl text-gray-400 animate-spin"></i>
+                <p class="text-gray-500 mt-2">Chargement de l'aperçu...</p>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action -->
+        <div class="border-t pt-6 mt-8 flex gap-3">
+            <button onclick="window.close()" class="tremor-Button tremor-Button-secondary tremor-Button-md">
+                <i class="ri-close-line mr-2"></i>
+                Fermer
+            </button>
+            <button onclick="window.opener.focus(); window.close();" class="tremor-Button tremor-Button-primary tremor-Button-md">
+                <i class="ri-edit-line mr-2"></i>
+                Retour à l'Édition
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Récupérer les paramètres URL
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                title: params.get('title') || 'Formulaire sans titre',
+                description: params.get('description') || '',
+                fields: JSON.parse(params.get('fields') || '[]')
+            };
+        }
+
+        // Générer le HTML du formulaire
+        function generateFormPreview(formData) {
+            let html = `
+                <div class="form-header mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">${formData.title}</h2>
+                    ${formData.description ? `<p class="text-gray-600">${formData.description}</p>` : ''}
+                </div>
+                <form id="previewForm">
+            `;
+
+            formData.fields.forEach((field, index) => {
+                html += `<div class="form-field">`;
+                
+                // Label
+                if (field.label) {
+                    html += `<label for="field_${index}">${field.label}${field.required ? '<span class="required">*</span>' : ''}</label>`;
+                }
+
+                // Input selon le type
+                switch (field.type) {
+                    case 'text':
+                    case 'email':
+                    case 'tel':
+                    case 'number':
+                        html += `<input type="${field.type}" id="field_${index}" ${field.placeholder ? `placeholder="${field.placeholder}"` : ''} ${field.required ? 'required' : ''} disabled>`;
+                        break;
+                        
+                    case 'textarea':
+                        html += `<textarea id="field_${index}" rows="4" ${field.placeholder ? `placeholder="${field.placeholder}"` : ''} ${field.required ? 'required' : ''} disabled></textarea>`;
+                        break;
+                        
+                    case 'select':
+                        html += `<select id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
+                        html += `<option value="">Choisir une option</option>`;
+                        if (field.options) {
+                            field.options.forEach(option => {
+                                html += `<option value="${option}">${option}</option>`;
+                            });
+                        }
+                        html += `</select>`;
+                        break;
+                        
+                    case 'radio':
+                        html += `<div class="radio-group">`;
+                        if (field.options) {
+                            field.options.forEach((option, optIndex) => {
+                                html += `
+                                    <div class="radio-item">
+                                        <input type="radio" id="field_${index}_${optIndex}" name="field_${index}" value="${option}" ${field.required ? 'required' : ''} disabled>
+                                        <label for="field_${index}_${optIndex}">${option}</label>
+                                    </div>
+                                `;
+                            });
+                        }
+                        html += `</div>`;
+                        break;
+                        
+                    case 'checkbox':
+                        if (field.options) {
+                            html += `<div class="checkbox-group">`;
+                            field.options.forEach((option, optIndex) => {
+                                html += `
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="field_${index}_${optIndex}" name="field_${index}[]" value="${option}" disabled>
+                                        <label for="field_${index}_${optIndex}">${option}</label>
+                                    </div>
+                                `;
+                            });
+                            html += `</div>`;
+                        } else {
+                            html += `<input type="checkbox" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
+                        }
+                        break;
+                        
+                    case 'date':
+                        html += `<input type="date" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
+                        break;
+                        
+                    case 'time':
+                        html += `<input type="time" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
+                        break;
+                        
+                    case 'file':
+                        html += `<input type="file" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
+                        break;
+                        
+                    default:
+                        html += `<input type="text" id="field_${index}" placeholder="Type de champ non supporté: ${field.type}" disabled>`;
+                }
+
+                html += `</div>`;
+            });
+
+            html += `
+                </form>
+                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="ri-information-line text-blue-500 mr-2"></i>
+                        <p class="text-blue-700 text-sm">
+                            <strong>Aperçu en lecture seule :</strong> Les champs sont désactivés dans l'aperçu. 
+                            Le formulaire final sera fonctionnel pour vos utilisateurs.
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Initialiser l'aperçu
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const formData = getUrlParams();
+                
+                if (formData.fields.length === 0) {
+                    document.getElementById('formPreview').innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-file-text-line text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-600 mb-2">Aucun champ à prévisualiser</h3>
+                            <p class="text-gray-500">Ajoutez des champs à votre formulaire pour voir l'aperçu</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('formPreview').innerHTML = generateFormPreview(formData);
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'aperçu:', error);
+                document.getElementById('formPreview').innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="ri-error-warning-line text-4xl text-red-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-red-600 mb-2">Erreur de chargement</h3>
+                        <p class="text-gray-500">Impossible de charger l'aperçu du formulaire</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

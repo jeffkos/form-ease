@@ -13,14 +13,14 @@ router.get('/stats', auth, async (req, res) => {
 
     // Compter les formulaires de l'utilisateur
     const totalForms = await prisma.form.count({
-      where: { userId: userId }
+      where: { user_id: userId }
     });
 
     // Compter les réponses totales
     const totalResponses = await prisma.submission.count({
       where: {
         form: {
-          userId: userId
+          user_id: userId
         }
       }
     });
@@ -28,8 +28,8 @@ router.get('/stats', auth, async (req, res) => {
     // Compter les formulaires actifs
     const activeForms = await prisma.form.count({
       where: { 
-        userId: userId,
-        status: 'active'
+        user_id: userId,
+        is_active: true
       }
     });
 
