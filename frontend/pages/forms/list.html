@@ -52,69 +52,33 @@
     </script>
     <style>
         .tremor-Card {
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.9);
+            background: white;
+            border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
         }
         
         .tremor-Card:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: #d1d5db;
         }
         
-        .form-card {
-            position: relative;
+        .form-list-item {
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .form-list-item:hover {
+            background: #f9fafb;
+        }
+        
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b, #10b981);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .form-card:hover::before {
-            opacity: 1;
-        }
-        
-        .badge-free {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-        
-        .badge-paid {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-        
-        .badge-ai {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .dropdown-menu {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            animation: fadeIn 0.2s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .line-clamp-2 {
@@ -123,42 +87,6 @@
             line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-        }
-        
-        .form-actions-btn:hover {
-            background-color: rgba(107, 114, 128, 0.1);
-        }
-        
-        /* Suppression du système de grille - style pour liste */
-        .form-list-item {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            border-radius: 0.5rem;
-        }
-        
-        .form-list-item:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
-        }
-        
-        .form-list-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b, #10b981);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: 0.5rem 0.5rem 0 0;
-        }
-        
-        .form-list-item:hover::before {
-            opacity: 1;
         }
         
         /* Pagination styles */
@@ -190,6 +118,42 @@
         .pagination-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+        
+        /* Stats grid responsive */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Styles pour les boutons de notation */
+        .rating-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .rating-btn:hover {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        input[type="radio"]:checked + .rating-btn {
+            background-color: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+        
+        /* Validation des champs */
+        .border-red-500 {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 1px #ef4444;
         }
         
         /* Stats grid similaire pour cohérence */
@@ -429,22 +393,36 @@
             <!-- Liste des formulaires -->
             <div class="p-6">
                 <div class="space-y-4" id="formsList">
+                    <!-- Test manuel -->
+                    <div class="form-list-item relative p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 flex-1 min-w-0">
+                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-blue-100" onclick="openResponsesModal(1)">
+                                    <i class="ri-file-list-3-line text-blue-600 text-lg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-base font-semibold text-gray-900 cursor-pointer hover:underline" onclick="openResponsesModal(1)">Formulaire de Test - Cliquez ici</h3>
+                                    <p class="text-sm text-gray-600">Ceci est un test pour vérifier les clics</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Les formulaires seront générés dynamiquement -->
                 </div>
                 
                 <!-- Pagination -->
-                <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
-                    <div class="text-sm text-gray-700">
-                        Affichage de <span id="startItem">1</span> à <span id="endItem">10</span> sur <span id="totalItems">0</span> formulaires
+                <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+                    <div class="text-sm text-gray-600">
+                        Affichage de <span id="startItem" class="font-medium text-gray-900">1</span> à <span id="endItem" class="font-medium text-gray-900">10</span> sur <span id="totalItems" class="font-medium text-gray-900">0</span> formulaires
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <button id="prevPage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <div class="flex items-center space-x-1">
+                        <button id="prevPage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                             <i class="ri-arrow-left-s-line mr-1"></i>Précédent
                         </button>
                         <div id="pageNumbers" class="flex space-x-1">
                             <!-- Les numéros de page seront générés ici -->
                         </div>
-                        <button id="nextPage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button id="nextPage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                             Suivant<i class="ri-arrow-right-s-line ml-1"></i>
                         </button>
                     </div>
@@ -453,7 +431,31 @@
         </main>
     </div>
 
-    <!-- Modal QR Code -->
+    <!-- Modal de visualisation du formulaire -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900" id="previewTitle">Aperçu du formulaire</h3>
+                    <p class="text-sm text-gray-600 mt-1" id="previewDescription">Prévisualisation du formulaire sélectionné</p>
+                </div>
+                <button id="closePreviewModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[70vh]" id="previewContent">
+                <!-- Le contenu du formulaire sera généré ici -->
+            </div>
+            <div class="border-t border-gray-200 p-4 bg-gray-50 flex justify-end space-x-3">
+                <button id="editFromPreview" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="ri-edit-line mr-2"></i>Éditer ce formulaire
+                </button>
+                <button id="closePreview" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="qrModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div class="flex justify-between items-center mb-4">
@@ -501,12 +503,211 @@
         </div>
     </div>
 
+    <!-- Modale de réponses du formulaire -->
+    <div id="responsesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg max-w-7xl w-full mx-4 max-h-[95vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900" id="responsesModalTitle">Réponses du formulaire</h3>
+                    <p class="text-sm text-gray-600 mt-1" id="responsesModalDesc">Gérez et analysez toutes les données soumises</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm text-gray-500" id="responsesCount">0 réponses</span>
+                    <button class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="exportAllResponses()">
+                        <i class="ri-download-line mr-1"></i>Exporter tout
+                    </button>
+                    <button id="closeResponsesModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtres avancés et recherche -->
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <!-- Première ligne : Recherche et filtres principaux -->
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="flex-1">
+                        <input type="text" id="searchResponses" placeholder="Rechercher dans les réponses..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onkeyup="filterResponses()">
+                    </div>
+                    <div>
+                        <select id="filterByField" class="px-3 py-2 border border-gray-300 rounded-lg text-sm" onchange="filterResponses()">
+                            <option value="">Tous les champs</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="sortResponses" class="px-3 py-2 border border-gray-300 rounded-lg text-sm" onchange="filterResponses()">
+                            <option value="newest">Plus récent</option>
+                            <option value="oldest">Plus ancien</option>
+                            <option value="name">Par nom</option>
+                            <option value="email">Par email</option>
+                        </select>
+                    </div>
+                    <button class="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm" onclick="toggleAdvancedFilters()">
+                        <i class="ri-filter-3-line mr-1"></i>Filtres avancés
+                    </button>
+                </div>
+
+                <!-- Filtres avancés (cachés par défaut) -->
+                <div id="advancedFilters" class="hidden">
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Filtres par données de formulaire</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="dynamicFilters">
+                            <!-- Les filtres seront générés dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barre d'actions pour les sélections -->
+            <div id="selectionActions" class="hidden px-6 py-3 bg-blue-50 border-b border-blue-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm font-medium text-blue-900">
+                            <span id="selectedCount">0</span> réponse(s) sélectionnée(s)
+                        </span>
+                        <button class="text-sm text-blue-600 hover:text-blue-800" onclick="clearSelection()">
+                            Désélectionner tout
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700" onclick="validateSelectedResponses()">
+                            <i class="ri-check-line mr-1"></i>Valider sélection
+                        </button>
+                        <button class="px-3 py-1 text-sm bg-yellow-600 text-white rounded-lg hover:bg-yellow-700" onclick="archiveSelectedResponses()">
+                            <i class="ri-archive-line mr-1"></i>Archiver sélection
+                        </button>
+                        <button class="px-3 py-1 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700" onclick="sendEmailToSelectedResponses()">
+                            <i class="ri-mail-line mr-1"></i>Envoyer emails
+                        </button>
+                        <button class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="exportSelectedResponses()">
+                            <i class="ri-download-line mr-1"></i>Exporter sélection
+                        </button>
+                        <button class="px-3 py-1 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700" onclick="deleteSelectedResponses()">
+                            <i class="ri-delete-bin-line mr-1"></i>Supprimer sélection
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto" id="responsesModalContent">
+                <!-- Table dynamique des réponses avec pagination -->
+            </div>
+
+            <!-- Pagination des réponses -->
+            <div class="border-t border-gray-200 px-6 py-4 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-600">
+                        Affichage de <span id="responseStartItem" class="font-medium text-gray-900">1</span> à <span id="responseEndItem" class="font-medium text-gray-900">10</span> sur <span id="responseTotalItems" class="font-medium text-gray-900">0</span> réponses
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button id="prevResponsePage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" onclick="goToResponsePage(currentResponsePage - 1)">
+                            <i class="ri-arrow-left-s-line mr-1"></i>Précédent
+                        </button>
+                        <div id="responsePageNumbers" class="flex space-x-1">
+                            <!-- Les numéros de page seront générés ici -->
+                        </div>
+                        <button id="nextResponsePage" class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" onclick="goToResponsePage(currentResponsePage + 1)">
+                            Suivant<i class="ri-arrow-right-s-line ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale détaillée d'une réponse -->
+    <div id="responseDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 hidden">
+        <div class="bg-white rounded-xl max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <!-- En-tête avec info du formulaire -->
+            <div class="bg-gradient-to-r from-tremor-brand-faint to-blue-50 px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-tremor-brand-DEFAULT rounded-lg flex items-center justify-center">
+                            <i class="ri-file-text-line text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900" id="responseDetailFormTitle">Détails de la réponse</h3>
+                            <p class="text-sm text-gray-600" id="responseDetailFormDesc">Formulaire de contact</p>
+                        </div>
+                    </div>
+                    <button id="closeResponseDetailModal" class="text-gray-400 hover:text-gray-600 hover:bg-white/50 rounded-lg p-2 transition-colors">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Métadonnées de la réponse -->
+                <div class="mt-4 flex flex-wrap gap-4 text-sm">
+                    <div class="flex items-center text-gray-600">
+                        <i class="ri-calendar-line mr-2"></i>
+                        <span id="responseDetailDate">Soumise le 8 janvier 2025</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="ri-user-line mr-2"></i>
+                        <span id="responseDetailUser">Utilisateur anonyme</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span id="responseDetailStatus" class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">En attente</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenu principal avec les réponses -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-6">
+                    <div class="grid gap-6" id="responseDetailContent">
+                        <!-- Le contenu sera généré dynamiquement -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pied de page avec actions -->
+            <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                    <!-- Actions principales -->
+                    <div class="flex flex-wrap gap-2">
+                        <button class="inline-flex items-center px-4 py-2 bg-tremor-success-DEFAULT text-white rounded-lg hover:bg-tremor-success-emphasis text-sm font-medium transition-colors" onclick="validateCurrentResponse()">
+                            <i class="ri-check-line mr-2"></i>Valider
+                        </button>
+                        <button class="inline-flex items-center px-4 py-2 bg-tremor-brand-DEFAULT text-white rounded-lg hover:bg-tremor-brand-emphasis text-sm font-medium transition-colors" onclick="sendEmailToCurrentResponse()">
+                            <i class="ri-mail-line mr-2"></i>Envoyer email
+                        </button>
+                        <button class="inline-flex items-center px-4 py-2 bg-tremor-warning-DEFAULT text-white rounded-lg hover:bg-tremor-warning-emphasis text-sm font-medium transition-colors" onclick="archiveCurrentResponse()">
+                            <i class="ri-archive-line mr-2"></i>Archiver
+                        </button>
+                    </div>
+                    
+                    <!-- Actions secondaires -->
+                    <div class="flex flex-wrap gap-2">
+                        <button class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm font-medium transition-colors" onclick="exportCurrentResponse()">
+                            <i class="ri-download-line mr-2"></i>Exporter
+                        </button>
+                        <button class="inline-flex items-center px-4 py-2 bg-tremor-error-DEFAULT text-white rounded-lg hover:bg-tremor-error-emphasis text-sm font-medium transition-colors" onclick="deleteCurrentResponse()">
+                            <i class="ri-delete-bin-line mr-2"></i>Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Vérifier l'authentification
         const token = localStorage.getItem('token');
         if (!token) {
             window.location.href = '../auth/login.html';
         }
+
+        // Variables globales
+        let currentResponseFormId = null;
+        let currentResponseIndex = null;
+        let currentResponsePage = 1;
+        let responsesPerPage = 10;
+        let filteredResponses = [];
+        let selectedResponses = new Set();
+        let allResponseData = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let filteredForms = [];
 
         // Charger les formulaires de l'utilisateur
         async function loadForms() {
@@ -672,16 +873,177 @@
             }
         ];
 
-        // Variables de pagination
-        let currentPage = 1;
-        let itemsPerPage = 10;
-        let filteredForms = [...formsData];
+        // Données de test pour les réponses du formulaire de contact
+        function generateSampleResponses() {
+            const sampleResponses = [
+                {
+                    id: 1,
+                    formId: 1,
+                    name: 'Jean Dupont',
+                    email: 'jean.dupont@email.com',
+                    phone: '+33 1 23 45 67 89',
+                    city: 'Paris',
+                    profession: 'Développeur',
+                    age: 28,
+                    service: 'consultation',
+                    message: 'Je suis intéressé par vos services de développement web. Pouvez-vous me contacter pour discuter d\'un projet ?',
+                    submittedAt: '2025-01-08T10:30:00Z',
+                    status: 'pending',
+                    validated: false,
+                    archived: false
+                },
+                {
+                    id: 2,
+                    formId: 1,
+                    name: 'Marie Kabila',
+                    email: 'marie.kabila@gmail.com',
+                    phone: '+33 2 98 76 54 32',
+                    city: 'Lyon',
+                    profession: 'Manager',
+                    age: 35,
+                    service: 'formation',
+                    message: 'Nous cherchons une solution de formation pour notre équipe.',
+                    submittedAt: '2025-01-07T14:20:00Z',
+                    status: 'validated',
+                    validated: true,
+                    archived: false
+                },
+                {
+                    id: 3,
+                    formId: 1,
+                    name: 'Paul Mbuyi',
+                    email: 'paul.mbuyi@yahoo.fr',
+                    phone: '+33 4 56 12 37 89',
+                    city: 'Marseille',
+                    profession: 'Designer',
+                    age: 31,
+                    service: 'support',
+                    message: 'J\'aimerais collaborer sur des projets de design UI/UX.',
+                    submittedAt: '2025-01-06T09:15:00Z',
+                    status: 'pending',
+                    validated: false,
+                    archived: false
+                },
+                {
+                    id: 4,
+                    formId: 1,
+                    name: 'Grace Tshala',
+                    email: 'grace.tshala@hotmail.com',
+                    phone: '+33 5 70 45 61 23',
+                    city: 'Toulouse',
+                    profession: 'Commercial',
+                    age: 29,
+                    service: 'consultation',
+                    message: 'Nous avons besoin d\'une stratégie digitale pour notre agence.',
+                    submittedAt: '2025-01-05T16:45:00Z',
+                    status: 'archived',
+                    validated: false,
+                    archived: true
+                },
+                {
+                    id: 5,
+                    formId: 1,
+                    name: 'André Kasongo',
+                    email: 'andre.kasongo@outlook.com',
+                    phone: '+33 6 12 34 56 78',
+                    city: 'Nice',
+                    profession: 'Consultant',
+                    age: 42,
+                    service: 'formation',
+                    message: 'Nous souhaitons former nos équipes aux nouvelles technologies.',
+                    submittedAt: '2025-01-04T11:30:00Z',
+                    status: 'validated',
+                    validated: true,
+                    archived: false
+                },
+                {
+                    id: 6,
+                    formId: 1,
+                    name: 'Sophie Martin',
+                    email: 'sophie.martin@gmail.com',
+                    phone: '+33 7 89 01 23 45',
+                    city: 'Paris',
+                    profession: 'Développeur',
+                    age: 26,
+                    service: 'support',
+                    message: 'Support technique pour notre application mobile.',
+                    submittedAt: '2025-01-03T08:45:00Z',
+                    status: 'pending',
+                    validated: false,
+                    archived: false
+                }
+            ];
+            
+            return sampleResponses;
+        }
+
+        // Fonction pour afficher les notifications
+        function showNotification(message, type = 'info') {
+            console.log(`Notification [${type}]:`, message);
+            
+            // Créer l'élément de notification
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full opacity-0`;
+            
+            // Définir les couleurs selon le type
+            switch (type) {
+                case 'success':
+                    notification.className += ' bg-green-500 text-white';
+                    break;
+                case 'error':
+                    notification.className += ' bg-red-500 text-white';
+                    break;
+                case 'info':
+                    notification.className += ' bg-blue-500 text-white';
+                    break;
+                default:
+                    notification.className += ' bg-gray-500 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white hover:text-gray-200">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Ajouter au DOM
+            document.body.appendChild(notification);
+            
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full', 'opacity-0');
+            }, 100);
+            
+            // Auto-suppression après 5 secondes
+            setTimeout(() => {
+                notification.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
 
         // Fonction pour générer la liste des formulaires
         function generateFormsList(forms, page = 1) {
+            console.log('=== generateFormsList appelée ===');
+            console.log('Génération de la liste avec', forms.length, 'formulaires');
+            console.log('Forms reçues:', forms);
+            
             const list = document.getElementById('formsList');
+            console.log('Conteneur formsList trouvé:', list);
+            
+            if (!list) {
+                console.error('ERREUR: Conteneur formsList non trouvé !');
+                return;
+            }
             
             if (forms.length === 0) {
+                console.log('Aucun formulaire à afficher');
                 list.innerHTML = `
                     <div class="text-center py-12">
                         <i class="ri-file-list-line text-6xl text-gray-300 mb-4"></i>
@@ -704,97 +1066,68 @@
                 const paymentBadge = getPaymentBadge(form);
                 
                 return `
-                    <div class="form-list-item relative p-6" data-form-id="${form.id}">
-                        <div class="flex items-start justify-between">
+                    <div class="form-list-item relative p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all duration-200" data-form-id="${form.id}">
+                        <div class="flex items-center justify-between">
                             <!-- Informations principales -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-start space-x-4">
-                                    <!-- Icône du formulaire -->
-                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                            <div class="flex items-center space-x-4 flex-1 min-w-0">
+                                <!-- Icône du formulaire (cliquable) -->
+                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-blue-100" onclick="openResponsesModal(${form.id})">
+                                    <i class="ri-file-list-3-line text-blue-600 text-lg"></i>
+                                </div>
+                                
+                                <!-- Détails du formulaire -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center space-x-3 mb-1">
+                                        <h3 class="text-base font-semibold text-gray-900 truncate cursor-pointer hover:underline" onclick="openResponsesModal(${form.id})">${form.title}</h3>
+                                        <div class="flex items-center space-x-2">
+                                            ${statusBadge}
+                                            ${typeBadge}
+                                            ${paymentBadge}
+                                        </div>
                                     </div>
+                                    <p class="text-sm text-gray-600 mb-2 line-clamp-1">${form.description}</p>
                                     
-                                    <!-- Détails du formulaire -->
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center space-x-3 mb-2">
-                                            <h3 class="text-lg font-semibold text-gray-900 truncate">${form.title}</h3>
-                                            <div class="flex items-center space-x-2">
-                                                ${statusBadge}
-                                                ${typeBadge}
-                                                ${paymentBadge}
-                                            </div>
-                                        </div>
-                                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${form.description}</p>
-                                        
-                                        <!-- Statistiques en ligne -->
-                                        <div class="flex items-center space-x-6 text-sm text-gray-500">
-                                            <div class="flex items-center">
-                                                <i class="ri-eye-line mr-1"></i>
-                                                <span class="font-medium text-gray-900">${form.views}</span> vues
-                                            </div>
-                                            <div class="flex items-center">
-                                                <i class="ri-message-2-line mr-1"></i>
-                                                <span class="font-medium text-gray-900">${form.responses}</span> réponses
-                                            </div>
-                                            <div class="flex items-center">
-                                                <i class="ri-percent-line mr-1"></i>
-                                                <span class="font-medium text-gray-900">${form.conversionRate}%</span> conversion
-                                            </div>
-                                            ${form.price ? `
-                                                <div class="flex items-center text-green-600">
-                                                    <i class="ri-money-euro-line mr-1"></i>
-                                                    <span class="font-medium">${form.price}€</span>
-                                                </div>
-                                            ` : ''}
-                                        </div>
-                                        
-                                        <!-- Métadonnées -->
-                                        <div class="flex items-center space-x-4 mt-3 text-xs text-gray-400">
-                                            <span>Créé le ${formatDate(form.createdAt)}</span>
-                                            ${form.lastResponse ? `<span>•</span><span>Dernière réponse: ${formatDate(form.lastResponse)}</span>` : ''}
-                                        </div>
+                                    <!-- Statistiques compactes -->
+                                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                        <span><strong class="text-gray-700">${form.views}</strong> vues</span>
+                                        <span><strong class="text-gray-700">${form.responses}</strong> réponses</span>
+                                        <span><strong class="text-gray-700">${form.conversionRate}%</strong> conversion</span>
+                                        <span class="text-gray-400">•</span>
+                                        <span>Créé le ${formatDate(form.createdAt)}</span>
+                                        ${form.price ? `<span class="text-green-600 font-medium">${form.price}€</span>` : ''}
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Actions -->
-                            <div class="flex items-center space-x-2 ml-4">
-                                <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="viewForm(${form.id})" title="Visualiser">
-                                    <i class="ri-eye-line"></i>
+                            <!-- Actions toutes en ligne -->
+                            <div class="flex items-center space-x-1 ml-4">
+                                <button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="viewForm(${form.id})" title="Visualiser">
+                                    <i class="ri-eye-line text-sm"></i>
                                 </button>
-                                <button class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="showQRCode(${form.id})" title="QR Code">
-                                    <i class="ri-qr-code-line"></i>
+                                <button class="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="editForm(${form.id})" title="Éditer">
+                                    <i class="ri-edit-line text-sm"></i>
                                 </button>
-                                <button class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="editForm(${form.id})" title="Éditer">
-                                    <i class="ri-edit-line"></i>
+                                <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="showQRCode(${form.id})" title="QR Code">
+                                    <i class="ri-qr-code-line text-sm"></i>
                                 </button>
-                                <div class="relative">
-                                    <button class="form-actions-btn p-2 text-gray-400 hover:bg-gray-50 rounded-lg transition-colors" data-form-id="${form.id}" title="Plus d'actions">
-                                        <i class="ri-more-2-line"></i>
-                                    </button>
-                                    <!-- Menu d'actions -->
-                                    <div class="form-actions-menu absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-gray-200 z-10 hidden dropdown-menu">
-                                        <div class="py-1">
-                                            <button class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="duplicateForm(${form.id})">
-                                                <i class="ri-file-copy-line mr-2"></i>Dupliquer
-                                            </button>
-                                            <button class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="downloadForm(${form.id})">
-                                                <i class="ri-download-line mr-2"></i>Télécharger
-                                            </button>
-                                            <div class="border-t border-gray-100 my-1"></div>
-                                            <button class="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50" onclick="confirmDeleteForm(${form.id})">
-                                                <i class="ri-delete-bin-line mr-2"></i>Supprimer
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="duplicateForm(${form.id})" title="Dupliquer">
+                                    <i class="ri-file-copy-line text-sm"></i>
+                                </button>
+                                <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="downloadForm(${form.id})" title="Télécharger">
+                                    <i class="ri-download-line text-sm"></i>
+                                </button>
+                                <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" onclick="confirmDeleteForm(${form.id})" title="Supprimer">
+                                    <i class="ri-delete-bin-line text-sm"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
+            console.log('HTML généré, injection dans le DOM');
             list.innerHTML = listHTML;
+            console.log('Contenu injecté, éléments cliquables:', document.querySelectorAll('[onclick]').length);
             updatePagination(forms.length, page);
         }
 
@@ -876,28 +1209,28 @@
             }
         }
 
-        // Fonctions utilitaires pour les badges
+        // Fonctions utilitaires pour les badges (couleurs Tremor simplifiées)
         function getStatusBadge(status) {
             const badges = {
-                active: '<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Actif</span>',
-                draft: '<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Brouillon</span>',
-                archived: '<span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Archivé</span>'
+                active: '<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Actif</span>',
+                draft: '<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">Brouillon</span>',
+                archived: '<span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">Archivé</span>'
             };
             return badges[status] || '';
         }
 
         function getTypeBadge(form) {
             if (form.isAI) {
-                return '<span class="px-2 py-1 text-xs font-medium text-white rounded-full badge-ai flex items-center"><i class="ri-robot-line mr-1"></i>IA</span>';
+                return '<span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">IA</span>';
             }
-            return '<span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">Manuel</span>';
+            return '<span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">Manuel</span>';
         }
 
         function getPaymentBadge(form) {
             if (form.paymentType === 'paid') {
-                return '<span class="px-2 py-1 text-xs font-medium text-white rounded-full badge-paid flex items-center"><i class="ri-money-euro-line mr-1"></i>Payant</span>';
+                return '<span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-700 rounded-full">Payant</span>';
             }
-            return '<span class="px-2 py-1 text-xs font-medium text-white rounded-full badge-free flex items-center"><i class="ri-gift-line mr-1"></i>Gratuit</span>';
+            return '<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Gratuit</span>';
         }
 
         function formatDate(dateString) {
@@ -913,11 +1246,305 @@
         function viewForm(formId) {
             const form = formsData.find(f => f.id === formId);
             console.log(`Visualiser le formulaire ${form.title}`);
-            showNotification(`Ouverture du formulaire "${form.title}"...`, 'info');
-            // Simuler l'ouverture dans un nouvel onglet
-            setTimeout(() => {
-                // window.open(`/forms/preview/${formId}`, '_blank');
-            }, 1000);
+            
+            // Remplir les informations de la modale
+            document.getElementById('previewTitle').textContent = form.title;
+            document.getElementById('previewDescription').textContent = form.description;
+            
+            // Générer le contenu du formulaire pour l'aperçu
+            const previewContent = generateFormPreview(form);
+            document.getElementById('previewContent').innerHTML = previewContent;
+            
+            // Configurer le bouton d'édition
+            const editBtn = document.getElementById('editFromPreview');
+            editBtn.onclick = () => {
+                document.getElementById('previewModal').classList.add('hidden');
+                editForm(formId);
+            };
+            
+            // Afficher la modale
+            document.getElementById('previewModal').classList.remove('hidden');
+            
+            showNotification(`Aperçu du formulaire "${form.title}"`, 'info');
+        }
+
+        // Fonction pour générer l'aperçu du formulaire
+        function generateFormPreview(form) {
+            const statusColor = form.status === 'active' ? 'text-green-600' : 
+                               form.status === 'draft' ? 'text-yellow-600' : 'text-gray-600';
+            
+            return `
+                <div class="space-y-6">
+                    <!-- Informations du formulaire -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Type</label>
+                                <p class="text-sm text-gray-900">${form.isAI ? 'Généré par IA' : 'Créé manuellement'}</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Statut</label>
+                                <p class="text-sm ${statusColor} font-medium">${
+                                    form.status === 'active' ? 'Actif' : 
+                                    form.status === 'draft' ? 'Brouillon' : 'Archivé'
+                                }</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Type de paiement</label>
+                                <p class="text-sm text-gray-900">${form.paymentType === 'paid' ? 'Payant' : 'Gratuit'}${form.price ? ` - ${form.price}€` : ''}</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Date de création</label>
+                                <p class="text-sm text-gray-900">${formatDate(form.createdAt)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Statistiques -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">${form.views}</div>
+                            <div class="text-sm text-blue-700">Vues</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">${form.responses}</div>
+                            <div class="text-sm text-green-700">Réponses</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600">${form.conversionRate}%</div>
+                            <div class="text-sm text-purple-700">Conversion</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Aperçu du formulaire -->
+                    <div class="border border-gray-200 rounded-lg p-6 bg-white">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Aperçu du formulaire</h4>
+                        
+                        <form id="previewForm-${form.id}" onsubmit="return false;">
+                            ${generateFormFields(form)}
+                            
+                            <div class="mt-6 flex justify-end">
+                                <button type="button" onclick="submitPreviewForm(${form.id})" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                    ${form.paymentType === 'paid' ? `Payer ${form.price}€` : 'Envoyer'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    ${form.lastResponse ? `
+                        <div class="text-sm text-gray-500">
+                            <strong>Dernière réponse :</strong> ${formatDate(form.lastResponse)}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Fonction pour générer les champs du formulaire selon le type
+        function generateFormFields(form) {
+            if (form.isAI) {
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet *</label>
+                            <input type="text" name="fullName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Votre nom complet">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="votre@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea name="message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="Votre message..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Évaluation</label>
+                            <div class="flex space-x-2">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="rating" value="${i}" class="sr-only">
+                                        <div class="w-8 h-8 border border-gray-300 rounded text-sm hover:bg-yellow-100 flex items-center justify-center rating-btn">${i}</div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Formulaire de contact client complet avec tous les champs pour les filtres
+                return `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nom *</label>
+                            <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Votre nom">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="votre@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                            <input type="tel" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="+33 1 23 45 67 89">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ville *</label>
+                            <select name="city" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionnez votre ville</option>
+                                <option value="Paris">Paris</option>
+                                <option value="Lyon">Lyon</option>
+                                <option value="Marseille">Marseille</option>
+                                <option value="Toulouse">Toulouse</option>
+                                <option value="Nice">Nice</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Profession *</label>
+                            <select name="profession" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionnez votre profession</option>
+                                <option value="Développeur">Développeur</option>
+                                <option value="Designer">Designer</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Consultant">Consultant</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Âge</label>
+                            <input type="number" name="age" min="18" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Votre âge">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Service souhaité</label>
+                            <select name="service" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionnez un service</option>
+                                <option value="consultation">Consultation</option>
+                                <option value="formation">Formation</option>
+                                <option value="support">Support technique</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea name="message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="Décrivez votre demande..."></textarea>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Fonction pour soumettre le formulaire de prévisualisation
+        function submitPreviewForm(formId) {
+            console.log('submitPreviewForm appelée avec formId:', formId); // Debug
+            
+            const form = formsData.find(f => f.id === formId);
+            const formElement = document.getElementById(`previewForm-${formId}`);
+            
+            console.log('Formulaire trouvé:', form); // Debug
+            console.log('Élément formulaire trouvé:', formElement); // Debug
+            
+            if (!formElement) {
+                showNotification('Erreur : formulaire non trouvé', 'error');
+                return;
+            }
+
+            // Validation des champs requis
+            const requiredFields = formElement.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+
+            if (!isValid) {
+                showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            // Collecte des données du formulaire
+            const formData = new FormData(formElement);
+            
+            // Générer un ID unique pour la réponse
+            const existingResponses = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            const newId = Math.max(...existingResponses.map(r => r.id || 0), 0) + 1;
+            
+            // Créer l'objet de réponse dans le bon format
+            const submissionData = {
+                id: newId,
+                formId: formId,
+                name: formData.get('name') || '',
+                email: formData.get('email') || '',
+                phone: formData.get('phone') || '',
+                city: formData.get('city') || '',
+                profession: formData.get('profession') || '',
+                age: parseInt(formData.get('age')) || null,
+                service: formData.get('service') || '',
+                message: formData.get('message') || '',
+                submittedAt: new Date().toISOString(),
+                status: 'pending',
+                validated: false,
+                archived: false
+            };
+
+            // Stockage local des réponses
+            let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            submissions.push(submissionData);
+            localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+
+            // Mise à jour des statistiques du formulaire
+            form.responses = (form.responses || 0) + 1;
+            form.lastResponse = new Date().toISOString().split('T')[0];
+            
+            // Sauvegarde des données mises à jour
+            localStorage.setItem('formsData', JSON.stringify(formsData));
+
+            // Mise à jour de l'affichage
+            updateStats();
+            filterAndDisplayForms();
+
+            // Gestion du paiement si nécessaire
+            if (form.paymentType === 'paid') {
+                showNotification(`Redirection vers le paiement de ${form.price}€...`, 'info');
+                // Ici vous pourriez intégrer Stripe ou un autre système de paiement
+                setTimeout(() => {
+                    showNotification('Paiement simulé avec succès !', 'success');
+                    document.getElementById('previewModal').classList.add('hidden');
+                }, 2000);
+            } else {
+                showNotification('Formulaire soumis avec succès !', 'success');
+                document.getElementById('previewModal').classList.add('hidden');
+            }
+
+            // Affichage des données dans la console pour debug
+            console.log('Données soumises:', submissionData);
+        }
+
+        // Fonction utilitaire pour voir toutes les soumissions (debug)
+        function viewAllSubmissions() {
+            const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            console.log('Toutes les soumissions:', submissions);
+            return submissions;
+        }
+
+        // Fonction pour obtenir les soumissions d'un formulaire spécifique
+        function getFormSubmissions(formId) {
+            // Vérifier si les données d'exemple existent déjà
+            let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            
+            // Si aucune donnée existe, initialiser avec les exemples
+            if (submissions.length === 0) {
+                console.log('Initialisation des données d\'exemple...');
+                const sampleData = generateSampleResponses();
+                localStorage.setItem('formSubmissions', JSON.stringify(sampleData));
+                submissions = sampleData;
+            }
+            
+            // Filtrer par formId et retourner
+            const formSubmissions = submissions.filter(sub => sub.formId === formId);
+            console.log(`Trouvé ${formSubmissions.length} réponses pour le formulaire ${formId}`);
+            return formSubmissions;
         }
 
         function showQRCode(formId) {
@@ -929,8 +1556,18 @@
         function editForm(formId) {
             const form = formsData.find(f => f.id === formId);
             console.log(`Éditer le formulaire ${form.title}`);
-            showNotification(`Redirection vers l'éditeur...`, 'info');
-            // window.location.href = `builder.html?edit=${formId}`;
+            showNotification(`Redirection vers l'éditeur pour "${form.title}"...`, 'info');
+            
+            // Redirection vers le éditeur approprié selon le type
+            setTimeout(() => {
+                if (form.isAI) {
+                    // Pour les formulaires IA, rediriger vers le générateur IA
+                    window.location.href = `ai-generator.html?edit=${formId}`;
+                } else {
+                    // Pour les formulaires manuels, rediriger vers le builder
+                    window.location.href = `builder.html?edit=${formId}`;
+                }
+            }, 500);
         }
 
         function duplicateForm(formId) {
@@ -994,80 +1631,694 @@
             }
         }
 
-        // Système de filtrage
-        function filterAndDisplayForms() {
-            const typeFilter = document.getElementById('filterType').value;
-            const statusFilter = document.getElementById('filterStatus').value;
-            
-            filteredForms = [...formsData];
-            
-            if (typeFilter !== 'all') {
-                filteredForms = filteredForms.filter(form => {
-                    switch(typeFilter) {
-                        case 'manual': return !form.isAI;
-                        case 'ai': return form.isAI;
-                        case 'free': return form.paymentType === 'free';
-                        case 'paid': return form.paymentType === 'paid';
-                        default: return true;
-                    }
+        // Fonctions de gestion de la sélection
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.response-checkbox');
+
+            if (selectAllCheckbox.checked) {
+                // Sélectionner toutes les réponses sur la page actuelle
+                checkboxes.forEach(checkbox => {
+                    const responseId = parseInt(checkbox.dataset.responseId);
+                    selectedResponses.add(responseId);
+
+                    checkbox.checked = true;
+                });
+            } else {
+                // Désélectionner toutes les réponses sur la page actuelle
+                checkboxes.forEach(checkbox => {
+                    const responseId = parseInt(checkbox.dataset.responseId);
+                    selectedResponses.delete(responseId);
+                    checkbox.checked = false;
                 });
             }
             
-            if (statusFilter !== 'all') {
-                filteredForms = filteredForms.filter(form => form.status === statusFilter);
+            updateSelectionActions();
+        }
+
+        function toggleResponseSelection(responseId) {
+            if (selectedResponses.has(responseId)) {
+                selectedResponses.delete(responseId);
+            } else {
+                selectedResponses.add(responseId);
             }
             
-            generateFormsList(filteredForms, 1); // Retour à la page 1 lors du filtrage
+            updateSelectionActions();
+            updateSelectAllCheckbox();
         }
 
-        // Mise à jour des statistiques
-        function updateStats() {
-            const totalForms = formsData.length;
-            const activeForms = formsData.filter(f => f.status === 'active').length;
-            const totalResponses = formsData.reduce((sum, f) => sum + f.responses, 0);
-            const avgConversionRate = formsData.length > 0 ? 
-                (formsData.reduce((sum, f) => sum + f.conversionRate, 0) / formsData.length).toFixed(1) : 0;
-            
-            document.getElementById('totalForms').textContent = totalForms;
-            document.getElementById('activeForms').textContent = activeForms;
-            document.getElementById('totalResponses').textContent = totalResponses.toLocaleString();
-            document.getElementById('conversionRate').textContent = avgConversionRate + '%';
+        function clearSelection() {
+            selectedResponses.clear();
+            document.querySelectorAll('.response-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateSelectionActions();
         }
 
-        // Notification système
-        function showNotification(message, type = 'info') {
-            // Créer et afficher une notification toast
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transition-all duration-300 flex items-center ${
-                type === 'success' ? 'bg-green-500 text-white' : 
-                type === 'error' ? 'bg-red-500 text-white' : 
-                'bg-blue-500 text-white'
-            }`;
+        function updateSelectionActions() {
+            const selectionBar = document.getElementById('selectionActions');
+            const selectedCount = selectedResponses.size;
             
-            const icon = type === 'success' ? 'ri-check-line' : 
-                         type === 'error' ? 'ri-close-line' : 'ri-information-line';
+            if (selectedCount > 0) {
+                selectionBar.classList.remove('hidden');
+                document.getElementById('selectedCount').textContent = selectedCount;
+            } else {
+                selectionBar.classList.add('hidden');
+            }
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.response-checkbox');
+            const checkedBoxes = document.querySelectorAll('.response-checkbox:checked');
             
-            notification.innerHTML = `
-                <i class="${icon} mr-2"></i>
-                <span>${message}</span>
+            if (checkboxes.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedBoxes.length === checkboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedBoxes.length > 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+
+        // Fonctions d'actions groupées
+        function validateSelectedResponses() {
+            if (selectedResponses.size === 0) return;
+            
+            if (confirm(`Valider ${selectedResponses.size} réponse(s) sélectionnée(s) ?`)) {
+                let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+                
+                submissions.forEach(sub => {
+                    if (selectedResponses.has(sub.id)) {
+                        sub.validated = true;
+                        sub.archived = false;
+                    }
+                });
+                
+                localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+                
+                // Mettre à jour l'affichage
+                allResponseData = getFormSubmissions(currentResponseFormId);
+                filterResponses();
+                
+                showNotification(`${selectedResponses.size} réponse(s) validée(s)`, 'success');
+                clearSelection();
+            }
+        }
+
+        function archiveSelectedResponses() {
+            if (selectedResponses.size === 0) return;
+            
+            if (confirm(`Archiver ${selectedResponses.size} réponse(s) sélectionnée(s) ?`)) {
+                let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+                
+                submissions.forEach(sub => {
+                    if (selectedResponses.has(sub.id)) {
+                        sub.archived = true;
+                        sub.validated = false;
+                    }
+                });
+                
+                localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+                
+                // Mettre à jour l'affichage
+                allResponseData = getFormSubmissions(currentResponseFormId);
+                filterResponses();
+                
+                showNotification(`${selectedResponses.size} réponse(s) archivée(s)`, 'info');
+                clearSelection();
+            }
+        }
+
+        function exportSelectedResponses() {
+            if (selectedResponses.size === 0) return;
+            
+            // Afficher un sélecteur de format d'export
+            showExportFormatModal();
+        }
+
+        // Fonction pour afficher la modale de sélection du format d'export
+        function showExportFormatModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 w-96 max-w-md mx-4">
+                    <h3 class="text-lg font-semibold mb-4">Exporter les réponses sélectionnées</h3>
+                    <p class="text-gray-600 mb-4">${selectedResponses.size} réponse(s) sélectionnée(s)</p>
+                    
+                    <div class="space-y-3 mb-6">
+                        <button onclick="exportResponses('csv')" class="w-full p-3 text-left border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+                            <i class="ri-file-text-line text-green-600 mr-3"></i>
+                            <div>
+                                <div class="font-medium">CSV</div>
+                                <div class="text-sm text-gray-500">Compatible Excel, LibreOffice</div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="exportResponses('excel')" class="w-full p-3 text-left border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+                            <i class="ri-file-excel-line text-green-600 mr-3"></i>
+                            <div>
+                                <div class="font-medium">Excel (XLS)</div>
+                                <div class="text-sm text-gray-500">Format Microsoft Excel</div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="exportResponses('pdf')" class="w-full p-3 text-left border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+                            <i class="ri-file-pdf-line text-red-600 mr-3"></i>
+                            <div>
+                                <div class="font-medium">PDF</div>
+                                <div class="text-sm text-gray-500">Document imprimable</div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="exportResponses('json')" class="w-full p-3 text-left border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center">
+                            <i class="ri-file-code-line text-blue-600 mr-3"></i>
+                            <div>
+                                <div class="font-medium">JSON</div>
+                                <div class="text-sm text-gray-500">Format de données structurées</div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Annuler</button>
+                    </div>
+                </div>
             `;
             
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            document.body.appendChild(modal);
         }
 
-        // Gestionnaires d'événements
+        // Fonction d'export selon le format choisi
+        function exportResponses(format) {
+            const selectedData = allResponseData.filter(r => selectedResponses.has(r.id));
+            const form = formsData.find(f => f.id === currentResponseFormId);
+            
+            // Fermer la modale de sélection
+            document.querySelector('.fixed.inset-0').remove();
+            
+            switch (format) {
+                case 'csv':
+                    exportToCSV(selectedData, form);
+                    break;
+                case 'excel':
+                    exportToExcel(selectedData, form);
+                    break;
+                case 'pdf':
+                    exportToPDF(selectedData, form);
+                    break;
+                case 'json':
+                    exportToJSON(selectedData, form);
+                    break;
+            }
+            
+            showNotification(`${selectedResponses.size} réponse(s) exportée(s) en ${format.toUpperCase()}`, 'success');
+        }
+
+        // Export CSV
+        function exportToCSV(data, form) {
+            const headers = ['ID', 'Nom', 'Email', 'Téléphone', 'Ville', 'Profession', 'Âge', 'Service', 'Message', 'Date de soumission', 'Statut'];
+            
+            let csvContent = headers.join(';') + '\n';
+            
+            data.forEach(response => {
+                const row = [
+                    response.id,
+                    `"${response.name || ''}"`,
+                    `"${response.email || ''}"`,
+                    `"${response.phone || ''}"`,
+                    `"${response.city || ''}"`,
+                    `"${response.profession || ''}"`,
+                    response.age || '',
+                    `"${response.service || ''}"`,
+                    `"${(response.message || '').replace(/"/g, '""')}"`,
+                    formatDate(response.submittedAt),
+                    response.status || 'pending'
+                ];
+                csvContent += row.join(';') + '\n';
+            });
+            
+            downloadFile(csvContent, `reponses_${form.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`, 'text/csv');
+        }
+
+        // Export Excel (format HTML qui s'ouvre dans Excel)
+        function exportToExcel(data, form) {
+            let htmlContent = `
+                <table border="1">
+                    <thead>
+                        <tr style="background-color: #f3f4f6; font-weight: bold;">
+                            <th>ID</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Ville</th>
+                            <th>Profession</th><th>Âge</th><th>Service</th><th>Message</th>
+                            <th>Date de soumission</th><th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.forEach(response => {
+                htmlContent += `
+                    <tr>
+                        <td>${response.id}</td>
+                        <td>${response.name || ''}</td>
+                        <td>${response.email || ''}</td>
+                        <td>${response.phone || ''}</td>
+                        <td>${response.city || ''}</td>
+                        <td>${response.profession || ''}</td>
+                        <td>${response.age || ''}</td>
+                        <td>${response.service || ''}</td>
+                        <td>${(response.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>
+                        <td>${formatDate(response.submittedAt)}</td>
+                        <td>${response.status || 'pending'}</td>
+                    </tr>
+                `;
+            });
+            
+            htmlContent += '</tbody></table>';
+            
+            downloadFile(htmlContent, `reponses_${form.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.xls`, 'application/vnd.ms-excel');
+        }
+
+        // Export PDF (HTML formaté pour impression)
+        function exportToPDF(data, form) {
+            let htmlContent = `
+                <html>
+                <head>
+                    <title>Réponses - ${form.title}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        h1 { color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f3f4f6; font-weight: bold; }
+                        .footer { margin-top: 30px; font-size: 12px; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Réponses du formulaire : ${form.title}</h1>
+                    <p><strong>Date d'export :</strong> ${new Date().toLocaleDateString('fr-FR')}</p>
+                    <p><strong>Nombre de réponses :</strong> ${data.length}</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th><th>Email</th><th>Ville</th><th>Profession</th>
+                                <th>Service</th><th>Date</th><th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            data.forEach(response => {
+                htmlContent += `
+                    <tr>
+                        <td>${response.name || ''}</td>
+                        <td>${response.email || ''}</td>
+                        <td>${response.city || ''}</td>
+                        <td>${response.profession || ''}</td>
+                        <td>${response.service || ''}</td>
+                        <td>${formatDate(response.submittedAt)}</td>
+                        <td>${response.status || 'pending'}</td>
+                    </tr>
+                `;
+            });
+            
+            htmlContent += `
+                        </tbody>
+                    </table>
+                    <div class="footer">
+                        <p>Document généré par FormEase - ${new Date().toLocaleString('fr-FR')}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Ouvrir dans une nouvelle fenêtre pour impression/sauvegarde PDF
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Export JSON (existant amélioré)
+        function exportToJSON(data, form) {
+            const exportData = {
+                formulaire: {
+                    id: form.id,
+                    titre: form.title,
+                    description: form.description
+                },
+                reponses: data,
+                export: {
+                    date: new Date().toISOString(),
+                    version: "1.0",
+                    nombre_reponses: data.length
+                }
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            downloadFile(dataStr, `reponses_${form.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`, 'application/json');
+        }
+
+        // Fonction utilitaire pour télécharger un fichier
+        function downloadFile(content, filename, mimeType) {
+            const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(content)}`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', filename);
+            linkElement.click();
+        }
+
+        function deleteSelectedResponses() {
+            if (selectedResponses.size === 0) return;
+            
+            if (confirm(`Supprimer définitivement ${selectedResponses.size} réponse(s) sélectionnée(s) ?`)) {
+                let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+                
+                submissions = submissions.filter(sub => !selectedResponses.has(sub.id));
+                
+                localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+                
+                // Mettre à jour l'affichage
+                allResponseData = getFormSubmissions(currentResponseFormId);
+                filterResponses();
+                updateStats();
+                
+                showNotification(`${selectedResponses.size} réponse(s) supprimée(s)`, 'success');
+                clearSelection();
+            }
+        }
+
+        // Fonction pour envoyer des emails aux réponses sélectionnées
+        function sendEmailToSelectedResponses() {
+            if (selectedResponses.size === 0) return;
+            
+            const selectedData = allResponseData.filter(r => selectedResponses.has(r.id));
+            showEmailComposerModal(selectedData);
+        }
+
+        // Fonction pour afficher la modale de composition d'email
+        function showEmailComposerModal(recipients) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">Envoyer un email groupé</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                            <i class="ri-close-line text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-gray-600">Destinataires : <span class="font-medium">${recipients.length} personne(s)</span></p>
+                        <div class="mt-2 max-h-20 overflow-y-auto">
+                            <div class="flex flex-wrap gap-1">
+                                ${recipients.map(r => `
+                                    <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">${r.name} (${r.email})</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Objet de l'email</label>
+                            <input type="text" id="emailSubject" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Sujet de votre email...">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea id="emailMessage" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="8" placeholder="Rédigez votre message..."></textarea>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">Variables disponibles :</h4>
+                            <div class="text-xs text-gray-600 space-y-1">
+                                <div><code class="bg-gray-200 px-1 rounded">{{nom}}</code> - Nom du destinataire</div>
+                                <div><code class="bg-gray-200 px-1 rounded">{{email}}</code> - Email du destinataire</div>
+                                <div><code class="bg-gray-200 px-1 rounded">{{profession}}</code> - Profession</div>
+                                <div><code class="bg-gray-200 px-1 rounded">{{ville}}</code> - Ville</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="sendIndividual" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label for="sendIndividual" class="text-sm text-gray-700">Personnaliser chaque email avec les données du destinataire</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Annuler</button>
+                        <button onclick="sendBulkEmail()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="ri-send-plane-line mr-2"></i>Envoyer les emails
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Fonction pour envoyer l'email groupé
+        function sendBulkEmail() {
+            const subject = document.getElementById('emailSubject').value;
+            const message = document.getElementById('emailMessage').value;
+            const sendIndividual = document.getElementById('sendIndividual').checked;
+            
+            if (!subject.trim() || !message.trim()) {
+                showNotification('Veuillez remplir l\'objet et le message', 'error');
+                return;
+            }
+            
+            const selectedData = allResponseData.filter(r => selectedResponses.has(r.id));
+            
+            // Simulation de l'envoi d'emails
+            let emailsSent = 0;
+            
+            selectedData.forEach(recipient => {
+                let personalizedMessage = message;
+                let personalizedSubject = subject;
+                
+                if (sendIndividual) {
+                    // Remplacer les variables par les données du destinataire
+                    personalizedMessage = message
+                        .replace(/{{nom}}/g, recipient.name || '')
+                        .replace(/{{email}}/g, recipient.email || '')
+                        .replace(/{{profession}}/g, recipient.profession || '')
+                        .replace(/{{ville}}/g, recipient.city || '');
+                    
+                    personalizedSubject = subject
+                        .replace(/{{nom}}/g, recipient.name || '')
+                        .replace(/{{profession}}/g, recipient.profession || '')
+                        .replace(/{{ville}}/g, recipient.city || '');
+                }
+                
+                // Simulation d'envoi (en production, ici on ferait un appel API)
+                console.log(`Email envoyé à ${recipient.email}:`);
+                console.log(`Objet: ${personalizedSubject}`);
+                console.log(`Message: ${personalizedMessage}`);
+                console.log('---');
+                
+                emailsSent++;
+            });
+            
+            // Fermer la modale
+            document.querySelector('.fixed.inset-0').remove();
+            
+            // Afficher la notification de succès
+            showNotification(`${emailsSent} email(s) envoyé(s) avec succès`, 'success');
+            
+            // Effacer la sélection
+            clearSelection();
+        }
+
+        // Fonction pour mettre à jour les contrôles de pagination
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(filteredForms.length / itemsPerPage);
+            
+            // Mettre à jour les boutons de pagination
+            const prevButton = document.getElementById('prevPage');
+            const nextButton = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            if (prevButton) {
+                prevButton.disabled = currentPage <= 1;
+                prevButton.classList.toggle('opacity-50', currentPage <= 1);
+                prevButton.classList.toggle('cursor-not-allowed', currentPage <= 1);
+            }
+            
+            if (nextButton) {
+                nextButton.disabled = currentPage >= totalPages;
+                nextButton.classList.toggle('opacity-50', currentPage >= totalPages);
+                nextButton.classList.toggle('cursor-not-allowed', currentPage >= totalPages);
+            }
+            
+            if (pageInfo) {
+                pageInfo.textContent = totalPages > 0 ? `Page ${currentPage} sur ${totalPages}` : 'Aucune page';
+            }
+        }
+
+        // Fonction pour mettre à jour les statistiques d'affichage
+        function updateStats() {
+            const totalForms = filteredForms.length;
+            const startIndex = (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, totalForms);
+            
+            const statsText = totalForms > 0 
+                ? `Affichage de ${startIndex} à ${endIndex} sur ${totalForms} formulaires`
+                : 'Aucun formulaire trouvé';
+            
+            // Mettre à jour l'affichage des stats si l'élément existe
+            const statsElement = document.getElementById('formsStats');
+            if (statsElement) {
+                statsElement.textContent = statsText;
+            }
+            
+            // Mettre à jour la pagination
+            updatePaginationControls();
+        }
+
+        // Fonction utilitaire pour diagnostiquer et réparer les données
+        function diagnosticAndRepairData() {
+            console.log('=== DIAGNOSTIC DES DONNÉES ===');
+            
+            // Vérifier les données des formulaires
+            console.log('FormsData:', formsData);
+            console.log('Nombre de formulaires:', formsData.length);
+            
+            // Vérifier les données des soumissions
+            let submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+            console.log('Submissions dans localStorage:', submissions);
+            console.log('Nombre de soumissions:', submissions.length);
+            
+            // Si pas de soumissions, forcer la création
+            if (submissions.length === 0) {
+                console.log('Aucune soumission trouvée, génération forcée...');
+                const sampleData = generateSampleResponses();
+                console.log('Données d\'exemple générées:', sampleData);
+                localStorage.setItem('formSubmissions', JSON.stringify(sampleData));
+                submissions = sampleData;
+                console.log('Données sauvegardées dans localStorage');
+            }
+            
+            // Vérifier les soumissions pour le formulaire 1
+            const form1Submissions = submissions.filter(sub => sub.formId === 1);
+            console.log('Soumissions pour formulaire 1:', form1Submissions);
+            
+            if (form1Submissions.length > 0) {
+                console.log('Exemple de première soumission:', form1Submissions[0]);
+            }
+            
+            // Forcer le rafraîchissement si on est dans la modale des réponses
+            if (currentResponseFormId) {
+                console.log('Rafraîchissement forcé de la modale des réponses...');
+                renderResponsesTable(currentResponseFormId);
+            }
+            
+            console.log('=== FIN DIAGNOSTIC ===');
+            return submissions;
+        }
+
+        // Améliorer l'ouverture de la modale des réponses
+        function openResponsesModal(formId) {
+            console.log('Ouverture de la modale pour le formulaire:', formId); // Debug
+            
+            const form = formsData.find(f => f.id === formId);
+            if (!form) {
+                console.error('Formulaire non trouvé:', formId);
+                return;
+            }
+            
+            currentResponseFormId = formId;
+            selectedResponses.clear();
+            currentResponsePage = 1;
+            
+            document.getElementById('responsesModalTitle').textContent = `Réponses : ${form.title}`;
+            document.getElementById('responsesModalDesc').textContent = form.description || '';
+            
+            // Réinitialiser les filtres
+            document.getElementById('searchResponses').value = '';
+            document.getElementById('filterByField').value = '';
+            document.getElementById('sortResponses').value = 'newest';
+            
+            // Cacher les filtres avancés
+            document.getElementById('advancedFilters').classList.add('hidden');
+            
+            // Générer le contenu dynamique
+            renderResponsesTable(formId);
+            
+            document.getElementById('responsesModal').classList.remove('hidden');
+            
+            console.log('Modale ouverte avec succès'); // Debug
+        }
+
+        // Rendre toutes les fonctions accessibles globalement AVANT l'initialisation
+        window.testClick = testClick;
+        window.openResponsesModal = openResponsesModal;
+        window.viewForm = viewForm;
+        window.editForm = editForm;
+        window.showQRCode = showQRCode;
+        window.duplicateForm = duplicateForm;
+        window.downloadForm = downloadForm;
+        window.confirmDeleteForm = confirmDeleteForm;
+        
+        // Fonctions de gestion des réponses
+        window.validateSelectedResponses = validateSelectedResponses;
+        window.archiveSelectedResponses = archiveSelectedResponses;
+        window.exportSelectedResponses = exportSelectedResponses;
+        window.deleteSelectedResponses = deleteSelectedResponses;
+        window.selectAllResponses = selectAllResponses;
+        window.clearSelection = clearSelection;
+        window.toggleResponseSelection = toggleResponseSelection;
+        window.viewResponseDetails = viewResponseDetails;
+        window.exportResponse = exportResponse;
+        window.deleteResponse = deleteResponse;
+        window.archiveResponse = archiveResponse;
+        window.validateResponse = validateResponse;
+        window.sendEmailResponse = sendEmailResponse;
+        window.filterAndDisplayForms = filterAndDisplayForms;
+        window.renderResponsesTable = renderResponsesTable;
+        window.toggleAdvancedFilters = toggleAdvancedFilters;
+        window.generateDynamicFilters = generateDynamicFilters;
+        window.filterResponses = filterResponses;
+        window.renderFilteredResponsesTable = renderFilteredResponsesTable;
+        window.submitPreviewForm = submitPreviewForm;
+        window.viewAllSubmissions = viewAllSubmissions;
+        window.showNotification = showNotification;
+        window.exportResponses = exportResponses;
+        window.sendEmailToSelectedResponses = sendEmailToSelectedResponses;
+        window.sendBulkEmail = sendBulkEmail;
+        window.sendSingleEmail = sendSingleEmail;
+        window.diagnosticAndRepairData = diagnosticAndRepairData;
+
+        // Initialisation de la page
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page chargée, initialisation...');
+            console.log('formsData:', formsData);
+            console.log('Nombre de formulaires dans formsData:', formsData.length);
+            
+            // Vérification et récupération des données si nécessaire
+            if (!formsData || formsData.length === 0) {
+                console.error('ERREUR: formsData est vide ou undefined !');
+                showNotification('Erreur: Impossible de charger les formulaires', 'error');
+                return;
+            }
+            
             // Initialisation des formes filtrées
             filteredForms = [...formsData];
+            console.log('filteredForms après initialisation:', filteredForms);
+            console.log('Formulaires disponibles:', filteredForms.length);
             
-            // Génération initiale
+            // Génération initiale des formulaires
             generateFormsList(filteredForms);
             updateStats();
+            
+            console.log('Génération des formulaires terminée');
             
             // Filtres
             document.getElementById('filterType').addEventListener('change', filterAndDisplayForms);
@@ -1077,22 +2328,35 @@
             document.getElementById('prevPage').addEventListener('click', goToPreviousPage);
             document.getElementById('nextPage').addEventListener('click', goToNextPage);
             
-            // Gestionnaire pour les menus d'actions
+            // Gestionnaire pour fermer les modales en cliquant à l'extérieur
             document.addEventListener('click', function(e) {
-                // Fermer tous les menus d'actions
-                document.querySelectorAll('.form-actions-menu').forEach(menu => {
-                    if (!menu.closest('.relative').contains(e.target)) {
-                        menu.classList.add('hidden');
-                    }
-                });
-                
-                // Ouvrir le menu cliqué
-                if (e.target.closest('.form-actions-btn')) {
-                    e.preventDefault();
-                    const btn = e.target.closest('.form-actions-btn');
-                    const menu = btn.nextElementSibling;
-                    menu.classList.toggle('hidden');
+                // Fermer les modales si on clique à l'extérieur
+                if (e.target.id === 'qrModal') {
+                    document.getElementById('qrModal').classList.add('hidden');
                 }
+                if (e.target.id === 'deleteModal') {
+                    document.getElementById('deleteModal').classList.add('hidden');
+                }
+                if (e.target.id === 'previewModal') {
+                    document.getElementById('previewModal').classList.add('hidden');
+                }
+                if (e.target.id === 'responsesModal') {
+                    document.getElementById('responsesModal').classList.add('hidden');
+                }
+                if (e.target.id === 'responseDetailModal') {
+                    document.getElementById('responseDetailModal').classList.add('hidden');
+                    currentResponseFormId = null;
+                    currentResponseIndex = null;
+                }
+            });
+            
+            // Modal de prévisualisation
+            document.getElementById('closePreviewModal').addEventListener('click', function() {
+                document.getElementById('previewModal').classList.add('hidden');
+            });
+            
+            document.getElementById('closePreview').addEventListener('click', function() {
+                document.getElementById('previewModal').classList.add('hidden');
             });
             
             // Modal QR Code
@@ -1113,12 +2377,38 @@
                 }
             });
             
+            // Modal de réponses
+            document.getElementById('closeResponsesModal').addEventListener('click', function() {
+                document.getElementById('responsesModal').classList.add('hidden');
+            });
+            
+            // Modal de détails de réponse
+            document.getElementById('closeResponseDetailModal').addEventListener('click', function() {
+                document.getElementById('responseDetailModal').classList.add('hidden');
+                currentResponseFormId = null;
+                currentResponseIndex = null;
+            });
+            
             // Bouton nouveau formulaire
             document.querySelector('.bg-blue-600').addEventListener('click', function() {
                 showNotification('Redirection vers le créateur de formulaires...', 'info');
                 // Rediriger vers le builder ou IA generator
             });
         });
+
+    </script>
+</body>
+</html>
+            
+            // Générer le contenu dynamique
+            renderResponsesTable(formId);
+            
+            document.getElementById('responsesModal').classList.remove('hidden');
+            
+            console.log('Modale ouverte avec succès de manière sécurisée');
+        }
+
+        // ...existing code...
     </script>
 </body>
 </html>
