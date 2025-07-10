@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Connectivité API - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">
+            <i class="ri-test-tube-line mr-2"></i>
+            Test de Connectivité API - FormEase Sprint 1
+        </h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">État du Backend</h2>
+            <div id="backendStatus" class="flex items-center">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                <span>Vérification en cours...</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Tests des Formulaires -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">
+                    <i class="ri-file-list-3-line mr-2"></i>
+                    Tests des Formulaires
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="testGetForms()" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Charger les formulaires
+                    </button>
+                    <button onclick="testCreateForm()" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Créer un formulaire test
+                    </button>
+                    <button onclick="testDuplicateForm()" class="w-full px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">
+                        Dupliquer un formulaire
+                    </button>
+                </div>
+                <div id="formsTestResults" class="mt-4 text-sm"></div>
+            </div>
+
+            <!-- Tests des Soumissions -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">
+                    <i class="ri-mail-line mr-2"></i>
+                    Tests des Soumissions
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="testGetSubmissions()" class="w-full px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                        Charger les soumissions
+                    </button>
+                    <button onclick="testValidateSubmissions()" class="w-full px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        Valider des soumissions
+                    </button>
+                    <button onclick="testExportSubmissions()" class="w-full px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">
+                        Exporter des soumissions
+                    </button>
+                </div>
+                <div id="submissionsTestResults" class="mt-4 text-sm"></div>
+            </div>
+
+            <!-- Tests des Statistiques -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">
+                    <i class="ri-bar-chart-line mr-2"></i>
+                    Tests des Statistiques
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="testGetStats()" class="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Charger les statistiques
+                    </button>
+                </div>
+                <div id="statsTestResults" class="mt-4 text-sm"></div>
+            </div>
+
+            <!-- Tests des Emails -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">
+                    <i class="ri-mail-send-line mr-2"></i>
+                    Tests des Emails
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="testSendEmail()" class="w-full px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                        Test envoi email
+                    </button>
+                </div>
+                <div id="emailTestResults" class="mt-4 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- Journal des Tests -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+            <h3 class="text-lg font-semibold mb-4">
+                <i class="ri-terminal-line mr-2"></i>
+                Journal des Tests
+            </h3>
+            <div id="testLog" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-64 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        // Classe ApiService identique à celle de list.html
+        class ApiService {
+            constructor() {
+                this.baseURL = 'http://localhost:4000/api';
+                this.token = localStorage.getItem('token') || 'test-token';
+            }
+
+            async request(endpoint, options = {}) {
+                const url = `${this.baseURL}${endpoint}`;
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`,
+                        ...options.headers
+                    },
+                    ...options
+                };
+
+                try {
+                    const response = await fetch(url, config);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Error:', error);
+                    throw error;
+                }
+            }
+
+            async getForms() {
+                return this.request('/forms');
+            }
+
+            async createForm(formData) {
+                return this.request('/forms', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+            }
+
+            async duplicateForm(id) {
+                return this.request(`/forms/${id}/duplicate`, {
+                    method: 'POST'
+                });
+            }
+
+            async getFormSubmissions(formId) {
+                return this.request(`/forms/${formId}/submissions`);
+            }
+
+            async validateSubmissions(submissionIds) {
+                return this.request('/submissions/validate', {
+                    method: 'POST',
+                    body: JSON.stringify({ submissionIds })
+                });
+            }
+
+            async exportSubmissions(formId, submissionIds = null, format = 'csv') {
+                const params = new URLSearchParams();
+                params.append('format', format);
+                if (submissionIds?.length) {
+                    params.append('submissions', submissionIds.join(','));
+                }
+                
+                const url = `${this.baseURL}/forms/${formId}/submissions/export?${params}`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response;
+            }
+
+            async getDashboardStats() {
+                return this.request('/dashboard/stats');
+            }
+
+            async sendEmailToSubmissions(submissionIds, emailData) {
+                return this.request('/submissions/send-email', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        submissionIds,
+                        ...emailData
+                    })
+                });
+            }
+        }
+
+        const apiService = new ApiService();
+        let testFormId = null;
+
+        // Fonctions utilitaires
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-blue-400',
+                success: 'text-green-400',
+                error: 'text-red-400',
+                warning: 'text-yellow-400'
+            };
+            
+            logElement.innerHTML += `<div class="${colors[type]}">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateResult(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="flex items-center ${isSuccess ? 'text-green-600' : 'text-red-600'}">
+                <i class="ri-${isSuccess ? 'check' : 'close'}-circle-line mr-2"></i>
+                ${message}
+            </div>`;
+        }
+
+        // Tests de connectivité
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('http://localhost:4000/api/health');
+                if (response.ok) {
+                    document.getElementById('backendStatus').innerHTML = `
+                        <div class="flex items-center text-green-600">
+                            <i class="ri-check-circle-line mr-2"></i>
+                            Backend connecté et opérationnel
+                        </div>`;
+                    log('✅ Backend connecté et opérationnel', 'success');
+                } else {
+                    throw new Error('Backend non accessible');
+                }
+            } catch (error) {
+                document.getElementById('backendStatus').innerHTML = `
+                    <div class="flex items-center text-red-600">
+                        <i class="ri-close-circle-line mr-2"></i>
+                        Backend non accessible - Tests en mode simulation
+                    </div>`;
+                log('❌ Backend non accessible - Tests en mode simulation', 'error');
+            }
+        }
+
+        // Tests des formulaires
+        async function testGetForms() {
+            log('🔄 Test de chargement des formulaires...', 'info');
+            try {
+                const forms = await apiService.getForms();
+                updateResult('formsTestResults', `${forms.length} formulaire(s) chargé(s)`, true);
+                log(`✅ Formulaires chargés: ${forms.length}`, 'success');
+                if (forms.length > 0) {
+                    testFormId = forms[0].id;
+                    log(`📝 ID de test défini: ${testFormId}`, 'info');
+                }
+            } catch (error) {
+                updateResult('formsTestResults', `Erreur: ${error.message}`, false);
+                log(`❌ Erreur chargement formulaires: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCreateForm() {
+            log('🔄 Test de création de formulaire...', 'info');
+            try {
+                const formData = {
+                    title: `Test Form ${Date.now()}`,
+                    description: 'Formulaire de test automatique',
+                    type: 'manual',
+                    status: 'draft'
+                };
+                const newForm = await apiService.createForm(formData);
+                updateResult('formsTestResults', `Formulaire créé: ${newForm.title}`, true);
+                log(`✅ Formulaire créé: ${newForm.title} (ID: ${newForm.id})`, 'success');
+                testFormId = newForm.id;
+            } catch (error) {
+                updateResult('formsTestResults', `Erreur création: ${error.message}`, false);
+                log(`❌ Erreur création formulaire: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDuplicateForm() {
+            if (!testFormId) {
+                log('⚠️ Aucun formulaire de test disponible', 'warning');
+                return;
+            }
+            
+            log('🔄 Test de duplication de formulaire...', 'info');
+            try {
+                const duplicatedForm = await apiService.duplicateForm(testFormId);
+                updateResult('formsTestResults', `Formulaire dupliqué: ${duplicatedForm.title}`, true);
+                log(`✅ Formulaire dupliqué: ${duplicatedForm.title}`, 'success');
+            } catch (error) {
+                updateResult('formsTestResults', `Erreur duplication: ${error.message}`, false);
+                log(`❌ Erreur duplication: ${error.message}`, 'error');
+            }
+        }
+
+        // Tests des soumissions
+        async function testGetSubmissions() {
+            if (!testFormId) {
+                log('⚠️ Aucun formulaire de test disponible', 'warning');
+                return;
+            }
+            
+            log('🔄 Test de chargement des soumissions...', 'info');
+            try {
+                const submissions = await apiService.getFormSubmissions(testFormId);
+                updateResult('submissionsTestResults', `${submissions.length} soumission(s) chargée(s)`, true);
+                log(`✅ Soumissions chargées: ${submissions.length}`, 'success');
+            } catch (error) {
+                updateResult('submissionsTestResults', `Erreur: ${error.message}`, false);
+                log(`❌ Erreur chargement soumissions: ${error.message}`, 'error');
+            }
+        }
+
+        async function testValidateSubmissions() {
+            log('🔄 Test de validation de soumissions...', 'info');
+            try {
+                const result = await apiService.validateSubmissions([1, 2, 3]);
+                updateResult('submissionsTestResults', 'Validation réussie', true);
+                log(`✅ Validation réussie: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                updateResult('submissionsTestResults', `Erreur validation: ${error.message}`, false);
+                log(`❌ Erreur validation: ${error.message}`, 'error');
+            }
+        }
+
+        async function testExportSubmissions() {
+            if (!testFormId) {
+                log('⚠️ Aucun formulaire de test disponible', 'warning');
+                return;
+            }
+            
+            log('🔄 Test d\'export de soumissions...', 'info');
+            try {
+                const response = await apiService.exportSubmissions(testFormId, null, 'csv');
+                updateResult('submissionsTestResults', 'Export réussi', true);
+                log(`✅ Export réussi: ${response.status}`, 'success');
+            } catch (error) {
+                updateResult('submissionsTestResults', `Erreur export: ${error.message}`, false);
+                log(`❌ Erreur export: ${error.message}`, 'error');
+            }
+        }
+
+        // Tests des statistiques
+        async function testGetStats() {
+            log('🔄 Test de chargement des statistiques...', 'info');
+            try {
+                const stats = await apiService.getDashboardStats();
+                updateResult('statsTestResults', `Stats chargées: ${Object.keys(stats).length} métriques`, true);
+                log(`✅ Statistiques chargées: ${JSON.stringify(stats)}`, 'success');
+            } catch (error) {
+                updateResult('statsTestResults', `Erreur: ${error.message}`, false);
+                log(`❌ Erreur statistiques: ${error.message}`, 'error');
+            }
+        }
+
+        // Tests des emails
+        async function testSendEmail() {
+            log('🔄 Test d\'envoi d\'email...', 'info');
+            try {
+                const result = await apiService.sendEmailToSubmissions([1, 2], {
+                    subject: 'Test Email',
+                    message: 'Ceci est un test'
+                });
+                updateResult('emailTestResults', 'Email envoyé avec succès', true);
+                log(`✅ Email envoyé: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                updateResult('emailTestResults', `Erreur envoi: ${error.message}`, false);
+                log(`❌ Erreur envoi email: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Initialisation des tests de connectivité API', 'info');
+            checkBackendStatus();
+        });
+    </script>
+</body>
+</html>
