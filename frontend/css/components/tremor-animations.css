@@ -1,0 +1,464 @@
+/**
+ * 🚀 SPRINT 2 - Animations Tremor pour FormEase
+ * Design System : Tremor Blocks
+ * Couleurs : #ffffff (bg), #2563eb (primary)
+ * Icônes : Remix Icons
+ */
+
+/* 🎨 Variables CSS Tremor */
+:root {
+  /* Couleurs officielles Tremor */
+  --tremor-bg-primary: #ffffff;
+  --tremor-text-primary: #111827;
+  --tremor-text-secondary: #6b7280;
+  --tremor-border: #e5e7eb;
+  --tremor-accent: #2563eb;
+  --tremor-accent-hover: #1d4ed8;
+  --tremor-success: #10b981;
+  --tremor-warning: #f59e0b;
+  --tremor-error: #ef4444;
+  
+  /* Ombres Tremor */
+  --tremor-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --tremor-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --tremor-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* Timing des animations */
+  --tremor-duration-fast: 150ms;
+  --tremor-duration-normal: 300ms;
+  --tremor-duration-slow: 500ms;
+  
+  /* Easings Tremor */
+  --tremor-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --tremor-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --tremor-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 🎯 Tremor Button Animations */
+.tremor-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  box-shadow: var(--tremor-shadow-sm);
+  background-color: var(--tremor-accent);
+  color: white;
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+  transform: translateY(0);
+  cursor: pointer;
+}
+
+.tremor-button:hover {
+  background-color: var(--tremor-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--tremor-shadow-md);
+}
+
+.tremor-button:active {
+  transform: translateY(0);
+  box-shadow: var(--tremor-shadow-sm);
+}
+
+.tremor-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--tremor-accent), 0 0 0 4px rgba(37, 99, 235, 0.5);
+}
+
+/* 🃏 Tremor Card Animations */
+.tremor-card {
+  @apply bg-white rounded-lg border border-gray-200 shadow-sm;
+  transition: all var(--tremor-duration-normal) var(--tremor-ease-out);
+  transform: translateY(0);
+}
+
+.tremor-card:hover {
+  box-shadow: var(--tremor-shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--tremor-accent);
+}
+
+.tremor-card-interactive {
+  cursor: pointer;
+}
+
+.tremor-card-interactive:hover {
+  background-color: #fafafa;
+}
+
+/* 📊 Tremor Table Animations */
+.tremor-table {
+  @apply w-full border-collapse;
+}
+
+.tremor-table-row {
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+  border-bottom: 1px solid var(--tremor-border);
+}
+
+.tremor-table-row:hover {
+  background-color: #f9fafb;
+  transform: scale(1.01);
+}
+
+.tremor-table-cell {
+  @apply px-6 py-4 text-sm;
+  color: var(--tremor-text-primary);
+}
+
+/* 🎨 Tremor Form Animations */
+.tremor-input {
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm;
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+  background-color: var(--tremor-bg-primary);
+}
+
+.tremor-input:focus {
+  outline: none;
+  border-color: var(--tremor-accent);
+  ring: 1px;
+  ring-color: var(--tremor-accent);
+  ring-opacity: 0.5;
+  transform: scale(1.02);
+}
+
+.tremor-input:hover {
+  border-color: #d1d5db;
+}
+
+/* 🏷️ Tremor Badge Animations */
+.tremor-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+  transform: scale(1);
+}
+
+.tremor-badge:hover {
+  transform: scale(1.05);
+}
+
+.tremor-badge-success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.tremor-badge-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.tremor-badge-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.tremor-badge-info {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+/* 🎯 Tremor Navigation Animations */
+.tremor-nav-item {
+  @apply flex items-center px-3 py-2 text-sm font-medium rounded-md;
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+  color: var(--tremor-text-secondary);
+}
+
+.tremor-nav-item:hover {
+  background-color: #f3f4f6;
+  color: var(--tremor-text-primary);
+  transform: translateX(4px);
+}
+
+.tremor-nav-item.active {
+  background-color: #eff6ff;
+  color: var(--tremor-accent);
+  border-left: 3px solid var(--tremor-accent);
+}
+
+/* 📱 Tremor Modal Animations */
+.tremor-modal-overlay {
+  @apply fixed inset-0 bg-gray-500 bg-opacity-75;
+  animation: tremor-fade-in var(--tremor-duration-normal) var(--tremor-ease-out);
+}
+
+.tremor-modal-content {
+  @apply bg-white rounded-lg shadow-xl;
+  animation: tremor-slide-up var(--tremor-duration-normal) var(--tremor-ease-out);
+}
+
+@keyframes tremor-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tremor-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 🔄 Tremor Loading States */
+.tremor-loading {
+  @apply relative;
+  overflow: hidden;
+}
+
+.tremor-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: tremor-shimmer 1.5s infinite;
+}
+
+@keyframes tremor-shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* 🎊 Tremor Success Animations */
+.tremor-success-animation {
+  animation: tremor-bounce var(--tremor-duration-slow) var(--tremor-ease-out);
+}
+
+@keyframes tremor-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* 📊 Tremor Chart Animations */
+.tremor-chart-enter {
+  animation: tremor-chart-fade-in 1s var(--tremor-ease-out);
+}
+
+@keyframes tremor-chart-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 🎯 Tremor Dropdown Animations */
+.tremor-dropdown {
+  @apply bg-white rounded-md shadow-lg border border-gray-200;
+  animation: tremor-dropdown-appear var(--tremor-duration-fast) var(--tremor-ease-out);
+  transform-origin: top;
+}
+
+@keyframes tremor-dropdown-appear {
+  from {
+    opacity: 0;
+    transform: scaleY(0.8) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+/* 🔍 Tremor Search Animations */
+.tremor-search-input {
+  @apply relative;
+}
+
+.tremor-search-input input:focus + .tremor-search-icon {
+  color: var(--tremor-accent);
+  transform: scale(1.1);
+}
+
+.tremor-search-icon {
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+}
+
+/* 📈 Tremor Progress Animations */
+.tremor-progress-bar {
+  @apply bg-gray-200 rounded-full h-2;
+  overflow: hidden;
+}
+
+.tremor-progress-fill {
+  @apply h-full rounded-full;
+  background-color: var(--tremor-accent);
+  transition: width var(--tremor-duration-normal) var(--tremor-ease-out);
+  animation: tremor-progress-shimmer 2s infinite;
+}
+
+@keyframes tremor-progress-shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+/* 🎨 Tremor Toast Notifications */
+.tremor-toast {
+  @apply p-4 rounded-lg shadow-lg max-w-sm;
+  animation: tremor-toast-slide-in var(--tremor-duration-normal) var(--tremor-ease-out);
+}
+
+.tremor-toast.tremor-toast-exit {
+  animation: tremor-toast-slide-out var(--tremor-duration-normal) var(--tremor-ease-in);
+}
+
+@keyframes tremor-toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes tremor-toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* 🎯 Tremor Icon Animations */
+.tremor-icon {
+  transition: all var(--tremor-duration-fast) var(--tremor-ease-out);
+}
+
+.tremor-icon:hover {
+  transform: scale(1.1);
+}
+
+.tremor-icon.tremor-icon-spin {
+  animation: tremor-spin 1s linear infinite;
+}
+
+@keyframes tremor-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 📱 Tremor Responsive Animations */
+@media (max-width: 640px) {
+  .tremor-card:hover {
+    transform: none;
+  }
+  
+  .tremor-button:hover {
+    transform: none;
+  }
+  
+  .tremor-table-row:hover {
+    transform: none;
+  }
+}
+
+/* 🎯 Tremor Focus States */
+.tremor-focusable:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: var(--tremor-accent);
+  ring-opacity: 0.5;
+  ring-offset: 2px;
+}
+
+/* 🎨 Tremor Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tremor-bg-primary: #1f2937;
+    --tremor-text-primary: #f9fafb;
+    --tremor-text-secondary: #9ca3af;
+    --tremor-border: #374151;
+  }
+  
+  .tremor-card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .tremor-input {
+    @apply bg-gray-800 border-gray-600 text-white;
+  }
+  
+  .tremor-table-row:hover {
+    background-color: #374151;
+  }
+}
+
+/* 🚀 Tremor Performance Optimizations */
+.tremor-optimize {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.tremor-gpu-accelerated {
+  transform: translateZ(0);
+}
+
+/* 🎯 Tremor Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 🎨 Tremor Utility Classes */
+.tremor-fade-in {
+  animation: tremor-fade-in var(--tremor-duration-normal) var(--tremor-ease-out);
+}
+
+.tremor-slide-up {
+  animation: tremor-slide-up var(--tremor-duration-normal) var(--tremor-ease-out);
+}
+
+.tremor-bounce {
+  animation: tremor-bounce var(--tremor-duration-slow) var(--tremor-ease-out);
+}
+
+.tremor-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 🎯 Classes pour intégration JavaScript */
+.js-tremor-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all var(--tremor-duration-normal) var(--tremor-ease-out);
+}
+
+.js-tremor-animate.tremor-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+console.log('🎨 Animations Tremor chargées - Style premium activé !');

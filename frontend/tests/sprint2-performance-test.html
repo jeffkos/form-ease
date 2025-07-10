@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Sprint 2 - Test des Optimisations Tremor + Tailwind</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- 🎨 Configuration Tremor + Tailwind -->
+    <script src="../js/components/TremorTailwindConfig.js"></script>
+    <script src="../js/components/TremorComponents.js"></script>
+    <script src="../js/components/DataCache.js"></script>
+    <script src="../js/components/SkeletonLoader.js"></script>
+    <script src="../js/components/OptimizedApiService.js"></script>
+    
+    <script>
+        // Configuration Tailwind avec Tremor
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe', 
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff',
+                            },
+                        },
+                    },
+                    boxShadow: {
+                        'tremor-input': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+                        'tremor-card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+                        'tremor-dropdown': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                    },
+                    borderRadius: {
+                        'tremor-small': '0.375rem',
+                        'tremor-default': '0.5rem',
+                        'tremor-full': '9999px',
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .demo-section { 
+            margin: 2rem 0; 
+            padding: 1.5rem; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 8px;
+            background: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- 🎯 Header -->
+        <div class="demo-section">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                🚀 Sprint 2 - Test des Optimisations
+            </h1>
+            <p class="text-gray-600 mb-4">
+                Test des composants Tremor : Cache intelligent, Skeleton screens, et animations
+            </p>
+            <div class="flex gap-4">
+                <button id="testCache" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    <i class="ri-database-line mr-2"></i>
+                    Tester Cache
+                </button>
+                <button id="testSkeleton" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    <i class="ri-loader-4-line mr-2"></i>
+                    Tester Skeleton
+                </button>
+                <button id="testApi" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    <i class="ri-cloud-line mr-2"></i>
+                    Tester API
+                </button>
+                <button id="showMetrics" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors duration-200">
+                    <i class="ri-bar-chart-line mr-2"></i>
+                    Métriques
+                </button>
+            </div>
+        </div>
+
+        <!-- 📊 Métriques en temps réel -->
+        <div class="demo-section">
+            <h2 class="text-xl font-semibold mb-4">📊 Métriques de Performance</h2>
+            <div id="metricsDisplay" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Métriques dynamiques -->
+            </div>
+        </div>
+
+        <!-- 🎨 Test des Skeletons -->
+        <div class="demo-section">
+            <h2 class="text-xl font-semibold mb-4">🎨 Test des Skeleton Screens</h2>
+            <div class="flex gap-4 mb-4">
+                <button onclick="testSkeletonType('formList')" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">Liste Formulaires</button>
+                <button onclick="testSkeletonType('dashboard')" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">Dashboard</button>
+                <button onclick="testSkeletonType('formBuilder')" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">Form Builder</button>
+                <button onclick="testSkeletonType('table')" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">Tableau</button>
+            </div>
+            <div id="skeletonDemo" class="min-h-96 border border-gray-200 rounded-lg p-4">
+                <!-- Zone de démonstration skeleton -->
+            </div>
+        </div>
+
+        <!-- 🔧 Test du Cache -->
+        <div class="demo-section">
+            <h2 class="text-xl font-semibold mb-4">🔧 Test du Cache Intelligent</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="font-semibold mb-2">Actions Cache</h3>
+                    <div class="space-y-2">
+                        <button onclick="testCacheSet()" class="tremor-button w-full">Ajouter données</button>
+                        <button onclick="testCacheGet()" class="tremor-button w-full">Récupérer données</button>
+                        <button onclick="testCacheInvalidate()" class="tremor-button w-full">Invalider catégorie</button>
+                        <button onclick="testCacheClear()" class="tremor-button w-full bg-red-600 hover:bg-red-700">Vider cache</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Statistiques Cache</h3>
+                    <div id="cacheStats" class="space-y-2 text-sm">
+                        <!-- Stats dynamiques -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌐 Test API Optimisé -->
+        <div class="demo-section">
+            <h2 class="text-xl font-semibold mb-4">🌐 Test API Optimisé</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="testApiCall('/forms')" class="tremor-button">GET /forms</button>
+                <button onclick="testApiCall('/dashboard/stats')" class="tremor-button">GET /stats</button>
+                <button onclick="testApiCall('/users/profile')" class="tremor-button">GET /profile</button>
+            </div>
+            <div id="apiResults" class="mt-4 p-4 bg-gray-100 rounded-lg">
+                <p class="text-gray-600">Résultats des tests API s'afficheront ici...</p>
+            </div>
+        </div>
+
+        <!-- 🎯 Animations Demo -->
+        <div class="demo-section">
+            <h2 class="text-xl font-semibold mb-4">🎯 Test des Animations Tremor</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="tremor-card tremor-card-interactive p-4 text-center">
+                    <i class="ri-file-line text-2xl text-blue-600 mb-2"></i>
+                    <p class="text-sm font-medium">Card Hover</p>
+                </div>
+                <div class="tremor-card tremor-card-interactive p-4 text-center">
+                    <i class="ri-bar-chart-line text-2xl text-green-600 mb-2"></i>
+                    <p class="text-sm font-medium">Chart Animation</p>
+                </div>
+                <div class="tremor-card tremor-card-interactive p-4 text-center">
+                    <i class="ri-notification-line text-2xl text-yellow-600 mb-2"></i>
+                    <p class="text-sm font-medium">Notification</p>
+                </div>
+                <div class="tremor-card tremor-card-interactive p-4 text-center">
+                    <i class="ri-loader-line text-2xl text-purple-600 mb-2"></i>
+                    <p class="text-sm font-medium">Loading State</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📋 Log Console -->
+        <div class="demo-section">
+            <h2 class="text-xl font-semibold mb-4">📋 Console de Debug</h2>
+            <div id="debugConsole" class="bg-black text-green-400 p-4 rounded-lg font-mono text-sm h-64 overflow-y-auto">
+                <p>🚀 Console de debug Sprint 2 prête...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🚀 Initialisation des tests Sprint 2
+        document.addEventListener('DOMContentLoaded', () => {
+            logToConsole('🎯 Initialisation des tests Sprint 2');
+            
+            // Test de disponibilité des composants
+            if (window.formEaseCache) {
+                logToConsole('✅ DataCache disponible');
+            } else {
+                logToConsole('❌ DataCache non disponible');
+            }
+            
+            if (window.tremorSkeleton) {
+                logToConsole('✅ SkeletonLoader disponible');
+            } else {
+                logToConsole('❌ SkeletonLoader non disponible');
+            }
+            
+            if (window.optimizedApiService) {
+                logToConsole('✅ OptimizedApiService disponible');
+            } else {
+                logToConsole('❌ OptimizedApiService non disponible');
+            }
+            
+            // Affichage initial des métriques
+            updateMetricsDisplay();
+            
+            // Mise à jour périodique
+            setInterval(updateMetricsDisplay, 2000);
+        });
+
+        // 📋 Fonction de log console
+        function logToConsole(message) {
+            const console = document.getElementById('debugConsole');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `<br>[${timestamp}] ${message}`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // 📊 Mise à jour des métriques
+        function updateMetricsDisplay() {
+            const metricsDiv = document.getElementById('metricsDisplay');
+            
+            let cacheMetrics = {};
+            let apiMetrics = {};
+            
+            if (window.formEaseCache) {
+                cacheMetrics = window.formEaseCache.getAnalytics();
+            }
+            
+            if (window.optimizedApiService) {
+                apiMetrics = window.optimizedApiService.getPerformanceMetrics();
+            }
+            
+            metricsDiv.innerHTML = `
+                <div class="tremor-card p-4">
+                    <div class="text-sm text-gray-600">Cache Hit Rate</div>
+                    <div class="text-2xl font-bold text-blue-600">${cacheMetrics.hitRate || '0%'}</div>
+                </div>
+                <div class="tremor-card p-4">
+                    <div class="text-sm text-gray-600">Cache Entries</div>
+                    <div class="text-2xl font-bold text-green-600">${cacheMetrics.cacheSize || 0}</div>
+                </div>
+                <div class="tremor-card p-4">
+                    <div class="text-sm text-gray-600">API Requests</div>
+                    <div class="text-2xl font-bold text-purple-600">${apiMetrics.requests || 0}</div>
+                </div>
+                <div class="tremor-card p-4">
+                    <div class="text-sm text-gray-600">Avg Response</div>
+                    <div class="text-2xl font-bold text-orange-600">${Math.round(apiMetrics.avgResponseTime || 0)}ms</div>
+                </div>
+            `;
+        }
+
+        // 🎨 Test des skeletons
+        function testSkeletonType(type) {
+            const demo = document.getElementById('skeletonDemo');
+            
+            if (window.tremorSkeleton) {
+                logToConsole(`🎨 Test skeleton: ${type}`);
+                window.tremorSkeleton.applyTo(demo, type);
+                
+                // Auto-suppression après 3 secondes
+                setTimeout(() => {
+                    window.tremorSkeleton.remove(demo, true);
+                    demo.innerHTML = `<p class="text-center text-gray-500 py-20">Skeleton ${type} terminé</p>`;
+                }, 3000);
+            }
+        }
+
+        // 🔧 Tests du cache
+        function testCacheSet() {
+            if (window.formEaseCache) {
+                const testData = { id: Date.now(), name: 'Test Form', created: new Date() };
+                window.formEaseCache.set(`test-${Date.now()}`, testData, 'forms');
+                logToConsole('💾 Données ajoutées au cache');
+                updateCacheStats();
+            }
+        }
+
+        function testCacheGet() {
+            if (window.formEaseCache) {
+                const result = window.formEaseCache.get('test-forms', 'forms');
+                logToConsole(`🔍 Cache GET: ${result ? 'HIT' : 'MISS'}`);
+            }
+        }
+
+        function testCacheInvalidate() {
+            if (window.formEaseCache) {
+                const count = window.formEaseCache.invalidateCategory('forms');
+                logToConsole(`🔄 ${count} entrées invalidées`);
+                updateCacheStats();
+            }
+        }
+
+        function testCacheClear() {
+            if (window.formEaseCache) {
+                window.formEaseCache.clear();
+                logToConsole('🧹 Cache complètement vidé');
+                updateCacheStats();
+            }
+        }
+
+        function updateCacheStats() {
+            if (window.formEaseCache) {
+                const stats = window.formEaseCache.getAnalytics();
+                const statsDiv = document.getElementById('cacheStats');
+                statsDiv.innerHTML = `
+                    <div>Hit Rate: <span class="font-semibold">${stats.hitRate}</span></div>
+                    <div>Entrées: <span class="font-semibold">${stats.cacheSize}</span></div>
+                    <div>Mémoire: <span class="font-semibold">${stats.memoryUsageKB} KB</span></div>
+                    <div>Hits: <span class="font-semibold">${stats.hits}</span></div>
+                    <div>Misses: <span class="font-semibold">${stats.misses}</span></div>
+                `;
+            }
+        }
+
+        // 🌐 Test API
+        async function testApiCall(endpoint) {
+            if (window.optimizedApiService) {
+                logToConsole(`🌐 Test API: ${endpoint}`);
+                const resultsDiv = document.getElementById('apiResults');
+                resultsDiv.innerHTML = '<p class="text-blue-600">⏳ Requête en cours...</p>';
+                
+                try {
+                    const start = Date.now();
+                    const result = await window.optimizedApiService.request(endpoint);
+                    const duration = Date.now() - start;
+                    
+                    resultsDiv.innerHTML = `
+                        <div class="text-green-600 font-semibold">✅ Succès (${duration}ms)</div>
+                        <pre class="mt-2 text-xs bg-white p-2 rounded border">${JSON.stringify(result, null, 2).substring(0, 500)}...</pre>
+                    `;
+                    
+                    logToConsole(`✅ API ${endpoint}: ${duration}ms`);
+                } catch (error) {
+                    resultsDiv.innerHTML = `
+                        <div class="text-red-600 font-semibold">❌ Erreur</div>
+                        <p class="text-sm">${error.message}</p>
+                    `;
+                    
+                    logToConsole(`❌ API ${endpoint}: ${error.message}`);
+                }
+            }
+        }
+
+        // 🎯 Event listeners
+        document.getElementById('testCache')?.addEventListener('click', () => {
+            testCacheSet();
+        });
+
+        document.getElementById('testSkeleton')?.addEventListener('click', () => {
+            testSkeletonType('formList');
+        });
+
+        document.getElementById('testApi')?.addEventListener('click', () => {
+            testApiCall('/forms');
+        });
+
+        document.getElementById('showMetrics')?.addEventListener('click', () => {
+            if (window.formEaseCache) {
+                window.formEaseCache.logStatus();
+            }
+            if (window.optimizedApiService) {
+                const metrics = window.optimizedApiService.getPerformanceMetrics();
+                console.log('📊 API Metrics:', metrics);
+                logToConsole('📊 Métriques affichées dans la console');
+            }
+        });
+
+        // 🎨 Animation d'apparition progressive
+        const cards = document.querySelectorAll('.demo-section');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    </script>
+</body>
+</html>
