@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../styles/tremor-base.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -21,6 +21,47 @@
                                 DEFAULT: '#0ea5e9',
                                 emphasis: '#0284c7',
                                 inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#0ea5e9'
+                            },
+                            border: {
+                                DEFAULT: '#e2e8f0',
+                                emphasis: '#cbd5e1'
+                            },
+                            ring: {
+                                DEFAULT: '#0ea5e9'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
                             }
                         }
                     },
@@ -31,253 +72,389 @@
             }
         }
     </script>
+    <style>
+        .tremor-CardHeader {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tremor-CardContent {
+            padding: 1rem 1.5rem;
+        }
+        .tremor-Button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .tremor-Card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .metric-card .tremor-CardContent {
+            padding: 0.75rem 1rem;
+        }
+        .tremor-Metric {
+            line-height: 1.25;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans">
-    <!-- Navigation Sidebar -->
-    <div class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 transform transition-transform duration-300" id="sidebar">
-        <!-- Logo -->
-        <div class="flex items-center px-6 py-4 border-b border-gray-200">
-            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <i class="ri-file-list-3-line text-white text-xl"></i>
+<<body class="bg-gray-50 font-sans">
+    <!-- Layout principal en grid avec container élargi -->
+    <div class="min-h-screen max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-7 p-4 md:p-6 lg:p-8">
+        <!-- Navigation Sidebar -->
+        <aside class="bg-white rounded-lg shadow-sm border border-gray-200 h-fit">
+            <!-- Logo -->
+            <div class="flex items-center px-4 py-4 border-b border-gray-200">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="ri-file-list-3-line text-white text-lg"></i>
+                </div>
+                <span class="ml-3 text-lg font-bold text-gray-900">FormEase</span>
             </div>
-            <span class="ml-3 text-xl font-bold text-gray-900">FormEase</span>
-        </div>
 
-        <!-- Navigation Menu -->
-        <nav class="mt-6">
-            <div class="px-3">
+            <!-- Navigation Menu -->
+            <nav class="p-4">
                 <!-- Dashboard -->
-                <a href="home.html" class="flex items-center px-3 py-2 text-blue-600 bg-blue-50 rounded-lg mb-1">
-                    <i class="ri-dashboard-line mr-3"></i>
-                    <span>Tableau de bord</span>
+                <a href="home.html" class="flex items-center px-3 py-2 text-blue-600 bg-blue-50 rounded-lg mb-2">
+                    <i class="ri-dashboard-line mr-3 text-sm"></i>
+                    <span class="text-sm font-medium" data-i18n="dashboard">Tableau de bord</span>
                 </a>
 
                 <!-- Forms -->
-                <div class="mt-6">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Formulaires</h3>
-                    <a href="../forms/list.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-file-list-2-line mr-3"></i>
-                        <span>Mes formulaires</span>
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="forms">Formulaires</h3>
+                    <a href="../forms/management.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-file-list-2-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formsList">Mes formulaires</span>
+                    </a>
+                    <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-tools-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formBuilder">Créateur de formulaires</span>
                     </a>
                     <a href="../forms/ai-generator.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-robot-line mr-3"></i>
-                        <span>Generation IA</span>
+                        <i class="ri-robot-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="formAI">Formulaire généré IA</span>
                     </a>
-                    <a href="../forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-tools-line mr-3"></i>
-                        <span>Createur manuel</span>
+                    <a href="../forms/qr-codes.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-qr-code-line mr-3 text-sm"></i>
+                        <span class="text-sm">QR Codes</span>
                     </a>
                 </div>
 
                 <!-- Analytics -->
-                <div class="mt-6">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Analytics</h3>
-                    <a href="../analytics/overview.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-bar-chart-line mr-3"></i>
-                        <span>Statistiques</span>
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="analytics">Analytics</h3>
+                    <a href="../analytics/dashboard.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-bar-chart-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="analytics">Analytics</span>
+                    </a>
+                    <a href="../analytics/reports.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-file-chart-line mr-3 text-sm"></i>
+                        <span class="text-sm">Rapports</span>
+                    </a>
+                    <a href="../analytics/insights.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-lightbulb-line mr-3 text-sm"></i>
+                        <span class="text-sm">Insights</span>
                     </a>
                 </div>
 
-                <!-- Settings -->
-                <div class="mt-6">
-                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Compte</h3>
-                    <a href="../settings/profile.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
-                        <i class="ri-user-line mr-3"></i>
-                        <span>Profil</span>
+                <!-- Subscription -->
+                <div class="mt-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2" data-i18n="subscription">Abonnement</h3>
+                    <a href="../public/pricing.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                        <i class="ri-vip-crown-line mr-3 text-sm"></i>
+                        <span class="text-sm" data-i18n="manageSubscription">Gérer l'abonnement</span>
                     </a>
                 </div>
-            </div>
 
-            <!-- Logout -->
-            <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200">
-                <button id="logoutBtn" class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-                    <i class="ri-logout-box-line mr-3"></i>
-                    <span>Deconnexion</span>
-                </button>
-            </div>
-        </nav>
-    </div>
+                <!-- User Profile & Actions -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <!-- User Info -->
+                    <div class="flex items-center justify-start px-3 py-2 mb-4">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-start pl-2 mr-3">
+                            <span class="text-white text-xs font-medium">JK</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate" id="userName">Jeff KOSI</p>
+                            <p class="text-xs text-blue-600 font-medium">Premium</p>
+                        </div>
+                    </div>
 
-    <!-- Main Content -->
-    <div class="ml-64 min-h-screen">
-        <!-- Header -->
-        <header class="bg-white border-b border-gray-200">
-            <div class="px-6 py-4">
+                    <!-- User Actions -->
+                    <div class="space-y-1">
+                        <button id="sidebarProfileBtn" class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="ri-user-settings-line mr-3 text-sm"></i>
+                            <span class="text-sm" data-i18n="profile">Mon profil</span>
+                        </button>
+                        
+                        <button id="sidebarNotifBtn" class="flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="ri-notification-line mr-3 text-sm"></i>
+                            <span class="text-sm" data-i18n="notifications">Notifications</span>
+                        </button>
+                        
+                        <!-- Séparateur -->
+                        <div class="border-t border-gray-200 my-2"></div>
+                        
+                        <!-- Déconnexion -->
+                        <button id="logoutBtn" class="flex items-center w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <i class="ri-logout-box-line mr-3 text-sm"></i>
+                            <span class="text-sm">Déconnexion</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[calc(100vh-4rem)]">
+        <!-- Main Content Area -->
+        <main class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[calc(100vh-4rem)]">
+            <!-- Header avec titre et informations utilisateur -->
+            <div class="border-b border-gray-200 px-6 py-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-                        <p class="text-gray-600 mt-1">Bienvenue dans votre espace FormEase</p>
+                        <h1 class="text-2xl font-bold text-gray-900" data-i18n="dashboardTitle">Tableau de Bord Principal</h1>
+                        <p class="text-gray-600 text-sm mt-1" id="dashboard-subtitle" data-i18n="dashboardSubtitle">Bienvenue dans votre espace FormEase</p>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                    <div class="flex items-center space-x-3">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center text-sm">
                             <i class="ri-add-line mr-2"></i>
                             Nouveau formulaire
                         </button>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="ri-user-line text-blue-600"></i>
+                        <div class="relative">
+                            <div class="flex items-center space-x-2 cursor-pointer" id="userProfileBtn">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-start pl-2">
+                                    <span class="text-white text-xs font-medium">JK</span>
+                                </div>
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
                             </div>
-                            <div class="text-sm">
-                                <div class="font-medium text-gray-900" id="userName">Utilisateur Premium</div>
-                                <div class="text-gray-500" id="userEmail">jeff.kosi@formease.com</div>
+                            <!-- User Dropdown Menu -->
+                            <div id="userDropdown" class="absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 hidden z-10">
+                                <!-- User Actions -->
+                                <div class="py-1">
+                                    <a href="profile.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        <i class="ri-user-line mr-3 w-4 h-4 flex-shrink-0"></i>
+                                        <span data-i18n="profile">Mon profil</span>
+                                    </a>
+                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        <i class="ri-notification-line mr-3 w-4 h-4 flex-shrink-0"></i>
+                                        <span data-i18n="notifications">Notifications</span>
+                                    </a>
+                                </div>
+                                <!-- Logout -->
+                                <div class="py-1">
+                                    <button id="headerLogoutBtn" class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                        <i class="ri-logout-box-line mr-3 w-4 h-4 flex-shrink-0"></i>
+                                        <span data-i18n="disconnect">Déconnexion</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
 
-        <!-- Dashboard Content -->
-        <main class="p-6">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Total Forms -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Formulaires</p>
-                            <p class="text-3xl font-bold text-gray-900" id="totalForms">0</p>
-                            <p class="text-xs text-green-600 mt-1">+12% ce mois</p>
-                        </div>
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="ri-file-list-line text-blue-600 text-xl"></i>
+            <!-- Contenu du dashboard -->
+            <div class="p-6">
+                <!-- Stats Cards avec style Tremor -->
+                <div class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="main-stats">
+                    <!-- Metric Card 1 -->
+                    <div class="tremor-Card metric-card">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-tremor-content-DEFAULT text-sm">Formulaires totaux</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="totalForms">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                                        <span class="text-green-500 text-xs font-medium">+12%</span>
+                                    </div>
+                                </div>
+                                <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-file-list-line text-blue-600"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Total Responses -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Reponses</p>
-                            <p class="text-3xl font-bold text-gray-900" id="totalResponses">0</p>
-                            <p class="text-xs text-green-600 mt-1">+23% ce mois</p>
-                        </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <i class="ri-chat-3-line text-green-600 text-xl"></i>
+                    <!-- Metric Card 2 -->
+                    <div class="tremor-Card metric-card">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-tremor-content-DEFAULT text-sm">Réponses totales</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="totalResponses">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                                        <span class="text-green-500 text-xs font-medium">+23%</span>
+                                    </div>
+                                </div>
+                                <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-chat-3-line text-green-600"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Conversion Rate -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Taux de conversion</p>
-                            <p class="text-3xl font-bold text-gray-900" id="conversionRate">0%</p>
-                            <p class="text-xs text-green-600 mt-1">+5.2% ce mois</p>
-                        </div>
-                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <i class="ri-bar-chart-line text-purple-600 text-xl"></i>
+                    <!-- Metric Card 3 -->
+                    <div class="tremor-Card metric-card">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-tremor-content-DEFAULT text-sm">Taux de conversion</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="conversionRate">0%</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                                        <span class="text-green-500 text-xs font-medium">+5.2%</span>
+                                    </div>
+                                </div>
+                                <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-trending-up-line text-purple-600"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Active Forms -->
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Formulaires actifs</p>
-                            <p class="text-3xl font-bold text-gray-900" id="activeForms">0</p>
-                            <p class="text-xs text-green-600 mt-1">+8% ce mois</p>
-                        </div>
-                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                            <i class="ri-play-circle-line text-orange-600 text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Forms and Quick Actions -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Recent Forms -->
-                <div class="bg-white rounded-lg border border-gray-200">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold text-gray-900">Formulaires recents</h2>
-                            <a href="../forms/list.html" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Voir tout</a>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4" id="recentForms">
-                            <div class="text-center py-8 text-gray-500">
-                                <i class="ri-file-list-line text-4xl mb-2"></i>
-                                <p>Aucun formulaire trouve</p>
-                                <p class="text-sm">Creez votre premier formulaire pour commencer</p>
+                    <!-- Metric Card 4 -->
+                    <div class="tremor-Card metric-card">
+                        <div class="tremor-CardContent">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-tremor-content-DEFAULT text-sm">Formulaires actifs</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="activeForms">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                                        <span class="text-green-500 text-xs font-medium">+8%</span>
+                                    </div>
+                                </div>
+                                <div class="h-10 w-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-play-circle-line text-orange-600"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-lg border border-gray-200">
-                    <div class="p-6 border-b border-gray-200">
-                        <h2 class="text-lg font-semibold text-gray-900">Actions rapides</h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            <!-- AI Generator -->
-                            <a href="../forms/ai-generator.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <!-- Section Quick Actions moderne -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions rapides</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <a href="../forms/ai-generator.html" class="tremor-Card p-4 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
                                     <i class="ri-robot-line text-blue-600"></i>
                                 </div>
-                                <div class="ml-4 flex-1">
-                                    <h3 class="font-medium text-gray-900">Generation par IA</h3>
-                                    <p class="text-sm text-gray-600">Decrivez votre formulaire et laissez l'IA le creer</p>
+                                <div>
+                                    <p class="font-medium text-gray-900">Créer avec IA</p>
+                                    <p class="text-sm text-gray-500">Générateur intelligent</p>
                                 </div>
-                                <i class="ri-arrow-right-line text-gray-400"></i>
-                            </a>
+                            </div>
+                        </a>
 
-                            <!-- Manual Builder -->
-                            <a href="../forms/builder.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="tremor-Card p-4 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
                                     <i class="ri-tools-line text-green-600"></i>
                                 </div>
-                                <div class="ml-4 flex-1">
-                                    <h3 class="font-medium text-gray-900">Createur manuel</h3>
-                                    <p class="text-sm text-gray-600">Interface drag & drop pour creer sur mesure</p>
+                                <div>
+                                    <p class="font-medium text-gray-900">Form Builder</p>
+                                    <p class="text-sm text-gray-500">Créateur visuel</p>
                                 </div>
-                                <i class="ri-arrow-right-line text-gray-400"></i>
-                            </a>
+                            </div>
+                        </a>
 
-                            <!-- Templates -->
-                            <a href="../templates/gallery.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <a href="../templates/gallery.html" class="tremor-Card p-4 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
                                     <i class="ri-layout-grid-line text-purple-600"></i>
                                 </div>
-                                <div class="ml-4 flex-1">
-                                    <h3 class="font-medium text-gray-900">Modeles predefinis</h3>
-                                    <p class="text-sm text-gray-600">Choisir parmi nos templates populaires</p>
+                                <div>
+                                    <p class="font-medium text-gray-900">Templates</p>
+                                    <p class="text-sm text-gray-500">Modèles prédéfinis</p>
                                 </div>
-                                <i class="ri-arrow-right-line text-gray-400"></i>
-                            </a>
+                            </div>
+                        </a>
 
-                            <!-- Import -->
-                            <a href="../tools/import.html" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                    <i class="ri-upload-line text-orange-600"></i>
+                        <a href="../analytics/dashboard.html" class="tremor-Card p-4 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="ri-bar-chart-line text-yellow-600"></i>
                                 </div>
-                                <div class="ml-4 flex-1">
-                                    <h3 class="font-medium text-gray-900">Importer un formulaire</h3>
-                                    <p class="text-sm text-gray-600">Importer depuis Google Forms, TypeForm, etc.</p>
+                                <div>
+                                    <p class="font-medium text-gray-900">Analytics</p>
+                                    <p class="text-sm text-gray-500">Analyses détaillées</p>
                                 </div>
-                                <i class="ri-arrow-right-line text-gray-400"></i>
-                            </a>
-                        </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Recent Activity -->
-            <div class="mt-8">
-                <div class="bg-white rounded-lg border border-gray-200">
-                    <div class="p-6 border-b border-gray-200">
-                        <h2 class="text-lg font-semibold text-gray-900">Activite recente</h2>
+                <!-- Recent Forms et Recent Activity avec style moderne -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Recent Forms -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900">Formulaires récents</h3>
+                                <a href="../forms/management.html" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Voir tout</a>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4" id="recentForms">
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="ri-file-list-line text-4xl mb-2"></i>
+                                    <p>Aucun formulaire trouvé</p>
+                                    <p class="text-sm">Créez votre premier formulaire pour commencer</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-6">
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="ri-time-line text-4xl mb-2"></i>
-                            <p>Aucune activite recente</p>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Activité récente</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <i class="ri-check-line text-green-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-900">Nouveau formulaire créé</p>
+                                        <p class="text-sm text-gray-500">"Formulaire de Contact" - Il y a 2 heures</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="ri-chat-3-line text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-900">15 nouvelles réponses</p>
+                                        <p class="text-sm text-gray-500">"Sondage Satisfaction" - Il y a 4 heures</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <i class="ri-bar-chart-line text-purple-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-900">Rapport généré</p>
+                                        <p class="text-sm text-gray-500">"Analytics hebdomadaire" - Il y a 1 jour</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -285,158 +462,171 @@
         </main>
     </div>
 
-    <script src="../../scripts/core.js"></script>
     <script>
-        // Check authentication
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '../auth/login.html';
-        }
-
-        // Load user info
-        async function loadUserInfo() {
-            try {
-                const response = await fetch('http://localhost:4000/api/auth/me', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const user = await response.json();
-                    document.getElementById('userName').textContent = `${user.firstName || user.first_name || 'Utilisateur'} ${user.lastName || user.last_name || ''}`;
-                    document.getElementById('userEmail').textContent = user.email || 'Email non disponible';
-                } else if (response.status === 401) {
-                    // Token expire, rediriger vers login
-                    localStorage.removeItem('token');
+        // Simple initialization without conflicts
+        (function() {
+            'use strict';
+            
+            let initialized = false;
+            
+            function init() {
+                if (initialized) return;
+                initialized = true;
+                
+                // Check authentication
+                const token = localStorage.getItem('token');
+                if (!token) {
                     window.location.href = '../auth/login.html';
-                } else {
-                    // Autres erreurs, ne pas deconnecter
-                    console.error('Erreur de chargement du profil:', response.status);
-                    document.getElementById('userName').textContent = 'Utilisateur Premium';
-                    document.getElementById('userEmail').textContent = 'jeff.kosi@formease.com';
+                    return;
                 }
-            } catch (error) {
-                console.error('Error loading user info:', error);
-                // En cas d'erreur reseau, garder l'utilisateur connecte
-                document.getElementById('userName').textContent = 'Utilisateur Premium';
-                document.getElementById('userEmail').textContent = 'jeff.kosi@formease.com';
-            }
-        }
 
-        // Load dashboard stats
-        async function loadDashboardStats() {
-            try {
-                const response = await fetch('http://localhost:4000/api/dashboard/stats', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                // User Profile Dropdown
+                const userProfileBtn = document.getElementById('userProfileBtn');
+                const userDropdown = document.getElementById('userDropdown');
+                
+                if (userProfileBtn && userDropdown) {
+                    userProfileBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        userDropdown.classList.toggle('hidden');
+                        return false;
+                    };
 
-                if (response.ok) {
-                    const stats = await response.json();
-                    document.getElementById('totalForms').textContent = stats.totalForms || 0;
-                    document.getElementById('totalResponses').textContent = stats.totalResponses || 0;
-                    document.getElementById('conversionRate').textContent = `${stats.conversionRate || 0}%`;
-                    document.getElementById('activeForms').textContent = stats.activeForms || 0;
-                } else {
-                    // En cas d'erreur, afficher des valeurs par defaut
-                    console.error('Erreur de chargement des stats:', response.status);
-                    document.getElementById('totalForms').textContent = '0';
-                    document.getElementById('totalResponses').textContent = '0';
-                    document.getElementById('conversionRate').textContent = '0%';
-                    document.getElementById('activeForms').textContent = '0';
+                    // Close dropdown when clicking outside
+                    document.onclick = function(event) {
+                        if (!userProfileBtn.contains(event.target)) {
+                            userDropdown.classList.add('hidden');
+                        }
+                    };
                 }
-            } catch (error) {
-                console.error('Error loading dashboard stats:', error);
-                // Afficher des valeurs par defaut en cas d'erreur
-                document.getElementById('totalForms').textContent = '0';
-                document.getElementById('totalResponses').textContent = '0';
-                document.getElementById('conversionRate').textContent = '0%';
-                document.getElementById('activeForms').textContent = '0';
-            }
-        }
 
-        // Load recent forms
-        async function loadRecentForms() {
-            try {
-                const response = await fetch('http://localhost:4000/api/forms?limit=5', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                // Sidebar Profile Button
+                const sidebarProfileBtn = document.getElementById('sidebarProfileBtn');
+                if (sidebarProfileBtn) {
+                    sidebarProfileBtn.onclick = function(e) {
+                        e.preventDefault();
+                        window.location.href = 'profile.html';
+                        return false;
+                    };
+                }
 
-                if (response.ok) {
-                    const forms = await response.json();
-                    const container = document.getElementById('recentForms');
-                    
-                    if (forms.length > 0) {
-                        container.innerHTML = forms.map(form => `
-                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i class="ri-file-list-line text-blue-600"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <h4 class="font-medium text-gray-900">${form.title}</h4>
-                                        <p class="text-sm text-gray-600">${form.responses || 0} reponses</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="px-2 py-1 text-xs rounded-full ${form.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                        ${form.status === 'active' ? 'Actif' : 'Inactif'}
-                                    </span>
-                                    <a href="../forms/preview.html?id=${form.id}" class="text-blue-600 hover:text-blue-700">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        `).join('');
-                    } else {
-                        container.innerHTML = `
-                            <div class="text-center py-8 text-gray-500">
-                                <i class="ri-file-list-line text-4xl mb-2"></i>
-                                <p>Aucun formulaire trouve</p>
-                                <p class="text-sm">Creez votre premier formulaire pour commencer</p>
-                            </div>
-                        `;
-                    }
-                } else {
-                    // En cas d'erreur, afficher un message informatif
-                    const container = document.getElementById('recentForms');
+                // Sidebar Notifications Button
+                const sidebarNotifBtn = document.getElementById('sidebarNotifBtn');
+                if (sidebarNotifBtn) {
+                    sidebarNotifBtn.onclick = function(e) {
+                        e.preventDefault();
+                        alert('Notifications - Fonctionnalité à implémenter');
+                        return false;
+                    };
+                }
+
+                // Logout functionality
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.onclick = function(e) {
+                        e.preventDefault();
+                        if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                            localStorage.removeItem('token');
+                            window.location.href = '../auth/login.html';
+                        }
+                        return false;
+                    };
+                }
+
+                const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+                if (headerLogoutBtn) {
+                    headerLogoutBtn.onclick = function(e) {
+                        e.preventDefault();
+                        if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                            localStorage.removeItem('token');
+                            window.location.href = '../auth/login.html';
+                        }
+                        return false;
+                    };
+                }
+
+                // Set default values
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl) userNameEl.textContent = 'Jeff KOSI';
+
+                const totalFormsEl = document.getElementById('totalForms');
+                if (totalFormsEl) totalFormsEl.textContent = '8';
+
+                const totalResponsesEl = document.getElementById('totalResponses');
+                if (totalResponsesEl) totalResponsesEl.textContent = '1,247';
+
+                const conversionRateEl = document.getElementById('conversionRate');
+                if (conversionRateEl) conversionRateEl.textContent = '72%';
+
+                const activeFormsEl = document.getElementById('activeForms');
+                if (activeFormsEl) activeFormsEl.textContent = '6';
+
+                // Load demo forms
+                const container = document.getElementById('recentForms');
+                if (container) {
                     container.innerHTML = `
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="ri-error-warning-line text-4xl mb-2"></i>
-                            <p>Impossible de charger les formulaires</p>
-                            <p class="text-sm">Verifiez votre connexion</p>
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-file-list-line text-blue-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="font-medium text-gray-900">Formulaire de Contact</h4>
+                                    <p class="text-sm text-gray-600">245 réponses</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Actif</span>
+                                <a href="#" class="text-blue-600 hover:text-blue-700">
+                                    <i class="ri-eye-line"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-file-list-line text-green-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="font-medium text-gray-900">Sondage Satisfaction</h4>
+                                    <p class="text-sm text-gray-600">128 réponses</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Actif</span>
+                                <a href="#" class="text-blue-600 hover:text-blue-700">
+                                    <i class="ri-eye-line"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-file-list-line text-purple-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="font-medium text-gray-900">Inscription Événement</h4>
+                                    <p class="text-sm text-gray-600">89 réponses</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Inactif</span>
+                                <a href="#" class="text-blue-600 hover:text-blue-700">
+                                    <i class="ri-eye-line"></i>
+                                </a>
+                            </div>
                         </div>
                     `;
                 }
-            } catch (error) {
-                console.error('Error loading recent forms:', error);
-                const container = document.getElementById('recentForms');
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="ri-wifi-off-line text-4xl mb-2"></i>
-                        <p>Erreur de connexion</p>
-                        <p class="text-sm">Verifiez que le serveur est demarre</p>
-                    </div>
-                `;
             }
-        }
-
-        // Logout functionality
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm('Etes-vous sur de vouloir vous deconnecter ?')) {
-                localStorage.removeItem('token');
-                window.location.href = '../auth/login.html';
+            
+            // Initialize when page loads
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
             }
-        });
-
-        // Load all dashboard data
-        loadUserInfo();
-        loadDashboardStats();
-        loadRecentForms();
+        })();
     </script>
 </body>
 </html>

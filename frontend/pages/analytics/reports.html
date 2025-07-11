@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tremor charts - pas besoin de Chart.js -->
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tremor-Button {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        .tremor-Button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .report-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .report-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard/home.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
+                    </a>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="../dashboard/home.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Tableau de bord
+                        </a>
+                        <a href="dashboard.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Analytics
+                        </a>
+                        <a href="reports.html" class="text-tremor-brand-DEFAULT font-medium">
+                            Rapports
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <div class="w-8 h-8 bg-tremor-brand-DEFAULT rounded-full flex items-center justify-center">
+                                <i class="ri-user-line text-white"></i>
+                            </div>
+                            <span class="hidden md:block">Mon compte</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-20 pb-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-tremor-content-strong mb-2">
+                        Rapports & Insights
+                    </h1>
+                    <p class="text-tremor-content-DEFAULT">
+                        Explorez vos données avec des rapports détaillés et des analyses approfondies
+                    </p>
+                </div>
+                <div class="flex space-x-3 mt-4 md:mt-0">
+                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                        <i class="ri-calendar-line mr-2"></i>
+                        Planifier rapport
+                    </button>
+                    <button class="tremor-Button inline-flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm">
+                        <i class="ri-add-line mr-2"></i>
+                        Nouveau rapport
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Report Categories -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Quick Reports -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                    Rapports rapides
+                </h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Performance Report -->
+                    <div class="tremor-Card p-6 report-card" onclick="generateReport('performance')">
+                        <div class="flex items-center mb-4">
+                            <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="ri-speed-line text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-tremor-content-strong">Performance</h3>
+                                <p class="text-sm text-tremor-content-DEFAULT">Analyse des métriques clés</p>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-subtle text-sm mb-4">
+                            Taux de conversion, temps de réponse, abandons...
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-tremor-content-subtle">Dernière mise à jour: maintenant</span>
+                            <i class="ri-arrow-right-line text-tremor-content-DEFAULT"></i>
+                        </div>
+                    </div>
+
+                    <!-- Traffic Report -->
+                    <div class="tremor-Card p-6 report-card" onclick="generateReport('traffic')">
+                        <div class="flex items-center mb-4">
+                            <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="ri-traffic-light-line text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-tremor-content-strong">Trafic</h3>
+                                <p class="text-sm text-tremor-content-DEFAULT">Sources et comportement</p>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-subtle text-sm mb-4">
+                            Origines du trafic, appareils, géolocalisation...
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-tremor-content-subtle">Dernière mise à jour: il y a 15min</span>
+                            <i class="ri-arrow-right-line text-tremor-content-DEFAULT"></i>
+                        </div>
+                    </div>
+
+                    <!-- Response Analysis -->
+                    <div class="tremor-Card p-6 report-card" onclick="generateReport('responses')">
+                        <div class="flex items-center mb-4">
+                            <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="ri-message-line text-purple-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-tremor-content-strong">Réponses</h3>
+                                <p class="text-sm text-tremor-content-DEFAULT">Analyse des soumissions</p>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-subtle text-sm mb-4">
+                            Tendances, qualité des données, validation...
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-tremor-content-subtle">Dernière mise à jour: il y a 30min</span>
+                            <i class="ri-arrow-right-line text-tremor-content-DEFAULT"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Reports -->
+            <div class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-tremor-content-strong">
+                        Rapports détaillés
+                    </h2>
+                    <div class="flex space-x-3">
+                        <input type="text" placeholder="Rechercher un rapport..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                        <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                            <option>Tous les types</option>
+                            <option>Performance</option>
+                            <option>Trafic</option>
+                            <option>Conversion</option>
+                            <option>Qualité</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid gap-6">
+                    
+                    <!-- Report Table -->
+                    <div class="tremor-Card p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4 font-semibold text-tremor-content-strong">Rapport</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Type</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Période</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Créé le</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Statut</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center">
+                                                <i class="ri-file-chart-line text-blue-600 mr-3"></i>
+                                                <div>
+                                                    <p class="font-medium text-tremor-content-strong">Analyse Mensuelle Décembre 2024</p>
+                                                    <p class="text-sm text-tremor-content-DEFAULT">Rapport complet sur les performances</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                Performance
+                                            </span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="text-tremor-content-DEFAULT">1-31 Déc 2024</span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="text-tremor-content-DEFAULT">2 Jan 2025</span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="ri-checkbox-circle-line mr-1"></i>
+                                                Prêt
+                                            </span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <div class="flex justify-center space-x-2">
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT" title="Voir">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT" title="Télécharger">
+                                                    <i class="ri-download-line"></i>
+                                                </button>
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT" title="Partager">
+                                                    <i class="ri-share-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center">
+                                                <i class="ri-line-chart-line text-green-600 mr-3"></i>
+                                                <div>
+                                                    <p class="font-medium text-tremor-content-strong">Rapport Trafic Hebdomadaire</p>
+                                                    <p class="text-sm text-tremor-content-DEFAULT">Sources et comportement des visiteurs</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Trafic
+                                            </span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="text-tremor-content-DEFAULT">23-29 Déc 2024</span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="text-tremor-content-DEFAULT">30 Déc 2024</span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="ri-checkbox-circle-line mr-1"></i>
+                                                Prêt
+                                            </span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <div class="flex justify-center space-x-2">
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT" title="Voir">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT" title="Télécharger">
+                                                    <i class="ri-download-line"></i>
+                                                </button>
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT" title="Partager">
+                                                    <i class="ri-share-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center">
+                                                <i class="ri-pie-chart-line text-purple-600 mr-3"></i>
+                                                <div>
+                                                    <p class="font-medium text-tremor-content-strong">Analyse de Conversion Q4 2024</p>
+                                                    <p class="text-sm text-tremor-content-DEFAULT">Entonnoirs et optimisations</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                Conversion
+                                            </span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="text-tremor-content-DEFAULT">1 Oct - 31 Déc 2024</span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="text-tremor-content-DEFAULT">28 Déc 2024</span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <i class="ri-time-line mr-1"></i>
+                                                En cours
+                                            </span>
+                                        </td>
+                                        <td class="text-center py-4 px-4">
+                                            <div class="flex justify-center space-x-2">
+                                                <button class="p-2 text-tremor-content-subtle" disabled title="En génération">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                                <button class="p-2 text-tremor-content-subtle" disabled title="En génération">
+                                                    <i class="ri-download-line"></i>
+                                                </button>
+                                                <button class="p-2 text-tremor-content-DEFAULT hover:text-red-600" title="Annuler">
+                                                    <i class="ri-close-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Report Builder -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                    Créateur de rapport personnalisé
+                </h2>
+                
+                <div class="tremor-Card p-6">
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        
+                        <!-- Report Configuration -->
+                        <div>
+                            <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                                Configuration
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                        Nom du rapport
+                                    </label>
+                                    <input type="text" 
+                                           placeholder="Ex: Analyse personnalisée janvier 2025"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                        Période
+                                    </label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <input type="date" 
+                                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                                        <input type="date" 
+                                               class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                        Formulaires inclus
+                                    </label>
+                                    <select multiple class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT h-24">
+                                        <option>Formulaire de Contact</option>
+                                        <option>Inscription Événement</option>
+                                        <option>Sondage Satisfaction</option>
+                                        <option>Newsletter Signup</option>
+                                        <option>Demande de Demo</option>
+                                    </select>
+                                    <p class="text-xs text-tremor-content-subtle mt-1">
+                                        Maintenez Ctrl pour sélectionner plusieurs formulaires
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Metrics Selection -->
+                        <div>
+                            <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                                Métriques à inclure
+                            </h3>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric1" checked 
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric1" class="ml-3 text-sm text-tremor-content-strong">
+                                        Nombre de vues
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric2" checked
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric2" class="ml-3 text-sm text-tremor-content-strong">
+                                        Nombre de réponses
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric3" checked
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric3" class="ml-3 text-sm text-tremor-content-strong">
+                                        Taux de conversion
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric4"
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric4" class="ml-3 text-sm text-tremor-content-strong">
+                                        Temps moyen de completion
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric5"
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric5" class="ml-3 text-sm text-tremor-content-strong">
+                                        Sources de trafic
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric6"
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric6" class="ml-3 text-sm text-tremor-content-strong">
+                                        Répartition par appareil
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="metric7"
+                                           class="w-4 h-4 text-tremor-brand-DEFAULT border-gray-300 rounded focus:ring-tremor-brand-DEFAULT">
+                                    <label for="metric7" class="ml-3 text-sm text-tremor-content-strong">
+                                        Analyse géographique
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <div class="flex space-x-3">
+                                    <button class="flex-1 tremor-Button inline-flex items-center justify-center px-4 py-2 rounded-lg text-white font-medium">
+                                        <i class="ri-play-line mr-2"></i>
+                                        Générer le rapport
+                                    </button>
+                                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-tremor-content-DEFAULT hover:bg-gray-50">
+                                        <i class="ri-save-line mr-2"></i>
+                                        Sauvegarder
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                    Insights automatiques
+                </h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Insight Card 1 -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-trending-up-line text-green-600"></i>
+                            </div>
+                            <span class="text-xs text-tremor-content-subtle">Il y a 2h</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-tremor-content-strong mb-2">
+                            Pic de trafic détecté
+                        </h3>
+                        <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                            Le formulaire "Inscription Événement" a reçu 300% plus de vues que d'habitude dans les dernières 24h.
+                        </p>
+                        <div class="flex items-center text-tremor-brand-DEFAULT text-sm">
+                            <i class="ri-arrow-right-line mr-1"></i>
+                            <span>Voir les détails</span>
+                        </div>
+                    </div>
+
+                    <!-- Insight Card 2 -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-alert-line text-red-600"></i>
+                            </div>
+                            <span class="text-xs text-tremor-content-subtle">Il y a 6h</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-tremor-content-strong mb-2">
+                            Baisse de conversion
+                        </h3>
+                        <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                            Le taux de conversion du formulaire "Contact" a chuté de 15% depuis hier. Vérifiez les modifications récentes.
+                        </p>
+                        <div class="flex items-center text-tremor-brand-DEFAULT text-sm">
+                            <i class="ri-arrow-right-line mr-1"></i>
+                            <span>Analyser les causes</span>
+                        </div>
+                    </div>
+
+                    <!-- Insight Card 3 -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="ri-lightbulb-line text-blue-600"></i>
+                            </div>
+                            <span class="text-xs text-tremor-content-subtle">Il y a 1j</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-tremor-content-strong mb-2">
+                            Opportunité d'optimisation
+                        </h3>
+                        <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                            Les utilisateurs mobiles abandonnent souvent à l'étape 3. Considérez simplifier ce champ.
+                        </p>
+                        <div class="flex items-center text-tremor-brand-DEFAULT text-sm">
+                            <i class="ri-arrow-right-line mr-1"></i>
+                            <span>Voir les recommandations</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i class="ri-form-line text-xl text-tremor-brand-DEFAULT"></i>
+                    <span class="text-tremor-content-strong font-medium">FormEase</span>
+                </div>
+                <div class="flex space-x-6 text-sm text-tremor-content-subtle">
+                    <a href="../utils/help.html" class="hover:text-tremor-brand-DEFAULT">Aide</a>
+                    <a href="../utils/api-docs.html" class="hover:text-tremor-brand-DEFAULT">API</a>
+                    <a href="../public/about.html" class="hover:text-tremor-brand-DEFAULT">À propos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function generateReport(type) {
+            // Simulate report generation
+            alert(`Génération du rapport ${type} en cours...`);
+        }
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/95');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-md');
+                nav.classList.add('bg-white/95');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -279,3 +279,186 @@ exports.updateProfile = async (req, res) => {
     });
   }
 };
+
+// Rafraîchissement du token JWT
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refresh_token } = req.body;
+    
+    if (!refresh_token) {
+      return res.status(400).json({
+        success: false,
+        error: 'REFRESH_TOKEN_REQUIRED',
+        message: 'Token de rafraîchissement requis'
+      });
+    }
+
+    // Vérifier le refresh token dans la base de données
+    const tokenRecord = await prisma.refreshToken.findUnique({
+      where: { token: refresh_token },
+      include: { user: true }
+    });
+
+    if (!tokenRecord || tokenRecord.expires_at < new Date()) {
+      return res.status(401).json({
+        success: false,
+        error: 'INVALID_REFRESH_TOKEN',
+        message: 'Token de rafraîchissement invalide ou expiré'
+      });
+    }
+
+    // Générer un nouveau token d'accès
+    const jwt = require('jsonwebtoken');
+    const accessToken = jwt.sign(
+      { 
+        userId: tokenRecord.user.id, 
+        email: tokenRecord.user.email,
+        role: tokenRecord.user.role,
+        plan: tokenRecord.user.plan
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // Générer un nouveau refresh token
+    const newRefreshToken = require('crypto').randomBytes(32).toString('hex');
+    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 jours
+
+    // Mettre à jour le refresh token en base
+    await prisma.refreshToken.update({
+      where: { id: tokenRecord.id },
+      data: {
+        token: newRefreshToken,
+        expires_at: refreshExpiresAt
+      }
+    });
+
+    logger.info('Token refreshed successfully', {
+      userId: tokenRecord.user.id,
+      ip: req.ip
+    });
+
+    res.json({
+      success: true,
+      token: accessToken,
+      refresh_token: newRefreshToken,
+      expires_in: 3600, // 1 heure en secondes
+      user: {
+        id: tokenRecord.user.id,
+        email: tokenRecord.user.email,
+        role: tokenRecord.user.role,
+        plan: tokenRecord.user.plan
+      }
+    });
+
+  } catch (error) {
+    logger.error('Token refresh error', {
+      error: error.message,
+      ip: req.ip
+    });
+
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_SERVER_ERROR',
+      message: 'Erreur lors du rafraîchissement du token'
+    });
+  }
+};
+
+// Déconnexion utilisateur
+exports.logout = async (req, res) => {
+  try {
+    const { refresh_token } = req.body;
+    const userId = req.user?.id;
+
+    // Si un refresh token est fourni, le supprimer de la base
+    if (refresh_token) {
+      await prisma.refreshToken.deleteMany({
+        where: { 
+          token: refresh_token,
+          user_id: userId 
+        }
+      });
+    }
+
+    // Optionnel : Supprimer tous les refresh tokens de l'utilisateur
+    if (req.body.logout_all_devices && userId) {
+      await prisma.refreshToken.deleteMany({
+        where: { user_id: userId }
+      });
+      
+      logger.info('User logged out from all devices', {
+        userId,
+        ip: req.ip
+      });
+    } else {
+      logger.info('User logged out', {
+        userId,
+        ip: req.ip
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Déconnexion réussie'
+    });
+
+  } catch (error) {
+    logger.error('Logout error', {
+      error: error.message,
+      userId: req.user?.id,
+      ip: req.ip
+    });
+
+    // Même en cas d'erreur, on confirme la déconnexion côté client
+    res.json({
+      success: true,
+      message: 'Déconnexion réussie'
+    });
+  }
+};
+
+// Révocation de tous les tokens d'un utilisateur (sécurité)
+exports.revokeAllTokens = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'UNAUTHORIZED',
+        message: 'Utilisateur non authentifié'
+      });
+    }
+
+    // Supprimer tous les refresh tokens
+    const deletedTokens = await prisma.refreshToken.deleteMany({
+      where: { user_id: userId }
+    });
+
+    logger.warn('All tokens revoked for user', {
+      userId,
+      deletedCount: deletedTokens.count,
+      ip: req.ip
+    });
+
+    res.json({
+      success: true,
+      message: `${deletedTokens.count} tokens révoqués avec succès`,
+      revoked_tokens: deletedTokens.count
+    });
+
+  } catch (error) {
+    logger.error('Token revocation error', {
+      error: error.message,
+      userId: req.user?.id,
+      ip: req.ip
+    });
+
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_SERVER_ERROR',
+      message: 'Erreur lors de la révocation des tokens'
+    });
+  }
+};

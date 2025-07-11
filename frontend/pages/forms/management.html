@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Formulaires - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tremor-Button {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        .tremor-Button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .form-card {
+            transition: all 0.3s ease;
+        }
+        .form-card:hover {
+            transform: translateY(-4px);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .status-draft {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-archived {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard/home.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
+                    </a>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="../dashboard/home.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Tableau de bord
+                        </a>
+                        <a href="management.html" class="text-tremor-brand-DEFAULT font-medium">
+                            Mes formulaires
+                        </a>
+                        <a href="../analytics/dashboard.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Analytics
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <div class="w-8 h-8 bg-tremor-brand-DEFAULT rounded-full flex items-center justify-center">
+                                <i class="ri-user-line text-white"></i>
+                            </div>
+                            <span class="hidden md:block">Mon compte</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-20 pb-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-tremor-content-strong mb-2">
+                        Mes Formulaires
+                    </h1>
+                    <p class="text-tremor-content-DEFAULT">
+                        Gérez et organisez tous vos formulaires en un seul endroit
+                    </p>
+                </div>
+                <div class="flex space-x-3 mt-4 md:mt-0">
+                    <a href="../forms/ai-generator.html" class="tremor-Button inline-flex items-center px-4 py-2 rounded-lg text-white font-medium">
+                        <i class="ri-magic-line mr-2"></i>
+                        IA Generator
+                    </a>
+                    <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="bg-gray-100 hover:bg-gray-200 text-tremor-content-strong inline-flex items-center px-4 py-2 rounded-lg font-medium transition-colors">
+                        <i class="ri-add-line mr-2"></i>
+                        Nouveau formulaire
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="tremor-Card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Total formulaires</p>
+                            <p class="text-2xl font-bold text-tremor-content-strong">12</p>
+                        </div>
+                        <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-file-list-line text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Réponses ce mois</p>
+                            <p class="text-2xl font-bold text-tremor-content-strong">2,847</p>
+                        </div>
+                        <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-chat-3-line text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Taux de conversion</p>
+                            <p class="text-2xl font-bold text-tremor-content-strong">68%</p>
+                        </div>
+                        <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-trending-up-line text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Formulaires actifs</p>
+                            <p class="text-2xl font-bold text-tremor-content-strong">8</p>
+                        </div>
+                        <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-play-circle-line text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters and Search -->
+    <section class="pb-6 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <!-- Search -->
+                <div class="relative flex-1 max-w-md">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="ri-search-line text-tremor-content-subtle"></i>
+                    </div>
+                    <input type="text" placeholder="Rechercher un formulaire..."
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT focus:border-tremor-brand-DEFAULT">
+                </div>
+
+                <!-- Filters -->
+                <div class="flex space-x-4">
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT focus:border-tremor-brand-DEFAULT">
+                        <option>Tous les statuts</option>
+                        <option>Actif</option>
+                        <option>Brouillon</option>
+                        <option>Archivé</option>
+                    </select>
+                    
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT focus:border-tremor-brand-DEFAULT">
+                        <option>Trier par</option>
+                        <option>Date de création</option>
+                        <option>Dernière modification</option>
+                        <option>Nombre de réponses</option>
+                        <option>Nom A-Z</option>
+                    </select>
+
+                    <button class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <i class="ri-filter-line text-tremor-content-DEFAULT"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forms Grid -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Form Card 1 -->
+                <div class="tremor-Card p-6 form-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="status-badge status-active">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            Actif
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleDropdown('form1')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="form1" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Modifier</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Dupliquer</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Partager</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Analytics</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Formulaire de Contact
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Formulaire de contact principal pour le site web
+                    </p>
+                    
+                    <div class="flex items-center justify-between text-sm text-tremor-content-subtle mb-4">
+                        <span>Créé le 15 jan 2025</span>
+                        <span>Modifié il y a 2h</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">1,247</p>
+                            <p class="text-xs text-tremor-content-subtle">Vues</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">321</p>
+                            <p class="text-xs text-tremor-content-subtle">Réponses</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">26%</p>
+                            <p class="text-xs text-tremor-content-subtle">Taux</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="flex-1 tremor-Button text-center py-2 px-4 rounded-lg text-white text-sm">
+                            Modifier
+                        </a>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <i class="ri-share-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <i class="ri-bar-chart-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Card 2 -->
+                <div class="tremor-Card p-6 form-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="status-badge status-draft">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                            Brouillon
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleDropdown('form2')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="form2" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Modifier</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Publier</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Dupliquer</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Sondage Satisfaction Client
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Évaluation de la satisfaction après achat
+                    </p>
+                    
+                    <div class="flex items-center justify-between text-sm text-tremor-content-subtle mb-4">
+                        <span>Créé le 10 jan 2025</span>
+                        <span>Modifié il y a 1j</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">-</p>
+                            <p class="text-xs text-tremor-content-subtle">Vues</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">-</p>
+                            <p class="text-xs text-tremor-content-subtle">Réponses</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">-</p>
+                            <p class="text-xs text-tremor-content-subtle">Taux</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="flex-1 tremor-Button text-center py-2 px-4 rounded-lg text-white text-sm">
+                            Continuer
+                        </a>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <i class="ri-eye-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Card 3 -->
+                <div class="tremor-Card p-6 form-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="status-badge status-active">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            Actif
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleDropdown('form3')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="form3" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Modifier</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Dupliquer</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Partager</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Analytics</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Inscription Événement
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Formulaire d'inscription pour notre prochain webinar
+                    </p>
+                    
+                    <div class="flex items-center justify-between text-sm text-tremor-content-subtle mb-4">
+                        <span>Créé le 8 jan 2025</span>
+                        <span>Modifié il y a 3h</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">856</p>
+                            <p class="text-xs text-tremor-content-subtle">Vues</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">127</p>
+                            <p class="text-xs text-tremor-content-subtle">Réponses</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">15%</p>
+                            <p class="text-xs text-tremor-content-subtle">Taux</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="flex-1 tremor-Button text-center py-2 px-4 rounded-lg text-white text-sm">
+                            Modifier
+                        </a>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <i class="ri-share-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <i class="ri-bar-chart-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Card 4 -->
+                <div class="tremor-Card p-6 form-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="status-badge status-archived">
+                            <div class="w-2 h-2 bg-gray-500 rounded-full mr-2"></div>
+                            Archivé
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleDropdown('form4')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="form4" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Restaurer</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Dupliquer</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Exporter données</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer définitivement</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Feedback Produit Q4
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Collecte de retours sur nos nouvelles fonctionnalités
+                    </p>
+                    
+                    <div class="flex items-center justify-between text-sm text-tremor-content-subtle mb-4">
+                        <span>Créé le 1 déc 2024</span>
+                        <span>Archivé le 5 jan 2025</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">2,154</p>
+                            <p class="text-xs text-tremor-content-subtle">Vues</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">573</p>
+                            <p class="text-xs text-tremor-content-subtle">Réponses</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-lg font-bold text-tremor-content-strong">27%</p>
+                            <p class="text-xs text-tremor-content-subtle">Taux</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-center py-2 px-4 rounded-lg text-tremor-content-strong text-sm transition-colors">
+                            Restaurer
+                        </button>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <i class="ri-download-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State for more forms -->
+                <div class="tremor-Card p-8 text-center border-2 border-dashed border-gray-300">
+                    <div class="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-add-line text-2xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Créer un nouveau formulaire
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Utilisez l'IA ou l'éditeur visuel pour créer votre prochain formulaire
+                    </p>
+                    <div class="flex flex-col space-y-2">
+                        <a href="../forms/ai-generator.html" class="tremor-Button text-center py-2 px-4 rounded-lg text-white text-sm">
+                            <i class="ri-magic-line mr-2"></i>
+                            Avec l'IA
+                        </a>
+                        <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="bg-gray-100 hover:bg-gray-200 text-center py-2 px-4 rounded-lg text-tremor-content-strong text-sm transition-colors">
+                            <i class="ri-edit-line mr-2"></i>
+                            Manuellement
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center mt-8">
+                <nav class="flex space-x-2">
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT disabled:opacity-50">
+                        <i class="ri-arrow-left-line"></i>
+                    </button>
+                    <button class="px-3 py-2 bg-tremor-brand-DEFAULT text-white rounded">1</button>
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">2</button>
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">3</button>
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                        <i class="ri-arrow-right-line"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i class="ri-form-line text-xl text-tremor-brand-DEFAULT"></i>
+                    <span class="text-tremor-content-strong font-medium">FormEase</span>
+                </div>
+                <div class="flex space-x-6 text-sm text-tremor-content-subtle">
+                    <a href="../utils/help.html" class="hover:text-tremor-brand-DEFAULT">Aide</a>
+                    <a href="../utils/api-docs.html" class="hover:text-tremor-brand-DEFAULT">API</a>
+                    <a href="../public/about.html" class="hover:text-tremor-brand-DEFAULT">À propos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dropdown toggle functionality
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const allDropdowns = document.querySelectorAll('[id^="form"]');
+            
+            // Close all other dropdowns
+            allDropdowns.forEach(dd => {
+                if (dd.id !== id) {
+                    dd.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('[onclick^="toggleDropdown"]')) {
+                const allDropdowns = document.querySelectorAll('[id^="form"]');
+                allDropdowns.forEach(dd => dd.classList.add('hidden'));
+            }
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/95');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-md');
+                nav.classList.add('bg-white/95');
+            }
+        });
+    </script>
+</body>
+</html>

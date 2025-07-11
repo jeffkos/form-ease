@@ -233,10 +233,10 @@
         <div class="max-w-7xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <h1 class="tremor-Title flex items-center text-lg">
+                    <a href="../dashboard/home.html" class="tremor-Title flex items-center text-lg hover:opacity-80 transition-opacity no-underline text-current">
                         <i class="ri-robot-line text-tremor-brand-emphasis mr-2"></i>
                         FormEase AI Generator
-                    </h1>
+                    </a>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-tremor-brand-faint text-tremor-brand-emphasis">
                         <i class="ri-sparkle-line mr-1"></i>
                         Powered by AI
@@ -247,7 +247,7 @@
                         <i class="ri-folder-line mr-1"></i>
                         Mes Formulaires (<span id="savedFormsCount">0</span>)
                     </button>
-                    <a href="form-builder-fixed.html" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
+                    <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="tremor-Button tremor-Button-secondary tremor-Button-sm">
                         <i class="ri-arrow-left-line mr-1"></i>
                         Retour au Builder
                     </a>
@@ -957,7 +957,7 @@
             localStorage.setItem('aiGeneratedForm', JSON.stringify(generatedFormData));
             
             // Rediriger vers le builder
-            window.location.href = 'form-builder-fixed.html?source=ai';
+            window.location.href = 'file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html?source=ai';
         }
 
         // Sauvegarder le formulaire généré

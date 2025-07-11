@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tremor-Button {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        .tremor-Button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #6366f1 100%);
+        }
+        .team-card {
+            transition: all 0.3s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    
+    <!-- Navigation -->
+    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard/home.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
+                    </a>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="landing.html#features" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Fonctionnalités
+                        </a>
+                        <a href="pricing.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Tarifs
+                        </a>
+                        <a href="about.html" class="text-tremor-brand-DEFAULT font-medium">
+                            À propos
+                        </a>
+                        <a href="../utils/help.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Aide
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="../auth/login.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                        <i class="ri-login-circle-line mr-1"></i>
+                        Se connecter
+                    </a>
+                    <a href="../auth/register.html" class="tremor-Button inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white">
+                        <i class="ri-user-add-line mr-1"></i>
+                        Essai gratuit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-20 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                    Nous rendons les formulaires
+                    <span class="block text-yellow-300">simples et puissants</span>
+                </h1>
+                <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                    FormEase est né de la frustration face aux outils complexes et coûteux. 
+                    Nous avons créé la plateforme que nous aurions voulu avoir.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-tremor-content-strong mb-6">
+                        Notre mission
+                    </h2>
+                    <p class="text-lg text-tremor-content-DEFAULT mb-6">
+                        Démocratiser la création de formulaires en combinant simplicité d'usage 
+                        et puissance technologique. Nous croyons que tous les professionnels 
+                        méritent des outils performants sans courbe d'apprentissage complexe.
+                    </p>
+                    <p class="text-lg text-tremor-content-DEFAULT mb-8">
+                        FormEase transforme la façon dont les entreprises collectent, analysent 
+                        et exploitent leurs données grâce à l'intelligence artificielle et 
+                        une expérience utilisateur exceptionnelle.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-tremor-brand-DEFAULT mb-2">2023</div>
+                            <div class="text-tremor-content-DEFAULT">Année de création</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-tremor-brand-DEFAULT mb-2">12</div>
+                            <div class="text-tremor-content-DEFAULT">Pays couverts</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:order-first">
+                    <div class="tremor-Card p-8">
+                        <div class="h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-lightbulb-line text-6xl text-tremor-brand-DEFAULT"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-tremor-content-strong mb-4">
+                    Nos valeurs
+                </h2>
+                <p class="text-xl text-tremor-content-DEFAULT max-w-2xl mx-auto">
+                    Ces principes guident chaque décision que nous prenons
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Innovation -->
+                <div class="tremor-Card p-6">
+                    <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-rocket-line text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-2">
+                        Innovation
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT">
+                        Nous repoussons constamment les limites de ce qui est possible 
+                        avec les formulaires, en intégrant les dernières avancées en IA.
+                    </p>
+                </div>
+
+                <!-- Simplicité -->
+                <div class="tremor-Card p-6">
+                    <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-leaf-line text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-2">
+                        Simplicité
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT">
+                        La complexité est l'ennemi de l'adoption. Nous créons des 
+                        expériences intuitives qui ne nécessitent aucune formation.
+                    </p>
+                </div>
+
+                <!-- Sécurité -->
+                <div class="tremor-Card p-6">
+                    <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-shield-check-line text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-2">
+                        Sécurité
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT">
+                        Vos données sont précieuses. Nous appliquons les plus hauts 
+                        standards de sécurité et de conformité.
+                    </p>
+                </div>
+
+                <!-- Transparence -->
+                <div class="tremor-Card p-6">
+                    <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-eye-line text-2xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-2">
+                        Transparence
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT">
+                        Pas de surprises, pas de frais cachés. Nous communiquons 
+                        clairement sur nos fonctionnalités et notre roadmap.
+                    </p>
+                </div>
+
+                <!-- Excellence -->
+                <div class="tremor-Card p-6">
+                    <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-star-line text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-2">
+                        Excellence
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT">
+                        Nous visons l'excellence dans chaque détail, du code à 
+                        l'expérience client, sans compromis sur la qualité.
+                    </p>
+                </div>
+
+                <!-- Support -->
+                <div class="tremor-Card p-6">
+                    <div class="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-heart-line text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-2">
+                        Bienveillance
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT">
+                        Nous traitons chaque utilisateur comme un partenaire, 
+                        avec respect, empathie et attention.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-tremor-content-strong mb-4">
+                    Notre équipe
+                </h2>
+                <p class="text-xl text-tremor-content-DEFAULT max-w-2xl mx-auto">
+                    Des experts passionnés qui révolutionnent l'expérience des formulaires
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Team Member 1 -->
+                <div class="tremor-Card p-6 team-card text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="ri-user-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-1">
+                        Marie Dubois
+                    </h3>
+                    <div class="text-tremor-brand-DEFAULT font-medium mb-3">CEO & Co-fondatrice</div>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Ex-Google, 12 ans d'expérience en produit. Passionnée par l'UX 
+                        et l'innovation technologique.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="#" class="text-tremor-content-subtle hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-linkedin-line"></i>
+                        </a>
+                        <a href="#" class="text-tremor-content-subtle hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-twitter-line"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 2 -->
+                <div class="tremor-Card p-6 team-card text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="ri-user-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-1">
+                        Thomas Martin
+                    </h3>
+                    <div class="text-tremor-brand-DEFAULT font-medium mb-3">CTO & Co-fondateur</div>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Expert en IA et architecture scalable. Ancien lead engineer 
+                        chez Stripe et Datadog.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="#" class="text-tremor-content-subtle hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-linkedin-line"></i>
+                        </a>
+                        <a href="#" class="text-tremor-content-subtle hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-github-line"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 3 -->
+                <div class="tremor-Card p-6 team-card text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="ri-user-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-tremor-content-strong mb-1">
+                        Sarah Chen
+                    </h3>
+                    <div class="text-tremor-brand-DEFAULT font-medium mb-3">Head of Design</div>
+                    <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                        Designer UX/UI primée, spécialiste des interfaces intuitives 
+                        et de l'accessibilité.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="#" class="text-tremor-content-subtle hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-linkedin-line"></i>
+                        </a>
+                        <a href="#" class="text-tremor-content-subtle hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-dribbble-line"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-tremor-content-strong mb-4">
+                    Sécurité et conformité
+                </h2>
+                <p class="text-xl text-tremor-content-DEFAULT max-w-2xl mx-auto">
+                    Votre confiance est notre priorité absolue
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- RGPD -->
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-shield-check-line text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        RGPD Compliant
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm">
+                        Conformité totale aux réglementations européennes
+                    </p>
+                </div>
+
+                <!-- ISO 27001 -->
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-medal-line text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        ISO 27001
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm">
+                        Certification sécurité de l'information
+                    </p>
+                </div>
+
+                <!-- Encryption -->
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-lock-line text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Chiffrement AES-256
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm">
+                        Données chiffrées en transit et au repos
+                    </p>
+                </div>
+
+                <!-- Backup -->
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-save-line text-2xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Backup 99.99%
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm">
+                        Sauvegarde automatique multi-zones
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 hero-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">
+                Rejoignez l'aventure FormEase
+            </h2>
+            <p class="text-xl text-blue-100 mb-8">
+                Faites partie de l'équipe qui révolutionne les formulaires
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="../auth/register.html" class="bg-white text-tremor-brand-DEFAULT px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all transform hover:-translate-y-1 shadow-lg inline-flex items-center">
+                    <i class="ri-rocket-line mr-2"></i>
+                    Commencer gratuitement
+                </a>
+                <a href="mailto:careers@formease.com" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-tremor-brand-DEFAULT transition-all inline-flex items-center">
+                    <i class="ri-briefcase-line mr-2"></i>
+                    Voir nos postes
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold">FormEase</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        La plateforme de création de formulaires la plus simple et puissante.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="ri-twitter-line text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="ri-linkedin-line text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="ri-github-line text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Produit</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="landing.html#features" class="hover:text-white">Fonctionnalités</a></li>
+                        <li><a href="pricing.html" class="hover:text-white">Tarifs</a></li>
+                        <li><a href="../utils/api-docs.html" class="hover:text-white">API</a></li>
+                        <li><a href="../utils/help.html" class="hover:text-white">Documentation</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Entreprise</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="about.html" class="hover:text-white">À propos</a></li>
+                        <li><a href="#" class="hover:text-white">Carrières</a></li>
+                        <li><a href="#" class="hover:text-white">Presse</a></li>
+                        <li><a href="#" class="hover:text-white">Partenaires</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="../utils/help.html" class="hover:text-white">Centre d'aide</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="#" class="hover:text-white">Statut</a></li>
+                        <li><a href="#" class="hover:text-white">Communauté</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 FormEase. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/95');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-md');
+                nav.classList.add('bg-white/95');
+            }
+        });
+    </script>
+</body>
+</html>

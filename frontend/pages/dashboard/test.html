@@ -7,19 +7,79 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-50 font-sans">
-    <div class="p-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">FormEase - Dashboard Test</h1>
-        
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-white/20 backdrop-blur-3xl"></div>
+    
+    <!-- Main Container -->
+    <div class="relative max-w-7xl mx-auto p-8">
+        <!-- Header -->
+        <div class="tremor-Card p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard Test</h1>
+                    <p class="text-gray-600">Environnement de test pour les fonctionnalités FormEase</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="ri-refresh-line mr-2"></i>Actualiser
+                    </button>
+                    <a href="home.html" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                        <i class="ri-home-line mr-2"></i>Dashboard Principal
+                    </a>
+                </div>
+            </div>
+        </div>
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-lg shadow">
+            <div class="tremor-Card p-6">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-medium text-gray-600">Total Formulaires</h3>
                         <p class="text-2xl font-bold text-gray-900" id="totalForms">23</p>
+                        <div class="flex items-center mt-1">
+                            <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                            <span class="text-green-500 text-xs font-medium">+15%</span>
+                        </div>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                         <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
@@ -27,11 +87,15 @@
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-lg shadow">
+            <div class="tremor-Card p-6">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-medium text-gray-600">Réponses</h3>
                         <p class="text-2xl font-bold text-gray-900" id="totalResponses">1,247</p>
+                        <div class="flex items-center mt-1">
+                            <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                            <span class="text-green-500 text-xs font-medium">+8%</span>
+                        </div>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <i class="ri-chat-3-line text-green-600 text-xl"></i>
@@ -39,14 +103,19 @@
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-lg shadow">
+            <div class="tremor-Card p-6">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-medium text-gray-600">Taux de conversion</h3>
                         <p class="text-2xl font-bold text-gray-900" id="conversionRate">48.9%</p>
+                        <div class="flex items-center mt-1">
+                            <i class="ri-arrow-down-line text-red-500 text-xs"></i>
+                            <span class="text-red-500 text-xs font-medium">-2%</span>
+                        </div>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <i class="ri-arrow-up-line text-purple-600 text-xl"></i>
+                        <i class="ri-trending-up-line text-purple-600 text-xl"></i>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -168,14 +237,42 @@
             chart.render();
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded, initializing charts...');
+        // Simple initialization
+        window.addEventListener('load', function() {
+            console.log('FormEase Dashboard Test loaded successfully');
             
-            setTimeout(() => {
-                initComboChart();
-                initPerformanceChart();
-            }, 500);
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // Update test metrics
+            function updateTestMetrics() {
+                const totalFormsEl = document.getElementById('totalForms');
+                const totalResponsesEl = document.getElementById('totalResponses');
+                const conversionRateEl = document.getElementById('conversionRate');
+
+                if (totalFormsEl) {
+                    const newForms = 23 + Math.floor(Math.random() * 5);
+                    totalFormsEl.textContent = newForms;
+                }
+
+                if (totalResponsesEl) {
+                    const newResponses = 1247 + Math.floor(Math.random() * 50);
+                    totalResponsesEl.textContent = newResponses.toLocaleString();
+                }
+
+                if (conversionRateEl) {
+                    const newRate = (48.9 + Math.random() * 2 - 1).toFixed(1);
+                    conversionRateEl.textContent = newRate + '%';
+                }
+            }
+
+            // Initial update and periodic refresh
+            updateTestMetrics();
+            setInterval(updateTestMetrics, 10000); // Update every 10 seconds for testing
         });
     </script>
 </body>

@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../styles/tremor-base.css">
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Tremor charts natifs - beaucoup mieux qu'ApexCharts -->
     <script>
         tailwind.config = {
             theme: {
@@ -37,12 +37,12 @@
     <!-- Navigation Sidebar -->
     <div class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 transform transition-transform duration-300" id="sidebar">
         <!-- Logo -->
-        <div class="flex items-center px-6 py-4 border-b border-gray-200">
+        <a href="home.html" class="flex items-center px-6 py-4 border-b border-gray-200 hover:opacity-80 transition-opacity">
             <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                 <i class="ri-file-list-3-line text-white text-xl"></i>
             </div>
             <span class="ml-3 text-xl font-bold text-gray-900">FormEase</span>
-        </div>
+        </a>
 
         <!-- Navigation Menu -->
         <nav class="mt-6">
@@ -60,7 +60,7 @@
                         <i class="ri-file-list-2-line mr-3"></i>
                         <span>Mes formulaires</span>
                     </a>
-                    <a href="../forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                    <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
                         <i class="ri-tools-line mr-3"></i>
                         <span>Créateur</span>
                     </a>

@@ -3,27 +3,866 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FormEase - Analytics</title>
+    <title>Analytics - FormEase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tremor charts - pas besoin de Chart.js -->
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tremor-Button {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        .tremor-Button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="ri-bar-chart-line text-blue-600 text-2xl"></i>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900 mb-2">Analytics</h1>
-            <p class="text-gray-600 mb-6">Cette page sera développée prochainement</p>
-            <div class="space-y-3">
-                <a href="../dashboard/home.html" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    <i class="ri-dashboard-line mr-2"></i>Retour au Dashboard
-                </a>
-                <a href="/form-ai-generator.html" class="block bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
-                    <i class="ri-magic-line mr-2"></i>Créer un Formulaire
-                </a>
+    
+    <!-- Navigation -->
+    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard/home.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
+                    </a>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="../dashboard/home.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Tableau de bord
+                        </a>
+                        <a href="../forms/management.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Mes formulaires
+                        </a>
+                        <a href="dashboard.html" class="text-tremor-brand-DEFAULT font-medium">
+                            Analytics
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <div class="w-8 h-8 bg-tremor-brand-DEFAULT rounded-full flex items-center justify-center">
+                                <i class="ri-user-line text-white"></i>
+                            </div>
+                            <span class="hidden md:block">Mon compte</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-20 pb-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-tremor-content-strong mb-2">
+                        Analytics Dashboard
+                    </h1>
+                    <p class="text-tremor-content-DEFAULT">
+                        Analysez les performances de vos formulaires en temps réel
+                    </p>
+                </div>
+                <div class="flex space-x-3 mt-4 md:mt-0">
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                        <option>Derniers 30 jours</option>
+                        <option>Derniers 7 jours</option>
+                        <option>Hier</option>
+                        <option>Aujourd'hui</option>
+                        <option>Personnalisé</option>
+                    </select>
+                    <button class="tremor-Button inline-flex items-center px-4 py-2 rounded-lg text-white font-medium">
+                        <i class="ri-download-line mr-2"></i>
+                        Exporter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Vues totales</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong">12,847</p>
+                            <div class="flex items-center mt-2">
+                                <i class="ri-arrow-up-line text-green-500 text-sm"></i>
+                                <span class="text-green-500 text-sm font-medium">+23.5%</span>
+                                <span class="text-tremor-content-subtle text-sm ml-2">vs mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-eye-line text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Réponses</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong">3,421</p>
+                            <div class="flex items-center mt-2">
+                                <i class="ri-arrow-up-line text-green-500 text-sm"></i>
+                                <span class="text-green-500 text-sm font-medium">+18.2%</span>
+                                <span class="text-tremor-content-subtle text-sm ml-2">vs mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-chat-3-line text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Taux de conversion</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong">26.6%</p>
+                            <div class="flex items-center mt-2">
+                                <i class="ri-arrow-down-line text-red-500 text-sm"></i>
+                                <span class="text-red-500 text-sm font-medium">-2.1%</span>
+                                <span class="text-tremor-content-subtle text-sm ml-2">vs mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-trending-up-line text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm">Temps moyen</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong">3m 24s</p>
+                            <div class="flex items-center mt-2">
+                                <i class="ri-arrow-up-line text-green-500 text-sm"></i>
+                                <span class="text-green-500 text-sm font-medium">+12s</span>
+                                <span class="text-tremor-content-subtle text-sm ml-2">vs mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-time-line text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                
+                <!-- Traffic Overview -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-tremor-content-strong">
+                            Trafic des formulaires
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 text-sm bg-tremor-brand-DEFAULT text-white rounded">7j</button>
+                            <button class="px-3 py-1 text-sm text-tremor-content-DEFAULT hover:bg-gray-100 rounded">30j</button>
+                            <button class="px-3 py-1 text-sm text-tremor-content-DEFAULT hover:bg-gray-100 rounded">90j</button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <div id="trafficChart" class="w-full h-80"></div>
+                    </div>
+                </div>
+
+                <!-- Conversion Funnel -->
+                <div class="tremor-Card p-6">
+                    <h2 class="text-xl font-bold text-tremor-content-strong mb-6">
+                        Entonnoir de conversion
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-full bg-gray-200 rounded-full h-8 mr-4">
+                                <div class="bg-blue-600 h-8 rounded-full flex items-center justify-end pr-3" style="width: 100%">
+                                    <span class="text-white text-sm font-medium">12,847 vues</span>
+                                </div>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT text-sm w-16">100%</span>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-full bg-gray-200 rounded-full h-8 mr-4">
+                                <div class="bg-green-600 h-8 rounded-full flex items-center justify-end pr-3" style="width: 45%">
+                                    <span class="text-white text-sm font-medium">5,781 démarrés</span>
+                                </div>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT text-sm w-16">45%</span>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-full bg-gray-200 rounded-full h-8 mr-4">
+                                <div class="bg-yellow-600 h-8 rounded-full flex items-center justify-end pr-3" style="width: 26.6%">
+                                    <span class="text-white text-sm font-medium">3,421 complétés</span>
+                                </div>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT text-sm w-16">26.6%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Performance Table -->
+            <div class="tremor-Card p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-tremor-content-strong">
+                        Performance par formulaire
+                    </h2>
+                    <div class="flex space-x-3">
+                        <input type="text" placeholder="Rechercher..." 
+                               class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                        <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                            <option>Tous les formulaires</option>
+                            <option>Actifs seulement</option>
+                            <option>Brouillons</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-semibold text-tremor-content-strong">Formulaire</th>
+                                <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Vues</th>
+                                <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Réponses</th>
+                                <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Taux</th>
+                                <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Temps moyen</th>
+                                <th class="text-center py-3 px-4 font-semibold text-tremor-content-strong">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                                        <div>
+                                            <p class="font-medium text-tremor-content-strong">Formulaire de Contact</p>
+                                            <p class="text-sm text-tremor-content-DEFAULT">contact-site-web</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">5,247</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">1,321</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        25.2%
+                                    </span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="text-tremor-content-DEFAULT">2m 15s</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <div class="flex justify-center space-x-2">
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-download-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                                        <div>
+                                            <p class="font-medium text-tremor-content-strong">Inscription Événement</p>
+                                            <p class="text-sm text-tremor-content-DEFAULT">webinar-janvier-2025</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">3,856</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">1,127</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        29.2%
+                                    </span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="text-tremor-content-DEFAULT">1m 45s</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <div class="flex justify-center space-x-2">
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-download-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                                        <div>
+                                            <p class="font-medium text-tremor-content-strong">Sondage Satisfaction</p>
+                                            <p class="text-sm text-tremor-content-DEFAULT">satisfaction-client-q1</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">2,144</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">573</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        26.7%
+                                    </span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="text-tremor-content-DEFAULT">4m 12s</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <div class="flex justify-center space-x-2">
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-download-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                                        <div>
+                                            <p class="font-medium text-tremor-content-strong">Newsletter Signup</p>
+                                            <p class="text-sm text-tremor-content-DEFAULT">newsletter-footer</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">1,600</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="font-medium text-tremor-content-strong">400</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        25.0%
+                                    </span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <span class="text-tremor-content-DEFAULT">0m 45s</span>
+                                </td>
+                                <td class="text-center py-4 px-4">
+                                    <div class="flex justify-center space-x-2">
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-edit-line"></i>
+                                        </button>
+                                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                                            <i class="ri-download-line"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Additional Insights -->
+            <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- Device Analytics -->
+                <div class="tremor-Card p-6">
+                    <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                        Répartition par appareil
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="ri-computer-line text-tremor-content-DEFAULT mr-3"></i>
+                                <span class="text-tremor-content-strong">Desktop</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-24 bg-gray-200 rounded-full h-2 mr-3">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                                <span class="text-tremor-content-DEFAULT text-sm w-10">65%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="ri-smartphone-line text-tremor-content-DEFAULT mr-3"></i>
+                                <span class="text-tremor-content-strong">Mobile</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-24 bg-gray-200 rounded-full h-2 mr-3">
+                                    <div class="bg-green-600 h-2 rounded-full" style="width: 28%"></div>
+                                </div>
+                                <span class="text-tremor-content-DEFAULT text-sm w-10">28%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="ri-tablet-line text-tremor-content-DEFAULT mr-3"></i>
+                                <span class="text-tremor-content-strong">Tablet</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-24 bg-gray-200 rounded-full h-2 mr-3">
+                                    <div class="bg-purple-600 h-2 rounded-full" style="width: 7%"></div>
+                                </div>
+                                <span class="text-tremor-content-DEFAULT text-sm w-10">7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Traffic Sources -->
+                <div class="tremor-Card p-6">
+                    <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                        Sources de trafic
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                <span class="text-tremor-content-strong">Direct</span>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT">42%</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                <span class="text-tremor-content-strong">Google</span>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT">31%</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                                <span class="text-tremor-content-strong">Social</span>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT">18%</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                                <span class="text-tremor-content-strong">Email</span>
+                            </div>
+                            <span class="text-tremor-content-DEFAULT">9%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="tremor-Card p-6">
+                    <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                        Activité récente
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-tremor-content-strong">Nouveau pic de trafic</p>
+                                <p class="text-xs text-tremor-content-subtle">Il y a 2 heures</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-tremor-content-strong">Formulaire Contact mis à jour</p>
+                                <p class="text-xs text-tremor-content-subtle">Il y a 5 heures</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-tremor-content-strong">Export de données terminé</p>
+                                <p class="text-xs text-tremor-content-subtle">Il y a 1 jour</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-tremor-content-strong">Alerte: baisse conversion</p>
+                                <p class="text-xs text-tremor-content-subtle">Il y a 2 jours</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i class="ri-form-line text-xl text-tremor-brand-DEFAULT"></i>
+                    <span class="text-tremor-content-strong font-medium">FormEase</span>
+                </div>
+                <div class="flex space-x-6 text-sm text-tremor-content-subtle">
+                    <a href="../utils/help.html" class="hover:text-tremor-brand-DEFAULT">Aide</a>
+                    <a href="../utils/api-docs.html" class="hover:text-tremor-brand-DEFAULT">API</a>
+                    <a href="../public/about.html" class="hover:text-tremor-brand-DEFAULT">À propos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ✨ TREMOR COMBO CHART - Moderne et élégant
+        function initTremorComboChart() {
+            const chartContainer = document.getElementById('trafficChart');
+            if (!chartContainer) return;
+
+            // Données pour le ComboChart Tremor
+            const chartData = [
+                { day: 'Lun', Vues: 1200, Réponses: 300 },
+                { day: 'Mar', Vues: 1900, Réponses: 500 },
+                { day: 'Mer', Vues: 3000, Réponses: 800 },
+                { day: 'Jeu', Vues: 2100, Réponses: 560 },
+                { day: 'Ven', Vues: 3200, Réponses: 850 },
+                { day: 'Sam', Vues: 2800, Réponses: 740 },
+                { day: 'Dim', Vues: 2400, Réponses: 640 }
+            ];
+
+            // Création du SVG pour le ComboChart
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '350');
+            svg.setAttribute('viewBox', '0 0 800 350');
+            svg.setAttribute('class', 'w-full h-full');
+
+            // Configuration des couleurs Tremor
+            const colors = {
+                primary: '#0ea5e9',
+                secondary: '#10b981',
+                grid: '#f3f4f6',
+                text: '#6b7280'
+            };
+
+            // Calculer les dimensions du graphique
+            const margin = { top: 40, right: 60, bottom: 60, left: 60 };
+            const width = 800 - margin.left - margin.right;
+            const height = 350 - margin.top - margin.bottom;
+
+            // Échelles
+            const maxVues = Math.max(...chartData.map(d => d.Vues));
+            const maxReponses = Math.max(...chartData.map(d => d.Réponses));
+            const xStep = width / (chartData.length - 1);
+
+            // Grille verticale
+            for (let i = 0; i < chartData.length; i++) {
+                const x = margin.left + i * xStep;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', margin.top);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', height + margin.top);
+                line.setAttribute('stroke', colors.grid);
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+            }
+
+            // Grille horizontale
+            for (let i = 0; i <= 5; i++) {
+                const y = margin.top + (height / 5) * i;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', margin.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', width + margin.left);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', colors.grid);
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+
+                // Labels des valeurs
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', margin.left - 15);
+                text.setAttribute('y', y + 4);
+                text.setAttribute('fill', colors.text);
+                text.setAttribute('text-anchor', 'end');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-family', 'Inter, sans-serif');
+                text.textContent = Math.round(maxVues * (1 - i / 5));
+                svg.appendChild(text);
+            }
+
+            // Ligne pour les Vues (area fill)
+            let pathVues = `M ${margin.left} ${margin.top + height - (chartData[0].Vues / maxVues) * height}`;
+            let areaVues = `M ${margin.left} ${margin.top + height}`;
+            
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xStep;
+                const y = margin.top + height - (d.Vues / maxVues) * height;
+                
+                if (i === 0) {
+                    areaVues += ` L ${x} ${y}`;
+                } else {
+                    pathVues += ` L ${x} ${y}`;
+                    areaVues += ` L ${x} ${y}`;
+                }
+            });
+            
+            areaVues += ` L ${margin.left + (chartData.length - 1) * xStep} ${margin.top + height} Z`;
+
+            // Area fill pour les Vues
+            const areaVuesElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            areaVuesElement.setAttribute('d', areaVues);
+            areaVuesElement.setAttribute('fill', colors.primary);
+            areaVuesElement.setAttribute('fill-opacity', '0.1');
+            svg.appendChild(areaVuesElement);
+
+            // Ligne des Vues
+            const lineVues = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            lineVues.setAttribute('d', pathVues);
+            lineVues.setAttribute('stroke', colors.primary);
+            lineVues.setAttribute('stroke-width', '3');
+            lineVues.setAttribute('fill', 'none');
+            lineVues.setAttribute('stroke-linecap', 'round');
+            lineVues.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(lineVues);
+
+            // Ligne pour les Réponses
+            let pathReponses = `M ${margin.left} ${margin.top + height - (chartData[0].Réponses / maxReponses) * height}`;
+            let areaReponses = `M ${margin.left} ${margin.top + height}`;
+            
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xStep;
+                const y = margin.top + height - (d.Réponses / maxReponses) * height;
+                
+                if (i === 0) {
+                    areaReponses += ` L ${x} ${y}`;
+                } else {
+                    pathReponses += ` L ${x} ${y}`;
+                    areaReponses += ` L ${x} ${y}`;
+                }
+            });
+            
+            areaReponses += ` L ${margin.left + (chartData.length - 1) * xStep} ${margin.top + height} Z`;
+
+            // Area fill pour les Réponses
+            const areaReponsesElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            areaReponsesElement.setAttribute('d', areaReponses);
+            areaReponsesElement.setAttribute('fill', colors.secondary);
+            areaReponsesElement.setAttribute('fill-opacity', '0.1');
+            svg.appendChild(areaReponsesElement);
+
+            // Ligne des Réponses
+            const lineReponses = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            lineReponses.setAttribute('d', pathReponses);
+            lineReponses.setAttribute('stroke', colors.secondary);
+            lineReponses.setAttribute('stroke-width', '3');
+            lineReponses.setAttribute('fill', 'none');
+            lineReponses.setAttribute('stroke-linecap', 'round');
+            lineReponses.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(lineReponses);
+
+            // Points interactifs
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xStep;
+                
+                // Point Vues
+                const yVues = margin.top + height - (d.Vues / maxVues) * height;
+                const circleVues = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circleVues.setAttribute('cx', x);
+                circleVues.setAttribute('cy', yVues);
+                circleVues.setAttribute('r', '4');
+                circleVues.setAttribute('fill', colors.primary);
+                circleVues.setAttribute('stroke', '#ffffff');
+                circleVues.setAttribute('stroke-width', '2');
+                circleVues.setAttribute('class', 'hover:r-6 transition-all cursor-pointer');
+                svg.appendChild(circleVues);
+
+                // Point Réponses
+                const yReponses = margin.top + height - (d.Réponses / maxReponses) * height;
+                const circleReponses = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circleReponses.setAttribute('cx', x);
+                circleReponses.setAttribute('cy', yReponses);
+                circleReponses.setAttribute('r', '4');
+                circleReponses.setAttribute('fill', colors.secondary);
+                circleReponses.setAttribute('stroke', '#ffffff');
+                circleReponses.setAttribute('stroke-width', '2');
+                circleReponses.setAttribute('class', 'hover:r-6 transition-all cursor-pointer');
+                svg.appendChild(circleReponses);
+
+                // Labels des jours
+                const dayLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                dayLabel.setAttribute('x', x);
+                dayLabel.setAttribute('y', height + margin.top + 20);
+                dayLabel.setAttribute('fill', colors.text);
+                dayLabel.setAttribute('text-anchor', 'middle');
+                dayLabel.setAttribute('font-size', '12');
+                dayLabel.setAttribute('font-family', 'Inter, sans-serif');
+                dayLabel.textContent = d.day;
+                svg.appendChild(dayLabel);
+            });
+
+            // Légende
+            const legendY = 25;
+            
+            // Légende Vues
+            const legendVuesCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            legendVuesCircle.setAttribute('cx', margin.left + 50);
+            legendVuesCircle.setAttribute('cy', legendY);
+            legendVuesCircle.setAttribute('r', '6');
+            legendVuesCircle.setAttribute('fill', colors.primary);
+            svg.appendChild(legendVuesCircle);
+
+            const legendVuesText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            legendVuesText.setAttribute('x', margin.left + 65);
+            legendVuesText.setAttribute('y', legendY + 4);
+            legendVuesText.setAttribute('fill', colors.text);
+            legendVuesText.setAttribute('font-size', '14');
+            legendVuesText.setAttribute('font-family', 'Inter, sans-serif');
+            legendVuesText.setAttribute('font-weight', '500');
+            legendVuesText.textContent = 'Vues';
+            svg.appendChild(legendVuesText);
+
+            // Légende Réponses
+            const legendReponsesCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            legendReponsesCircle.setAttribute('cx', margin.left + 150);
+            legendReponsesCircle.setAttribute('cy', legendY);
+            legendReponsesCircle.setAttribute('r', '6');
+            legendReponsesCircle.setAttribute('fill', colors.secondary);
+            svg.appendChild(legendReponsesCircle);
+
+            const legendReponsesText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            legendReponsesText.setAttribute('x', margin.left + 165);
+            legendReponsesText.setAttribute('y', legendY + 4);
+            legendReponsesText.setAttribute('fill', colors.text);
+            legendReponsesText.setAttribute('font-size', '14');
+            legendReponsesText.setAttribute('font-family', 'Inter, sans-serif');
+            legendReponsesText.setAttribute('font-weight', '500');
+            legendReponsesText.textContent = 'Réponses';
+            svg.appendChild(legendReponsesText);
+
+            // Remplacer le canvas par le SVG
+            chartContainer.innerHTML = '';
+            chartContainer.appendChild(svg);
+        }
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/95');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-md');
+                nav.classList.add('bg-white/95');
+            }
+        });
+
+        // Initialiser le graphique Tremor quand la page est chargée
+        window.addEventListener('load', function() {
+            initTremorComboChart();
+        });
+    </script>
 </body>
 </html>

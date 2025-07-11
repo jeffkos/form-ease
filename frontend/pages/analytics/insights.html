@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tremor charts - pas besoin de Chart.js -->
+    <script src="../../scripts/auth-manager.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tremor-Button {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        .tremor-Button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .insight-priority-high {
+            border-left: 4px solid #ef4444;
+        }
+        .insight-priority-medium {
+            border-left: 4px solid #f59e0b;
+        }
+        .insight-priority-low {
+            border-left: 4px solid #10b981;
+        }
+        .ai-glow {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            to { box-shadow: 0 0 30px rgba(118, 75, 162, 0.5); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
+                    </div>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="../dashboard/home.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Tableau de bord
+                        </a>
+                        <a href="dashboard.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Analytics
+                        </a>
+                        <a href="reports.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Rapports
+                        </a>
+                        <a href="insights.html" class="text-tremor-brand-DEFAULT font-medium">
+                            Insights
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <div class="w-8 h-8 bg-tremor-brand-DEFAULT rounded-full flex items-center justify-center">
+                                <i class="ri-user-line text-white"></i>
+                            </div>
+                            <span class="hidden md:block">Mon compte</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-20 pb-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-tremor-content-strong mb-2">
+                        Insights Intelligence
+                    </h1>
+                    <p class="text-tremor-content-DEFAULT">
+                        Découvrez des recommandations personnalisées et des analyses prédictives powered by AI
+                    </p>
+                </div>
+                <div class="flex space-x-3 mt-4 md:mt-0">
+                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                        <i class="ri-settings-line mr-2"></i>
+                        Paramètres IA
+                    </button>
+                    <button class="tremor-Button inline-flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm ai-glow">
+                        <i class="ri-magic-line mr-2"></i>
+                        Générer Insights
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Status Banner -->
+            <div class="tremor-Card p-4 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-robot-line text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-tremor-content-strong text-sm">FormEase AI Assistant</p>
+                            <p class="text-tremor-content-DEFAULT text-xs">Analyse en temps réel • Dernière mise à jour: il y a 3 min</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-green-600 font-medium">Actif</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Priority Insights -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Critical Insights -->
+            <div class="mb-12">
+                <div class="flex items-center mb-6">
+                    <h2 class="text-2xl font-bold text-tremor-content-strong mr-3">
+                        Insights prioritaires
+                    </h2>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        3 critiques
+                    </span>
+                </div>
+
+                <div class="grid gap-6">
+                    
+                    <!-- High Priority Insight -->
+                    <div class="tremor-Card p-6 insight-priority-high">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="ri-error-warning-line text-red-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-tremor-content-strong">Taux d'abandon critique détecté</h3>
+                                    <p class="text-sm text-tremor-content-DEFAULT">Formulaire "Demande de Devis" • Priorité: Haute</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-tremor-content-subtle">Il y a 15 min</span>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-2xl font-bold text-red-600">67%</p>
+                                <p class="text-sm text-tremor-content-DEFAULT">Taux d'abandon</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-2xl font-bold text-tremor-content-strong">Étape 3</p>
+                                <p class="text-sm text-tremor-content-DEFAULT">Point de friction</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-2xl font-bold text-orange-600">+45%</p>
+                                <p class="text-sm text-tremor-content-DEFAULT">vs semaine dernière</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-tremor-content-strong mb-2">🎯 Recommandations IA:</h4>
+                            <ul class="space-y-2 text-sm text-tremor-content-DEFAULT">
+                                <li class="flex items-start">
+                                    <i class="ri-check-line text-green-600 mr-2 mt-0.5"></i>
+                                    Simplifier le champ "Détails du projet" en le rendant optionnel
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="ri-check-line text-green-600 mr-2 mt-0.5"></i>
+                                    Ajouter une barre de progression pour rassurer l'utilisateur
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="ri-check-line text-green-600 mr-2 mt-0.5"></i>
+                                    Diviser l'étape 3 en deux parties plus courtes
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button class="tremor-Button inline-flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm">
+                                <i class="ri-tools-line mr-2"></i>
+                                Appliquer les corrections
+                            </button>
+                            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                                <i class="ri-eye-line mr-2"></i>
+                                Analyser en détail
+                            </button>
+                            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                                <i class="ri-time-line mr-2"></i>
+                                Reporter à plus tard
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Medium Priority Insight -->
+                    <div class="tremor-Card p-6 insight-priority-medium">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="ri-lightbulb-line text-yellow-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-tremor-content-strong">Opportunité d'optimisation mobile</h3>
+                                    <p class="text-sm text-tremor-content-DEFAULT">Tous formulaires • Priorité: Moyenne</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-tremor-content-subtle">Il y a 1h</span>
+                        </div>
+                        
+                        <p class="text-tremor-content-DEFAULT mb-4">
+                            Les utilisateurs mobiles ont un taux de conversion 23% inférieur aux utilisateurs desktop. 
+                            L'IA a identifié plusieurs améliorations UX spécifiques au mobile.
+                        </p>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-lg font-bold text-tremor-content-strong">23% ↓</p>
+                                <p class="text-sm text-tremor-content-DEFAULT">Conversion mobile vs desktop</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-lg font-bold text-tremor-content-strong">+120%</p>
+                                <p class="text-sm text-tremor-content-DEFAULT">Potentiel d'amélioration estimé</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button class="tremor-Button inline-flex items-center px-4 py-2 rounded-lg text-white font-medium text-sm">
+                                <i class="ri-smartphone-line mr-2"></i>
+                                Optimiser pour mobile
+                            </button>
+                            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                                <i class="ri-bar-chart-line mr-2"></i>
+                                Voir les détails
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictive Analytics -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                    Analyses prédictives
+                </h2>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    
+                    <!-- Conversion Prediction -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-center mb-6">
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="ri-line-chart-line text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-tremor-content-strong">Prédiction de conversion</h3>
+                                <p class="text-sm text-tremor-content-DEFAULT">Prochains 30 jours</p>
+                            </div>
+                        </div>
+                        
+                        <div class="h-48 mb-4">
+                            <div id="predictionChart" class="w-full h-72"></div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-2xl font-bold text-green-600">+15%</p>
+                                <p class="text-xs text-tremor-content-DEFAULT">Croissance prévue</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-tremor-content-strong">4,250</p>
+                                <p class="text-xs text-tremor-content-DEFAULT">Conversions estimées</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-blue-600">92%</p>
+                                <p class="text-xs text-tremor-content-DEFAULT">Précision du modèle</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trend Analysis -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-center mb-6">
+                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="ri-trending-up-line text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-tremor-content-strong">Analyse des tendances</h3>
+                                <p class="text-sm text-tremor-content-DEFAULT">Patterns détectés par IA</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded-r-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="ri-arrow-up-line text-green-600 mr-2"></i>
+                                    <span class="font-semibold text-green-800">Tendance positive</span>
+                                </div>
+                                <p class="text-sm text-green-700">
+                                    Les formulaires créés en fin de semaine performent 35% mieux
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-r-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="ri-time-line text-blue-600 mr-2"></i>
+                                    <span class="font-semibold text-blue-800">Pattern temporel</span>
+                                </div>
+                                <p class="text-sm text-blue-700">
+                                    Pic d'activité détecté entre 14h-16h pour les formulaires B2B
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-orange-500 bg-orange-50 p-4 rounded-r-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="ri-user-line text-orange-600 mr-2"></i>
+                                    <span class="font-semibold text-orange-800">Comportement utilisateur</span>
+                                </div>
+                                <p class="text-sm text-orange-700">
+                                    Les champs pré-remplis augmentent la conversion de 28%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automated Recommendations -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                    Recommandations automatisées
+                </h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- A/B Test Suggestion -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="ri-a-b text-green-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-tremor-content-strong">Test A/B suggéré</h3>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Forte probabilité</span>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                            Tester deux variantes du bouton d'action: "Envoyer" vs "Valider ma demande"
+                        </p>
+                        <div class="text-sm text-tremor-content-subtle mb-4">
+                            Impact estimé: +12% de conversion
+                        </div>
+                        <button class="w-full tremor-Button inline-flex items-center justify-center px-4 py-2 rounded-lg text-white font-medium text-sm">
+                            <i class="ri-flask-line mr-2"></i>
+                            Lancer le test
+                        </button>
+                    </div>
+
+                    <!-- Field Optimization -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="ri-edit-box-line text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-tremor-content-strong">Optimisation champs</h3>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Moyen impact</span>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                            Réorganiser l'ordre des champs pour suivre le parcours mental utilisateur
+                        </p>
+                        <div class="text-sm text-tremor-content-subtle mb-4">
+                            Impact estimé: +8% de completion
+                        </div>
+                        <button class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                            <i class="ri-drag-move-line mr-2"></i>
+                            Réorganiser
+                        </button>
+                    </div>
+
+                    <!-- Timing Optimization -->
+                    <div class="tremor-Card p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="ri-timer-line text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-tremor-content-strong">Timing optimal</h3>
+                                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">Insight unique</span>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-DEFAULT text-sm mb-4">
+                            Planifier l'envoi de vos formulaires le mardi entre 14h-16h
+                        </p>
+                        <div class="text-sm text-tremor-content-subtle mb-4">
+                            Impact estimé: +25% d'ouverture
+                        </div>
+                        <button class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                            <i class="ri-calendar-event-line mr-2"></i>
+                            Programmer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Learning Progress -->
+            <div>
+                <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                    Progression de l'apprentissage IA
+                </h2>
+                
+                <div class="tremor-Card p-6">
+                    <div class="grid lg:grid-cols-3 gap-8">
+                        
+                        <!-- Model Performance -->
+                        <div>
+                            <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                                Performance du modèle
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-tremor-content-strong">Précision des prédictions</span>
+                                        <span class="text-tremor-content-DEFAULT">94%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-600 h-2 rounded-full" style="width: 94%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-tremor-content-strong">Fiabilité des insights</span>
+                                        <span class="text-tremor-content-DEFAULT">89%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 89%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-tremor-content-strong">Vitesse d'analyse</span>
+                                        <span class="text-tremor-content-DEFAULT">97%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-600 h-2 rounded-full" style="width: 97%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Sources -->
+                        <div>
+                            <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                                Sources de données
+                            </h3>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="ri-database-line text-blue-600 mr-2"></i>
+                                        <span class="text-tremor-content-strong text-sm">Formulaires</span>
+                                    </div>
+                                    <span class="text-tremor-content-DEFAULT text-sm">12,847 entrées</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="ri-user-line text-green-600 mr-2"></i>
+                                        <span class="text-tremor-content-strong text-sm">Comportements</span>
+                                    </div>
+                                    <span class="text-tremor-content-DEFAULT text-sm">45,231 sessions</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="ri-time-line text-purple-600 mr-2"></i>
+                                        <span class="text-tremor-content-strong text-sm">Patterns temporels</span>
+                                    </div>
+                                    <span class="text-tremor-content-DEFAULT text-sm">90 jours</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="ri-device-line text-orange-600 mr-2"></i>
+                                        <span class="text-tremor-content-strong text-sm">Appareils</span>
+                                    </div>
+                                    <span class="text-tremor-content-DEFAULT text-sm">8,542 types</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Learnings -->
+                        <div>
+                            <h3 class="text-lg font-bold text-tremor-content-strong mb-4">
+                                Apprentissages récents
+                            </h3>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                                    <div>
+                                        <p class="text-sm text-tremor-content-strong">Nouveau pattern détecté</p>
+                                        <p class="text-xs text-tremor-content-subtle">Il y a 2h</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                    <div>
+                                        <p class="text-sm text-tremor-content-strong">Modèle mis à jour</p>
+                                        <p class="text-xs text-tremor-content-subtle">Il y a 6h</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                                    <div>
+                                        <p class="text-sm text-tremor-content-strong">Nouvelle corrélation</p>
+                                        <p class="text-xs text-tremor-content-subtle">Il y a 12h</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i class="ri-form-line text-xl text-tremor-brand-DEFAULT"></i>
+                    <span class="text-tremor-content-strong font-medium">FormEase</span>
+                </div>
+                <div class="flex space-x-6 text-sm text-tremor-content-subtle">
+                    <a href="../utils/help.html" class="hover:text-tremor-brand-DEFAULT">Aide</a>
+                    <a href="../utils/api-docs.html" class="hover:text-tremor-brand-DEFAULT">API</a>
+                    <a href="../public/about.html" class="hover:text-tremor-brand-DEFAULT">À propos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 🔐 PROTECTION AUTHENTIFICATION - Éviter les boucles infinies
+        function checkAuthentication() {
+            const token = localStorage.getItem('formease_token');
+            const currentPath = window.location.pathname;
+            
+            // Pages publiques qui ne nécessitent pas d'authentification
+            const publicPages = ['/login.html', '/register.html', '/landing.html', '/about.html', '/pricing.html'];
+            const isPublicPage = publicPages.some(page => currentPath.includes(page));
+            
+            if (!token && !isPublicPage) {
+                // Redirection uniquement si pas déjà sur une page d'auth
+                if (!currentPath.includes('/auth/')) {
+                    window.location.href = '../auth/login.html';
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Vérifier l'auth au chargement - une seule fois
+        if (!checkAuthentication()) {
+            // Arrêter l'exécution du reste du script
+            throw new Error('Authentication required');
+        }
+
+        // ✨ TREMOR PREDICTION CHART - Graphique de prédiction moderne
+        function initTremorPredictionChart() {
+            const chartContainer = document.getElementById('predictionChart');
+            if (!chartContainer) return;
+
+            // Données pour le graphique de prédiction
+            const chartData = [
+                { week: 'Sem 1', Actuel: 850, Prediction: 1050 },
+                { week: 'Sem 2', Actuel: 920, Prediction: 1150 },
+                { week: 'Sem 3', Actuel: 780, Prediction: 1080 },
+                { week: 'Sem 4', Actuel: 1050, Prediction: 1250 }
+            ];
+
+            // Création du SVG
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '300');
+            svg.setAttribute('viewBox', '0 0 700 300');
+            svg.setAttribute('class', 'w-full h-full');
+
+            // Configuration des couleurs Tremor
+            const colors = {
+                actual: '#64748b',
+                prediction: '#0ea5e9',
+                grid: '#f3f4f6',
+                text: '#6b7280'
+            };
+
+            // Calculer les dimensions
+            const margin = { top: 40, right: 60, bottom: 60, left: 60 };
+            const width = 700 - margin.left - margin.right;
+            const height = 300 - margin.top - margin.bottom;
+
+            // Échelles
+            const maxValue = Math.max(...chartData.map(d => Math.max(d.Actuel, d.Prediction)));
+            const xStep = width / (chartData.length - 1);
+
+            // Grille verticale
+            for (let i = 0; i < chartData.length; i++) {
+                const x = margin.left + i * xStep;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', margin.top);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', height + margin.top);
+                line.setAttribute('stroke', colors.grid);
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+            }
+
+            // Grille horizontale
+            for (let i = 0; i <= 4; i++) {
+                const y = margin.top + (height / 4) * i;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', margin.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', width + margin.left);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', colors.grid);
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+
+                // Labels des valeurs
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', margin.left - 15);
+                text.setAttribute('y', y + 4);
+                text.setAttribute('fill', colors.text);
+                text.setAttribute('text-anchor', 'end');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-family', 'Inter, sans-serif');
+                text.textContent = Math.round(maxValue * (1 - i / 4));
+                svg.appendChild(text);
+            }
+
+            // Ligne pour les données actuelles
+            let pathActuel = `M ${margin.left} ${margin.top + height - (chartData[0].Actuel / maxValue) * height}`;
+            chartData.forEach((d, i) => {
+                if (i > 0) {
+                    const x = margin.left + i * xStep;
+                    const y = margin.top + height - (d.Actuel / maxValue) * height;
+                    pathActuel += ` L ${x} ${y}`;
+                }
+            });
+
+            const lineActuel = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            lineActuel.setAttribute('d', pathActuel);
+            lineActuel.setAttribute('stroke', colors.actual);
+            lineActuel.setAttribute('stroke-width', '3');
+            lineActuel.setAttribute('fill', 'none');
+            lineActuel.setAttribute('stroke-linecap', 'round');
+            lineActuel.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(lineActuel);
+
+            // Ligne pour les prédictions (pointillés)
+            let pathPrediction = `M ${margin.left} ${margin.top + height - (chartData[0].Prediction / maxValue) * height}`;
+            chartData.forEach((d, i) => {
+                if (i > 0) {
+                    const x = margin.left + i * xStep;
+                    const y = margin.top + height - (d.Prediction / maxValue) * height;
+                    pathPrediction += ` L ${x} ${y}`;
+                }
+            });
+
+            const linePrediction = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            linePrediction.setAttribute('d', pathPrediction);
+            linePrediction.setAttribute('stroke', colors.prediction);
+            linePrediction.setAttribute('stroke-width', '3');
+            linePrediction.setAttribute('fill', 'none');
+            linePrediction.setAttribute('stroke-linecap', 'round');
+            linePrediction.setAttribute('stroke-linejoin', 'round');
+            linePrediction.setAttribute('stroke-dasharray', '8,8');
+            svg.appendChild(linePrediction);
+
+            // Area fill pour les prédictions
+            let areaPrediction = `M ${margin.left} ${margin.top + height}`;
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xStep;
+                const y = margin.top + height - (d.Prediction / maxValue) * height;
+                areaPrediction += ` L ${x} ${y}`;
+            });
+            areaPrediction += ` L ${margin.left + (chartData.length - 1) * xStep} ${margin.top + height} Z`;
+
+            const areaElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            areaElement.setAttribute('d', areaPrediction);
+            areaElement.setAttribute('fill', colors.prediction);
+            areaElement.setAttribute('fill-opacity', '0.1');
+            svg.insertBefore(areaElement, lineActuel);
+
+            // Points interactifs
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xStep;
+                
+                // Point données actuelles
+                const yActuel = margin.top + height - (d.Actuel / maxValue) * height;
+                const circleActuel = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circleActuel.setAttribute('cx', x);
+                circleActuel.setAttribute('cy', yActuel);
+                circleActuel.setAttribute('r', '4');
+                circleActuel.setAttribute('fill', colors.actual);
+                circleActuel.setAttribute('stroke', '#ffffff');
+                circleActuel.setAttribute('stroke-width', '2');
+                circleActuel.setAttribute('class', 'hover:r-6 transition-all cursor-pointer');
+                svg.appendChild(circleActuel);
+
+                // Point prédictions
+                const yPrediction = margin.top + height - (d.Prediction / maxValue) * height;
+                const circlePrediction = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circlePrediction.setAttribute('cx', x);
+                circlePrediction.setAttribute('cy', yPrediction);
+                circlePrediction.setAttribute('r', '4');
+                circlePrediction.setAttribute('fill', colors.prediction);
+                circlePrediction.setAttribute('stroke', '#ffffff');
+                circlePrediction.setAttribute('stroke-width', '2');
+                circlePrediction.setAttribute('class', 'hover:r-6 transition-all cursor-pointer');
+                svg.appendChild(circlePrediction);
+
+                // Labels des semaines
+                const weekLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                weekLabel.setAttribute('x', x);
+                weekLabel.setAttribute('y', height + margin.top + 20);
+                weekLabel.setAttribute('fill', colors.text);
+                weekLabel.setAttribute('text-anchor', 'middle');
+                weekLabel.setAttribute('font-size', '12');
+                weekLabel.setAttribute('font-family', 'Inter, sans-serif');
+                weekLabel.textContent = d.week;
+                svg.appendChild(weekLabel);
+            });
+
+            // Légende
+            const legendY = 25;
+            
+            // Légende Données actuelles
+            const legendActuelCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            legendActuelCircle.setAttribute('cx', margin.left + 80);
+            legendActuelCircle.setAttribute('cy', legendY);
+            legendActuelCircle.setAttribute('r', '6');
+            legendActuelCircle.setAttribute('fill', colors.actual);
+            svg.appendChild(legendActuelCircle);
+
+            const legendActuelText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            legendActuelText.setAttribute('x', margin.left + 95);
+            legendActuelText.setAttribute('y', legendY + 4);
+            legendActuelText.setAttribute('fill', colors.text);
+            legendActuelText.setAttribute('font-size', '14');
+            legendActuelText.setAttribute('font-family', 'Inter, sans-serif');
+            legendActuelText.setAttribute('font-weight', '500');
+            legendActuelText.textContent = 'Conversions actuelles';
+            svg.appendChild(legendActuelText);
+
+            // Légende Prédictions
+            const legendPredictionLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            legendPredictionLine.setAttribute('x1', margin.left + 280);
+            legendPredictionLine.setAttribute('y1', legendY);
+            legendPredictionLine.setAttribute('x2', margin.left + 292);
+            legendPredictionLine.setAttribute('y2', legendY);
+            legendPredictionLine.setAttribute('stroke', colors.prediction);
+            legendPredictionLine.setAttribute('stroke-width', '3');
+            legendPredictionLine.setAttribute('stroke-dasharray', '4,4');
+            svg.appendChild(legendPredictionLine);
+
+            const legendPredictionText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            legendPredictionText.setAttribute('x', margin.left + 305);
+            legendPredictionText.setAttribute('y', legendY + 4);
+            legendPredictionText.setAttribute('fill', colors.text);
+            legendPredictionText.setAttribute('font-size', '14');
+            legendPredictionText.setAttribute('font-family', 'Inter, sans-serif');
+            legendPredictionText.setAttribute('font-weight', '500');
+            legendPredictionText.textContent = 'Prédiction IA';
+            svg.appendChild(legendPredictionText);
+
+            // Remplacer le canvas par le SVG
+            chartContainer.innerHTML = '';
+            chartContainer.appendChild(svg);
+        }
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/95');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-md');
+                nav.classList.add('bg-white/95');
+            }
+        });
+
+        // Initialiser le graphique Tremor
+        window.addEventListener('load', function() {
+            initTremorPredictionChart();
+        });
+    </script>
+</body>
+</html>

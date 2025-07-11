@@ -6,24 +6,134 @@
     <title>FormEase - Gestionnaire de Réponses</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="ri-file-text-line text-green-600 text-2xl"></i>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-white/20 backdrop-blur-3xl"></div>
+    
+    <!-- Main Container -->
+    <div class="relative min-h-screen flex items-center justify-center px-4 py-8">
+        <!-- Content Card -->
+        <div class="tremor-Card w-full max-w-4xl p-8 shadow-xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-6 shadow-lg">
+                    <i class="ri-database-2-line text-3xl text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-3">Gestionnaire de Réponses</h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Analysez et gérez toutes les réponses de vos formulaires en un seul endroit. 
+                    Cette fonctionnalité avancée sera bientôt disponible.
+                </p>
             </div>
-            <h1 class="text-2xl font-bold text-gray-900 mb-2">Gestionnaire de Réponses</h1>
-            <p class="text-gray-600 mb-6">Cette page sera développée prochainement</p>
-            <div class="space-y-3">
-                <a href="../dashboard/home.html" class="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    <i class="ri-dashboard-line mr-2"></i>Retour au Dashboard
+
+            <!-- Features Preview -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="text-center p-6 bg-blue-50 rounded-lg border border-blue-100">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-bar-chart-box-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Analyses Avancées</h3>
+                    <p class="text-sm text-gray-600">Graphiques et statistiques détaillées</p>
+                </div>
+
+                <div class="text-center p-6 bg-green-50 rounded-lg border border-green-100">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-filter-3-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Filtres Intelligents</h3>
+                    <p class="text-sm text-gray-600">Triez et filtrez vos réponses facilement</p>
+                </div>
+
+                <div class="text-center p-6 bg-purple-50 rounded-lg border border-purple-100">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-download-cloud-2-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Export Multiple</h3>
+                    <p class="text-sm text-gray-600">CSV, Excel, PDF et plus encore</p>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-tools-line text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-amber-900">En cours de développement</h4>
+                        <p class="text-amber-700 text-sm">Cette fonctionnalité sera disponible dans la prochaine mise à jour</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="../dashboard/home.html" 
+                   class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    <i class="ri-dashboard-line mr-2"></i>
+                    Retour au Dashboard
                 </a>
-                <a href="../forms/list.html" class="block bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
-                    <i class="ri-file-list-line mr-2"></i>Mes Formulaires
+                <a href="../forms/management.html" 
+                   class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center">
+                    <i class="ri-file-list-line mr-2"></i>
+                    Mes Formulaires
+                </a>
+                <a href="../analytics/reports.html" 
+                   class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center justify-center">
+                    <i class="ri-line-chart-line mr-2"></i>
+                    Voir les Rapports
                 </a>
             </div>
         </div>
     </div>
+
+    <script>
+        // Simple authentication check
+        window.addEventListener('load', function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../auth/login.html';
+            }
+        });
+    </script>
 </body>
 </html>

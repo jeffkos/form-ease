@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Codes - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tremor-Button {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        .tremor-Button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .qr-preview {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #f3f4f6 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f3f4f6 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f3f4f6 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation -->
+    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard/home.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
+                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
+                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
+                    </a>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="../dashboard/home.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Tableau de bord
+                        </a>
+                        <a href="management.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Mes formulaires
+                        </a>
+                        <a href="qr-codes.html" class="text-tremor-brand-DEFAULT font-medium">
+                            QR Codes
+                        </a>
+                        <a href="../analytics/dashboard.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            Analytics
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                            <div class="w-8 h-8 bg-tremor-brand-DEFAULT rounded-full flex items-center justify-center">
+                                <i class="ri-user-line text-white"></i>
+                            </div>
+                            <span class="hidden md:block">Mon compte</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-20 pb-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-tremor-content-strong mb-4">
+                    Générateur de QR Codes
+                </h1>
+                <p class="text-xl text-tremor-content-DEFAULT max-w-2xl mx-auto">
+                    Créez des QR codes personnalisés pour vos formulaires et partagez-les facilement
+                </p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="ri-qr-code-line text-2xl text-blue-600"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-tremor-content-strong">24</p>
+                    <p class="text-tremor-content-DEFAULT">QR Codes créés</p>
+                </div>
+                
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="ri-scan-line text-2xl text-green-600"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-tremor-content-strong">1,847</p>
+                    <p class="text-tremor-content-DEFAULT">Scans ce mois</p>
+                </div>
+                
+                <div class="tremor-Card p-6 text-center">
+                    <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="ri-trending-up-line text-2xl text-purple-600"></i>
+                    </div>
+                    <p class="text-2xl font-bold text-tremor-content-strong">+23%</p>
+                    <p class="text-tremor-content-DEFAULT">vs mois dernier</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QR Generator -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-8">
+                
+                <!-- Generator Form -->
+                <div class="tremor-Card p-8">
+                    <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                        Créer un nouveau QR Code
+                    </h2>
+                    
+                    <form id="qrForm" class="space-y-6">
+                        <!-- Form Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                Sélectionner un formulaire
+                            </label>
+                            <select id="formSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT focus:border-tremor-brand-DEFAULT">
+                                <option value="">Choisir un formulaire</option>
+                                <option value="contact">Formulaire de Contact</option>
+                                <option value="survey">Sondage Satisfaction</option>
+                                <option value="event">Inscription Événement</option>
+                                <option value="feedback">Feedback Produit</option>
+                            </select>
+                        </div>
+
+                        <!-- QR Code Style -->
+                        <div>
+                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                Style du QR Code
+                            </label>
+                            <div class="grid grid-cols-3 gap-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="qrStyle" value="classic" class="sr-only" checked>
+                                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-tremor-brand-DEFAULT transition-colors qr-style-option border-tremor-brand-DEFAULT">
+                                        <div class="w-16 h-16 bg-black mx-auto mb-2 rounded"></div>
+                                        <p class="text-sm text-center">Classique</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="qrStyle" value="rounded" class="sr-only">
+                                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-tremor-brand-DEFAULT transition-colors qr-style-option">
+                                        <div class="w-16 h-16 bg-black mx-auto mb-2 rounded-lg"></div>
+                                        <p class="text-sm text-center">Arrondi</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="qrStyle" value="dots" class="sr-only">
+                                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-tremor-brand-DEFAULT transition-colors qr-style-option">
+                                        <div class="w-16 h-16 bg-black mx-auto mb-2 rounded-full"></div>
+                                        <p class="text-sm text-center">Points</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Colors -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                    Couleur principale
+                                </label>
+                                <div class="flex space-x-2">
+                                    <input type="color" value="#000000" class="w-12 h-10 border border-gray-300 rounded cursor-pointer">
+                                    <input type="text" value="#000000" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                    Couleur d'arrière-plan
+                                </label>
+                                <div class="flex space-x-2">
+                                    <input type="color" value="#ffffff" class="w-12 h-10 border border-gray-300 rounded cursor-pointer">
+                                    <input type="text" value="#ffffff" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo Upload -->
+                        <div>
+                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                Logo (optionnel)
+                            </label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-tremor-brand-DEFAULT transition-colors">
+                                <i class="ri-upload-cloud-line text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-tremor-content-DEFAULT">Glissez votre logo ici ou cliquez pour parcourir</p>
+                                <input type="file" accept="image/*" class="hidden">
+                            </div>
+                        </div>
+
+                        <!-- QR Code Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">
+                                Nom du QR Code
+                            </label>
+                            <input type="text" placeholder="Ex: QR Contact Site Web" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT focus:border-tremor-brand-DEFAULT">
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button type="submit" class="tremor-Button w-full py-3 px-6 rounded-lg text-white font-medium">
+                            <i class="ri-magic-line mr-2"></i>
+                            Générer le QR Code
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Preview -->
+                <div class="tremor-Card p-8">
+                    <h2 class="text-2xl font-bold text-tremor-content-strong mb-6">
+                        Aperçu
+                    </h2>
+                    
+                    <div class="text-center mb-6">
+                        <div class="qr-preview mx-auto rounded-lg flex items-center justify-center">
+                            <div class="w-32 h-32 bg-black grid grid-cols-8 gap-1 p-2">
+                                <!-- QR Code Pattern Simulation -->
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-black"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-white"></div>
+                                <div class="bg-black"></div>
+                            </div>
+                        </div>
+                        <p class="text-tremor-content-DEFAULT mt-4">
+                            Sélectionnez un formulaire pour voir l'aperçu
+                        </p>
+                    </div>
+
+                    <!-- QR Info -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-tremor-content-DEFAULT">URL:</span>
+                            <span class="text-sm text-tremor-content-strong">-</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-tremor-content-DEFAULT">Taille:</span>
+                            <span class="text-sm text-tremor-content-strong">200x200px</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-tremor-content-DEFAULT">Format:</span>
+                            <span class="text-sm text-tremor-content-strong">PNG, SVG</span>
+                        </div>
+                    </div>
+
+                    <!-- Download Options -->
+                    <div class="mt-6 space-y-3">
+                        <button disabled class="w-full py-2 px-4 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
+                            <i class="ri-download-line mr-2"></i>
+                            Télécharger PNG
+                        </button>
+                        <button disabled class="w-full py-2 px-4 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
+                            <i class="ri-download-line mr-2"></i>
+                            Télécharger SVG
+                        </button>
+                        <button disabled class="w-full py-2 px-4 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
+                            <i class="ri-printer-line mr-2"></i>
+                            Imprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QR Codes List -->
+    <section class="py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-tremor-content-strong">
+                    Mes QR Codes
+                </h2>
+                <div class="flex space-x-4">
+                    <input type="text" placeholder="Rechercher..." 
+                           class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tremor-brand-DEFAULT">
+                        <option>Tous les QR Codes</option>
+                        <option>Actifs</option>
+                        <option>Archivés</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                <!-- QR Code Card 1 -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Actif
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleQRDropdown('qr1')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="qr1" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Télécharger PNG</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Télécharger SVG</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Copier le lien</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Modifier</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-24 h-24 bg-black mx-auto mb-4 rounded grid grid-cols-6 gap-px p-1">
+                        <!-- Mini QR pattern -->
+                        <div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div>
+                        <div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div>
+                        <div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div>
+                        <div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div>
+                        <div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div>
+                        <div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div><div class="bg-black"></div><div class="bg-white"></div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2 text-center">
+                        Contact Site Web
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm text-center mb-4">
+                        Formulaire de contact principal
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center text-sm">
+                        <div>
+                            <p class="font-bold text-tremor-content-strong">847</p>
+                            <p class="text-tremor-content-subtle">Scans</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-tremor-content-strong">23</p>
+                            <p class="text-tremor-content-subtle">Cette semaine</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex space-x-2">
+                        <button class="flex-1 tremor-Button py-2 px-3 rounded text-white text-sm">
+                            <i class="ri-download-line mr-1"></i>
+                            Télécharger
+                        </button>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                            <i class="ri-share-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Code Card 2 -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Actif
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleQRDropdown('qr2')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="qr2" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Télécharger PNG</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Télécharger SVG</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Copier le lien</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Modifier</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-24 h-24 bg-blue-600 mx-auto mb-4 rounded-lg grid grid-cols-6 gap-px p-1">
+                        <!-- Mini QR pattern with blue color -->
+                        <div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div>
+                        <div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div>
+                        <div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div>
+                        <div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div>
+                        <div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div>
+                        <div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div><div class="bg-blue-800"></div><div class="bg-white"></div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2 text-center">
+                        Événement Webinar
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm text-center mb-4">
+                        Inscription webinar janvier
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center text-sm">
+                        <div>
+                            <p class="font-bold text-tremor-content-strong">432</p>
+                            <p class="text-tremor-content-subtle">Scans</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-tremor-content-strong">15</p>
+                            <p class="text-tremor-content-subtle">Cette semaine</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex space-x-2">
+                        <button class="flex-1 tremor-Button py-2 px-3 rounded text-white text-sm">
+                            <i class="ri-download-line mr-1"></i>
+                            Télécharger
+                        </button>
+                        <button class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded transition-colors">
+                            <i class="ri-share-line text-tremor-content-DEFAULT"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Code Card 3 -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            Archivé
+                        </span>
+                        <div class="relative">
+                            <button class="p-1 hover:bg-gray-100 rounded" onclick="toggleQRDropdown('qr3')">
+                                <i class="ri-more-line text-tremor-content-DEFAULT"></i>
+                            </button>
+                            <div id="qr3" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Restaurer</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Télécharger PNG</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Télécharger SVG</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Supprimer définitivement</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-24 h-24 bg-gray-600 mx-auto mb-4 rounded grid grid-cols-6 gap-px p-1 opacity-70">
+                        <!-- Mini QR pattern with gray color -->
+                        <div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div>
+                        <div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div>
+                        <div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div>
+                        <div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div>
+                        <div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div>
+                        <div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div><div class="bg-gray-800"></div><div class="bg-white"></div>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2 text-center">
+                        Feedback Q4 2024
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm text-center mb-4">
+                        Sondage satisfaction produit
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center text-sm">
+                        <div>
+                            <p class="font-bold text-tremor-content-strong">1,203</p>
+                            <p class="text-tremor-content-subtle">Scans total</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-tremor-content-strong">-</p>
+                            <p class="text-tremor-content-subtle">Archivé</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button class="w-full py-2 px-3 bg-gray-100 hover:bg-gray-200 rounded text-tremor-content-strong text-sm transition-colors">
+                            <i class="ri-refresh-line mr-1"></i>
+                            Restaurer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add New QR Card -->
+                <div class="tremor-Card p-8 text-center border-2 border-dashed border-gray-300 hover:border-tremor-brand-DEFAULT transition-colors cursor-pointer" onclick="scrollToGenerator()">
+                    <div class="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-add-line text-2xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-tremor-content-strong mb-2">
+                        Créer un QR Code
+                    </h3>
+                    <p class="text-tremor-content-DEFAULT text-sm">
+                        Générez un nouveau QR code pour vos formulaires
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center mt-8">
+                <nav class="flex space-x-2">
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT disabled:opacity-50">
+                        <i class="ri-arrow-left-line"></i>
+                    </button>
+                    <button class="px-3 py-2 bg-tremor-brand-DEFAULT text-white rounded">1</button>
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">2</button>
+                    <button class="px-3 py-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
+                        <i class="ri-arrow-right-line"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i class="ri-form-line text-xl text-tremor-brand-DEFAULT"></i>
+                    <span class="text-tremor-content-strong font-medium">FormEase</span>
+                </div>
+                <div class="flex space-x-6 text-sm text-tremor-content-subtle">
+                    <a href="../utils/help.html" class="hover:text-tremor-brand-DEFAULT">Aide</a>
+                    <a href="../utils/api-docs.html" class="hover:text-tremor-brand-DEFAULT">API</a>
+                    <a href="../public/about.html" class="hover:text-tremor-brand-DEFAULT">À propos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // QR Style selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const styleOptions = document.querySelectorAll('.qr-style-option');
+            const radioInputs = document.querySelectorAll('input[name="qrStyle"]');
+
+            radioInputs.forEach((input, index) => {
+                input.addEventListener('change', function() {
+                    styleOptions.forEach(option => {
+                        option.classList.remove('border-tremor-brand-DEFAULT');
+                        option.classList.add('border-gray-200');
+                    });
+                    if (this.checked) {
+                        styleOptions[index].classList.remove('border-gray-200');
+                        styleOptions[index].classList.add('border-tremor-brand-DEFAULT');
+                    }
+                });
+            });
+        });
+
+        // Dropdown toggle functionality
+        function toggleQRDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const allDropdowns = document.querySelectorAll('[id^="qr"]');
+            
+            // Close all other dropdowns
+            allDropdowns.forEach(dd => {
+                if (dd.id !== id && dd.classList.contains('absolute')) {
+                    dd.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('[onclick^="toggleQRDropdown"]')) {
+                const allDropdowns = document.querySelectorAll('[id^="qr"]');
+                allDropdowns.forEach(dd => {
+                    if (dd.classList.contains('absolute')) {
+                        dd.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Scroll to generator
+        function scrollToGenerator() {
+            document.querySelector('#qrForm').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // Form submission
+        document.getElementById('qrForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Here you would typically send the form data to your backend
+            alert('QR Code généré avec succès !');
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/95');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-md');
+                nav.classList.add('bg-white/95');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,68 @@
-// Middleware de validation centralisé pour FormEase
+/**
+ * 🚀 Enhanced Validation Middleware - FormEase API
+ * 
+ * Système de validation avancé avec Joi pour sécuriser
+ * toutes les entrées de l'API
+ * 
+ * @version 2.0.0
+ * @author FormEase Security Team
+ */
+
 const { body, param, query, validationResult } = require('express-validator');
 const Joi = require('joi');
 const logger = require('../utils/logger');
+
+// Schémas de validation personnalisés
+const customSchemas = {
+  // Validation d'email sécurisée
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'fr', 'edu', 'gov'] } })
+    .max(255)
+    .lowercase()
+    .trim(),
+
+  // Validation de mot de passe fort
+  password: Joi.string()
+    .min(8)
+    .max(128)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+    .message('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial'),
+
+  // Validation de nom sécurisée (anti-XSS)
+  safeName: Joi.string()
+    .min(1)
+    .max(100)
+    .pattern(/^[a-zA-ZÀ-ÿ\s\-'\.]+$/)
+    .trim()
+    .message('Le nom contient des caractères non autorisés'),
+
+  // Validation d'ID sécurisée
+  id: Joi.number().integer().positive().max(2147483647),
+
+  // Validation de texte libre sécurisée
+  safeText: Joi.string()
+    .max(5000)
+    .trim()
+    .custom((value, helpers) => {
+      // Détecter les tentatives XSS basiques
+      const xssPatterns = [
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        /javascript:/gi,
+        /on\w+\s*=/gi,
+        /<iframe/gi,
+        /expression\s*\(/gi
+      ];
+      
+      for (const pattern of xssPatterns) {
+        if (pattern.test(value)) {
+          logger.warn('XSS attempt detected', { value, pattern: pattern.toString() });
+          return helpers.error('any.invalid', { message: 'Contenu suspect détecté' });
+        }
+      }
+      
+      return value;
+    })
+};
 
 // Middleware pour traiter les résultats de validation express-validator
 const validateRequest = (validations) => {
@@ -20,10 +81,12 @@ const validateRequest = (validations) => {
         errors: errors.array(),
         ip: req.ip,
         endpoint: req.originalUrl,
-        method: req.method
+        method: req.method,
+        userId: req.user?.id
       });
 
       return res.status(400).json({
+        success: false,
         error: 'VALIDATION_ERROR',
         message: 'Données invalides',
         details: errors.array().map(err => ({

@@ -8,14 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     
-    <!-- 🚀 SPRINT 2 - Composants Tremor + Tailwind CSS -->
-    <script src="../../js/components/TremorTailwindConfig.js"></script>
-    <script src="../../js/components/TremorComponents.js"></script>
-    <script src="../../js/components/DataCache.js"></script>
-    <script src="../../js/components/SkeletonLoader.js"></script>
-    <script src="../../js/components/OptimizedApiService.js"></script>
-    <script src="../../js/components/AnimationManager.js"></script>
-    <script src="../../js/components/ErrorHandler.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/tremor-base.css">
     <script>
         tailwind.config = {
             theme: {
@@ -215,7 +209,7 @@
             <!-- Navigation Menu -->
             <nav class="p-4">
                 <!-- Dashboard -->
-                <a href="../dashboard/advanced.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-2">
+                <a href="../dashboard/home.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-2">
                     <i class="ri-dashboard-line mr-3 text-sm"></i>
                     <span class="text-sm font-medium" data-i18n="dashboard">Tableau de bord</span>
                 </a>
@@ -227,7 +221,7 @@
                         <i class="ri-file-list-2-line mr-3 text-sm"></i>
                         <span class="text-sm" data-i18n="formsList">Mes formulaires</span>
                     </a>
-                    <a href="builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
+                    <a href="file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html" class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg mb-1">
                         <i class="ri-tools-line mr-3 text-sm"></i>
                         <span class="text-sm" data-i18n="formBuilder">Créateur de formulaires</span>
                     </a>
@@ -1853,7 +1847,7 @@
                     window.location.href = `ai-generator.html?edit=${formId}`;
                 } else {
                     // Pour les formulaires manuels, rediriger vers le builder
-                    window.location.href = `builder.html?edit=${formId}`;
+                    window.location.href = `file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html?edit=${formId}`;
                 }
             }, 500);
         }
@@ -2147,7 +2141,7 @@
                         if (creationType === 'ai') {
                             window.location.href = `ai-generator.html?edit=${newForm.id}`;
                         } else {
-                            window.location.href = `builder.html?edit=${newForm.id}`;
+                            window.location.href = `file:///C:/Users/Jeff%20KOSI/Desktop/FormEase/frontend/pages/forms/builder.html?edit=${newForm.id}`;
                         }
                     }, 1000);
 
@@ -2193,69 +2187,95 @@
             return function (...args) {
                 clearTimeout(timeoutId);
                 timeoutId = setTimeout(() => func.apply(this, args), delay);
-            };
         }
 
-        // Refactorer openResponsesModal pour utiliser l'API
-        const originalOpenResponsesModal = window.openResponsesModal;
-        window.openResponsesModal = async function(formId) {
-            try {
-                showNotification('Chargement des réponses...', 'info');
-                
-                // Charger les réponses depuis l'API
-                const responses = await apiService.getFormSubmissions(formId);
-                allResponseData = responses;
-                filteredResponses = responses;
-                
-                // Appeler la fonction originale
-                originalOpenResponsesModal(formId);
-                
-                showNotification(`${responses.length} réponse(s) chargée(s)`, 'success');
-                
-            } catch (error) {
-                console.error('Erreur lors du chargement des réponses:', error);
-                showNotification('Erreur lors du chargement des réponses. Données d\'exemple utilisées.', 'error');
-                
-                // Fallback sur les données d'exemple
-                allResponseData = generateSampleResponses();
-                filteredResponses = allResponseData;
-                originalOpenResponsesModal(formId);
-            }
-        };
-
-        // Fonction pour rafraîchir les données depuis l'API
-        async function refreshData() {
-            try {
-                showNotification('Actualisation en cours...', 'info');
-                await loadForms();
-                showNotification('Données actualisées', 'success');
-            } catch (error) {
-                console.error('Erreur lors de l\'actualisation:', error);
-                showNotification('Erreur lors de l\'actualisation', 'error');
-            }
-        }
-
-        // Ajouter un bouton de rafraîchissement (optionnel)
-        window.refreshData = refreshData;
-
-        // Gestion de la déconnexion automatique en cas d'erreur 401
-        window.addEventListener('unhandledrejection', function(event) {
-            if (event.reason && event.reason.message && event.reason.message.includes('401')) {
-                console.log('Token expiré, redirection vers la connexion');
-                localStorage.removeItem('token');
+    <script>
+        // Simple and safe initialization
+        window.addEventListener('load', function() {
+            console.log('FormEase Forms List loaded successfully');
+            
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
                 window.location.href = '../auth/login.html';
+                return;
             }
-        });
 
-        console.log('=== SPRINT 1 : CONNEXION API TERMINÉE ===');
-        console.log('✅ Service API centralisé créé');
-        console.log('✅ Chargement des formulaires depuis l\'API');
-        console.log('✅ CRUD formulaires connecté à l\'API');
-        console.log('✅ Gestion des réponses connectée à l\'API');
-        console.log('✅ Actions groupées connectées à l\'API');
-        console.log('✅ Création de formulaires connectée à l\'API');
-        console.log('✅ Export/Import connecté à l\'API');
-        console.log('✅ Gestion d\'erreurs et fallbacks implémentés');
+            // Basic form data
+            let formsData = [
+                {
+                    id: 1,
+                    title: "Formulaire de Contact",
+                    description: "Formulaire pour nous contacter",
+                    status: "active",
+                    responses: 245,
+                    createdAt: "2024-01-15",
+                    isAI: false,
+                    paymentType: "free"
+                },
+                {
+                    id: 2,
+                    title: "Sondage Satisfaction",
+                    description: "Évaluation de la satisfaction client",
+                    status: "active",
+                    responses: 128,
+                    createdAt: "2024-01-20",
+                    isAI: true,
+                    paymentType: "free"
+                },
+                {
+                    id: 3,
+                    title: "Inscription Événement",
+                    description: "Formulaire d'inscription pour l'événement",
+                    status: "inactive",
+                    responses: 89,
+                    createdAt: "2024-01-10",
+                    isAI: false,
+                    paymentType: "paid"
+                }
+            ];
+
+            // Load forms list
+            function loadFormsList() {
+                const container = document.getElementById('formsContainer');
+                if (!container) return;
+
+                const formsHTML = formsData.map(form => `
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">${form.title}</h3>
+                            <span class="px-2 py-1 text-xs rounded-full ${form.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                ${form.status === 'active' ? 'Actif' : 'Inactif'}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-4">${form.description}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span><i class="ri-chat-3-line mr-1"></i>${form.responses} réponses</span>
+                                <span><i class="ri-calendar-line mr-1"></i>${form.createdAt}</span>
+                                ${form.isAI ? '<span class="text-blue-600"><i class="ri-robot-line mr-1"></i>IA</span>' : ''}
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="text-blue-600 hover:text-blue-700" onclick="viewForm(${form.id})">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                                <button class="text-green-600 hover:text-green-700" onclick="editForm(${form.id})">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-700" onclick="deleteForm(${form.id})">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = formsHTML;
+            }
+
+            // Initialize
+            loadFormsList();
+        });
     </script>
 </body>
 </html>

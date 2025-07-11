@@ -17,6 +17,11 @@ const {
   errorHandler 
 } = require('./middleware/security');
 
+// Import des nouveaux middlewares améliorés
+const { initializeCache } = require('./middleware/performance');
+const { initializeRedis } = require('./middleware/rateLimiting');
+const enhancedApiRoutes = require('./routes/enhanced-api');
+
 // Vérification des secrets critiques au démarrage
 app.use(checkCriticalSecrets);
 
@@ -119,6 +124,23 @@ app.post('/api/test-login', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Initialisation des systèmes de cache et monitoring
+async function initializeEnhancedSystems() {
+  try {
+    await initializeCache();
+    await initializeRedis();
+    logger.info('🚀 Enhanced API systems initialized');
+  } catch (error) {
+    logger.warn('Enhanced systems initialization partial failure:', error.message);
+  }
+}
+
+// Initialiser au démarrage
+initializeEnhancedSystems();
+
+// Utiliser les routes API améliorées
+app.use('/api/v2', enhancedApiRoutes);
 
 // Importation des routes
 const authRoutes = require('./routes/auth');
