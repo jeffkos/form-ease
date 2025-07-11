@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Boutons FormEase</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { margin: 10px; padding: 10px 20px; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #f0f0f0; }
+        .working { background-color: #90EE90; }
+        .not-working { background-color: #FFB6C1; }
+    </style>
+</head>
+<body>
+    <h1>Test des Boutons FormEase</h1>
+    
+    <h2>Tests Simples (doivent fonctionner)</h2>
+    <button onclick="alert('Test 1 OK')" class="working">Test Alert Simple</button>
+    <button onclick="testFunction()" class="working">Test Function</button>
+    
+    <h2>Tests FormEase</h2>
+    <button onclick="viewResponses('form-1', 'Test', 10)" class="not-working">viewResponses</button>
+    <button onclick="shareForm('form-1', 'Test')" class="not-working">shareForm</button>
+    <button onclick="showQRCode('form-1', 'Test')" class="not-working">showQRCode</button>
+    
+    <h2>Console de Debug</h2>
+    <div id="debug" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; background: #f9f9f9;"></div>
+    
+    <script>
+        // Fonctions de test
+        function testFunction() {
+            alert('testFunction fonctionne!');
+            console.log('testFunction appelée');
+            document.getElementById('debug').innerHTML += 'testFunction: OK<br>';
+        }
+        
+        function viewResponses(formId, formName, responseCount) {
+            alert('viewResponses: ' + formId + ', ' + formName + ', ' + responseCount);
+            console.log('viewResponses appelée:', formId, formName, responseCount);
+            document.getElementById('debug').innerHTML += 'viewResponses: OK - ' + formId + '<br>';
+        }
+        
+        function shareForm(formId, formName) {
+            alert('shareForm: ' + formId + ', ' + formName);
+            console.log('shareForm appelée:', formId, formName);
+            document.getElementById('debug').innerHTML += 'shareForm: OK - ' + formId + '<br>';
+        }
+        
+        function showQRCode(formId, formName) {
+            alert('showQRCode: ' + formId + ', ' + formName);
+            console.log('showQRCode appelée:', formId, formName);
+            document.getElementById('debug').innerHTML += 'showQRCode: OK - ' + formId + '<br>';
+        }
+        
+        // Test au chargement
+        console.log('Script de test chargé');
+        document.getElementById('debug').innerHTML = 'Script chargé: OK<br>';
+    </script>
+</body>
+</html>

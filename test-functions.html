@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Fonctions</title>
+</head>
+<body>
+    <h1>Test des Fonctions JavaScript</h1>
+    
+    <button onclick="testFunction()">Test Function</button>
+    <button onclick="viewResponses('test', 'Test', 10)">Test viewResponses</button>
+    <button onclick="shareForm('test', 'Test')">Test shareForm</button>
+    
+    <script>
+        function testFunction() {
+            alert('testFunction fonctionne!');
+            console.log('testFunction appelée');
+        }
+        
+        function viewResponses(formId, formName, responseCount) {
+            alert('viewResponses fonctionne: ' + formId + ', ' + formName + ', ' + responseCount);
+            console.log('viewResponses appelée avec:', formId, formName, responseCount);
+        }
+        
+        function shareForm(formId, formName) {
+            alert('shareForm fonctionne: ' + formId + ', ' + formName);
+            console.log('shareForm appelée avec:', formId, formName);
+        }
+        
+        console.log('Script chargé, fonctions définies');
+    </script>
+</body>
+</html>

@@ -72,6 +72,42 @@
         .metric-card:hover {
             transform: translateY(-2px);
         }
+        
+        /* Styles spécifiques pour le ComboChart Tremor */
+        .tremor-ComboChart {
+            position: relative;
+            font-family: 'Inter', sans-serif;
+        }
+        .tremor-ComboChart-legend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .tremor-Chart {
+            width: 100%;
+            height: 100%;
+        }
+        .tremor-Chart-svg {
+            overflow: visible;
+        }
+        .tremor-Chart-bar {
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+        .tremor-Chart-bar:hover {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+        }
+        .tremor-Chart-line {
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+        .tremor-Chart-point {
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+        .tremor-Tooltip {
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -233,8 +269,23 @@
                             <button class="px-3 py-1 text-sm text-tremor-content-DEFAULT hover:bg-gray-100 rounded">90j</button>
                         </div>
                     </div>
-                    <div class="h-64">
-                        <div id="trafficChart" class="w-full h-80"></div>
+                    <div class="h-80">
+                        <!-- ComboChart Tremor Officiel -->
+                        <div class="tremor-ComboChart w-full h-full">
+                            <div class="tremor-ComboChart-legend mb-4">
+                                <div class="flex items-center space-x-6">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-sm"></div>
+                                        <span class="text-sm text-tremor-content-DEFAULT">Vues</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-3 h-0.5 bg-green-500"></div>
+                                        <span class="text-sm text-tremor-content-DEFAULT">Conversions</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tremorComboChart" class="w-full h-64"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -615,239 +666,239 @@
     </footer>
 
     <script>
-        // ✨ TREMOR COMBO CHART - Moderne et élégant
+        // ✨ Tremor ComboChart Officiel - Documentation: https://tremor.so/docs/visualizations/combo-chart
         function initTremorComboChart() {
-            const chartContainer = document.getElementById('trafficChart');
+            const chartContainer = document.getElementById('tremorComboChart');
             if (!chartContainer) return;
 
             // Données pour le ComboChart Tremor
             const chartData = [
-                { day: 'Lun', Vues: 1200, Réponses: 300 },
-                { day: 'Mar', Vues: 1900, Réponses: 500 },
-                { day: 'Mer', Vues: 3000, Réponses: 800 },
-                { day: 'Jeu', Vues: 2100, Réponses: 560 },
-                { day: 'Ven', Vues: 3200, Réponses: 850 },
-                { day: 'Sam', Vues: 2800, Réponses: 740 },
-                { day: 'Dim', Vues: 2400, Réponses: 640 }
+                { month: 'Jan', Vues: 2890, Conversions: 400 },
+                { month: 'Fév', Vues: 2756, Conversions: 380 },
+                { month: 'Mar', Vues: 3322, Conversions: 450 },
+                { month: 'Avr', Vues: 3470, Conversions: 520 },
+                { month: 'Mai', Vues: 3475, Conversions: 480 },
+                { month: 'Juin', Vues: 3129, Conversions: 390 },
             ];
 
-            // Création du SVG pour le ComboChart
+            // Configuration Tremor ComboChart
+            const maxVues = Math.max(...chartData.map(d => d.Vues));
+            const maxConversions = Math.max(...chartData.map(d => d.Conversions));
+            
+            // Créer le conteneur principal avec les classes Tremor
+            const chartWrapper = document.createElement('div');
+            chartWrapper.className = 'tremor-Chart relative';
+            
+            // Créer le SVG avec les dimensions appropriées
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '350');
-            svg.setAttribute('viewBox', '0 0 800 350');
-            svg.setAttribute('class', 'w-full h-full');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('viewBox', '0 0 800 320');
+            svg.className = 'tremor-Chart-svg';
 
-            // Configuration des couleurs Tremor
+            // Configuration des marges et dimensions
+            const margin = { top: 20, right: 80, bottom: 50, left: 60 };
+            const width = 800 - margin.left - margin.right;
+            const height = 320 - margin.top - margin.bottom;
+
+            // Couleurs Tremor officielles
             const colors = {
-                primary: '#0ea5e9',
-                secondary: '#10b981',
-                grid: '#f3f4f6',
-                text: '#6b7280'
+                primary: '#3b82f6',    // blue-500 pour les barres
+                secondary: '#10b981',  // green-500 pour la ligne
+                grid: '#f3f4f6',       // gray-100
+                text: '#6b7280',       // gray-500
+                background: '#ffffff'
             };
 
-            // Calculer les dimensions du graphique
-            const margin = { top: 40, right: 60, bottom: 60, left: 60 };
-            const width = 800 - margin.left - margin.right;
-            const height = 350 - margin.top - margin.bottom;
-
             // Échelles
-            const maxVues = Math.max(...chartData.map(d => d.Vues));
-            const maxReponses = Math.max(...chartData.map(d => d.Réponses));
-            const xStep = width / (chartData.length - 1);
-
-            // Grille verticale
-            for (let i = 0; i < chartData.length; i++) {
-                const x = margin.left + i * xStep;
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', x);
-                line.setAttribute('y1', margin.top);
-                line.setAttribute('x2', x);
-                line.setAttribute('y2', height + margin.top);
-                line.setAttribute('stroke', colors.grid);
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
-            }
+            const xScale = width / chartData.length;
+            const yScale = height / maxVues;
+            const yScale2 = height / maxConversions;
 
             // Grille horizontale
             for (let i = 0; i <= 5; i++) {
                 const y = margin.top + (height / 5) * i;
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', margin.left);
-                line.setAttribute('y1', y);
-                line.setAttribute('x2', width + margin.left);
-                line.setAttribute('y2', y);
-                line.setAttribute('stroke', colors.grid);
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
+                const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                gridLine.setAttribute('x1', margin.left);
+                gridLine.setAttribute('y1', y);
+                gridLine.setAttribute('x2', width + margin.left);
+                gridLine.setAttribute('y2', y);
+                gridLine.setAttribute('stroke', colors.grid);
+                gridLine.setAttribute('stroke-width', '1');
+                svg.appendChild(gridLine);
 
-                // Labels des valeurs
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', margin.left - 15);
-                text.setAttribute('y', y + 4);
-                text.setAttribute('fill', colors.text);
-                text.setAttribute('text-anchor', 'end');
-                text.setAttribute('font-size', '12');
-                text.setAttribute('font-family', 'Inter, sans-serif');
-                text.textContent = Math.round(maxVues * (1 - i / 5));
-                svg.appendChild(text);
+                // Labels axe Y gauche (Vues)
+                if (i > 0) {
+                    const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    yLabel.setAttribute('x', margin.left - 10);
+                    yLabel.setAttribute('y', y + 4);
+                    yLabel.setAttribute('text-anchor', 'end');
+                    yLabel.setAttribute('fill', colors.text);
+                    yLabel.setAttribute('font-size', '12');
+                    yLabel.setAttribute('font-family', 'Inter, sans-serif');
+                    yLabel.textContent = Math.round(maxVues * (1 - i / 5)).toLocaleString();
+                    svg.appendChild(yLabel);
+                }
             }
 
-            // Ligne pour les Vues (area fill)
-            let pathVues = `M ${margin.left} ${margin.top + height - (chartData[0].Vues / maxVues) * height}`;
-            let areaVues = `M ${margin.left} ${margin.top + height}`;
-            
+            // Titre axe Y gauche
+            const yTitleLeft = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            yTitleLeft.setAttribute('x', 20);
+            yTitleLeft.setAttribute('y', height / 2 + margin.top);
+            yTitleLeft.setAttribute('text-anchor', 'middle');
+            yTitleLeft.setAttribute('fill', colors.primary);
+            yTitleLeft.setAttribute('font-size', '12');
+            yTitleLeft.setAttribute('font-weight', '500');
+            yTitleLeft.setAttribute('transform', `rotate(-90, 20, ${height / 2 + margin.top})`);
+            yTitleLeft.textContent = 'Vues';
+            svg.appendChild(yTitleLeft);
+
+            // Labels axe Y droite (Conversions)
+            for (let i = 1; i <= 5; i++) {
+                const y = margin.top + (height / 5) * i;
+                const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                yLabel.setAttribute('x', width + margin.left + 10);
+                yLabel.setAttribute('y', y + 4);
+                yLabel.setAttribute('text-anchor', 'start');
+                yLabel.setAttribute('fill', colors.text);
+                yLabel.setAttribute('font-size', '12');
+                yLabel.setAttribute('font-family', 'Inter, sans-serif');
+                yLabel.textContent = Math.round(maxConversions * (1 - i / 5));
+                svg.appendChild(yLabel);
+            }
+
+            // Titre axe Y droite
+            const yTitleRight = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            yTitleRight.setAttribute('x', width + margin.left + 60);
+            yTitleRight.setAttribute('y', height / 2 + margin.top);
+            yTitleRight.setAttribute('text-anchor', 'middle');
+            yTitleRight.setAttribute('fill', colors.secondary);
+            yTitleRight.setAttribute('font-size', '12');
+            yTitleRight.setAttribute('font-weight', '500');
+            yTitleRight.setAttribute('transform', `rotate(90, ${width + margin.left + 60}, ${height / 2 + margin.top})`);
+            yTitleRight.textContent = 'Conversions';
+            svg.appendChild(yTitleRight);
+
+            // Barres pour les Vues
             chartData.forEach((d, i) => {
-                const x = margin.left + i * xStep;
-                const y = margin.top + height - (d.Vues / maxVues) * height;
+                const barWidth = xScale * 0.6;
+                const x = margin.left + i * xScale + (xScale - barWidth) / 2;
+                const barHeight = (d.Vues / maxVues) * height;
+                const y = margin.top + height - barHeight;
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', barWidth);
+                rect.setAttribute('height', barHeight);
+                rect.setAttribute('fill', colors.primary);
+                rect.setAttribute('rx', '3');
+                rect.setAttribute('class', 'tremor-Chart-bar hover:opacity-80 transition-opacity cursor-pointer');
+                
+                // Tooltip au hover
+                rect.addEventListener('mouseenter', (e) => {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tremor-Tooltip absolute bg-gray-900 text-white text-xs rounded px-2 py-1 z-50';
+                    tooltip.textContent = `${d.month}: ${d.Vues.toLocaleString()} vues`;
+                    tooltip.style.left = e.pageX + 'px';
+                    tooltip.style.top = (e.pageY - 30) + 'px';
+                    document.body.appendChild(tooltip);
+                    
+                    rect.tooltip = tooltip;
+                });
+                
+                rect.addEventListener('mouseleave', () => {
+                    if (rect.tooltip) {
+                        document.body.removeChild(rect.tooltip);
+                        rect.tooltip = null;
+                    }
+                });
+                
+                svg.appendChild(rect);
+            });
+
+            // Ligne pour les Conversions
+            let pathData = '';
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xScale + xScale / 2;
+                const y = margin.top + height - (d.Conversions / maxConversions) * height;
                 
                 if (i === 0) {
-                    areaVues += ` L ${x} ${y}`;
+                    pathData += `M ${x} ${y}`;
                 } else {
-                    pathVues += ` L ${x} ${y}`;
-                    areaVues += ` L ${x} ${y}`;
+                    pathData += ` L ${x} ${y}`;
                 }
             });
-            
-            areaVues += ` L ${margin.left + (chartData.length - 1) * xStep} ${margin.top + height} Z`;
 
-            // Area fill pour les Vues
-            const areaVuesElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            areaVuesElement.setAttribute('d', areaVues);
-            areaVuesElement.setAttribute('fill', colors.primary);
-            areaVuesElement.setAttribute('fill-opacity', '0.1');
-            svg.appendChild(areaVuesElement);
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('stroke', colors.secondary);
+            path.setAttribute('stroke-width', '3');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            path.setAttribute('class', 'tremor-Chart-line');
+            svg.appendChild(path);
 
-            // Ligne des Vues
-            const lineVues = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            lineVues.setAttribute('d', pathVues);
-            lineVues.setAttribute('stroke', colors.primary);
-            lineVues.setAttribute('stroke-width', '3');
-            lineVues.setAttribute('fill', 'none');
-            lineVues.setAttribute('stroke-linecap', 'round');
-            lineVues.setAttribute('stroke-linejoin', 'round');
-            svg.appendChild(lineVues);
-
-            // Ligne pour les Réponses
-            let pathReponses = `M ${margin.left} ${margin.top + height - (chartData[0].Réponses / maxReponses) * height}`;
-            let areaReponses = `M ${margin.left} ${margin.top + height}`;
-            
+            // Points sur la ligne
             chartData.forEach((d, i) => {
-                const x = margin.left + i * xStep;
-                const y = margin.top + height - (d.Réponses / maxReponses) * height;
+                const x = margin.left + i * xScale + xScale / 2;
+                const y = margin.top + height - (d.Conversions / maxConversions) * height;
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', x);
+                circle.setAttribute('cy', y);
+                circle.setAttribute('r', '4');
+                circle.setAttribute('fill', colors.secondary);
+                circle.setAttribute('stroke', '#ffffff');
+                circle.setAttribute('stroke-width', '2');
+                circle.setAttribute('class', 'tremor-Chart-point hover:r-6 transition-all cursor-pointer');
                 
-                if (i === 0) {
-                    areaReponses += ` L ${x} ${y}`;
-                } else {
-                    pathReponses += ` L ${x} ${y}`;
-                    areaReponses += ` L ${x} ${y}`;
-                }
-            });
-            
-            areaReponses += ` L ${margin.left + (chartData.length - 1) * xStep} ${margin.top + height} Z`;
-
-            // Area fill pour les Réponses
-            const areaReponsesElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            areaReponsesElement.setAttribute('d', areaReponses);
-            areaReponsesElement.setAttribute('fill', colors.secondary);
-            areaReponsesElement.setAttribute('fill-opacity', '0.1');
-            svg.appendChild(areaReponsesElement);
-
-            // Ligne des Réponses
-            const lineReponses = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            lineReponses.setAttribute('d', pathReponses);
-            lineReponses.setAttribute('stroke', colors.secondary);
-            lineReponses.setAttribute('stroke-width', '3');
-            lineReponses.setAttribute('fill', 'none');
-            lineReponses.setAttribute('stroke-linecap', 'round');
-            lineReponses.setAttribute('stroke-linejoin', 'round');
-            svg.appendChild(lineReponses);
-
-            // Points interactifs
-            chartData.forEach((d, i) => {
-                const x = margin.left + i * xStep;
+                // Tooltip pour les points
+                circle.addEventListener('mouseenter', (e) => {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tremor-Tooltip absolute bg-gray-900 text-white text-xs rounded px-2 py-1 z-50';
+                    tooltip.textContent = `${d.month}: ${d.Conversions} conversions`;
+                    tooltip.style.left = e.pageX + 'px';
+                    tooltip.style.top = (e.pageY - 30) + 'px';
+                    document.body.appendChild(tooltip);
+                    
+                    circle.tooltip = tooltip;
+                });
                 
-                // Point Vues
-                const yVues = margin.top + height - (d.Vues / maxVues) * height;
-                const circleVues = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circleVues.setAttribute('cx', x);
-                circleVues.setAttribute('cy', yVues);
-                circleVues.setAttribute('r', '4');
-                circleVues.setAttribute('fill', colors.primary);
-                circleVues.setAttribute('stroke', '#ffffff');
-                circleVues.setAttribute('stroke-width', '2');
-                circleVues.setAttribute('class', 'hover:r-6 transition-all cursor-pointer');
-                svg.appendChild(circleVues);
-
-                // Point Réponses
-                const yReponses = margin.top + height - (d.Réponses / maxReponses) * height;
-                const circleReponses = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circleReponses.setAttribute('cx', x);
-                circleReponses.setAttribute('cy', yReponses);
-                circleReponses.setAttribute('r', '4');
-                circleReponses.setAttribute('fill', colors.secondary);
-                circleReponses.setAttribute('stroke', '#ffffff');
-                circleReponses.setAttribute('stroke-width', '2');
-                circleReponses.setAttribute('class', 'hover:r-6 transition-all cursor-pointer');
-                svg.appendChild(circleReponses);
-
-                // Labels des jours
-                const dayLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                dayLabel.setAttribute('x', x);
-                dayLabel.setAttribute('y', height + margin.top + 20);
-                dayLabel.setAttribute('fill', colors.text);
-                dayLabel.setAttribute('text-anchor', 'middle');
-                dayLabel.setAttribute('font-size', '12');
-                dayLabel.setAttribute('font-family', 'Inter, sans-serif');
-                dayLabel.textContent = d.day;
-                svg.appendChild(dayLabel);
+                circle.addEventListener('mouseleave', () => {
+                    if (circle.tooltip) {
+                        document.body.removeChild(circle.tooltip);
+                        circle.tooltip = null;
+                    }
+                });
+                
+                svg.appendChild(circle);
             });
 
-            // Légende
-            const legendY = 25;
-            
-            // Légende Vues
-            const legendVuesCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            legendVuesCircle.setAttribute('cx', margin.left + 50);
-            legendVuesCircle.setAttribute('cy', legendY);
-            legendVuesCircle.setAttribute('r', '6');
-            legendVuesCircle.setAttribute('fill', colors.primary);
-            svg.appendChild(legendVuesCircle);
+            // Labels des mois (axe X)
+            chartData.forEach((d, i) => {
+                const x = margin.left + i * xScale + xScale / 2;
+                const y = height + margin.top + 25;
 
-            const legendVuesText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            legendVuesText.setAttribute('x', margin.left + 65);
-            legendVuesText.setAttribute('y', legendY + 4);
-            legendVuesText.setAttribute('fill', colors.text);
-            legendVuesText.setAttribute('font-size', '14');
-            legendVuesText.setAttribute('font-family', 'Inter, sans-serif');
-            legendVuesText.setAttribute('font-weight', '500');
-            legendVuesText.textContent = 'Vues';
-            svg.appendChild(legendVuesText);
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', x);
+                label.setAttribute('y', y);
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('fill', colors.text);
+                label.setAttribute('font-size', '12');
+                label.setAttribute('font-family', 'Inter, sans-serif');
+                label.textContent = d.month;
+                svg.appendChild(label);
+            });
 
-            // Légende Réponses
-            const legendReponsesCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            legendReponsesCircle.setAttribute('cx', margin.left + 150);
-            legendReponsesCircle.setAttribute('cy', legendY);
-            legendReponsesCircle.setAttribute('r', '6');
-            legendReponsesCircle.setAttribute('fill', colors.secondary);
-            svg.appendChild(legendReponsesCircle);
-
-            const legendReponsesText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            legendReponsesText.setAttribute('x', margin.left + 165);
-            legendReponsesText.setAttribute('y', legendY + 4);
-            legendReponsesText.setAttribute('fill', colors.text);
-            legendReponsesText.setAttribute('font-size', '14');
-            legendReponsesText.setAttribute('font-family', 'Inter, sans-serif');
-            legendReponsesText.setAttribute('font-weight', '500');
-            legendReponsesText.textContent = 'Réponses';
-            svg.appendChild(legendReponsesText);
-
-            // Remplacer le canvas par le SVG
+            // Nettoyer le conteneur et ajouter le nouveau graphique
             chartContainer.innerHTML = '';
-            chartContainer.appendChild(svg);
+            chartWrapper.appendChild(svg);
+            chartContainer.appendChild(chartWrapper);
         }
 
-        // Navbar background on scroll
+        // Navigation background on scroll
         window.addEventListener('scroll', function() {
             const nav = document.querySelector('nav');
             if (window.scrollY > 100) {
@@ -859,7 +910,7 @@
             }
         });
 
-        // Initialiser le graphique Tremor quand la page est chargée
+        // Initialiser le graphique au chargement
         window.addEventListener('load', function() {
             initTremorComboChart();
         });
