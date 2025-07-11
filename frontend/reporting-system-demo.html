@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase Reporting System - Sprint 5 Phase 4</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Configuration Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blue: {
+                            50: '#eff6ff',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af'
+                        },
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    },
+                    backgroundColor: {
+                        'white': '#ffffff',
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(-8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'slide-up': {
+                            '0%': { opacity: '0', transform: 'translateY(16px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.8' }
+                        },
+                        'progress': {
+                            '0%': { width: '0%' },
+                            '100%': { width: '100%' }
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.25s ease-out',
+                        'slide-up': 'slide-up 0.3s ease-out',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'progress': 'progress 2s ease-in-out'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .tremor-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .tremor-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .dark .tremor-card:hover {
+            border-color: #2563eb;
+        }
+        
+        .tremor-button-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.15s ease-in-out;
+        }
+        
+        .tremor-button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .tremor-button-secondary {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .tremor-button-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        
+        .dark .tremor-button-secondary {
+            background-color: #1f2937;
+            color: #d1d5db;
+            border-color: #4b5563;
+        }
+        
+        .dark .tremor-button-secondary:hover {
+            background-color: #374151;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        
+        .tremor-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db transparent;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 3px;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #9ca3af;
+        }
+        
+        .report-generator-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-generator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 50%, #2563eb 100%);
+            background-size: 200% 100%;
+            animation: progress-shimmer 2s infinite;
+        }
+        
+        @keyframes progress-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .template-preview {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 0.375rem;
+            border: 1px solid #e5e7eb;
+            min-height: 200px;
+        }
+        
+        .dark .template-preview {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            border-color: #4b5563;
+        }
+        
+        .schedule-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .schedule-active { background-color: #10b981; }
+        .schedule-paused { background-color: #f59e0b; }
+        .schedule-error { background-color: #ef4444; }
+        
+        .format-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .format-pdf { background: #dc2626; color: white; }
+        .format-excel { background: #059669; color: white; }
+        .format-html { background: #7c3aed; color: white; }
+    </style>
+</head>
+
+<body class="h-full bg-gray-50 dark:bg-gray-900 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center">
+                        <i class="ri-file-chart-line text-2xl text-blue-500 mr-3"></i>
+                        <div>
+                            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                FormEase Reporting System
+                            </h1>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Sprint 5 Phase 4</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Mode Navigation -->
+                    <div class="hidden sm:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                        <button id="reportsBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm transition-all duration-150">
+                            <i class="ri-file-chart-line mr-2"></i>
+                            Rapports
+                        </button>
+                        <button id="templatesBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-file-edit-line mr-2"></i>
+                            Templates
+                        </button>
+                        <button id="scheduleBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-calendar-schedule-line mr-2"></i>
+                            Planification
+                        </button>
+                        <button id="historyBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-history-line mr-2"></i>
+                            Historique
+                        </button>
+                    </div>
+                    
+                    <!-- Dark mode toggle -->
+                    <button id="darkModeToggle" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150">
+                        <i class="ri-moon-line dark:hidden text-lg"></i>
+                        <i class="ri-sun-line hidden dark:block text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="h-[calc(100vh-4rem)]">
+        <!-- Reports Mode -->
+        <div id="reportsMode" class="h-full">
+            <div class="max-w-7xl mx-auto p-6 h-full overflow-auto tremor-scrollbar">
+                <!-- Hero Section -->
+                <div class="tremor-card p-8 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-600 report-generator-card">
+                    <div class="text-center">
+                        <div class="flex justify-center mb-4">
+                            <div class="p-4 bg-blue-100 dark:bg-blue-900 rounded-full animate-pulse-glow">
+                                <i class="ri-file-chart-line text-4xl text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                            Système de Rapports Avancé
+                        </h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-6">
+                            Générez des rapports professionnels automatiquement avec des templates personnalisables et une planification intelligente
+                        </p>
+                        <div class="flex justify-center space-x-4">
+                            <button id="generateReportBtn" class="tremor-button-primary flex items-center">
+                                <i class="ri-add-line mr-2"></i>
+                                Générer un rapport
+                            </button>
+                            <button id="createTemplateBtn" class="tremor-button-secondary flex items-center">
+                                <i class="ri-file-edit-line mr-2"></i>
+                                Créer un template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg mr-4">
+                                <i class="ri-file-chart-line text-green-600 dark:text-green-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalReports">0</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Rapports générés</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg mr-4">
+                                <i class="ri-file-edit-line text-blue-600 dark:text-blue-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalTemplates">0</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Templates disponibles</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg mr-4">
+                                <i class="ri-calendar-schedule-line text-purple-600 dark:text-purple-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="scheduledReports">0</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Rapports planifiés</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg mr-4">
+                                <i class="ri-percentage-line text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="successRate">0%</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Taux de succès</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Generation -->
+                <div class="tremor-card p-6 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Génération de Rapport</h3>
+                        <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+                            <i class="ri-magic-line mr-1"></i>
+                            Assisté par IA
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Template de rapport
+                                    </label>
+                                    <select id="reportTemplateSelect" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                        <option value="">Sélectionner un template...</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Format de sortie
+                                        </label>
+                                        <select id="reportFormatSelect" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                            <option value="pdf">PDF</option>
+                                            <option value="excel">Excel</option>
+                                            <option value="html">HTML</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Période d'analyse
+                                        </label>
+                                        <select id="reportPeriodSelect" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                            <option value="week">7 derniers jours</option>
+                                            <option value="month">30 derniers jours</option>
+                                            <option value="quarter">3 derniers mois</option>
+                                            <option value="year">12 derniers mois</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Titre personnalisé (optionnel)
+                                    </label>
+                                    <input type="text" id="reportTitleInput" placeholder="Titre du rapport..." 
+                                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="template-preview p-4 h-full">
+                                <div id="templatePreview" class="text-center text-gray-500 dark:text-gray-400 h-full flex items-center justify-center">
+                                    <div>
+                                        <i class="ri-file-text-line text-4xl mb-2"></i>
+                                        <p>Aperçu du template</p>
+                                        <p class="text-sm">Sélectionnez un template pour voir l'aperçu</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end mt-6 space-x-3">
+                        <button id="previewReportBtn" class="tremor-button-secondary flex items-center">
+                            <i class="ri-eye-line mr-2"></i>
+                            Aperçu
+                        </button>
+                        <button id="generateBtn" class="tremor-button-primary flex items-center">
+                            <i class="ri-play-circle-line mr-2"></i>
+                            Générer le rapport
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Reports -->
+                <div class="tremor-card p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Rapports Récents</h3>
+                        <button id="viewAllReportsBtn" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 text-sm font-medium">
+                            Voir tout
+                        </button>
+                    </div>
+                    
+                    <div id="recentReportsList" class="space-y-4">
+                        <!-- Recent reports will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates Mode -->
+        <div id="templatesMode" class="h-full hidden">
+            <div id="templatesContainer" class="h-full">
+                <!-- Templates management will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Schedule Mode -->
+        <div id="scheduleMode" class="h-full hidden">
+            <div id="scheduleContainer" class="h-full">
+                <!-- Schedule management will be loaded here -->
+            </div>
+        </div>
+
+        <!-- History Mode -->
+        <div id="historyMode" class="h-full hidden">
+            <div id="historyContainer" class="h-full">
+                <!-- Report history will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Generation Progress Modal -->
+    <div id="reportProgressModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:w-full sm:max-w-md">
+                    <div class="p-6">
+                        <div class="text-center">
+                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 mb-4">
+                                <i class="ri-file-chart-line text-blue-600 dark:text-blue-400 text-2xl animate-pulse-glow"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                Génération en cours
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6" id="progressMessage">
+                                Préparation du rapport...
+                            </p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
+                                <div id="progressBar" class="progress-bar h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            
+                            <p class="text-xs text-gray-400" id="progressPercent">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-4 shadow-lg animate-slide-up max-w-md">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="ri-check-circle-line text-green-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-green-800 dark:text-green-200" id="successMessage">
+                        Rapport généré avec succès !
+                    </p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button class="text-green-500 hover:text-green-600 dark:text-green-300 dark:hover:text-green-200" onclick="document.getElementById('successToast').classList.add('hidden')">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/reporting/ReportingSystem.js"></script>
+    <script src="js/reporting/ReportTemplateManager.js"></script>
+    <script src="js/reporting/ReportScheduler.js"></script>
+
+    <script>
+        class ReportingSystemDemo {
+            constructor() {
+                this.currentMode = 'reports';
+                this.reportingSystem = null;
+                this.templateManager = null;
+                this.scheduler = null;
+                this.isGenerating = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.initReportingSystem();
+                this.setupEventListeners();
+                this.loadDashboardData();
+                
+                console.log('📊 Reporting System Demo initialized');
+            }
+            
+            initReportingSystem() {
+                if (window.FormEaseReporting) {
+                    this.reportingSystem = new window.FormEaseReporting({
+                        apiBase: '/api',
+                        enablePDF: true,
+                        enableExcel: true,
+                        enableScheduling: true
+                    });
+                    
+                    if (window.ReportTemplateManager) {
+                        this.templateManager = new window.ReportTemplateManager(this.reportingSystem);
+                    }
+                    
+                    if (window.ReportScheduler) {
+                        this.scheduler = new window.ReportScheduler(this.reportingSystem);
+                    }
+                    
+                    this.loadTemplatesIntoSelect();
+                }
+            }
+            
+            setupEventListeners() {
+                // Mode switching
+                document.getElementById('reportsBtn').addEventListener('click', () => {
+                    this.switchMode('reports');
+                });
+                
+                document.getElementById('templatesBtn').addEventListener('click', () => {
+                    this.switchMode('templates');
+                });
+                
+                document.getElementById('scheduleBtn').addEventListener('click', () => {
+                    this.switchMode('schedule');
+                });
+                
+                document.getElementById('historyBtn').addEventListener('click', () => {
+                    this.switchMode('history');
+                });
+                
+                // Dark mode toggle
+                document.getElementById('darkModeToggle').addEventListener('click', () => {
+                    this.toggleDarkMode();
+                });
+                
+                // Report generation
+                document.getElementById('generateReportBtn').addEventListener('click', () => {
+                    this.showReportGenerator();
+                });
+                
+                document.getElementById('createTemplateBtn').addEventListener('click', () => {
+                    this.switchMode('templates');
+                });
+                
+                document.getElementById('generateBtn').addEventListener('click', () => {
+                    this.generateReport();
+                });
+                
+                document.getElementById('previewReportBtn').addEventListener('click', () => {
+                    this.previewReport();
+                });
+                
+                // Template selection
+                document.getElementById('reportTemplateSelect').addEventListener('change', (e) => {
+                    this.updateTemplatePreview(e.target.value);
+                });
+            }
+            
+            switchMode(mode) {
+                this.currentMode = mode;
+                
+                // Update navigation
+                const buttons = {
+                    reports: document.getElementById('reportsBtn'),
+                    templates: document.getElementById('templatesBtn'),
+                    schedule: document.getElementById('scheduleBtn'),
+                    history: document.getElementById('historyBtn')
+                };
+                
+                Object.values(buttons).forEach(btn => {
+                    btn.className = 'flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150';
+                });
+                
+                buttons[mode].className = 'flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm transition-all duration-150';
+                
+                // Show/hide content
+                document.getElementById('reportsMode').classList.toggle('hidden', mode !== 'reports');
+                document.getElementById('templatesMode').classList.toggle('hidden', mode !== 'templates');
+                document.getElementById('scheduleMode').classList.toggle('hidden', mode !== 'schedule');
+                document.getElementById('historyMode').classList.toggle('hidden', mode !== 'history');
+                
+                // Initialize mode-specific content
+                if (mode === 'templates') {
+                    this.initTemplatesMode();
+                } else if (mode === 'schedule') {
+                    this.initScheduleMode();
+                } else if (mode === 'history') {
+                    this.initHistoryMode();
+                }
+            }
+            
+            loadDashboardData() {
+                if (!this.reportingSystem) return;
+                
+                const stats = this.reportingSystem.getStats();
+                
+                document.getElementById('totalReports').textContent = stats.totalReports;
+                document.getElementById('totalTemplates').textContent = stats.totalTemplates;
+                document.getElementById('scheduledReports').textContent = stats.scheduledReports;
+                document.getElementById('successRate').textContent = `${Math.round(stats.successRate)}%`;
+                
+                this.loadRecentReports();
+            }
+            
+            loadTemplatesIntoSelect() {
+                const select = document.getElementById('reportTemplateSelect');
+                select.innerHTML = '<option value="">Sélectionner un template...</option>';
+                
+                if (this.reportingSystem) {
+                    const templates = this.reportingSystem.getAllReportTemplates();
+                    
+                    templates.forEach(template => {
+                        const option = document.createElement('option');
+                        option.value = template.id;
+                        option.textContent = `${template.name} (${template.category})`;
+                        select.appendChild(option);
+                    });
+                }
+            }
+            
+            updateTemplatePreview(templateId) {
+                const preview = document.getElementById('templatePreview');
+                
+                if (!templateId || !this.reportingSystem) {
+                    preview.innerHTML = `
+                        <div class="text-center text-gray-500 dark:text-gray-400 h-full flex items-center justify-center">
+                            <div>
+                                <i class="ri-file-text-line text-4xl mb-2"></i>
+                                <p>Aperçu du template</p>
+                                <p class="text-sm">Sélectionnez un template pour voir l'aperçu</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const template = this.reportingSystem.getReportTemplate(templateId);
+                if (!template) return;
+                
+                preview.innerHTML = `
+                    <div class="h-full flex flex-col">
+                        <div class="flex items-center mb-3">
+                            <i class="${template.icon || 'ri-file-text-line'} text-blue-500 mr-2"></i>
+                            <h4 class="font-medium text-gray-900 dark:text-white text-sm">${template.name}</h4>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-4">${template.description}</p>
+                        
+                        <div class="flex-1">
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Sections :</div>
+                            <div class="space-y-1">
+                                ${template.sections.slice(0, 4).map(section => `
+                                    <div class="flex items-center text-xs">
+                                        <div class="w-2 h-2 bg-blue-300 rounded-full mr-2"></div>
+                                        <span class="text-gray-700 dark:text-gray-300">${section.title}</span>
+                                    </div>
+                                `).join('')}
+                                ${template.sections.length > 4 ? `
+                                    <div class="text-xs text-gray-400">+${template.sections.length - 4} autres sections</div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
+                            <div class="flex space-x-1">
+                                ${template.formats.map(format => `
+                                    <div class="format-icon format-${format}">${format.toUpperCase()}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            async generateReport() {
+                if (this.isGenerating) return;
+                
+                const templateId = document.getElementById('reportTemplateSelect').value;
+                const format = document.getElementById('reportFormatSelect').value;
+                const period = document.getElementById('reportPeriodSelect').value;
+                const title = document.getElementById('reportTitleInput').value;
+                
+                if (!templateId) {
+                    alert('Veuillez sélectionner un template');
+                    return;
+                }
+                
+                this.isGenerating = true;
+                this.showProgressModal();
+                
+                try {
+                    // Simulate data collection
+                    await this.updateProgress(20, 'Collecte des données...');
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    // Generate sample data
+                    const data = this.generateSampleData(period);
+                    
+                    await this.updateProgress(50, 'Traitement des données...');
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                    
+                    await this.updateProgress(80, 'Génération du rapport...');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Generate the report
+                    const options = {
+                        format,
+                        title: title || undefined,
+                        period,
+                        includeCharts: true,
+                        includeData: true
+                    };
+                    
+                    const reportResult = await this.reportingSystem.generateReport(templateId, data, options);
+                    
+                    await this.updateProgress(100, 'Finalisation...');
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    this.hideProgressModal();
+                    this.showSuccessToast(`Rapport "${reportResult.filename}" généré avec succès !`);
+                    
+                    // Auto-download
+                    setTimeout(() => {
+                        this.reportingSystem.downloadReport(reportResult);
+                    }, 1000);
+                    
+                    // Refresh data
+                    this.loadDashboardData();
+                    
+                } catch (error) {
+                    console.error('Report generation failed:', error);
+                    this.hideProgressModal();
+                    alert(`Erreur lors de la génération : ${error.message}`);
+                } finally {
+                    this.isGenerating = false;
+                }
+            }
+            
+            generateSampleData(period) {
+                // Generate realistic sample data based on period
+                const baseData = {
+                    totalResponses: Math.floor(Math.random() * 500) + 200,
+                    completionRate: Math.floor(Math.random() * 20) + 75,
+                    averageTime: Math.floor(Math.random() * 180) + 120,
+                    lastResponse: new Date().toISOString()
+                };
+                
+                // Add period-specific data
+                switch (period) {
+                    case 'week':
+                        return { ...baseData, period: '7 derniers jours' };
+                    case 'month':
+                        return { ...baseData, period: '30 derniers jours' };
+                    case 'quarter':
+                        return { ...baseData, period: '3 derniers mois' };
+                    case 'year':
+                        return { ...baseData, period: '12 derniers mois' };
+                    default:
+                        return baseData;
+                }
+            }
+            
+            async updateProgress(percent, message) {
+                document.getElementById('progressBar').style.width = `${percent}%`;
+                document.getElementById('progressPercent').textContent = `${percent}%`;
+                document.getElementById('progressMessage').textContent = message;
+            }
+            
+            showProgressModal() {
+                document.getElementById('reportProgressModal').classList.remove('hidden');
+                this.updateProgress(0, 'Initialisation...');
+            }
+            
+            hideProgressModal() {
+                document.getElementById('reportProgressModal').classList.add('hidden');
+            }
+            
+            showSuccessToast(message) {
+                document.getElementById('successMessage').textContent = message;
+                document.getElementById('successToast').classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById('successToast').classList.add('hidden');
+                }, 5000);
+            }
+            
+            loadRecentReports() {
+                const container = document.getElementById('recentReportsList');
+                
+                if (!this.reportingSystem) {
+                    container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Aucun rapport disponible</p>';
+                    return;
+                }
+                
+                const history = this.reportingSystem.getReportHistory().slice(0, 5);
+                
+                if (history.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-file-chart-line text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">Aucun rapport généré pour le moment</p>
+                            <p class="text-sm text-gray-400 dark:text-gray-500">Générez votre premier rapport pour commencer</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = history.map(report => `
+                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div class="flex items-center">
+                            <div class="format-icon format-${report.options.format} mr-3">
+                                ${report.options.format.toUpperCase()}
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 dark:text-white">${report.options.title}</h4>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    ${new Date(report.generated).toLocaleDateString('fr-FR')} • ${report.template.category}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                report.success 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                            }">
+                                ${report.success ? 'Succès' : 'Échec'}
+                            </span>
+                            ${report.success ? `
+                                <button onclick="reportingDemo.downloadReport('${report.id}')" 
+                                        class="p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                                    <i class="ri-download-line"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            showReportGenerator() {
+                // Scroll to generator section
+                document.querySelector('.tremor-card:nth-child(3)').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+            
+            async previewReport() {
+                const templateId = document.getElementById('reportTemplateSelect').value;
+                
+                if (!templateId) {
+                    alert('Veuillez sélectionner un template');
+                    return;
+                }
+                
+                try {
+                    const sampleData = this.generateSampleData('week');
+                    const result = await this.reportingSystem.generateReport(templateId, sampleData, {
+                        format: 'html',
+                        title: 'Aperçu du rapport',
+                        isPreview: true
+                    });
+                    
+                    // Open preview in new window
+                    const previewWindow = window.open('', '_blank');
+                    previewWindow.document.write(result.data);
+                    previewWindow.document.close();
+                    
+                } catch (error) {
+                    alert(`Erreur lors de l'aperçu : ${error.message}`);
+                }
+            }
+            
+            initTemplatesMode() {
+                const container = document.getElementById('templatesContainer');
+                container.innerHTML = `
+                    <div class="h-full flex items-center justify-center p-8">
+                        <div class="text-center">
+                            <i class="ri-file-edit-line text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                Gestionnaire de Templates
+                            </h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-6">
+                                Interface de gestion des templates sera implémentée ici
+                            </p>
+                            <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                <p>• Créateur visuel de templates</p>
+                                <p>• Bibliothèque de templates prédéfinis</p>
+                                <p>• Import/Export de templates</p>
+                                <p>• Éditeur par glisser-déposer</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            initScheduleMode() {
+                const container = document.getElementById('scheduleContainer');
+                container.innerHTML = `
+                    <div class="h-full flex items-center justify-center p-8">
+                        <div class="text-center">
+                            <i class="ri-calendar-schedule-line text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                Planificateur de Rapports
+                            </h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-6">
+                                Interface de planification sera implémentée ici
+                            </p>
+                            <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                <p>• Planification quotidienne/hebdomadaire/mensuelle</p>
+                                <p>• Livraison automatique par email</p>
+                                <p>• Gestion des destinataires</p>
+                                <p>• Historique des exécutions</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            initHistoryMode() {
+                const container = document.getElementById('historyContainer');
+                const history = this.reportingSystem?.getReportHistory() || [];
+                
+                container.innerHTML = `
+                    <div class="max-w-7xl mx-auto p-6 h-full overflow-auto tremor-scrollbar">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                Historique des Rapports
+                            </h2>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                Consultez l'historique complet de tous les rapports générés
+                            </p>
+                        </div>
+                        
+                        <div class="tremor-card p-6">
+                            <div class="space-y-4">
+                                ${history.length > 0 ? history.map(report => `
+                                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="format-icon format-${report.options.format} mr-4">
+                                                ${report.options.format.toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-gray-900 dark:text-white">${report.options.title}</h4>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                    ${new Date(report.generated).toLocaleDateString('fr-FR')} à ${new Date(report.generated).toLocaleTimeString('fr-FR')}
+                                                </p>
+                                                <p class="text-xs text-gray-400">Template: ${report.template.name} • Durée: ${report.duration}ms</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                                report.success 
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                            }">
+                                                ${report.success ? 'Succès' : 'Échec'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                `).join('') : `
+                                    <div class="text-center py-12">
+                                        <i class="ri-history-line text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                                        <p class="text-gray-500 dark:text-gray-400">Aucun rapport dans l'historique</p>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            toggleDarkMode() {
+                const html = document.documentElement;
+                html.classList.toggle('dark');
+                
+                const isDark = html.classList.contains('dark');
+                localStorage.setItem('formease-dark-mode', isDark.toString());
+            }
+        }
+        
+        // Initialize demo
+        let reportingDemo;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply saved dark mode preference
+            const isDark = localStorage.getItem('formease-dark-mode') === 'true';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            // Initialize demo
+            reportingDemo = new ReportingSystemDemo();
+        });
+    </script>
+</body>
+</html>

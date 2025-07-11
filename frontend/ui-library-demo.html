@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase UI Library Demo - Sprint 5</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tremor Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tremor/icons@3.0.0/dist/icons.css">
+    
+    <!-- Configuration Tailwind personnalisée -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    spacing: {
+                        'tremor-xs': '0.25rem',
+                        'tremor-sm': '0.5rem',
+                        'tremor-default': '0.75rem',
+                        'tremor-lg': '1rem',
+                        'tremor-xl': '1.5rem',
+                        'tremor-2xl': '2rem',
+                        'tremor-3xl': '3rem'
+                    },
+                    borderRadius: {
+                        'tremor-small': '0.375rem',
+                        'tremor-default': '0.5rem',
+                        'tremor-full': '9999px'
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'slide-in': {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(0)' }
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.3s ease-out',
+                        'slide-in': 'slide-in 0.3s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Styles personnalisés pour la démo */
+        .demo-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .dark .demo-section {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+        
+        .demo-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .dark .demo-title {
+            color: #f9fafb;
+            border-bottom-color: #374151;
+        }
+        
+        .code-preview {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            font-family: monospace;
+        }
+        
+        .dark .code-preview {
+            background-color: #111827;
+            border-color: #374151;
+        }
+        
+        .component-showcase {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tremor-card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .tremor-card {
+            background-color: #111827;
+            border-color: #1f2937;
+        }
+    </style>
+</head>
+
+<body class="h-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+                        FormEase UI Library
+                    </h1>
+                    <span class="ml-3 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                        Sprint 5 Demo
+                    </span>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <!-- Sélecteur de thème -->
+                    <select id="themeSelector" class="px-3 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                        <option value="tremor">Tremor</option>
+                        <option value="formease">FormEase</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                    
+                    <!-- Toggle mode sombre -->
+                    <button id="darkModeToggle" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Introduction -->
+        <div class="demo-section">
+            <h2 class="demo-title">🚀 Sprint 5 - UIComponentLibrary</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Fonctionnalités</h3>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li>✅ Composants compatibles Tremor</li>
+                        <li>✅ Utilisation de Tailwind CSS</li>
+                        <li>✅ Système de thèmes avancé</li>
+                        <li>✅ Mode sombre intégré</li>
+                        <li>✅ Registre de composants</li>
+                        <li>✅ Validation et animations</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Statistiques</h3>
+                    <div id="statsContainer" class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <!-- Statistiques dynamiques -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Composants de base -->
+        <div class="demo-section">
+            <h2 class="demo-title">🎨 Composants de Base</h2>
+            
+            <!-- Boutons -->
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Boutons</h3>
+                <div class="component-showcase grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+                    <div id="buttonShowcase">
+                        <!-- Boutons générés dynamiquement -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inputs -->
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Champs de saisie</h3>
+                <div class="component-showcase grid-cols-1 md:grid-cols-2">
+                    <div id="inputShowcase">
+                        <!-- Inputs générés dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Composants avancés -->
+        <div class="demo-section">
+            <h2 class="demo-title">⚡ Composants Avancés</h2>
+            
+            <!-- DatePicker -->
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Sélecteur de Date</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div id="datePickerShowcase">
+                        <!-- DatePicker généré dynamiquement -->
+                    </div>
+                    <div class="code-preview">
+                        <pre><code>const datePicker = createComponent('datePicker', {
+    placeholder: 'Sélectionner une date',
+    format: 'DD/MM/YYYY',
+    clearable: true,
+    onChange: (date) => console.log(date)
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Select -->
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Sélecteur</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div id="selectShowcase">
+                        <!-- Select généré dynamiquement -->
+                    </div>
+                    <div class="code-preview">
+                        <pre><code>const select = createComponent('select', {
+    options: [
+        { value: 'fr', label: 'Français' },
+        { value: 'en', label: 'English' }
+    ],
+    searchable: true,
+    clearable: true
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FileUpload -->
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Upload de Fichiers</h3>
+                <div class="grid gap-4">
+                    <div id="fileUploadShowcase">
+                        <!-- FileUpload généré dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Démonstration du système de thèmes -->
+        <div class="demo-section">
+            <h2 class="demo-title">🎭 Système de Thèmes</h2>
+            
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div id="themePreviewContainer">
+                    <!-- Prévisualisations de thèmes -->
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                <h4 class="font-medium text-blue-900 dark:text-blue-100 mb-2">Raccourcis clavier</h4>
+                <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                    <li><kbd class="px-2 py-1 bg-blue-100 dark:bg-blue-800 rounded">Ctrl + Shift + D</kbd> : Basculer le mode sombre</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Registre de composants -->
+        <div class="demo-section">
+            <h2 class="demo-title">📦 Registre de Composants</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Composants Enregistrés</h3>
+                    <div id="componentsList" class="space-y-2">
+                        <!-- Liste des composants -->
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">Actions</h3>
+                    <div class="space-y-3">
+                        <button id="cleanupBtn" class="w-full px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
+                            🧹 Nettoyer les instances
+                        </button>
+                        <button id="exportConfigBtn" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                            📤 Exporter la configuration
+                        </button>
+                        <div id="exportResult" class="text-sm text-gray-600 dark:text-gray-400"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console de débogage -->
+        <div class="demo-section">
+            <h2 class="demo-title">🔧 Console de Débogage</h2>
+            
+            <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm h-64 overflow-y-auto" id="debugConsole">
+                <div class="text-green-300">FormEase UI Library Console v5.0.0</div>
+                <div class="text-gray-500">Prêt pour les commandes...</div>
+            </div>
+            
+            <div class="mt-4 flex gap-2">
+                <input type="text" id="debugInput" placeholder="Commande (ex: componentRegistry.getStats())" 
+                       class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm">
+                <button id="executeBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    Exécuter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chargement des scripts UI -->
+    <script src="js/ui/UIComponentLibrary.js"></script>
+    <script src="js/ui/CoreComponents.js"></script>
+    <script src="js/ui/AdvancedComponents.js"></script>
+    <script src="js/ui/ComponentRegistry.js"></script>
+    <script src="js/ui/ThemeSystem.js"></script>
+
+    <!-- Script de démo -->
+    <script>
+        class UILibraryDemo {
+            constructor() {
+                this.debugConsole = document.getElementById('debugConsole');
+                this.init();
+            }
+            
+            init() {
+                this.log('🚀 Initialisation de la démo UI Library...');
+                
+                // Attendre que tous les composants soient chargés
+                setTimeout(() => {
+                    this.setupDemo();
+                    this.setupEventListeners();
+                    this.updateStats();
+                    this.log('✅ Démo initialisée avec succès');
+                }, 500);
+            }
+            
+            setupDemo() {
+                // Créer les composants de démonstration
+                this.createButtonShowcase();
+                this.createInputShowcase();
+                this.createAdvancedComponentsShowcase();
+                this.createThemePreview();
+                this.updateComponentsList();
+            }
+            
+            createButtonShowcase() {
+                const container = document.getElementById('buttonShowcase');
+                if (!container) return;
+                
+                const variants = ['primary', 'secondary', 'outline', 'ghost', 'danger'];
+                const sizes = ['sm', 'md', 'lg'];
+                
+                variants.forEach(variant => {
+                    const button = createComponent('button', {
+                        text: variant.charAt(0).toUpperCase() + variant.slice(1),
+                        variant: variant,
+                        size: 'md',
+                        onClick: () => this.log(`Bouton ${variant} cliqué`)
+                    });
+                    
+                    if (button && button.render) {
+                        container.appendChild(button.render());
+                    }
+                });
+            }
+            
+            createInputShowcase() {
+                const container = document.getElementById('inputShowcase');
+                if (!container) return;
+                
+                const inputs = [
+                    { type: 'text', placeholder: 'Texte normal', label: 'Champ texte' },
+                    { type: 'email', placeholder: 'email@exemple.com', label: 'Email' },
+                    { type: 'password', placeholder: 'Mot de passe', label: 'Mot de passe' },
+                    { type: 'number', placeholder: '0', label: 'Nombre' }
+                ];
+                
+                inputs.forEach(inputConfig => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'space-y-2';
+                    
+                    const label = document.createElement('label');
+                    label.className = 'block text-sm font-medium text-gray-700 dark:text-gray-300';
+                    label.textContent = inputConfig.label;
+                    
+                    const input = createComponent('input', {
+                        type: inputConfig.type,
+                        placeholder: inputConfig.placeholder,
+                        onChange: (value) => this.log(`Input ${inputConfig.type}: ${value}`)
+                    });
+                    
+                    wrapper.appendChild(label);
+                    if (input && input.render) {
+                        wrapper.appendChild(input.render());
+                    }
+                    
+                    container.appendChild(wrapper);
+                });
+            }
+            
+            createAdvancedComponentsShowcase() {
+                // DatePicker
+                const datePickerContainer = document.getElementById('datePickerShowcase');
+                if (datePickerContainer && window.DatePickerComponent) {
+                    const datePicker = createComponent('datePicker', {
+                        placeholder: 'Sélectionner une date',
+                        clearable: true,
+                        onChange: (date, formatted) => this.log(`Date sélectionnée: ${formatted}`)
+                    });
+                    
+                    if (datePicker && datePicker.render) {
+                        datePickerContainer.appendChild(datePicker.render());
+                    }
+                }
+                
+                // Select
+                const selectContainer = document.getElementById('selectShowcase');
+                if (selectContainer && window.SelectComponent) {
+                    const select = createComponent('select', {
+                        options: [
+                            { value: 'fr', label: 'Français' },
+                            { value: 'en', label: 'English' },
+                            { value: 'es', label: 'Español' },
+                            { value: 'de', label: 'Deutsch' }
+                        ],
+                        placeholder: 'Choisir une langue',
+                        searchable: true,
+                        clearable: true,
+                        onChange: (value) => this.log(`Langue sélectionnée: ${value}`)
+                    });
+                    
+                    if (select && select.render) {
+                        selectContainer.appendChild(select.render());
+                    }
+                }
+                
+                // FileUpload
+                const fileUploadContainer = document.getElementById('fileUploadShowcase');
+                if (fileUploadContainer && window.FileUploadComponent) {
+                    const fileUpload = createComponent('fileUpload', {
+                        multiple: true,
+                        accept: 'image/*,.pdf,.doc,.docx',
+                        maxSize: 5 * 1024 * 1024, // 5MB
+                        onSelect: (files) => this.log(`${files.length} fichier(s) sélectionné(s)`),
+                        onError: (error) => this.log(`Erreur: ${error}`, 'error')
+                    });
+                    
+                    if (fileUpload && fileUpload.render) {
+                        fileUploadContainer.appendChild(fileUpload.render());
+                    }
+                }
+            }
+            
+            createThemePreview() {
+                const container = document.getElementById('themePreviewContainer');
+                if (!container || !window.themeSystem) return;
+                
+                const themes = themeSystem.getAvailableThemes();
+                
+                themes.forEach(theme => {
+                    const preview = themeSystem.generateThemePreview(theme.id);
+                    if (preview) {
+                        // Ajouter un bouton pour appliquer le thème
+                        const applyBtn = document.createElement('button');
+                        applyBtn.className = 'mt-2 w-full px-3 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors';
+                        applyBtn.textContent = 'Appliquer';
+                        applyBtn.addEventListener('click', () => {
+                            themeSystem.applyTheme(theme.id);
+                            this.log(`Thème '${theme.name}' appliqué`);
+                        });
+                        
+                        preview.appendChild(applyBtn);
+                        container.appendChild(preview);
+                    }
+                });
+            }
+            
+            updateComponentsList() {
+                const container = document.getElementById('componentsList');
+                if (!container || !window.componentRegistry) return;
+                
+                const stats = componentRegistry.getStats();
+                
+                Object.entries(stats.categories).forEach(([category, count]) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center py-2 px-3 bg-gray-50 dark:bg-gray-700 rounded text-sm';
+                    
+                    item.innerHTML = `
+                        <span class="font-medium">${category}</span>
+                        <span class="text-gray-500 dark:text-gray-400">${count} composants</span>
+                    `;
+                    
+                    container.appendChild(item);
+                });
+            }
+            
+            setupEventListeners() {
+                // Sélecteur de thème
+                const themeSelector = document.getElementById('themeSelector');
+                if (themeSelector) {
+                    themeSelector.addEventListener('change', (e) => {
+                        if (window.themeSystem) {
+                            themeSystem.applyTheme(e.target.value);
+                            this.log(`Thème changé: ${e.target.value}`);
+                        }
+                    });
+                }
+                
+                // Toggle mode sombre
+                const darkModeToggle = document.getElementById('darkModeToggle');
+                if (darkModeToggle) {
+                    darkModeToggle.addEventListener('click', () => {
+                        if (window.themeSystem) {
+                            const isDark = themeSystem.toggleDarkMode();
+                            this.log(`Mode sombre: ${isDark ? 'activé' : 'désactivé'}`);
+                        }
+                    });
+                }
+                
+                // Boutons d'action
+                const cleanupBtn = document.getElementById('cleanupBtn');
+                if (cleanupBtn) {
+                    cleanupBtn.addEventListener('click', () => {
+                        if (window.componentRegistry) {
+                            const cleaned = componentRegistry.cleanup();
+                            this.log(`${cleaned} instances nettoyées`);
+                            this.updateStats();
+                        }
+                    });
+                }
+                
+                const exportConfigBtn = document.getElementById('exportConfigBtn');
+                if (exportConfigBtn) {
+                    exportConfigBtn.addEventListener('click', () => {
+                        if (window.componentRegistry) {
+                            const config = componentRegistry.exportConfig();
+                            const json = JSON.stringify(config, null, 2);
+                            
+                            // Créer un lien de téléchargement
+                            const blob = new Blob([json], { type: 'application/json' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'formease-ui-config.json';
+                            a.click();
+                            URL.revokeObjectURL(url);
+                            
+                            document.getElementById('exportResult').textContent = 'Configuration exportée avec succès';
+                            this.log('Configuration exportée');
+                        }
+                    });
+                }
+                
+                // Console de débogage
+                const debugInput = document.getElementById('debugInput');
+                const executeBtn = document.getElementById('executeBtn');
+                
+                if (debugInput && executeBtn) {
+                    const executeCommand = () => {
+                        const command = debugInput.value.trim();
+                        if (command) {
+                            this.executeDebugCommand(command);
+                            debugInput.value = '';
+                        }
+                    };
+                    
+                    executeBtn.addEventListener('click', executeCommand);
+                    debugInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            executeCommand();
+                        }
+                    });
+                }
+            }
+            
+            executeDebugCommand(command) {
+                this.log(`> ${command}`, 'command');
+                
+                try {
+                    const result = eval(command);
+                    this.log(JSON.stringify(result, null, 2), 'result');
+                } catch (error) {
+                    this.log(`Erreur: ${error.message}`, 'error');
+                }
+            }
+            
+            updateStats() {
+                const container = document.getElementById('statsContainer');
+                if (!container || !window.componentRegistry) return;
+                
+                const stats = componentRegistry.getStats();
+                
+                container.innerHTML = `
+                    <div>📦 Composants: ${stats.totalComponents}</div>
+                    <div>🎯 Instances: ${stats.totalInstances}</div>
+                    <div>🎨 Thèmes: ${stats.totalThemes}</div>
+                    <div>🔌 Plugins: ${stats.totalPlugins}</div>
+                    <div>💾 Mémoire: ${stats.memoryUsage.used} MB</div>
+                `;
+            }
+            
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const line = document.createElement('div');
+                
+                let prefix = '';
+                let className = 'text-gray-300';
+                
+                switch (type) {
+                    case 'error':
+                        prefix = '❌';
+                        className = 'text-red-400';
+                        break;
+                    case 'command':
+                        prefix = '💻';
+                        className = 'text-blue-400';
+                        break;
+                    case 'result':
+                        prefix = '📤';
+                        className = 'text-green-400';
+                        break;
+                    default:
+                        prefix = 'ℹ️';
+                }
+                
+                line.className = className;
+                line.innerHTML = `<span class="text-gray-500">${timestamp}</span> ${prefix} ${message}`;
+                
+                this.debugConsole.appendChild(line);
+                this.debugConsole.scrollTop = this.debugConsole.scrollHeight;
+            }
+        }
+        
+        // Initialiser la démo quand tout est chargé
+        document.addEventListener('DOMContentLoaded', () => {
+            new UILibraryDemo();
+        });
+    </script>
+</body>
+</html>

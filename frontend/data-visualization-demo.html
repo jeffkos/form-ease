@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase Data Visualization - Sprint 5 Phase 3</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Configuration Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blue: {
+                            50: '#eff6ff',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af'
+                        },
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    },
+                    backgroundColor: {
+                        'white': '#ffffff',
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(-8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'slide-up': {
+                            '0%': { opacity: '0', transform: 'translateY(16px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.8' }
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.25s ease-out',
+                        'slide-up': 'slide-up 0.3s ease-out',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .tremor-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .tremor-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .dark .tremor-card:hover {
+            border-color: #2563eb;
+        }
+        
+        .tremor-button-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.15s ease-in-out;
+        }
+        
+        .tremor-button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .tremor-button-secondary {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .tremor-button-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        
+        .dark .tremor-button-secondary {
+            background-color: #1f2937;
+            color: #d1d5db;
+            border-color: #4b5563;
+        }
+        
+        .dark .tremor-button-secondary:hover {
+            background-color: #374151;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        
+        .tremor-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db transparent;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 3px;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #9ca3af;
+        }
+        
+        .chart-demo-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-demo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .demo-chart-canvas {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 0.375rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .dark .demo-chart-canvas {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            border-color: #4b5563;
+        }
+    </style>
+</head>
+
+<body class="h-full bg-gray-50 dark:bg-gray-900 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center">
+                        <i class="ri-bar-chart-line text-2xl text-blue-500 mr-3"></i>
+                        <div>
+                            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                FormEase Data Visualization
+                            </h1>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Sprint 5 Phase 3</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Mode Navigation -->
+                    <div class="hidden sm:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                        <button id="overviewModeBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm transition-all duration-150">
+                            <i class="ri-dashboard-line mr-2"></i>
+                            Vue d'ensemble
+                        </button>
+                        <button id="chartsModeBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-bar-chart-line mr-2"></i>
+                            Graphiques
+                        </button>
+                        <button id="dashboardModeBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-layout-grid-line mr-2"></i>
+                            Dashboard
+                        </button>
+                    </div>
+                    
+                    <!-- Dark mode toggle -->
+                    <button id="darkModeToggle" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150">
+                        <i class="ri-moon-line dark:hidden text-lg"></i>
+                        <i class="ri-sun-line hidden dark:block text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="h-[calc(100vh-4rem)]">
+        <!-- Overview Mode -->
+        <div id="overviewMode" class="h-full">
+            <div class="max-w-7xl mx-auto p-6 h-full overflow-auto tremor-scrollbar">
+                <!-- Hero Section -->
+                <div class="tremor-card p-8 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-600">
+                    <div class="text-center">
+                        <div class="flex justify-center mb-4">
+                            <div class="p-4 bg-blue-100 dark:bg-blue-900 rounded-full animate-pulse-glow">
+                                <i class="ri-bar-chart-line text-4xl text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                            Système de Visualisation de Données
+                        </h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-6">
+                            Transformez vos données de formulaires en insights visuels puissants avec des graphiques interactifs et des dashboards intelligents
+                        </p>
+                        <div class="flex justify-center space-x-4">
+                            <button id="exploreFeaturesBtn" class="tremor-button-primary flex items-center">
+                                <i class="ri-compass-line mr-2"></i>
+                                Explorer les fonctionnalités
+                            </button>
+                            <button id="createDashboardBtn" class="tremor-button-secondary flex items-center">
+                                <i class="ri-add-line mr-2"></i>
+                                Créer un dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    <!-- Chart Types -->
+                    <div class="tremor-card p-6 chart-demo-card">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg mr-4">
+                                <i class="ri-pie-chart-line text-green-600 dark:text-green-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Types de Graphiques
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">
+                            8 types de graphiques professionnels : barres, lignes, aires, secteurs, nuages de points et plus
+                        </p>
+                        <div class="demo-chart-canvas h-32 flex items-center justify-center">
+                            <div class="flex space-x-2">
+                                <div class="w-4 h-16 bg-blue-500 rounded animate-pulse"></div>
+                                <div class="w-4 h-12 bg-green-500 rounded animate-pulse" style="animation-delay: 0.1s"></div>
+                                <div class="w-4 h-20 bg-purple-500 rounded animate-pulse" style="animation-delay: 0.2s"></div>
+                                <div class="w-4 h-8 bg-yellow-500 rounded animate-pulse" style="animation-delay: 0.3s"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Dashboards -->
+                    <div class="tremor-card p-6 chart-demo-card">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg mr-4">
+                                <i class="ri-dashboard-line text-purple-600 dark:text-purple-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Dashboards Interactifs
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">
+                            Créez des dashboards responsive avec filtres en temps réel et mise en page personnalisable
+                        </p>
+                        <div class="demo-chart-canvas h-32 grid grid-cols-2 gap-2 p-2">
+                            <div class="bg-blue-500 rounded opacity-60 animate-pulse"></div>
+                            <div class="bg-green-500 rounded opacity-60 animate-pulse" style="animation-delay: 0.5s"></div>
+                            <div class="bg-purple-500 rounded opacity-60 animate-pulse col-span-2" style="animation-delay: 1s"></div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Analytics -->
+                    <div class="tremor-card p-6 chart-demo-card">
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg mr-4">
+                                <i class="ri-brain-line text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Analyses Intelligentes
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">
+                            Génération automatique d'insights et recommandations basées sur vos données
+                        </p>
+                        <div class="demo-chart-canvas h-32 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                                <div class="text-sm text-gray-500">Analyse en cours...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Specifications -->
+                <div class="tremor-card p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                        Spécifications Techniques
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-full w-fit mx-auto mb-3">
+                                <i class="ri-speed-line text-blue-600 dark:text-blue-400 text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Performance</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Rendu optimisé avec Canvas 2D</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full w-fit mx-auto mb-3">
+                                <i class="ri-smartphone-line text-green-600 dark:text-green-400 text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Responsive</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Adaptatif sur tous les appareils</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-full w-fit mx-auto mb-3">
+                                <i class="ri-palette-line text-purple-600 dark:text-purple-400 text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Tremor Design</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Style cohérent avec Tremor Blocks</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full w-fit mx-auto mb-3">
+                                <i class="ri-download-line text-yellow-600 dark:text-yellow-400 text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Export</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">PNG, SVG, PDF et données</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Start -->
+                <div class="tremor-card p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                        Démarrage Rapide
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Préparez vos données</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Importez ou connectez vos sources de données de formulaires</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Choisissez vos graphiques</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Sélectionnez les types de visualisations les plus appropriés</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Créez votre dashboard</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Assemblez vos graphiques dans un dashboard interactif</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Mode -->
+        <div id="chartsMode" class="h-full hidden">
+            <div id="chartsContainer" class="h-full">
+                <!-- Charts demo will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Dashboard Mode -->
+        <div id="dashboardMode" class="h-full hidden">
+            <div id="dashboardContainer" class="h-full">
+                <!-- Dashboard will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/visualization/DataVisualization.js"></script>
+    <script src="js/visualization/ChartComponents.js"></script>
+    <script src="js/visualization/VisualizationDashboard.js"></script>
+
+    <script>
+        class DataVisualizationDemo {
+            constructor() {
+                this.currentMode = 'overview';
+                this.dataViz = null;
+                this.dashboard = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.loadSampleData();
+                
+                console.log('📊 Data Visualization Demo initialized');
+            }
+            
+            setupEventListeners() {
+                // Mode switching
+                document.getElementById('overviewModeBtn').addEventListener('click', () => {
+                    this.switchMode('overview');
+                });
+                
+                document.getElementById('chartsModeBtn').addEventListener('click', () => {
+                    this.switchMode('charts');
+                });
+                
+                document.getElementById('dashboardModeBtn').addEventListener('click', () => {
+                    this.switchMode('dashboard');
+                });
+                
+                // Dark mode toggle
+                document.getElementById('darkModeToggle').addEventListener('click', () => {
+                    this.toggleDarkMode();
+                });
+                
+                // Overview actions
+                document.getElementById('exploreFeaturesBtn')?.addEventListener('click', () => {
+                    this.switchMode('charts');
+                });
+                
+                document.getElementById('createDashboardBtn')?.addEventListener('click', () => {
+                    this.switchMode('dashboard');
+                });
+            }
+            
+            switchMode(mode) {
+                this.currentMode = mode;
+                
+                // Update navigation
+                const buttons = {
+                    overview: document.getElementById('overviewModeBtn'),
+                    charts: document.getElementById('chartsModeBtn'),
+                    dashboard: document.getElementById('dashboardModeBtn')
+                };
+                
+                Object.values(buttons).forEach(btn => {
+                    btn.className = 'flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150';
+                });
+                
+                buttons[mode].className = 'flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm transition-all duration-150';
+                
+                // Show/hide content
+                document.getElementById('overviewMode').classList.toggle('hidden', mode !== 'overview');
+                document.getElementById('chartsMode').classList.toggle('hidden', mode !== 'charts');
+                document.getElementById('dashboardMode').classList.toggle('hidden', mode !== 'dashboard');
+                
+                // Initialize mode-specific content
+                if (mode === 'charts') {
+                    this.initChartsMode();
+                } else if (mode === 'dashboard') {
+                    this.initDashboardMode();
+                }
+            }
+            
+            initChartsMode() {
+                const container = document.getElementById('chartsContainer');
+                
+                if (this.dataViz) {
+                    return; // Already initialized
+                }
+                
+                container.innerHTML = `
+                    <div class="h-full flex flex-col">
+                        <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Démo des Graphiques</h2>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <button onclick="vizDemo.createSampleChart('bar')" class="tremor-button-secondary text-sm">
+                                    <i class="ri-bar-chart-line mr-2"></i>Barres
+                                </button>
+                                <button onclick="vizDemo.createSampleChart('line')" class="tremor-button-secondary text-sm">
+                                    <i class="ri-line-chart-line mr-2"></i>Lignes
+                                </button>
+                                <button onclick="vizDemo.createSampleChart('pie')" class="tremor-button-secondary text-sm">
+                                    <i class="ri-pie-chart-line mr-2"></i>Secteurs
+                                </button>
+                                <button onclick="vizDemo.createSampleChart('donut')" class="tremor-button-secondary text-sm">
+                                    <i class="ri-donut-chart-line mr-2"></i>Anneau
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex-1 p-6 grid grid-cols-1 md:grid-cols-2 gap-6" id="chartsGrid">
+                            <!-- Charts will be added here -->
+                        </div>
+                    </div>
+                `;
+                
+                // Initialize visualization system
+                if (window.FormEaseVisualization) {
+                    this.dataViz = new window.FormEaseVisualization(container);
+                    this.addSampleDatasets();
+                }
+            }
+            
+            initDashboardMode() {
+                const container = document.getElementById('dashboardContainer');
+                
+                if (this.dashboard) {
+                    return; // Already initialized
+                }
+                
+                // Initialize dashboard
+                if (window.VisualizationDashboard) {
+                    this.dashboard = new window.VisualizationDashboard(container, {
+                        title: 'Dashboard de Démonstration',
+                        visualizationSystem: this.dataViz
+                    });
+                    
+                    // Add sample quick stats
+                    this.dashboard.updateQuickStats([
+                        {
+                            title: 'Réponses totales',
+                            value: '1,234',
+                            change: '+12%',
+                            changeType: 'positive',
+                            icon: 'ri-file-list-line',
+                            color: 'blue'
+                        },
+                        {
+                            title: 'Taux de completion',
+                            value: '87%',
+                            change: '+3%',
+                            changeType: 'positive',
+                            icon: 'ri-checkbox-circle-line',
+                            color: 'green'
+                        },
+                        {
+                            title: 'Temps moyen',
+                            value: '3m 24s',
+                            change: '-8%',
+                            changeType: 'positive',
+                            icon: 'ri-time-line',
+                            color: 'yellow'
+                        },
+                        {
+                            title: 'Satisfaction',
+                            value: '4.8/5',
+                            change: '+0.2',
+                            changeType: 'positive',
+                            icon: 'ri-star-line',
+                            color: 'purple'
+                        }
+                    ]);
+                }
+            }
+            
+            addSampleDatasets() {
+                if (!this.dataViz) return;
+                
+                // Sample data for form responses
+                const responseData = [
+                    { category: 'Très satisfait', count: 45 },
+                    { category: 'Satisfait', count: 32 },
+                    { category: 'Neutre', count: 12 },
+                    { category: 'Insatisfait', count: 8 },
+                    { category: 'Très insatisfait', count: 3 }
+                ];
+                
+                const timeData = [
+                    { date: '2024-01-01', responses: 23 },
+                    { date: '2024-01-02', responses: 34 },
+                    { date: '2024-01-03', responses: 28 },
+                    { date: '2024-01-04', responses: 41 },
+                    { date: '2024-01-05', responses: 37 },
+                    { date: '2024-01-06', responses: 29 },
+                    { date: '2024-01-07', responses: 45 }
+                ];
+                
+                this.dataViz.addDataset('satisfaction', responseData, {
+                    name: 'Satisfaction Client',
+                    description: 'Répartition des niveaux de satisfaction'
+                });
+                
+                this.dataViz.addDataset('responses-time', timeData, {
+                    name: 'Réponses par jour',
+                    description: 'Évolution des réponses dans le temps'
+                });
+            }
+            
+            createSampleChart(type) {
+                if (!this.dataViz) return;
+                
+                const chartsGrid = document.getElementById('chartsGrid');
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'tremor-card p-4';
+                chartContainer.innerHTML = `
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Graphique ${type}
+                    </h3>
+                    <div class="chart-area h-64"></div>
+                `;
+                
+                chartsGrid.appendChild(chartContainer);
+                
+                const chartArea = chartContainer.querySelector('.chart-area');
+                const datasetId = type === 'line' ? 'responses-time' : 'satisfaction';
+                
+                this.dataViz.createChart({
+                    id: `demo-${type}-${Date.now()}`,
+                    type: type,
+                    datasetId: datasetId,
+                    container: chartArea,
+                    options: {
+                        responsive: true,
+                        animated: true
+                    }
+                });
+            }
+            
+            loadSampleData() {
+                // Simulate loading sample data
+                console.log('📊 Sample data loaded');
+            }
+            
+            toggleDarkMode() {
+                const html = document.documentElement;
+                html.classList.toggle('dark');
+                
+                // Save preference
+                const isDark = html.classList.contains('dark');
+                localStorage.setItem('formease-dark-mode', isDark.toString());
+                
+                // Refresh charts if they exist
+                if (this.dataViz) {
+                    this.dataViz.refreshAllCharts();
+                }
+            }
+        }
+        
+        // Initialize demo
+        let vizDemo;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply saved dark mode preference
+            const isDark = localStorage.getItem('formease-dark-mode') === 'true';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            // Initialize demo
+            vizDemo = new DataVisualizationDemo();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase Advanced Form Templates - Sprint 5 Phase 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Configuration Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Tremor Color Palette
+                        blue: {
+                            50: '#eff6ff',
+                            500: '#2563eb', // Primary button color from guidelines
+                            600: '#1d4ed8',
+                            700: '#1e40af'
+                        },
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    },
+                    backgroundColor: {
+                        'white': '#ffffff', // Background color from guidelines
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(-8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'slide-up': {
+                            '0%': { opacity: '0', transform: 'translateY(16px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.25s ease-out',
+                        'slide-up': 'slide-up 0.3s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tremor-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .tremor-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .tremor-card {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .dark .tremor-card:hover {
+            border-color: #2563eb;
+        }
+        
+        .tremor-button-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.15s ease-in-out;
+        }
+        
+        .tremor-button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .tremor-button-secondary {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .tremor-button-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        
+        .dark .tremor-button-secondary {
+            background-color: #1f2937;
+            color: #d1d5db;
+            border-color: #4b5563;
+        }
+        
+        .dark .tremor-button-secondary:hover {
+            background-color: #374151;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        
+        .tremor-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .tremor-badge-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .tremor-badge-yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .tremor-badge-red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .tremor-badge-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .dark .tremor-badge-green {
+            background-color: #064e3b;
+            color: #6ee7b7;
+        }
+        
+        .dark .tremor-badge-yellow {
+            background-color: #78350f;
+            color: #fcd34d;
+        }
+        
+        .dark .tremor-badge-red {
+            background-color: #7f1d1d;
+            color: #fca5a5;
+        }
+        
+        .dark .tremor-badge-blue {
+            background-color: #1e3a8a;
+            color: #93c5fd;
+        }
+        
+        /* Custom scrollbar */
+        .tremor-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db transparent;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 3px;
+        }
+        
+        .tremor-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #9ca3af;
+        }
+        
+        /* Drag and drop styles */
+        .drag-over {
+            border-color: #2563eb !important;
+            background-color: rgba(37, 99, 235, 0.05) !important;
+        }
+        
+        .dragging {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body class="h-full bg-gray-50 dark:bg-gray-900 font-sans">
+    <!-- Navigation - Tremor Style -->
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center">
+                        <i class="ri-file-text-line text-2xl text-blue-500 mr-3"></i>
+                        <div>
+                            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                FormEase Advanced Templates
+                            </h1>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Sprint 5 Phase 2</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Mode Navigation -->
+                    <div class="hidden sm:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                        <button id="templateModeBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm transition-all duration-150">
+                            <i class="ri-layout-grid-line mr-2"></i>
+                            Templates
+                        </button>
+                        <button id="builderModeBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-tools-line mr-2"></i>
+                            Constructeur
+                        </button>
+                        <button id="demoModeBtn" class="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150">
+                            <i class="ri-play-circle-line mr-2"></i>
+                            Démo
+                        </button>
+                    </div>
+                    
+                    <!-- Dark mode toggle -->
+                    <button id="darkModeToggle" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150">
+                        <i class="ri-moon-line dark:hidden text-lg"></i>
+                        <i class="ri-sun-line hidden dark:block text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="h-[calc(100vh-4rem)]">
+        <!-- Template Browser Mode -->
+        <div id="templateBrowserMode" class="h-full">
+            <div class="max-w-7xl mx-auto p-6 h-full overflow-auto tremor-scrollbar">
+                <!-- Hero Banner - Tremor Style -->
+                <div class="tremor-card p-8 mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 border-blue-200 dark:border-gray-600">
+                    <div class="text-center">
+                        <div class="flex justify-center mb-4">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
+                                <i class="ri-file-text-line text-3xl text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                            Templates de Formulaires Avancés
+                        </h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            Créez des formulaires professionnels en quelques clics avec nos templates prêts à l'emploi
+                        </p>
+                        <div class="flex justify-center mt-6">
+                            <button class="tremor-button-primary flex items-center">
+                                <i class="ri-rocket-line mr-2"></i>
+                                Commencer maintenant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Cards - Tremor Style -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                                <i class="ri-file-list-2-line text-blue-600 dark:text-blue-400 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalTemplates">0</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Templates disponibles</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                                <i class="ri-folder-2-line text-green-600 dark:text-green-400 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalCategories">0</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Catégories</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                                <i class="ri-bar-chart-line text-purple-600 dark:text-purple-400 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="totalUsage">0</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Utilisations totales</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tremor-card p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
+                                <i class="ri-star-line text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white" id="mostUsedTemplate">-</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">Plus populaire</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Filters - Tremor Filterbar Style -->
+                <div class="tremor-card p-6 mb-8">
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Rechercher et filtrer</h3>
+                            <button id="clearFilters" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                                <i class="ri-close-circle-line mr-1"></i>
+                                Effacer les filtres
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Search -->
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="ri-search-line text-gray-400"></i>
+                                </div>
+                                <input type="text" id="templateSearch" placeholder="Rechercher un template..." 
+                                       class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400">
+                            </div>
+                            
+                            <!-- Category filter -->
+                            <div class="relative">
+                                <select id="categoryFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">Toutes les catégories</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Difficulty filter -->
+                            <div class="relative">
+                                <select id="difficultyFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">Toutes les difficultés</option>
+                                    <option value="easy">Facile</option>
+                                    <option value="medium">Moyen</option>
+                                    <option value="hard">Difficile</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Sort -->
+                            <div class="relative">
+                                <select id="sortFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="name">Trier par nom</option>
+                                    <option value="usage">Trier par popularité</option>
+                                    <option value="created">Trier par date</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Templates Grid - Tremor Grid Style -->
+                <div id="templatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Templates générés dynamiquement -->
+                </div>
+
+                <!-- Empty State - Tremor Style -->
+                <div id="emptyState" class="text-center py-16 hidden">
+                    <div class="mx-auto max-w-md">
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                            <i class="ri-search-line text-gray-400 text-xl"></i>
+                        </div>
+                        <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Aucun template trouvé</h3>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Essayez de modifier vos critères de recherche ou explorez d'autres catégories.
+                        </p>
+                        <div class="mt-6">
+                            <button type="button" class="tremor-button-primary">
+                                <i class="ri-refresh-line mr-2"></i>
+                                Réinitialiser les filtres
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Builder Mode -->
+        <div id="formBuilderMode" class="h-full hidden">
+            <div id="formBuilderContainer">
+                <!-- Form Builder sera injecté ici -->
+            </div>
+        </div>
+
+        <!-- Demo Mode -->
+        <div id="demoMode" class="h-full hidden">
+            <div class="max-w-4xl mx-auto p-6 h-full overflow-auto tremor-scrollbar">
+                <!-- Header with breadcrumb -->
+                <div class="mb-8">
+                    <nav class="flex mb-4" aria-label="Breadcrumb">
+                        <ol class="flex items-center space-x-2">
+                            <li>
+                                <div class="flex items-center">
+                                    <i class="ri-home-line text-gray-400"></i>
+                                    <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">FormEase</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                    <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">Templates</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                    <span class="ml-2 text-sm font-medium text-gray-900 dark:text-white">Démonstration</span>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg mr-4">
+                            <i class="ri-play-circle-line text-green-600 dark:text-green-400 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                Démonstration Interactive
+                            </h2>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                Testez les formulaires générés à partir des templates
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template Selector -->
+                <div class="tremor-card p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Choisir un template</h3>
+                        <span class="tremor-badge tremor-badge-blue">
+                            <i class="ri-test-tube-line mr-1"></i>
+                            Mode test
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <select id="demoTemplateSelect" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="">Sélectionner un template à tester...</option>
+                            </select>
+                        </div>
+                        <button id="loadDemoBtn" class="tremor-button-primary w-full">
+                            <i class="ri-rocket-line mr-2"></i>
+                            Charger le formulaire
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Demo Form Container -->
+                <div id="demoFormContainer" class="tremor-card mb-8">
+                    <div class="p-12 text-center text-gray-500 dark:text-gray-400">
+                        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
+                            <i class="ri-file-text-line text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Prêt pour la démonstration</h3>
+                        <p class="text-gray-500 dark:text-gray-400">
+                            Sélectionnez un template ci-dessus pour commencer le test interactif
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Demo Results -->
+                <div id="demoResults" class="tremor-card hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg mr-3">
+                                <i class="ri-check-line text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Données soumises avec succès</h3>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <pre id="demoResultsContent" class="text-sm text-gray-800 dark:text-gray-200 overflow-auto"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Preview Modal - Tremor Dialog Style -->
+    <div id="templatePreviewModal" class="fixed inset-0 z-50 hidden">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg mr-3">
+                                <i class="ri-eye-line text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="previewModalTitle">
+                                Aperçu du template
+                            </h3>
+                        </div>
+                        <button id="closePreviewModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                            <i class="ri-close-line text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="px-6 py-6 max-h-96 overflow-y-auto tremor-scrollbar" id="previewModalContent">
+                        <!-- Preview content will be injected here -->
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+                        <div class="flex justify-end space-x-3">
+                            <button id="closePreviewModalFooter" class="tremor-button-secondary">
+                                <i class="ri-close-line mr-2"></i>
+                                Fermer
+                            </button>
+                            <button id="useTemplateFromPreview" class="tremor-button-primary">
+                                <i class="ri-rocket-line mr-2"></i>
+                                Utiliser ce template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast - Tremor Banner Style -->
+    <div id="successToast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-4 shadow-lg animate-slide-up max-w-md">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="ri-check-circle-line text-green-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-green-800 dark:text-green-200" id="successToastMessage">
+                        Action réussie !
+                    </p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button class="text-green-500 hover:text-green-600 dark:text-green-300 dark:hover:text-green-200" onclick="document.getElementById('successToast').classList.add('hidden')">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/ui/UIComponentLibrary.js"></script>
+    <script src="js/ui/CoreComponents.js"></script>
+    <script src="js/ui/AdvancedComponents.js"></script>
+    <script src="js/ui/ComponentRegistry.js"></script>
+    <script src="js/ui/ThemeSystem.js"></script>
+    <script src="js/forms/AdvancedFormTemplates.js"></script>
+    <script src="js/forms/FormBuilderUI.js"></script>
+
+    <script>
+        class AdvancedFormTemplatesDemo {
+            constructor() {
+                this.currentMode = 'template';
+                this.formBuilder = null;
+                this.currentPreviewTemplate = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.loadStatistics();
+                this.loadTemplatesGrid();
+                this.loadFilters();
+                this.setupSearch();
+                
+                console.log('🎯 Advanced Form Templates Demo initialisé');
+            }
+            
+            setupEventListeners() {
+                // Mode switching
+                document.getElementById('templateModeBtn').addEventListener('click', () => {
+                    this.switchMode('template');
+                });
+                
+                document.getElementById('builderModeBtn').addEventListener('click', () => {
+                    this.switchMode('builder');
+                });
+                
+                document.getElementById('demoModeBtn').addEventListener('click', () => {
+                    this.switchMode('demo');
+                });
+                
+                // Dark mode toggle
+                document.getElementById('darkModeToggle').addEventListener('click', () => {
+                    this.toggleDarkMode();
+                });
+                
+                // Preview modal
+                document.getElementById('closePreviewModal').addEventListener('click', () => {
+                    this.closePreviewModal();
+                });
+                
+                document.getElementById('closePreviewModalFooter').addEventListener('click', () => {
+                    this.closePreviewModal();
+                });
+                
+                document.getElementById('useTemplateFromPreview').addEventListener('click', () => {
+                    if (this.currentPreviewTemplate) {
+                        this.useTemplate(this.currentPreviewTemplate);
+                    }
+                });
+                
+                // Demo mode
+                document.getElementById('loadDemoBtn').addEventListener('click', () => {
+                    this.loadDemoTemplate();
+                });
+                
+                // Filters
+                document.getElementById('templateSearch').addEventListener('input', () => {
+                    this.filterTemplates();
+                });
+                
+                document.getElementById('categoryFilter').addEventListener('change', () => {
+                    this.filterTemplates();
+                });
+                
+                document.getElementById('difficultyFilter').addEventListener('change', () => {
+                    this.filterTemplates();
+                });
+                
+                document.getElementById('sortFilter').addEventListener('change', () => {
+                    this.filterTemplates();
+                });
+                
+                // Clear filters
+                document.getElementById('clearFilters').addEventListener('click', () => {
+                    this.clearAllFilters();
+                });
+            }
+            
+            clearAllFilters() {
+                document.getElementById('templateSearch').value = '';
+                document.getElementById('categoryFilter').value = '';
+                document.getElementById('difficultyFilter').value = '';
+                document.getElementById('sortFilter').value = 'name';
+                this.filterTemplates();
+            }
+            
+            switchMode(mode) {
+                this.currentMode = mode;
+                
+                // Update navigation buttons
+                const buttons = {
+                    template: document.getElementById('templateModeBtn'),
+                    builder: document.getElementById('builderModeBtn'),
+                    demo: document.getElementById('demoModeBtn')
+                };
+                
+                Object.values(buttons).forEach(btn => {
+                    btn.className = 'flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-150';
+                });
+                
+                buttons[mode].className = 'flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm transition-all duration-150';
+                
+                // Show/hide content
+                document.getElementById('templateBrowserMode').classList.toggle('hidden', mode !== 'template');
+                document.getElementById('formBuilderMode').classList.toggle('hidden', mode !== 'builder');
+                document.getElementById('demoMode').classList.toggle('hidden', mode !== 'demo');
+                
+                // Initialize mode-specific content
+                if (mode === 'builder') {
+                    this.initFormBuilder();
+                } else if (mode === 'demo') {
+                    this.initDemoMode();
+                }
+            }
+            
+            initFormBuilder() {
+                const container = document.getElementById('formBuilderContainer');
+                
+                if (this.formBuilder) {
+                    return; // Already initialized
+                }
+                
+                if (window.FormBuilderUI) {
+                    this.formBuilder = new window.FormBuilderUI(container, {
+                        mode: 'template-selector',
+                        allowSave: true,
+                        allowExport: true,
+                        showPreview: true
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="flex items-center justify-center h-full p-8">
+                            <div class="text-center max-w-md">
+                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
+                                    <i class="ri-tools-line text-gray-400 text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                    Constructeur en cours de chargement
+                                </h3>
+                                <p class="text-gray-500 dark:text-gray-400">
+                                    Le constructeur de formulaires sera disponible sous peu
+                                </p>
+                                <div class="mt-6">
+                                    <div class="animate-pulse bg-gray-200 dark:bg-gray-600 h-2 rounded w-32 mx-auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            initDemoMode() {
+                const select = document.getElementById('demoTemplateSelect');
+                select.innerHTML = '<option value="">Sélectionner un template...</option>';
+                
+                if (window.advancedFormTemplates) {
+                    const templates = Array.from(window.advancedFormTemplates.templates.values());
+                    
+                    templates.forEach(template => {
+                        const option = document.createElement('option');
+                        option.value = template.id;
+                        option.textContent = `${template.name} (${template.category})`;
+                        select.appendChild(option);
+                    });
+                }
+            }
+            
+            loadStatistics() {
+                if (!window.advancedFormTemplates) return;
+                
+                const stats = window.advancedFormTemplates.getStats();
+                
+                document.getElementById('totalTemplates').textContent = stats.totalTemplates;
+                document.getElementById('totalCategories').textContent = Object.keys(stats.categories).length;
+                document.getElementById('totalUsage').textContent = stats.totalUsage;
+                document.getElementById('mostUsedTemplate').textContent = stats.mostUsed ? stats.mostUsed.name : 'Aucun';
+            }
+            
+            loadFilters() {
+                const categoryFilter = document.getElementById('categoryFilter');
+                
+                if (window.advancedFormTemplates) {
+                    const categories = window.advancedFormTemplates.categories;
+                    
+                    categories.forEach((categoryInfo, categoryId) => {
+                        const option = document.createElement('option');
+                        option.value = categoryId;
+                        option.innerHTML = `${categoryInfo.name}`;
+                        categoryFilter.appendChild(option);
+                    });
+                }
+            }
+            
+            loadTemplatesGrid() {
+                const grid = document.getElementById('templatesGrid');
+                
+                if (!window.advancedFormTemplates) {
+                    grid.innerHTML = `
+                        <div class="col-span-full">
+                            <div class="text-center py-12">
+                                <div class="animate-pulse">
+                                    <div class="h-12 w-12 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-4"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-48 mx-auto mb-2"></div>
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-32 mx-auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const templates = Array.from(window.advancedFormTemplates.templates.values());
+                this.renderTemplates(templates);
+            }
+            
+            renderTemplates(templates) {
+                const grid = document.getElementById('templatesGrid');
+                const emptyState = document.getElementById('emptyState');
+                
+                if (templates.length === 0) {
+                    grid.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+                
+                emptyState.classList.add('hidden');
+                grid.innerHTML = '';
+                
+                templates.forEach(template => {
+                    const card = this.createTemplateCard(template);
+                    grid.appendChild(card);
+                });
+            }
+            
+            createTemplateCard(template) {
+                const card = document.createElement('div');
+                card.className = 'tremor-card p-6 cursor-pointer group animate-fade-in';
+                
+                const categoryInfo = window.advancedFormTemplates?.categories?.get(template.category);
+                const difficultyBadge = this.getDifficultyBadgeClass(template.difficulty);
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg mr-3">
+                                <i class="${categoryInfo?.icon || 'ri-file-text-line'} text-blue-600 dark:text-blue-400 text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    ${template.name}
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    ${categoryInfo?.name || template.category}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="tremor-badge ${difficultyBadge}">
+                            ${this.getDifficultyLabel(template.difficulty)}
+                        </span>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                        ${template.description}
+                    </p>
+                    
+                    <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-4">
+                        <div class="flex items-center space-x-4">
+                            <span class="flex items-center">
+                                <i class="ri-time-line mr-1"></i>
+                                ${template.estimatedTime || '5 min'}
+                            </span>
+                            <span class="flex items-center">
+                                <i class="ri-input-field mr-1"></i>
+                                ${template.fields?.length || 0} champs
+                            </span>
+                        </div>
+                        <span class="flex items-center">
+                            <i class="ri-bar-chart-line mr-1"></i>
+                            ${template.usage || 0} utilisations
+                        </span>
+                    </div>
+                    
+                    ${template.tags && template.tags.length > 0 ? `
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            ${template.tags.slice(0, 3).map(tag => 
+                                `<span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-md">${tag}</span>`
+                            ).join('')}
+                            ${template.tags.length > 3 ? `<span class="text-xs text-gray-400">+${template.tags.length - 3}</span>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="templatesDemo.useTemplate('${template.id}')" 
+                                class="tremor-button-primary flex-1 flex items-center justify-center">
+                            <i class="ri-rocket-line mr-2"></i>
+                            Utiliser
+                        </button>
+                        <button onclick="templatesDemo.previewTemplate('${template.id}')" 
+                                class="tremor-button-secondary flex items-center justify-center px-4">
+                            <i class="ri-eye-line"></i>
+                        </button>
+                    </div>
+                `;
+                
+                return card;
+            }
+            
+            getDifficultyBadgeClass(difficulty) {
+                switch (difficulty) {
+                    case 'easy':
+                        return 'tremor-badge-green';
+                    case 'medium':
+                        return 'tremor-badge-yellow';
+                    case 'hard':
+                        return 'tremor-badge-red';
+                    default:
+                        return 'tremor-badge-blue';
+                }
+            }
+            
+            getDifficultyLabel(difficulty) {
+                switch (difficulty) {
+                    case 'easy':
+                        return 'Facile';
+                    case 'medium':
+                        return 'Moyen';
+                    case 'hard':
+                        return 'Difficile';
+                    default:
+                        return 'Standard';
+                }
+            }
+            
+            filterTemplates() {
+                if (!window.advancedFormTemplates) return;
+                
+                const search = document.getElementById('templateSearch').value;
+                const category = document.getElementById('categoryFilter').value;
+                const difficulty = document.getElementById('difficultyFilter').value;
+                const sort = document.getElementById('sortFilter').value;
+                
+                let templates = Array.from(window.advancedFormTemplates.templates.values());
+                
+                // Apply filters
+                if (search) {
+                    templates = window.advancedFormTemplates.searchTemplates(search, {
+                        category: category || undefined,
+                        difficulty: difficulty || undefined
+                    });
+                } else {
+                    if (category) {
+                        templates = templates.filter(t => t.category === category);
+                    }
+                    if (difficulty) {
+                        templates = templates.filter(t => t.difficulty === difficulty);
+                    }
+                }
+                
+                // Apply sorting
+                templates.sort((a, b) => {
+                    switch (sort) {
+                        case 'usage':
+                            return (b.usage || 0) - (a.usage || 0);
+                        case 'created':
+                            return new Date(b.created) - new Date(a.created);
+                        case 'name':
+                        default:
+                            return a.name.localeCompare(b.name);
+                    }
+                });
+                
+                this.renderTemplates(templates);
+            }
+            
+            setupSearch() {
+                let searchTimeout;
+                const searchInput = document.getElementById('templateSearch');
+                
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.filterTemplates();
+                    }, 300);
+                });
+            }
+            
+            useTemplate(templateId) {
+                if (window.advancedFormTemplates) {
+                    const template = window.advancedFormTemplates.getTemplate(templateId);
+                    if (template) {
+                        this.switchMode('builder');
+                        
+                        // Initialize builder with template
+                        setTimeout(() => {
+                            if (this.formBuilder && this.formBuilder.useTemplate) {
+                                this.formBuilder.useTemplate(templateId);
+                            }
+                        }, 100);
+                        
+                        this.showSuccessToast(`Template "${template.name}" chargé dans le constructeur`);
+                    }
+                }
+            }
+            
+            previewTemplate(templateId) {
+                if (!window.advancedFormTemplates) return;
+                
+                const template = window.advancedFormTemplates.getTemplate(templateId);
+                if (!template) return;
+                
+                this.currentPreviewTemplate = templateId;
+                
+                const modal = document.getElementById('templatePreviewModal');
+                const title = document.getElementById('previewModalTitle');
+                const content = document.getElementById('previewModalContent');
+                
+                title.textContent = `Aperçu : ${template.name}`;
+                content.innerHTML = '';
+                
+                if (window.AdvancedFormBuilder) {
+                    const builder = new window.AdvancedFormBuilder(template, {
+                        autoRender: false,
+                        onSubmit: (data) => {
+                            alert('Aperçu - Formulaire soumis !\n\n' + JSON.stringify(data, null, 2));
+                        }
+                    });
+                    
+                    const form = builder.render();
+                    content.appendChild(form);
+                } else {
+                    content.innerHTML = '<p class="text-gray-500">Aperçu non disponible</p>';
+                }
+                
+                modal.classList.remove('hidden');
+            }
+            
+            closePreviewModal() {
+                document.getElementById('templatePreviewModal').classList.add('hidden');
+                this.currentPreviewTemplate = null;
+            }
+            
+            loadDemoTemplate() {
+                const select = document.getElementById('demoTemplateSelect');
+                const templateId = select.value;
+                
+                if (!templateId || !window.advancedFormTemplates) return;
+                
+                const template = window.advancedFormTemplates.getTemplate(templateId);
+                if (!template) return;
+                
+                const container = document.getElementById('demoFormContainer');
+                container.innerHTML = '';
+                
+                if (window.AdvancedFormBuilder) {
+                    const builder = new window.AdvancedFormBuilder(template, {
+                        autoRender: false,
+                        onSubmit: (data) => {
+                            this.showDemoResults(data);
+                        }
+                    });
+                    
+                    const form = builder.render();
+                    form.className = 'p-8';
+                    container.appendChild(form);
+                    
+                    this.showSuccessToast(`Template "${template.name}" chargé pour la démonstration`);
+                }
+            }
+            
+            showDemoResults(data) {
+                const resultsContainer = document.getElementById('demoResults');
+                const resultsContent = document.getElementById('demoResultsContent');
+                
+                resultsContent.textContent = JSON.stringify(data, null, 2);
+                resultsContainer.classList.remove('hidden');
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            toggleDarkMode() {
+                const html = document.documentElement;
+                html.classList.toggle('dark');
+                
+                // Save preference
+                const isDark = html.classList.contains('dark');
+                localStorage.setItem('formease-dark-mode', isDark.toString());
+            }
+            
+            showSuccessToast(message) {
+                const toast = document.getElementById('successToast');
+                const messageEl = document.getElementById('successToastMessage');
+                
+                messageEl.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+        }
+        
+        // Initialize demo when page loads
+        let templatesDemo;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply saved dark mode preference
+            const isDark = localStorage.getItem('formease-dark-mode') === 'true';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            // Wait a bit for all scripts to load
+            setTimeout(() => {
+                templatesDemo = new AdvancedFormTemplatesDemo();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
