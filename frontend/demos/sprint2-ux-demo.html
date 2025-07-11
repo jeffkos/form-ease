@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint 2 - Animation & Error Handler Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 🚀 SPRINT 2 - Composants -->
+    <script src="../js/components/TremorTailwindConfig.js"></script>
+    <script src="../js/components/TremorComponents.js"></script>
+    <script src="../js/components/DataCache.js"></script>
+    <script src="../js/components/SkeletonLoader.js"></script>
+    <script src="../js/components/OptimizedApiService.js"></script>
+    <script src="../js/components/AnimationManager.js"></script>
+    <script src="../js/components/ErrorHandler.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe',
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8'
+                            },
+                            success: {
+                                faint: '#f0fdf4',
+                                muted: '#bbf7d0',
+                                subtle: '#4ade80',
+                                DEFAULT: '#22c55e',
+                                emphasis: '#16a34a'
+                            },
+                            warning: {
+                                faint: '#fffbeb',
+                                muted: '#fed7aa',
+                                subtle: '#fb923c',
+                                DEFAULT: '#f97316',
+                                emphasis: '#ea580c'
+                            },
+                            error: {
+                                faint: '#fef2f2',
+                                muted: '#fecaca',
+                                subtle: '#f87171',
+                                DEFAULT: '#ef4444',
+                                emphasis: '#dc2626'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-600 text-white p-3 rounded-lg">
+                        <i class="ri-magic-line text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Sprint 2 Demo</h1>
+                        <p class="text-sm text-gray-600">Animation Manager & Error Handler</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="stats-display" class="text-sm text-gray-600"></div>
+                    <button onclick="toggleDebugMode()" 
+                            class="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+                        Toggle Debug
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Navigation Tabs -->
+        <div class="mb-8">
+            <nav class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+                <button onclick="showTab('animations')" 
+                        class="tab-btn active px-4 py-2 text-sm font-medium rounded-md transition-colors">
+                    🎨 Animations
+                </button>
+                <button onclick="showTab('errors')" 
+                        class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors">
+                    🚨 Error Handler
+                </button>
+                <button onclick="showTab('integration')" 
+                        class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors">
+                    🔧 Intégration
+                </button>
+                <button onclick="showTab('performance')" 
+                        class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors">
+                    📊 Performance
+                </button>
+            </nav>
+        </div>
+
+        <!-- Animation Tab -->
+        <div id="animations-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Micro-interactions -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Micro-interactions</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="testMicroInteraction('pulse')" 
+                                id="pulse-btn"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Pulse
+                        </button>
+                        <button onclick="testMicroInteraction('shake')" 
+                                id="shake-btn"
+                                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            Shake
+                        </button>
+                        <button onclick="testMicroInteraction('bounce')" 
+                                id="bounce-btn"
+                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            Bounce
+                        </button>
+                        <button onclick="testMicroInteraction('glow')" 
+                                id="glow-btn"
+                                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            Glow
+                        </button>
+                        <button onclick="testMicroInteraction('flip')" 
+                                id="flip-btn"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Flip
+                        </button>
+                        <button onclick="AnimationManager.success(this)" 
+                                class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                            Success
+                        </button>
+                    </div>
+                </div>
+
+                <!-- State Transitions -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🔀 Transitions d'État</h3>
+                    <div class="space-y-4">
+                        <div id="transition-demo" 
+                             class="h-32 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center text-gray-700 font-medium">
+                            Élément de démonstration
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="testTransition('fadeIn')" 
+                                    class="px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">
+                                Fade In
+                            </button>
+                            <button onclick="testTransition('slideInLeft')" 
+                                    class="px-3 py-2 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors">
+                                Slide Left
+                            </button>
+                            <button onclick="testTransition('scaleIn')" 
+                                    class="px-3 py-2 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">
+                                Scale In
+                            </button>
+                            <button onclick="testTransition('fadeOut')" 
+                                    class="px-3 py-2 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors">
+                                Fade Out
+                            </button>
+                            <button onclick="testTransition('slideOutRight')" 
+                                    class="px-3 py-2 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition-colors">
+                                Slide Right
+                            </button>
+                            <button onclick="testTransition('rotateIn')" 
+                                    class="px-3 py-2 text-sm bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition-colors">
+                                Rotate In
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll Animations -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">📱 Animations au Scroll</h3>
+                    <button onclick="createScrollElements()" 
+                            class="mb-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        Générer éléments de test
+                    </button>
+                    <div id="scroll-container" class="h-64 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-4">
+                        <p class="text-gray-600 text-center">Cliquez sur "Générer éléments de test" pour voir les animations au scroll</p>
+                    </div>
+                </div>
+
+                <!-- Loading Animations -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">💫 Animations de Chargement</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div id="spinner-demo" class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-2"></div>
+                            <button onclick="testLoading('spinner')" 
+                                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">
+                                Spinner
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <div id="pulse-demo" class="w-8 h-8 bg-green-500 rounded-full mx-auto mb-2"></div>
+                            <button onclick="testLoading('pulse')" 
+                                    class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors">
+                                Pulse
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <div id="wave-demo" class="w-8 h-8 bg-purple-500 rounded mx-auto mb-2 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-white"></div>
+                            </div>
+                            <button onclick="testLoading('wave')" 
+                                    class="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">
+                                Wave
+                            </button>
+                        </div>
+                        <div class="text-center">
+                            <div id="dots-demo" class="flex justify-center space-x-1 mb-2">
+                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            </div>
+                            <button onclick="testLoading('dots')" 
+                                    class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors">
+                                Dots
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="stopAllLoading()" 
+                            class="mt-4 w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                        Arrêter toutes les animations
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Handler Tab -->
+        <div id="errors-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Types d'erreurs -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🚨 Types d'Erreurs</h3>
+                    <div class="space-y-3">
+                        <button onclick="testError('NETWORK')" 
+                                class="w-full text-left px-4 py-3 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-3">🌐</span>
+                                <div>
+                                    <div class="font-medium text-yellow-800">Erreur Réseau</div>
+                                    <div class="text-sm text-yellow-600">Problème de connexion</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="testError('SERVER')" 
+                                class="w-full text-left px-4 py-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-3">🔧</span>
+                                <div>
+                                    <div class="font-medium text-red-800">Erreur Serveur</div>
+                                    <div class="text-sm text-red-600">Problème côté serveur</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="testError('VALIDATION')" 
+                                class="w-full text-left px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-3">⚠️</span>
+                                <div>
+                                    <div class="font-medium text-amber-800">Erreur de Validation</div>
+                                    <div class="text-sm text-amber-600">Données invalides</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="testError('AUTHENTICATION')" 
+                                class="w-full text-left px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-3">🔐</span>
+                                <div>
+                                    <div class="font-medium text-blue-800">Session Expirée</div>
+                                    <div class="text-sm text-blue-600">Authentification requise</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="testError('PERMISSION')" 
+                                class="w-full text-left px-4 py-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-3">🚫</span>
+                                <div>
+                                    <div class="font-medium text-red-800">Accès Refusé</div>
+                                    <div class="text-sm text-red-600">Permissions insuffisantes</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="testError('CLIENT')" 
+                                class="w-full text-left px-4 py-3 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-3">💻</span>
+                                <div>
+                                    <div class="font-medium text-purple-800">Erreur Client</div>
+                                    <div class="text-sm text-purple-600">Problème d'application</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">📱 Notifications</h3>
+                    <div class="space-y-3">
+                        <button onclick="testNotification('success')" 
+                                class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            ✅ Notification de Succès
+                        </button>
+                        <button onclick="testNotification('warning')" 
+                                class="w-full px-4 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                            ⚠️ Notification d'Avertissement
+                        </button>
+                        <button onclick="testNotification('error')" 
+                                class="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            ❌ Notification d'Erreur
+                        </button>
+                        <button onclick="testNotification('info')" 
+                                class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            ℹ️ Notification d'Information
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h4 class="font-medium text-gray-900 mb-3">🔧 Actions</h4>
+                        <div class="space-y-2">
+                            <button onclick="simulateOffline()" 
+                                    class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                                Simuler Mode Hors Ligne
+                            </button>
+                            <button onclick="showErrorStats()" 
+                                    class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                Afficher Statistiques d'Erreurs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Tab -->
+        <div id="integration-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- API Integration -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🔧 Intégration API</h3>
+                    <div class="space-y-4">
+                        <button onclick="testApiCall('success')" 
+                                class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            API Call Réussie
+                        </button>
+                        <button onclick="testApiCall('error')" 
+                                class="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            API Call Échouée
+                        </button>
+                        <button onclick="testApiCall('slow')" 
+                                class="w-full px-4 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                            API Call Lente (avec skeleton)
+                        </button>
+                        <button onclick="testApiCall('retry')" 
+                                class="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            API Call avec Retry
+                        </button>
+                    </div>
+                    
+                    <div id="api-response" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-2">Résponse API :</h4>
+                        <div class="text-sm text-gray-600">Aucune requête effectuée</div>
+                    </div>
+                </div>
+
+                <!-- Cache Demo -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">💾 Cache Intelligent</h3>
+                    <div class="space-y-4">
+                        <button onclick="testCache('set')" 
+                                class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Ajouter au Cache
+                        </button>
+                        <button onclick="testCache('get')" 
+                                class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            Lire depuis le Cache
+                        </button>
+                        <button onclick="testCache('invalidate')" 
+                                class="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            Invalider le Cache
+                        </button>
+                        <button onclick="testCache('stats')" 
+                                class="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            Statistiques du Cache
+                        </button>
+                    </div>
+
+                    <div id="cache-info" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-2">État du Cache :</h4>
+                        <div class="text-sm text-gray-600">Cache vide</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Tab -->
+        <div id="performance-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Métriques Animations</h3>
+                    <div id="animation-metrics" class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Animations actives:</span>
+                            <span class="font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Observers actifs:</span>
+                            <span class="font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Mode réduit:</span>
+                            <span class="font-medium">Non</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🚨 Métriques Erreurs</h3>
+                    <div id="error-metrics" class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Erreurs totales:</span>
+                            <span class="font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Mode debug:</span>
+                            <span class="font-medium">Non</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">En ligne:</span>
+                            <span class="font-medium">Oui</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">💾 Métriques Cache</h3>
+                    <div id="cache-metrics" class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Éléments en cache:</span>
+                            <span class="font-medium">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Hit rate:</span>
+                            <span class="font-medium">0%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Mémoire utilisée:</span>
+                            <span class="font-medium">0 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Test de Performance</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="performanceTest('animations')" 
+                            class="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Test Animations (x100)
+                    </button>
+                    <button onclick="performanceTest('errors')" 
+                            class="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        Test Erreurs (x50)
+                    </button>
+                    <button onclick="performanceTest('cache')" 
+                            class="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        Test Cache (x1000)
+                    </button>
+                </div>
+                <div id="performance-results" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-medium text-gray-900 mb-2">Résultats des Tests :</h4>
+                    <div class="text-sm text-gray-600">Aucun test exécuté</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentTab = 'animations';
+        let animationCount = 0;
+        let errorCount = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            setInterval(updateStats, 2000);
+        });
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-white', 'text-gray-900', 'shadow-sm');
+                btn.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Update active button
+            event.target.classList.add('active', 'bg-white', 'text-gray-900', 'shadow-sm');
+            event.target.classList.remove('text-gray-500', 'hover:text-gray-700');
+            
+            currentTab = tabName;
+        }
+
+        // Animation Tests
+        function testMicroInteraction(type) {
+            const button = document.getElementById(type + '-btn') || event.target;
+            AnimationManager.microInteraction(button, type);
+            animationCount++;
+        }
+
+        function testTransition(type) {
+            const element = document.getElementById('transition-demo');
+            AnimationManager.stateTransition(element, 'visible', type);
+            animationCount++;
+        }
+
+        function createScrollElements() {
+            const container = document.getElementById('scroll-container');
+            container.innerHTML = '';
+            
+            const animations = ['fadeIn', 'slideInLeft', 'slideInRight', 'scaleIn', 'rotateIn'];
+            
+            for (let i = 0; i < 10; i++) {
+                const element = document.createElement('div');
+                element.className = 'h-20 bg-gradient-to-r from-indigo-100 to-pink-100 rounded-lg flex items-center justify-center text-gray-700 font-medium';
+                element.textContent = `Element ${i + 1}`;
+                
+                const animationType = animations[i % animations.length];
+                AnimationManager.onScrollAnimation(element, animationType);
+                
+                container.appendChild(element);
+            }
+        }
+
+        function testLoading(type) {
+            const element = document.getElementById(type + '-demo');
+            AnimationManager.loadingAnimation(element, type);
+            animationCount++;
+        }
+
+        function stopAllLoading() {
+            ['spinner-demo', 'pulse-demo', 'wave-demo', 'dots-demo'].forEach(id => {
+                const element = document.getElementById(id);
+                AnimationManager.stop(element);
+            });
+        }
+
+        // Error Tests
+        function testError(type) {
+            const messages = {
+                NETWORK: 'Impossible de se connecter au serveur',
+                SERVER: 'Erreur 500 - Problème serveur temporaire',
+                VALIDATION: 'Le champ email est requis',
+                AUTHENTICATION: 'Votre session a expiré',
+                PERMISSION: 'Accès refusé à cette ressource',
+                CLIENT: 'Erreur JavaScript inattendue'
+            };
+
+            ErrorHandler.handleError({
+                type: type,
+                message: messages[type],
+                userMessage: messages[type]
+            });
+            errorCount++;
+        }
+
+        function testNotification(type) {
+            const notifications = {
+                success: { title: 'Succès !', message: 'Opération terminée avec succès' },
+                warning: { title: 'Attention', message: 'Cette action nécessite votre attention' },
+                error: { title: 'Erreur', message: 'Une erreur s\'est produite' },
+                info: { title: 'Information', message: 'Nouvelle information disponible' }
+            };
+
+            ErrorHandler.showNotification({
+                type: type,
+                ...notifications[type]
+            });
+        }
+
+        function simulateOffline() {
+            // Simuler le mode hors ligne
+            window.dispatchEvent(new Event('offline'));
+            setTimeout(() => {
+                window.dispatchEvent(new Event('online'));
+            }, 5000);
+        }
+
+        function showErrorStats() {
+            const stats = ErrorHandler.getErrorStats();
+            alert(JSON.stringify(stats, null, 2));
+        }
+
+        // Integration Tests
+        function testApiCall(type) {
+            const apiResponse = document.getElementById('api-response');
+            
+            switch(type) {
+                case 'success':
+                    apiResponse.innerHTML = `
+                        <h4 class="font-medium text-green-900 mb-2">✅ Succès :</h4>
+                        <div class="text-sm text-green-700">Données récupérées avec succès</div>
+                    `;
+                    break;
+                case 'error':
+                    ErrorHandler.handleError({
+                        type: 'NETWORK',
+                        message: 'API call failed'
+                    });
+                    apiResponse.innerHTML = `
+                        <h4 class="font-medium text-red-900 mb-2">❌ Erreur :</h4>
+                        <div class="text-sm text-red-700">Échec de l'appel API</div>
+                    `;
+                    break;
+                case 'slow':
+                    apiResponse.innerHTML = `
+                        <h4 class="font-medium text-yellow-900 mb-2">⏳ Chargement :</h4>
+                        <div class="text-sm text-yellow-700">API en cours...</div>
+                    `;
+                    SkeletonLoader.show('api-response', 'Table');
+                    setTimeout(() => {
+                        SkeletonLoader.hide('api-response');
+                        apiResponse.innerHTML = `
+                            <h4 class="font-medium text-green-900 mb-2">✅ Terminé :</h4>
+                            <div class="text-sm text-green-700">Données chargées (avec skeleton)</div>
+                        `;
+                    }, 3000);
+                    break;
+                case 'retry':
+                    apiResponse.innerHTML = `
+                        <h4 class="font-medium text-blue-900 mb-2">🔄 Retry :</h4>
+                        <div class="text-sm text-blue-700">Test de retry automatique</div>
+                    `;
+                    break;
+            }
+        }
+
+        function testCache(action) {
+            const cacheInfo = document.getElementById('cache-info');
+            
+            switch(action) {
+                case 'set':
+                    DataCache.set('test-key', { data: 'test data', timestamp: new Date() }, 'forms');
+                    cacheInfo.innerHTML = `
+                        <h4 class="font-medium text-green-900 mb-2">✅ Ajouté :</h4>
+                        <div class="text-sm text-green-700">Données ajoutées au cache</div>
+                    `;
+                    break;
+                case 'get':
+                    const cached = DataCache.get('test-key');
+                    cacheInfo.innerHTML = `
+                        <h4 class="font-medium text-blue-900 mb-2">📖 Lecture :</h4>
+                        <div class="text-sm text-blue-700">${cached ? 'Données trouvées' : 'Aucune donnée'}</div>
+                    `;
+                    break;
+                case 'invalidate':
+                    DataCache.invalidateCategory('forms');
+                    cacheInfo.innerHTML = `
+                        <h4 class="font-medium text-red-900 mb-2">🗑️ Invalidé :</h4>
+                        <div class="text-sm text-red-700">Cache invalidé</div>
+                    `;
+                    break;
+                case 'stats':
+                    const stats = DataCache.getStats();
+                    cacheInfo.innerHTML = `
+                        <h4 class="font-medium text-purple-900 mb-2">📊 Statistiques :</h4>
+                        <div class="text-sm text-purple-700">
+                            Éléments: ${stats.itemCount}<br>
+                            Hit rate: ${stats.hitRate.toFixed(1)}%<br>
+                            Mémoire: ${(stats.memoryUsage / 1024).toFixed(1)} KB
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        // Performance Tests
+        function performanceTest(type) {
+            const results = document.getElementById('performance-results');
+            results.innerHTML = `
+                <h4 class="font-medium text-yellow-900 mb-2">⏳ Test en cours :</h4>
+                <div class="text-sm text-yellow-700">Exécution du test ${type}...</div>
+            `;
+
+            const startTime = performance.now();
+            
+            switch(type) {
+                case 'animations':
+                    for (let i = 0; i < 100; i++) {
+                        const element = document.createElement('div');
+                        document.body.appendChild(element);
+                        AnimationManager.microInteraction(element, 'pulse');
+                        document.body.removeChild(element);
+                    }
+                    break;
+                case 'errors':
+                    for (let i = 0; i < 50; i++) {
+                        ErrorHandler.handleError({
+                            type: 'CLIENT',
+                            message: `Test error ${i}`
+                        });
+                    }
+                    break;
+                case 'cache':
+                    for (let i = 0; i < 1000; i++) {
+                        DataCache.set(`test-${i}`, { data: `data-${i}` }, 'test');
+                        DataCache.get(`test-${i}`);
+                    }
+                    break;
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            setTimeout(() => {
+                results.innerHTML = `
+                    <h4 class="font-medium text-green-900 mb-2">✅ Test terminé :</h4>
+                    <div class="text-sm text-green-700">
+                        Type: ${type}<br>
+                        Durée: ${duration.toFixed(2)}ms<br>
+                        Performance: ${duration < 100 ? 'Excellente' : duration < 500 ? 'Bonne' : 'À optimiser'}
+                    </div>
+                `;
+            }, 100);
+        }
+
+        // Utility Functions
+        function toggleDebugMode() {
+            const current = localStorage.getItem('formease_debug') === 'true';
+            localStorage.setItem('formease_debug', !current);
+            location.reload();
+        }
+
+        function updateStats() {
+            // Animation stats
+            const animStats = AnimationManager.getStats();
+            const animMetrics = document.getElementById('animation-metrics');
+            if (animMetrics) {
+                animMetrics.innerHTML = `
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Animations actives:</span>
+                        <span class="font-medium">${animStats.activeAnimations}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Observers actifs:</span>
+                        <span class="font-medium">${animStats.activeObservers}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mode réduit:</span>
+                        <span class="font-medium">${animStats.prefersReducedMotion ? 'Oui' : 'Non'}</span>
+                    </div>
+                `;
+            }
+
+            // Error stats
+            const errorStats = ErrorHandler.getErrorStats();
+            const errorMetrics = document.getElementById('error-metrics');
+            if (errorMetrics) {
+                errorMetrics.innerHTML = `
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Erreurs totales:</span>
+                        <span class="font-medium">${errorStats.totalErrors}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mode debug:</span>
+                        <span class="font-medium">${errorStats.debugMode ? 'Oui' : 'Non'}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">En ligne:</span>
+                        <span class="font-medium">${errorStats.isOnline ? 'Oui' : 'Non'}</span>
+                    </div>
+                `;
+            }
+
+            // Cache stats
+            const cacheStats = DataCache.getStats();
+            const cacheMetrics = document.getElementById('cache-metrics');
+            if (cacheMetrics) {
+                cacheMetrics.innerHTML = `
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Éléments en cache:</span>
+                        <span class="font-medium">${cacheStats.itemCount}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Hit rate:</span>
+                        <span class="font-medium">${cacheStats.hitRate.toFixed(1)}%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Mémoire utilisée:</span>
+                        <span class="font-medium">${(cacheStats.memoryUsage / 1024).toFixed(1)} KB</span>
+                    </div>
+                `;
+            }
+
+            // Update header stats
+            const statsDisplay = document.getElementById('stats-display');
+            if (statsDisplay) {
+                statsDisplay.textContent = `Animations: ${animationCount} | Erreurs: ${errorCount}`;
+            }
+        }
+
+        // CSS for active tab
+        const style = document.createElement('style');
+        style.textContent = `
+            .tab-btn.active {
+                background-color: white;
+                color: #111827;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            }
+            .tab-btn:not(.active) {
+                color: #6b7280;
+            }
+            .tab-btn:not(.active):hover {
+                color: #374151;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

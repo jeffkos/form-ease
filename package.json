@@ -1,5 +1,26 @@
 {
   "dependencies": {
     "@heroicons/react": "^2.2.0"
-  }
+  },
+  "name": "formease",
+  "version": "1.0.0",
+  "description": "[![Next.js](https://img.shields.io/badge/Next.js-14.2.30-black)](https://nextjs.org/)\r [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)\r [![Prisma](https://img.shields.io/badge/Prisma-5.0-green)](https://www.prisma.io/)\r [![Tremor UI](https://img.shields.io/badge/Tremor-UI-purple)](https://www.tremor.so/)\r [![Licence MIT](https://img.shields.io/badge/Licence-MIT-yellow.svg)](https://opensource.org/licenses/MIT)",
+  "main": "optimized-server.js",
+  "devDependencies": {
+    "tailwindcss": "^4.1.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffkos/form-ease.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffkos/form-ease/issues"
+  },
+  "homepage": "https://github.com/jeffkos/form-ease#readme"
 }
