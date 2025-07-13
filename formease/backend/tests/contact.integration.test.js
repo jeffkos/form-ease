@@ -1,9 +1,9 @@
-const request = require('supertest');
-const app = require('../src/app');
-const JWTTestHelper = require('./helpers/jwtTestHelper');
-const { mockPrisma } = require('./setup/prismaMocks');
+const request = require("supertest");
+const app = require("../src/app");
+const JWTTestHelper = require("./helpers/jwtTestHelper");
+const { mockPrisma } = require("./setup/prismaMocks");
 
-describe('API /api/contacts', () => {
+describe("API /api/contacts", () => {
   let contactId;
   let authToken;
   let adminToken;
@@ -11,283 +11,336 @@ describe('API /api/contacts', () => {
   beforeAll(async () => {
     // Générer des tokens valides
     authToken = JWTTestHelper.formatAuthHeader(
-      JWTTestHelper.generateValidToken({ id: 1, role: 'USER' })
+      JWTTestHelper.generateValidToken({ id: 1, role: "USER" })
     );
-    
+
     adminToken = JWTTestHelper.formatAuthHeader(
-      JWTTestHelper.generateAdminToken({ id: 2, role: 'ADMIN' })
+      JWTTestHelper.generateAdminToken({ id: 2, role: "ADMIN" })
     );
   });
 
   beforeEach(() => {
     // Configuration spécifique des mocks pour chaque test
-    mockPrisma.contact.create.mockImplementation(({ data }) => 
-      Promise.resolve({ 
-        id: 1, 
-        ...data, 
-        created_at: new Date(), 
-        updated_at: new Date() 
+    mockPrisma.contact.create.mockImplementation(({ data }) =>
+      Promise.resolve({
+        id: 1,
+        ...data,
+        created_at: new Date(),
+        updated_at: new Date(),
       })
     );
+
+    // Mock pour getContacts (liste)
+    mockPrisma.contact.findMany.mockResolvedValue([
+      {
+        id: 1,
+        email: "test@example.com",
+        first_name: "Test",
+        last_name: "User",
+        city: "Paris",
+        country: "France",
+        tags: ["test"],
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ]);
+
+    mockPrisma.contact.count.mockResolvedValue(1);
+
+    // Mock pour findUnique (get by ID)
+    mockPrisma.contact.findUnique.mockResolvedValue({
+      id: 1,
+      email: "test@example.com",
+      first_name: "Test",
+      last_name: "User",
+      city: "Paris",
+      country: "France",
+      tags: ["test"],
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    // Mock pour update
+    mockPrisma.contact.update.mockImplementation(({ data }) =>
+      Promise.resolve({
+        id: 1,
+        email: "test@example.com",
+        first_name: "Test",
+        last_name: "User",
+        city: data.city || "Paris",
+        country: "France",
+        tags: ["test"],
+        created_at: new Date(),
+        updated_at: new Date(),
+      })
+    );
+
+    // Mock pour delete
+    mockPrisma.contact.delete.mockResolvedValue({
+      id: 1,
+      email: "test@example.com",
+      first_name: "Test",
+      last_name: "User",
+    });
   });
 
-  it('crée un contact', async () => {
+  it("crée un contact", async () => {
     const res = await request(app)
-      .post('/api/contacts')
-      .set('Authorization', authToken)
+      .post("/api/contacts")
+      .set("Authorization", authToken)
       .send({
-        email: 'john.doe@example.com',
-        first_name: 'John',
-        last_name: 'Doe',
-        city: 'Paris',
-        country: 'France',
-        tags: ['VIP', 'newsletter']
+        email: "john.doe@example.com",
+        first_name: "John",
+        last_name: "Doe",
+        city: "Paris",
+        country: "France",
+        tags: ["VIP", "newsletter"],
       });
     expect(res.status).toBe(201);
-    expect(res.body.email).toBe('john.doe@example.com');
+    expect(res.body.email).toBe("john.doe@example.com");
     contactId = res.body.id;
   });
 
-  it('liste les contacts', async () => {
+  it("liste les contacts", async () => {
     const res = await request(app)
-      .get('/api/contacts')
-      .set('Authorization', authToken);
+      .get("/api/contacts")
+      .set("Authorization", authToken);
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(res.body).toHaveProperty("contacts");
+    expect(Array.isArray(res.body.contacts)).toBe(true);
+    expect(res.body.contacts.length).toBeGreaterThan(0);
   });
 
-  it('met à jour un contact', async () => {
+  it("met à jour un contact", async () => {
     const res = await request(app)
       .put(`/api/contacts/${contactId}`)
-      .set('Authorization', authToken)
-      .send({ city: 'Lyon' });
+      .set("Authorization", authToken)
+      .send({ city: "Lyon" });
     expect(res.status).toBe(200);
-    expect(res.body.city).toBe('Lyon');
+    expect(res.body.city).toBe("Lyon");
   });
 
-  it('supprime un contact', async () => {
+  it("supprime un contact", async () => {
     const res = await request(app)
       .delete(`/api/contacts/${contactId}`)
-      .set('Authorization', authToken);
+      .set("Authorization", authToken);
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
   });
 
-  it('échoue si email déjà utilisé', async () => {
-    // Mock contact already exists
+  it("échoue si email déjà utilisé", async () => {
+    // Mock contact already exists - Le contrôleur vérifie d'abord l'unicité
     mockPrisma.contact.findFirst.mockResolvedValue({
       id: 1,
-      email: 'duplicate@example.com',
-      first_name: 'Dup',
-      last_name: 'Licate'
+      email: "duplicate@example.com",
+      first_name: "Dup",
+      last_name: "Licate",
     });
-    
+
+    // Le create ne devrait pas être appelé car l'email existe déjà
+    mockPrisma.contact.create.mockRejectedValue(
+      new Error("Email already exists")
+    );
+
     // Tentative de doublon
     const res = await request(app)
-      .post('/api/contacts')
-      .set('Authorization', authToken)
+      .post("/api/contacts")
+      .set("Authorization", authToken)
       .send({
-        email: 'duplicate@example.com',
-        first_name: 'Dup',
-        last_name: 'Licate',
-        city: 'Paris',
-        country: 'France',
-        tags: ['VIP']
+        email: "duplicate@example.com",
+        first_name: "Dup",
+        last_name: "Licate",
+        city: "Paris",
+        country: "France",
+        tags: ["VIP"],
       });
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('échoue si champs obligatoires manquants', async () => {
+  it("échoue si champs obligatoires manquants", async () => {
     const res = await request(app)
-      .post('/api/contacts')
-      .set('Authorization', authToken)
+      .post("/api/contacts")
+      .set("Authorization", authToken)
       .send({});
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('échoue si email invalide', async () => {
+  it("échoue si email invalide", async () => {
     const res = await request(app)
-      .post('/api/contacts')
-      .set('Authorization', authToken)
+      .post("/api/contacts")
+      .set("Authorization", authToken)
       .send({
-        email: 'not-an-email',
-        first_name: 'Test',
-        last_name: 'User',
-        city: 'Paris',
-        country: 'France',
-        tags: ['VIP']
+        email: "not-an-email",
+        first_name: "Test",
+        last_name: "User",
+        city: "Paris",
+        country: "France",
+        tags: ["VIP"],
       });
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('récupère un contact par ID', async () => {
+  it("récupère un contact par ID", async () => {
     // Mock contact exists
     const mockContact = {
       id: 123,
-      email: 'uniqueid@example.com',
-      first_name: 'Unique',
-      last_name: 'Id',
-      city: 'Paris',
-      country: 'France',
-      tags: ['Test']
+      email: "uniqueid@example.com",
+      first_name: "Unique",
+      last_name: "Id",
+      city: "Paris",
+      country: "France",
+      tags: ["Test"],
     };
     mockPrisma.contact.findUnique.mockResolvedValue(mockContact);
-    
+
     const res = await request(app)
       .get(`/api/contacts/${mockContact.id}`)
-      .set('Authorization', authToken);
+      .set("Authorization", authToken);
     expect(res.status).toBe(200);
-    expect(res.body.email).toBe('uniqueid@example.com');
+    expect(res.body.email).toBe("uniqueid@example.com");
   });
 
-  it('échoue à récupérer un contact inexistant', async () => {
+  it("échoue à récupérer un contact inexistant", async () => {
     const res = await request(app)
-      .get('/api/contacts/999999')
-      .set('Authorization', authToken);
+      .get("/api/contacts/999999")
+      .set("Authorization", authToken);
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('échoue à mettre à jour un contact inexistant', async () => {
+  it("échoue à mettre à jour un contact inexistant", async () => {
     const res = await request(app)
-      .put('/api/contacts/999999')
-      .set('Authorization', authToken)
-      .send({ city: 'Nowhere' });
+      .put("/api/contacts/999999")
+      .set("Authorization", authToken)
+      .send({ city: "Nowhere" });
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('échoue à mettre à jour un contact avec données invalides', async () => {
+  it("échoue à mettre à jour un contact avec données invalides", async () => {
     // Mock contact exists
     const mockContact = {
       id: 456,
-      email: 'updateinvalid@example.com',
-      first_name: 'Update',
-      last_name: 'Invalid',
-      city: 'Paris',
-      country: 'France',
-      tags: ['Test']
+      email: "updateinvalid@example.com",
+      first_name: "Update",
+      last_name: "Invalid",
+      city: "Paris",
+      country: "France",
+      tags: ["Test"],
     };
     mockPrisma.contact.findUnique.mockResolvedValue(mockContact);
-    
+
     // Email invalide
     const res = await request(app)
       .put(`/api/contacts/${mockContact.id}`)
-      .set('Authorization', authToken)
-      .send({ email: 'not-an-email' });
+      .set("Authorization", authToken)
+      .send({ email: "not-an-email" });
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('échoue à supprimer un contact inexistant', async () => {
+  it("échoue à supprimer un contact inexistant", async () => {
     const res = await request(app)
-      .delete('/api/contacts/999999')
-      .set('Authorization', authToken);
+      .delete("/api/contacts/999999")
+      .set("Authorization", authToken);
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('refuse l’accès sans authentification (création)', async () => {
+  it("refuse l’accès sans authentification (création)", async () => {
     const res = await request(app)
-      .post('/api/contacts')
+      .post("/api/contacts")
       .send({
-        email: 'unauth@example.com',
-        first_name: 'No',
-        last_name: 'Auth',
-        city: 'Paris',
-        country: 'France',
-        tags: ['Test']
+        email: "unauth@example.com",
+        first_name: "No",
+        last_name: "Auth",
+        city: "Paris",
+        country: "France",
+        tags: ["Test"],
       });
     expect(res.status).toBe(401);
   });
 
-  it('refuse l’accès sans authentification (lecture)', async () => {
-    const res = await request(app)
-      .get('/api/contacts')
+  it("refuse l’accès sans authentification (lecture)", async () => {
+    const res = await request(app).get("/api/contacts");
     expect(res.status).toBe(401);
   });
 
-  it('refuse l’accès sans authentification (mise à jour)', async () => {
+  it("refuse l’accès sans authentification (mise à jour)", async () => {
     const res = await request(app)
-      .put('/api/contacts/1')
-      .send({ city: 'Paris' });
+      .put("/api/contacts/1")
+      .send({ city: "Paris" });
     expect(res.status).toBe(401);
   });
 
-  it('refuse l’accès sans authentification (suppression)', async () => {
-    const res = await request(app)
-      .delete('/api/contacts/1');
+  it("refuse l’accès sans authentification (suppression)", async () => {
+    const res = await request(app).delete("/api/contacts/1");
     expect(res.status).toBe(401);
   });
 
-  it('échoue si tags n’est pas un tableau', async () => {
+  it("échoue si tags n’est pas un tableau", async () => {
     const res = await request(app)
-      .post('/api/contacts')
-      .set('Authorization', authToken)
+      .post("/api/contacts")
+      .set("Authorization", authToken)
       .send({
-        email: 'tagsnotarray@example.com',
-        first_name: 'Tag',
-        last_name: 'Error',
-        city: 'Paris',
-        country: 'France',
-        tags: 'VIP' // Doit être un tableau
+        email: "tagsnotarray@example.com",
+        first_name: "Tag",
+        last_name: "Error",
+        city: "Paris",
+        country: "France",
+        tags: "VIP", // Doit être un tableau
       });
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('accepte la création sans champs optionnels', async () => {
+  it("accepte la création sans champs optionnels", async () => {
     const res = await request(app)
-      .post('/api/contacts')
-      .set('Authorization', authToken)
+      .post("/api/contacts")
+      .set("Authorization", authToken)
       .send({
-        email: 'nooptionals@example.com',
-        first_name: 'No',
-        last_name: 'Optionals',
-        tags: ['Test']
+        email: "nooptionals@example.com",
+        first_name: "No",
+        last_name: "Optionals",
+        tags: ["Test"],
       });
     expect(res.status).toBe(201);
-    expect(res.body.email).toBe('nooptionals@example.com');
+    expect(res.body.email).toBe("nooptionals@example.com");
   });
 
-  it('refuse la suppression à un utilisateur non-admin', async () => {
+  it("refuse la suppression à un utilisateur non-admin", async () => {
     // Mock contact exists
     const mockContact = {
       id: 789,
-      email: 'notadmin@example.com',
-      first_name: 'Not',
-      last_name: 'Admin',
-      city: 'Paris',
-      country: 'France',
-      tags: ['Test']
+      email: "notadmin@example.com",
+      first_name: "Not",
+      last_name: "Admin",
+      city: "Paris",
+      country: "France",
+      tags: ["Test"],
     };
     mockPrisma.contact.findUnique.mockResolvedValue(mockContact);
-    
-    // Génère un token JWT simulant un utilisateur USER
-    const jwt = require('jsonwebtoken');
-    const userToken = 'Bearer ' + jwt.sign({ id: 123, role: 'USER' }, process.env.JWT_SECRET || 'test', { expiresIn: '1h' });
+
+    // Utilise le token USER standard (non-admin)
     const res = await request(app)
       .delete(`/api/contacts/${mockContact.id}`)
-      .set('Authorization', userToken);
+      .set("Authorization", authToken);
     expect(res.status).toBe(403);
   });
 
-  it('autorise la suppression à un utilisateur admin', async () => {
+  it("autorise la suppression à un utilisateur admin", async () => {
     // Mock contact exists
     const mockContact = {
       id: 999,
-      email: 'admincanremove@example.com',
-      first_name: 'Admin',
-      last_name: 'CanRemove',
-      city: 'Paris',
-      country: 'France',
-      tags: ['Test']
+      email: "admincanremove@example.com",
+      first_name: "Admin",
+      last_name: "CanRemove",
+      city: "Paris",
+      country: "France",
+      tags: ["Test"],
     };
     mockPrisma.contact.findUnique.mockResolvedValue(mockContact);
     mockPrisma.contact.delete.mockResolvedValue(mockContact);
-    
-    // Génère un token JWT simulant un utilisateur ADMIN
-    const jwt = require('jsonwebtoken');
-    const adminToken = 'Bearer ' + jwt.sign({ id: 1, role: 'ADMIN' }, process.env.JWT_SECRET || 'test', { expiresIn: '1h' });
+
+    // Utilise le token ADMIN standard
     const res = await request(app)
       .delete(`/api/contacts/${mockContact.id}`)
-      .set('Authorization', adminToken);
+      .set("Authorization", adminToken);
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
   });

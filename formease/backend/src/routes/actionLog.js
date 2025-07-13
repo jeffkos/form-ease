@@ -1,8 +1,8 @@
-// Routes pour consulter les logs d'action admin (audit trail)
+﻿// Routes pour consulter les logs d'action admin (audit trail)
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/actionLogController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 router.use(auth);
 

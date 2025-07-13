@@ -1,7 +1,7 @@
-const express = require('express');
+﻿const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 const prisma = new PrismaClient();
 
 // Pixel de suivi pour l'ouverture des emails

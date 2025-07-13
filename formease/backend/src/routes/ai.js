@@ -1,7 +1,7 @@
-const express = require('express');
+﻿const express = require('express');
 const { OpenAI } = require('openai');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY

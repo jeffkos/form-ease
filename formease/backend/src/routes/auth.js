@@ -1,19 +1,19 @@
 // Route d'authentification pour FormEase
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authController = require('../controllers/authController');
-const auth = require('../middleware/auth');
-const { 
-  validateRequest, 
-  registerValidation, 
-  loginValidation, 
-  updateProfileValidation 
-} = require('../middleware/validation');
-const { 
-  authLimiter, 
-  strictLimiter, 
-  securityLogger 
-} = require('../middleware/security');
+const authController = require("../controllers/authController");
+const { default: auth } = require("../middleware/auth");
+const {
+  validateRequest,
+  registerValidation,
+  loginValidation,
+  updateProfileValidation,
+} = require("../middleware/validation");
+const {
+  authLimiter,
+  strictLimiter,
+  securityLogger,
+} = require("../middleware/security");
 
 // Middleware de sécurité pour toutes les routes d'auth
 router.use(securityLogger);
@@ -44,9 +44,10 @@ router.use(securityLogger);
  *       201:
  *         description: Utilisateur créé
  */
-router.post('/register', 
-  strictLimiter, 
-  validateRequest(registerValidation), 
+router.post(
+  "/register",
+  strictLimiter,
+  validateRequest(registerValidation),
   authController.register
 );
 
@@ -70,22 +71,24 @@ router.post('/register',
  *       200:
  *         description: Connexion réussie
  */
-router.post('/login', 
-  authLimiter, 
-  validateRequest(loginValidation), 
+router.post(
+  "/login",
+  authLimiter,
+  validateRequest(loginValidation),
   authController.login
 );
 
 // Route pour récupérer le profil utilisateur
-router.get('/profile', auth, authController.getProfile);
+router.get("/profile", auth, authController.getProfile);
 
 // Route pour récupérer le profil utilisateur (alias pour compatibilité frontend)
-router.get('/me', auth, authController.getProfile);
+router.get("/me", auth, authController.getProfile);
 
 // Route pour mettre à jour le profil utilisateur
-router.put('/profile', 
-  auth, 
-  validateRequest(updateProfileValidation), 
+router.put(
+  "/profile",
+  auth,
+  validateRequest(updateProfileValidation),
   authController.updateProfile
 );
 

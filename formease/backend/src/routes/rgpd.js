@@ -1,8 +1,8 @@
-// Routes RGPD pour l'utilisateur connecté
+﻿// Routes RGPD pour l'utilisateur connecté
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/rgpdController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 router.use(auth);
 

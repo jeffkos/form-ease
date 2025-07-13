@@ -1,8 +1,8 @@
-// Routes d'archivage avancé pour FormEase
+﻿// Routes d'archivage avancé pour FormEase
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/archiveController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 router.use(auth);
 

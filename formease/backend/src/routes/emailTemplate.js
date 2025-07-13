@@ -1,8 +1,8 @@
-// Routes CRUD des templates d'email (admin/superadmin)
+﻿// Routes CRUD des templates d'email (admin/superadmin)
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/emailTemplateController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 router.use(auth);
 

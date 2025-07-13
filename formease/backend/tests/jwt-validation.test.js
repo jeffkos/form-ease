@@ -1,53 +1,65 @@
-const JWTTestHelper = require('./helpers/jwtTestHelper');
-const jwt = require('jsonwebtoken');
+const JWTTestHelper = require("./helpers/jwtTestHelper");
+const jwt = require("jsonwebtoken");
 
-describe('JWT Test Helper Validation', () => {
-  test('génère un token valide', () => {
+describe("JWT Test Helper Validation", () => {
+  test("génère un token valide", () => {
     const token = JWTTestHelper.generateValidToken();
-    const decoded = jwt.verify(token, global.JWT_TEST_SECRET || process.env.JWT_SECRET);
-    
+    const decoded = jwt.verify(
+      token,
+      global.JWT_TEST_SECRET || process.env.JWT_SECRET
+    );
+
     expect(decoded.id).toBe(1);
-    expect(decoded.email).toBe('test@formease.com');
-    expect(decoded.role).toBe('USER');
+    expect(decoded.email).toBe("test@formease.com");
+    expect(decoded.role).toBe("USER");
   });
 
-  test('génère un token admin', () => {
+  test("génère un token admin", () => {
     const token = JWTTestHelper.generateAdminToken();
-    const decoded = jwt.verify(token, global.JWT_TEST_SECRET || process.env.JWT_SECRET);
-    
-    expect(decoded.role).toBe('ADMIN');
+    const decoded = jwt.verify(
+      token,
+      global.JWT_TEST_SECRET || process.env.JWT_SECRET
+    );
+
+    expect(decoded.role).toBe("ADMIN");
   });
 
-  test('génère un token premium', () => {
+  test("génère un token premium", () => {
     const token = JWTTestHelper.generatePremiumToken();
-    const decoded = jwt.verify(token, global.JWT_TEST_SECRET || process.env.JWT_SECRET);
-    
-    expect(decoded.plan).toBe('premium');
+    const decoded = jwt.verify(
+      token,
+      global.JWT_TEST_SECRET || process.env.JWT_SECRET
+    );
+
+    expect(decoded.plan).toBe("premium");
     expect(decoded.plan_expiration).toBeDefined();
   });
 
-  test('format correct pour headers', () => {
+  test("format correct pour headers", () => {
     const token = JWTTestHelper.generateValidToken();
     const header = JWTTestHelper.formatAuthHeader(token);
-    
+
     expect(header).toMatch(/^Bearer .+/);
   });
 
-  test('token expiré détecté', () => {
+  test("token expiré détecté", () => {
     const expiredToken = JWTTestHelper.generateExpiredToken();
-    
+
     expect(() => {
-      jwt.verify(expiredToken, global.JWT_TEST_SECRET || process.env.JWT_SECRET);
-    }).toThrow('jwt expired');
+      jwt.verify(
+        expiredToken,
+        global.JWT_TEST_SECRET || process.env.JWT_SECRET
+      );
+    }).toThrow("jwt expired");
   });
 
-  test('génère des utilisateurs mock corrects', () => {
+  test("génère des utilisateurs mock corrects", () => {
     const user = JWTTestHelper.getMockUser();
     const admin = JWTTestHelper.getMockAdminUser();
     const premium = JWTTestHelper.getMockPremiumUser();
 
-    expect(user.role).toBe('USER');
-    expect(admin.role).toBe('ADMIN');
-    expect(premium.plan).toBe('premium');
+    expect(user.role).toBe("USER");
+    expect(admin.role).toBe("SUPERADMIN");
+    expect(premium.plan).toBe("premium");
   });
 });

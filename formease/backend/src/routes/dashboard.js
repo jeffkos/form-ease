@@ -1,7 +1,7 @@
-// Routes du tableau de bord FormEase
+﻿// Routes du tableau de bord FormEase
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();

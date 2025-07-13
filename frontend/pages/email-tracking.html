@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi des Emails - FormEase</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Email Tracking System -->
+    <script src="../js/email-tracking-system.js"></script>
+    <!-- Navigation Component -->
+    <script src="../components/navigation.js"></script>
+    <!-- Navigation Standalone (Fallback) -->
+    <script src="../components/navigation-standalone.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe', 
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff',
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#374151'
+                            },
+                            border: {
+                                DEFAULT: '#e5e7eb',
+                                emphasis: '#d1d5db'
+                            },
+                            content: {
+                                subtle: '#9ca3af',
+                                DEFAULT: '#6b7280',
+                                emphasis: '#374151',
+                                strong: '#111827',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                    fontSize: {
+                        'tremor-label': ['0.75rem', { lineHeight: '1rem' }],
+                        'tremor-default': ['0.875rem', { lineHeight: '1.25rem' }],
+                        'tremor-title': ['1.125rem', { lineHeight: '1.75rem' }],
+                        'tremor-metric': ['1.875rem', { lineHeight: '2.25rem' }],
+                    },
+                    borderRadius: {
+                        'tremor-small': '0.375rem',
+                        'tremor-default': '0.5rem',
+                        'tremor-full': '9999px',
+                    },
+                    boxShadow: {
+                        'tremor-card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+                        'tremor-dropdown': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Additional Tremor-like styling */
+        .tremor-metric {
+            font-feature-settings: "tnum";
+        }
+        
+        /* Custom scrollbar for webkit browsers */
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Loading animation for trackers */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .tracker-loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Clean card styles - Tremor style like dashboard */
+        .tremor-Card {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 0;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tremor-Card:hover {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .tremor-Card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .tremor-Card:hover::before {
+            opacity: 1;
+        }
+        
+        .tremor-CardContent {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+            min-height: 120px;
+        }
+        
+        .metric-card .tremor-CardContent {
+            padding: 1.5rem;
+            height: 100%;
+        }
+        
+        .metric-card:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 0.98) 100%);
+        }
+        
+        /* Ensure consistent card heights */
+        .grid > .tremor-Card {
+            height: 100%;
+        }
+        
+        /* Chart containers */
+        .chart-container {
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Legend spacing */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .tremor-CardContent {
+                padding: 1rem;
+            }
+            
+            .metric-card .tremor-CardContent {
+                padding: 1.25rem;
+            }
+            
+            .metric-card {
+                min-height: 100px;
+            }
+        }
+
+        /* Modern button styles */
+        .btn-modern {
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 0.5rem;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body class="bg-tremor-background-muted font-sans antialiased">
+    <!-- Navigation fixe -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo et navigation principale -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="../dashboard/home.html" class="flex items-center hover:opacity-80 transition-opacity">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <span class="text-white text-lg font-bold">F</span>
+                            </div>
+                            <span class="ml-3 text-xl font-bold text-gray-900">FormEase</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Menu principal - caché sur mobile -->
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="../forms/builder.html" class="text-gray-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">
+                            Mes formulaires
+                        </a>
+                        <a href="email-tracking.html" class="text-blue-600 border-b-2 border-blue-600 px-3 py-2 text-sm font-medium">
+                            Suivi emails
+                        </a>
+                        <a href="../analytics/reports.html" class="text-gray-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">
+                            Analytics
+                        </a>
+                        <a href="../dashboard/dashboard.html" class="text-gray-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">
+                            Paramètres
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Actions de droite -->
+                <div class="flex items-center space-x-4">
+                    <!-- Bouton actualiser -->
+                    <button onclick="refreshData()" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Actualiser
+                    </button>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button type="button" id="notifications-btn" onclick="toggleNotifications()" 
+                                class="relative p-2 text-gray-600 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50" 
+                                aria-expanded="false" aria-haspopup="true">
+                            <i class="ri-notification-3-line text-lg"></i>
+                            <span id="notification-badge" class="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
+                        
+                        <!-- Dropdown notifications -->
+                        <div id="notifications-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 hidden">
+                            <div class="p-4 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+                            </div>
+                            <div class="p-2 max-h-64 overflow-y-auto">
+                                <div class="p-3 hover:bg-gray-50 rounded cursor-pointer" onclick="markAsRead('1')">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900">Email livré avec succès</p>
+                                            <p class="text-xs text-gray-600">Taux de livraison 98%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50 rounded cursor-pointer" onclick="markAsRead('2')">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900">Nouvel email envoyé</p>
+                                            <p class="text-xs text-gray-600">Formulaire de contact</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50 rounded cursor-pointer" onclick="markAsRead('3')">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900">Taux d'échec élevé</p>
+                                            <p class="text-xs text-gray-600">Newsletter</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Menu utilisateur -->
+                    <div class="relative">
+                        <button type="button" id="user-menu-btn" onclick="toggleUserMenu()" 
+                                class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50" 
+                                aria-expanded="false" aria-haspopup="true">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                <i class="ri-user-3-fill text-white text-sm"></i>
+                            </div>
+                            <span class="hidden md:block text-sm font-medium">Jeff KOSI</span>
+                        </button>
+                        
+                        <!-- Dropdown menu utilisateur -->
+                        <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden">
+                            <div class="p-4 border-b border-gray-200">
+                                <p class="text-sm font-medium text-gray-900">Jeff KOSI</p>
+                                <p class="text-xs text-gray-600">jeff.kosi@formease.com</p>
+                            </div>
+                            <div class="py-2">
+                                <a href="../dashboard/dashboard.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Mon profil</a>
+                                <a href="../analytics/dashboard.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Préférences</a>
+                                <hr class="my-2">
+                                <button onclick="showHelp()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Centre d'aide</button>
+                                <button onclick="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Se déconnecter</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton menu mobile -->
+                    <button type="button" id="mobile-menu-btn" onclick="toggleMobileMenu()" 
+                            class="md:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50">
+                        <i class="ri-menu-line text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Menu mobile -->
+            <div id="mobile-menu" class="md:hidden hidden border-t border-gray-200 bg-white">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="../forms/builder.html" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors text-sm font-medium">
+                        Mes formulaires
+                    </a>
+                    <a href="email-tracking.html" class="block px-3 py-2 text-blue-600 bg-blue-50 text-sm font-medium">
+                        Suivi emails
+                    </a>
+                    <a href="../analytics/reports.html" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors text-sm font-medium">
+                        Analytics
+                    </a>
+                    <a href="../dashboard/dashboard.html" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors text-sm font-medium">
+                        Paramètres
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Navigation container for compatibility -->
+    <div id="navigation-container" style="display: none;"></div>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            
+            <!-- Header Section -->
+            <div class="mb-8">
+                <div class="md:flex md:items-center md:justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h1 class="text-2xl font-bold text-tremor-content-strong">
+                            <i class="ri-mail-line mr-3 text-tremor-brand"></i>
+                            Suivi des emails
+                        </h1>
+                        <p class="mt-2 text-base text-tremor-content-emphasis">
+                            Suivez les performances de vos campagnes d'emails en temps réel
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Emails Envoyés -->
+                <div class="tremor-Card metric-card h-full">
+                    <div class="tremor-CardContent h-full flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails envoyés</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-sent">12,847</p>
+                                <div class="flex items-center">
+                                    <i class="ri-arrow-up-line text-green-500 text-xs"></i>
+                                    <span class="text-green-500 text-xs font-medium">+8.2% ce mois</span>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="ri-send-plane-line text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emails Livrés -->
+                <div class="tremor-Card metric-card h-full">
+                    <div class="tremor-CardContent h-full flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails livrés</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-delivered">12,456</p>
+                                <div class="flex items-center">
+                                    <span class="text-emerald-600 text-xs font-medium">97.0% taux de livraison</span>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="ri-check-line text-emerald-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emails Ouverts -->
+                <div class="tremor-Card metric-card h-full">
+                    <div class="tremor-CardContent h-full flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails ouverts</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-opened">8,934</p>
+                                <div class="flex items-center">
+                                    <span class="text-violet-600 text-xs font-medium">71.7% taux d'ouverture</span>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="ri-mail-open-line text-violet-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emails Échoués -->
+                <div class="tremor-Card metric-card h-full">
+                    <div class="tremor-CardContent h-full flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails échoués</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-failed">391</p>
+                                <div class="flex items-center">
+                                    <span class="text-red-600 text-xs font-medium">3.0% taux d'échec</span>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="ri-error-warning-line text-red-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Controls -->
+            <div class="tremor-Card mb-8">
+                <div class="tremor-CardContent">
+                    <div class="flex flex-wrap items-center gap-4 mb-6">
+                        <h3 class="text-lg font-semibold text-tremor-content-strong">
+                            <i class="ri-filter-3-line mr-2 text-tremor-brand"></i>Filtres
+                        </h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Filtre par Formulaire -->
+                    <div>
+                        <label class="block text-sm font-medium text-tremor-content-strong mb-2">Formulaire</label>
+                        <select id="form-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                            <option value="">Tous les formulaires</option>
+                            <option value="form-contact-001">Formulaire de contact</option>
+                            <option value="form-survey-001">Sondage satisfaction</option>
+                            <option value="form-event-001">Inscription événement</option>
+                            <option value="newsletter-001">Newsletter</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtre par Statut -->
+                    <div>
+                        <label class="block text-sm font-medium text-tremor-content-strong mb-2">Statut</label>
+                        <select id="status-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                            <option value="">Tous les statuts</option>
+                            <option value="delivered">Livrés</option>
+                            <option value="opened">Ouverts</option>
+                            <option value="clicked">Cliqués</option>
+                            <option value="bounced">Échoués</option>
+                            <option value="pending">En attente</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtre par Période -->
+                    <div>
+                        <label class="block text-sm font-medium text-tremor-content-strong mb-2">Période</label>
+                        <select id="period-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                            <option value="7">7 derniers jours</option>
+                            <option value="30" selected>30 derniers jours</option>
+                            <option value="90">90 derniers jours</option>
+                            <option value="365">Cette année</option>
+                        </select>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-end">
+                        <button onclick="exportTracking()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors text-sm">
+                            <i class="ri-download-line mr-2"></i>Exporter
+                        </button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+                <!-- Email Performance Chart - Takes 2/3 width -->
+                <div class="lg:col-span-2 tremor-Card">
+                    <div class="tremor-CardContent">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-tremor-content-strong flex items-center">
+                                    <i class="ri-line-chart-line mr-2 text-tremor-brand"></i>
+                                    Performance des emails
+                                </h3>
+                                <p class="text-sm text-tremor-content-emphasis mt-1">
+                                    Évolution des métriques sur 30 jours
+                                </p>
+                            </div>
+                            <div class="flex items-center space-x-4 text-xs">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                    <span class="text-tremor-content-emphasis">Envoyés</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-emerald-500 rounded-full mr-2"></div>
+                                    <span class="text-tremor-content-emphasis">Livrés</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-violet-500 rounded-full mr-2"></div>
+                                    <span class="text-tremor-content-emphasis">Ouverts</span>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="performanceChart" height="300"></canvas>
+                    </div>
+                </div>
+
+                <!-- Status Distribution -->
+                <div class="tremor-Card">
+                    <div class="tremor-CardContent">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-tremor-content-strong flex items-center">
+                                <i class="ri-pie-chart-line mr-2 text-violet-600"></i>
+                                Répartition des statuts
+                            </h3>
+                            <p class="text-sm text-tremor-content-emphasis mt-1">
+                                Vue d'ensemble des statuts
+                            </p>
+                        </div>
+                        
+                        <div class="flex justify-center mb-6">
+                            <canvas id="statusChart" height="250"></canvas>
+                        </div>
+                        
+                        <!-- Status Legend with Values -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-emerald-500 rounded-full mr-3"></div>
+                                    <span class="text-sm text-tremor-content-emphasis">Livrés</span>
+                                </div>
+                                <span class="text-sm font-medium text-tremor-content-strong" id="legend-delivered">12,456</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-violet-500 rounded-full mr-3"></div>
+                                    <span class="text-sm text-tremor-content-emphasis">Ouverts</span>
+                                </div>
+                                <span class="text-sm font-medium text-tremor-content-strong" id="legend-opened">8,934</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-amber-500 rounded-full mr-3"></div>
+                                    <span class="text-sm text-tremor-content-emphasis">Cliqués</span>
+                                </div>
+                                <span class="text-sm font-medium text-tremor-content-strong" id="legend-clicked">2,847</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
+                                    <span class="text-sm text-tremor-content-emphasis">Échoués</span>
+                                </div>
+                                <span class="text-sm font-medium text-tremor-content-strong" id="legend-failed">391</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-slate-400 rounded-full mr-3"></div>
+                                    <span class="text-sm text-tremor-content-emphasis">En attente</span>
+                                </div>
+                                <span class="text-sm font-medium text-tremor-content-strong" id="legend-pending">66</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Tracking Table -->
+            <div class="tremor-Card overflow-hidden">
+                <div class="tremor-CardContent border-b border-tremor-border bg-tremor-background-subtle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-tremor-content-strong flex items-center">
+                                <i class="ri-table-line mr-2 text-tremor-brand"></i>
+                                Détail des envois d'emails
+                            </h3>
+                            <p class="text-sm text-tremor-content-emphasis mt-1">
+                                Suivi complet de vos campagnes d'emailing
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm text-tremor-content-emphasis">Affichage :</span>
+                            <select id="per-page" onchange="changePerPage()" class="px-3 py-2 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand">
+                                <option value="25" selected>25 par page</option>
+                                <option value="50">50 par page</option>
+                                <option value="100">100 par page</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-tremor-border">
+                        <thead class="bg-tremor-background-subtle">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider cursor-pointer hover:bg-tremor-background-muted" onclick="sortTable('recipient')">
+                                    <div class="flex items-center">
+                                        Destinataire
+                                        <i class="ri-arrow-up-down-line ml-1 text-tremor-content-subtle"></i>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider cursor-pointer hover:bg-tremor-background-muted" onclick="sortTable('form')">
+                                    <div class="flex items-center">
+                                        Formulaire
+                                        <i class="ri-arrow-up-down-line ml-1 text-tremor-content-subtle"></i>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider">
+                                    Objet
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider cursor-pointer hover:bg-tremor-background-muted" onclick="sortTable('status')">
+                                    <div class="flex items-center">
+                                        Statut
+                                        <i class="ri-arrow-up-down-line ml-1 text-tremor-content-subtle"></i>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider cursor-pointer hover:bg-tremor-background-muted" onclick="sortTable('sentDate')">
+                                    <div class="flex items-center">
+                                        Date d'envoi
+                                        <i class="ri-arrow-up-down-line ml-1 text-tremor-content-subtle"></i>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider">
+                                    Date d'ouverture
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-tremor-content-strong tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="email-table-body" class="bg-tremor-background divide-y divide-tremor-border">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="bg-tremor-background-subtle px-6 py-4 border-t border-tremor-border flex items-center justify-between">
+                    <div class="text-sm text-tremor-content-emphasis">
+                        Affichage de <span class="font-medium text-tremor-content-strong" id="page-start">1</span> à <span class="font-medium text-tremor-content-strong" id="page-end">25</span> 
+                        sur <span class="font-medium text-tremor-content-strong" id="total-items">2,847</span> emails
+                    </div>
+                    <div id="pagination-controls" class="flex space-x-1">
+                        <!-- Pagination buttons will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initialize the email tracking system
+        let emailTracker;
+        let currentPage = 1;
+        let perPage = 25;
+        let currentFilters = {};
+        let currentSort = { field: 'sentDate', order: 'desc' };
+
+        // Tremor Tracker Implementation
+        function createTracker(containerId, data, tooltipPrefix = '') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = '';
+            container.className = 'group flex h-8 w-full items-center';
+
+            data.forEach((block, index) => {
+                const blockElement = document.createElement('div');
+                blockElement.className = 'size-full overflow-hidden px-[0.5px] transition first:rounded-l-[4px] first:pl-0 last:rounded-r-[4px] last:pr-0 sm:px-px cursor-pointer hover:opacity-75';
+                
+                const innerBlock = document.createElement('div');
+                innerBlock.className = `size-full rounded-[1px] ${block.color}`;
+                
+                // Add tooltip
+                if (block.tooltip) {
+                    blockElement.title = `${tooltipPrefix}${block.tooltip}`;
+                }
+                
+                blockElement.appendChild(innerBlock);
+                container.appendChild(blockElement);
+            });
+        }
+
+        // Generate tracker data for email activity
+        function generateEmailActivityData(days = 30) {
+            const data = [];
+            const performanceData = emailTracker.getPerformanceData(days);
+            
+            performanceData.forEach(day => {
+                const intensity = Math.min(day.sent / 50, 1); // Normalize to 0-1
+                let color = 'bg-slate-100';
+                
+                if (intensity > 0.8) color = 'bg-blue-600';
+                else if (intensity > 0.6) color = 'bg-blue-500';
+                else if (intensity > 0.4) color = 'bg-blue-400';
+                else if (intensity > 0.2) color = 'bg-blue-300';
+                else if (intensity > 0) color = 'bg-blue-200';
+                
+                data.push({
+                    color: color,
+                    tooltip: `${new Date(day.date).toLocaleDateString('fr-FR')}: ${day.sent} emails envoyés`
+                });
+            });
+            
+            return data;
+        }
+
+        // Generate delivery rate tracker
+        function generateDeliveryRateData(days = 30) {
+            const data = [];
+            const performanceData = emailTracker.getPerformanceData(days);
+            
+            performanceData.forEach(day => {
+                const rate = day.sent > 0 ? day.delivered / day.sent : 0;
+                let color = 'bg-slate-100';
+                
+                if (rate >= 0.95) color = 'bg-emerald-600';
+                else if (rate >= 0.90) color = 'bg-emerald-500';
+                else if (rate >= 0.85) color = 'bg-emerald-400';
+                else if (rate >= 0.80) color = 'bg-yellow-400';
+                else if (rate > 0) color = 'bg-red-400';
+                
+                data.push({
+                    color: color,
+                    tooltip: `${new Date(day.date).toLocaleDateString('fr-FR')}: ${(rate * 100).toFixed(1)}% de livraison`
+                });
+            });
+            
+            return data;
+        }
+
+        // Generate open rate tracker
+        function generateOpenRateData(days = 30) {
+            const data = [];
+            const performanceData = emailTracker.getPerformanceData(days);
+            
+            performanceData.forEach(day => {
+                const rate = day.delivered > 0 ? day.opened / day.delivered : 0;
+                let color = 'bg-slate-100';
+                
+                if (rate >= 0.70) color = 'bg-violet-600';
+                else if (rate >= 0.50) color = 'bg-violet-500';
+                else if (rate >= 0.30) color = 'bg-violet-400';
+                else if (rate >= 0.15) color = 'bg-violet-300';
+                else if (rate > 0) color = 'bg-violet-200';
+                
+                data.push({
+                    color: color,
+                    tooltip: `${new Date(day.date).toLocaleDateString('fr-FR')}: ${(rate * 100).toFixed(1)}% d'ouverture`
+                });
+            });
+            
+            return data;
+        }
+
+        // Generate bounce rate tracker
+        function generateBounceRateData(days = 30) {
+            const data = [];
+            const performanceData = emailTracker.getPerformanceData(days);
+            
+            performanceData.forEach(day => {
+                const rate = day.sent > 0 ? day.bounced / day.sent : 0;
+                let color = 'bg-slate-100';
+                
+                if (rate >= 0.10) color = 'bg-red-600';
+                else if (rate >= 0.05) color = 'bg-red-500';
+                else if (rate >= 0.03) color = 'bg-red-400';
+                else if (rate >= 0.01) color = 'bg-yellow-400';
+                else if (day.sent > 0) color = 'bg-emerald-200';
+                
+                data.push({
+                    color: color,
+                    tooltip: `${new Date(day.date).toLocaleDateString('fr-FR')}: ${(rate * 100).toFixed(1)}% d'échec`
+                });
+            });
+            
+            return data;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing navigation...');
+            
+            // Attendre que tous les scripts soient chargés
+            setTimeout(() => {
+                // Vérifier si FormEaseNavigation est disponible
+                if (typeof FormEaseNavigation === 'undefined') {
+                    console.error('FormEaseNavigation not found! Check if navigation.js is loaded.');
+                    // Créer un menu de base en fallback
+                    createFallbackNavigation();
+                    return;
+                }
+                
+                try {
+                    // Initialize navigation
+                    const navigation = new FormEaseNavigation('email');
+                    console.log('Navigation instance created:', navigation);
+                    
+                    navigation.addNotification({
+                        type: 'success',
+                        title: 'Email livré avec succès',
+                        message: 'Taux de livraison 98%'
+                    });
+                    navigation.addNotification({
+                        type: 'info',
+                        title: 'Nouvel email envoyé',
+                        message: 'Formulaire de contact'
+                    });
+                    navigation.addNotification({
+                        type: 'warning',
+                        title: 'Taux d\'échec élevé',
+                        message: 'Newsletter'
+                    });
+                    
+                    console.log('Rendering navigation...');
+                    navigation.render('navigation-container');
+                    console.log('Navigation rendered');
+                } catch (error) {
+                    console.error('Error initializing navigation:', error);
+                    createFallbackNavigation();
+                }
+                
+                // Initialiser le reste si EmailTrackingSystem est disponible
+                if (typeof EmailTrackingSystem !== 'undefined') {
+                    emailTracker = new EmailTrackingSystem();
+                    initializeTrackers();
+                    initializeCharts();
+                    renderTable();
+                    updateStats();
+                } else {
+                    console.warn('EmailTrackingSystem not available, using mock data');
+                    initializeMockData();
+                }
+            }, 100);
+        });
+        
+        // Fonction de fallback pour créer une navigation basique
+        function createFallbackNavigation() {
+            const container = document.getElementById('navigation-container');
+            if (container) {
+                container.innerHTML = `
+                    <nav class="border-b border-gray-200 bg-white fixed w-full z-50">
+                        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                            <div class="flex justify-between h-16">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 flex items-center">
+                                        <a href="dashboard/home.html" class="flex items-center hover:opacity-80 transition-opacity">
+                                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                                <span class="text-white text-lg font-bold">F</span>
+                                            </div>
+                                            <span class="ml-3 text-xl font-bold text-gray-900">FormEase</span>
+                                        </a>
+                                    </div>
+                                    
+                                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                                        <a href="dashboard/home.html" class="text-gray-600 hover:text-blue-600 transition-colors">
+                                            Tableau de bord
+                                        </a>
+                                        <a href="forms/management.html" class="text-gray-600 hover:text-blue-600 transition-colors">
+                                            Mes formulaires
+                                        </a>
+                                        <a href="email-tracking.html" class="text-blue-600 font-medium">
+                                            Suivi emails
+                                        </a>
+                                        <a href="analytics/dashboard.html" class="text-gray-600 hover:text-blue-600 transition-colors">
+                                            Analytics
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center space-x-4">
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" 
+                                            onclick="window.location.reload()">
+                                        Actualiser
+                                    </button>
+                                    
+                                    <div class="flex items-center space-x-2 text-gray-600">
+                                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm font-medium">J</span>
+                                        </div>
+                                        <span class="hidden md:block text-sm">Jeff KOSI</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                `;
+                console.log('Fallback navigation created');
+            }
+        }
+        
+        // Fonction pour initialiser des données mockées si le système principal n'est pas disponible
+        function initializeMockData() {
+            // Créer des fonctions mock basiques
+            window.initializeTrackers = function() { console.log('Mock: trackers initialized'); };
+            window.initializeCharts = function() { console.log('Mock: charts initialized'); };
+            window.renderTable = function() { console.log('Mock: table rendered'); };
+            window.updateStats = function() { console.log('Mock: stats updated'); };
+            
+            // Exécuter les fonctions mock
+            initializeTrackers();
+            initializeCharts();
+            renderTable();
+            updateStats();
+        }
+
+        function initializeTrackers() {
+            // Create all trackers
+            createTracker('emails-sent-tracker', generateEmailActivityData());
+            createTracker('delivery-rate-tracker', generateDeliveryRateData());
+            createTracker('open-rate-tracker', generateOpenRateData());
+            createTracker('bounce-rate-tracker', generateBounceRateData());
+        }
+
+        function initializeCharts() {
+            // Get performance data for charts
+            const performanceData = emailTracker.getPerformanceData(30);
+            
+            // Performance Chart with Tremor styling
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: performanceData.slice(-7).map(d => {
+                        const date = new Date(d.date);
+                        return date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+                    }),
+                    datasets: [
+                        {
+                            label: 'Emails Envoyés',
+                            data: performanceData.slice(-7).map(d => d.sent),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#3b82f6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Emails Livrés',
+                            data: performanceData.slice(-7).map(d => d.delivered),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Emails Ouverts',
+                            data: performanceData.slice(-7).map(d => d.opened),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false, // We use custom legend
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f1f5f9',
+                                borderDash: [2, 2]
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#f1f5f9',
+                                borderDash: [2, 2]
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+
+            // Status Chart with Tremor styling
+            const stats = emailTracker.getEmailStatistics();
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Livrés', 'Ouverts', 'Cliqués', 'Échoués', 'En attente'],
+                    datasets: [{
+                        data: [
+                            stats.delivered - stats.opened,
+                            stats.opened - stats.clicked,
+                            stats.clicked,
+                            stats.bounced,
+                            stats.pending
+                        ],
+                        backgroundColor: [
+                            '#10b981',
+                            '#8b5cf6', 
+                            '#f59e0b',
+                            '#ef4444',
+                            '#94a3b8'
+                        ],
+                        borderWidth: 0,
+                        cutout: '65%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // We use custom legend
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label;
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value.toLocaleString('fr-FR')} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTable() {
+            const result = emailTracker.getEmailList(currentPage, perPage, currentFilters, currentSort.field, currentSort.order);
+            const emails = result.emails;
+            const pagination = result.pagination;
+            
+            const tableBody = document.getElementById('email-tracking-table');
+
+            tableBody.innerHTML = emails.map(email => {
+                const statusBadge = getStatusBadge(email.status);
+                const openedInfo = email.openedDate ? 
+                    `<div class="text-sm text-tremor-content-strong">${formatDate(email.openedDate)}</div>
+                     <div class="text-xs text-tremor-content-subtle">${email.openCount} ouverture${email.openCount > 1 ? 's' : ''}</div>` : 
+                    `<span class="text-sm text-tremor-content-subtle">Non ouvert</span>`;
+
+                const engagement = emailTracker.calculateEngagement(email);
+                const engagementColor = engagement >= 70 ? 'text-emerald-600' : engagement >= 40 ? 'text-amber-600' : 'text-red-600';
+
+                return `
+                    <tr class="hover:bg-tremor-background-muted transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-tremor-brand to-violet-500 flex items-center justify-center">
+                                        <span class="text-white font-medium text-sm">${email.recipientName ? email.recipientName.charAt(0).toUpperCase() : 'U'}</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-tremor-content-strong">${email.recipientName || 'Utilisateur'}</div>
+                                    <div class="text-xs text-tremor-content-subtle">${email.recipient}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-tremor-content-strong">${email.formName}</div>
+                            <div class="text-xs text-tremor-content-subtle">${email.campaign}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-tremor-content-strong max-w-xs truncate" title="${email.subject}">${email.subject}</div>
+                            ${email.tags ? `<div class="flex flex-wrap gap-1 mt-2">${email.tags.map(tag => `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-tremor-brand-faint text-tremor-brand-emphasis">${tag}</span>`).join('')}</div>` : ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex flex-col space-y-2">
+                                ${statusBadge}
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full ${engagementColor.replace('text-', 'bg-')} mr-2"></div>
+                                    <span class="text-xs ${engagementColor} font-medium">${engagement}% engagement</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-tremor-content-strong">${formatDate(email.sentDate)}</div>
+                            ${email.device ? `<div class="text-xs text-tremor-content-subtle flex items-center mt-1"><i class="ri-${email.device === 'mobile' ? 'smartphone' : email.device === 'tablet' ? 'tablet' : 'computer'}-line mr-1"></i>${email.device}</div>` : ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${openedInfo}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-tremor-content-subtle">
+                            <div class="flex space-x-2">
+                                <button onclick="viewEmailDetails('${email.id}')" class="text-tremor-brand hover:text-tremor-brand-emphasis p-2 rounded hover:bg-tremor-background-muted transition-colors" title="Voir détails">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                                <button onclick="resendEmail('${email.id}')" class="text-emerald-600 hover:text-emerald-700 p-2 rounded hover:bg-tremor-background-muted transition-colors" title="Renvoyer">
+                                    <i class="ri-refresh-line"></i>
+                                </button>
+                                ${email.clickCount > 0 ? `<button onclick="viewClicks('${email.id}')" class="text-violet-600 hover:text-violet-700 p-2 rounded hover:bg-tremor-background-muted transition-colors" title="Voir clics (${email.clickCount})"><i class="ri-cursor-line"></i></button>` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            updatePagination(pagination);
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'delivered': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"><i class="ri-check-line mr-1"></i>Livré</span>',
+                'opened': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet-100 text-violet-800"><i class="ri-mail-open-line mr-1"></i>Ouvert</span>',
+                'clicked': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"><i class="ri-cursor-line mr-1"></i>Cliqué</span>',
+                'bounced': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="ri-error-warning-line mr-1"></i>Échec</span>',
+                'pending': '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"><i class="ri-time-line mr-1"></i>En attente</span>'
+            };
+            return badges[status] || badges['pending'];
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleString('fr-FR', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function applyFilters() {
+            currentFilters = {
+                formId: document.getElementById('form-filter').value || undefined,
+                status: document.getElementById('status-filter').value || undefined,
+                // Add more filters as needed
+            };
+
+            currentPage = 1;
+            renderTable();
+            updateStats();
+        }
+
+        function updateStats() {
+            const stats = emailTracker.getEmailStatistics(currentFilters);
+            
+            document.getElementById('total-sent').textContent = stats.sent.toLocaleString('fr-FR');
+            document.getElementById('total-delivered').textContent = stats.delivered.toLocaleString('fr-FR');
+            document.getElementById('total-opened').textContent = stats.opened.toLocaleString('fr-FR');
+            document.getElementById('total-failed').textContent = stats.bounced.toLocaleString('fr-FR');
+            
+            // Update legend values
+            document.getElementById('legend-delivered').textContent = stats.delivered.toLocaleString('fr-FR');
+            document.getElementById('legend-opened').textContent = stats.opened.toLocaleString('fr-FR');
+            document.getElementById('legend-clicked').textContent = stats.clicked.toLocaleString('fr-FR');
+            document.getElementById('legend-failed').textContent = stats.bounced.toLocaleString('fr-FR');
+            document.getElementById('legend-pending').textContent = stats.pending.toLocaleString('fr-FR');
+            
+            // Refresh trackers
+            initializeTrackers();
+        }
+
+        function updatePagination(pagination) {
+            const paginationContainer = document.getElementById('pagination-controls');
+            
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `
+                <button onclick="changePage(${pagination.currentPage - 1})" 
+                        ${!pagination.hasPrev ? 'disabled' : ''} 
+                        class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-tremor-content-emphasis bg-tremor-background border border-tremor-border rounded-l-lg hover:bg-tremor-background-muted transition-colors ${!pagination.hasPrev ? 'opacity-50 cursor-not-allowed' : ''}">
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+            `;
+            
+            // Page numbers
+            const startPage = Math.max(1, pagination.currentPage - 2);
+            const endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+            
+            for(let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button onclick="changePage(${i})" 
+                            class="relative inline-flex items-center px-4 py-2 text-sm font-medium transition-colors ${i === pagination.currentPage ? 'text-tremor-brand bg-tremor-brand-faint border border-tremor-brand' : 'text-tremor-content-emphasis bg-tremor-background border border-tremor-border hover:bg-tremor-background-muted'}">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            // Next button
+            paginationHTML += `
+                <button onclick="changePage(${pagination.currentPage + 1})" 
+                        ${!pagination.hasNext ? 'disabled' : ''} 
+                        class="relative inline-flex items-center px-3 py-2 text-sm font-medium text-tremor-content-emphasis bg-tremor-background border border-tremor-border rounded-r-lg hover:bg-tremor-background-muted transition-colors ${!pagination.hasNext ? 'opacity-50 cursor-not-allowed' : ''}">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+            `;
+            
+            paginationContainer.innerHTML = paginationHTML;
+
+            // Update pagination info
+            document.getElementById('page-start').textContent = ((pagination.currentPage - 1) * pagination.perPage + 1).toLocaleString('fr-FR');
+            document.getElementById('page-end').textContent = Math.min(pagination.currentPage * pagination.perPage, pagination.totalItems).toLocaleString('fr-FR');
+            document.getElementById('total-items').textContent = pagination.totalItems.toLocaleString('fr-FR');
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+        function changePerPage() {
+            perPage = parseInt(document.getElementById('per-page').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        function viewEmailDetails(emailId) {
+            const emailDetails = emailTracker.getEmailDetails(emailId);
+            if (!emailDetails) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1">
+                                    <i class="ri-mail-line mr-2"></i>
+                                    Détails de l'Email
+                                </h3>
+                                <p class="text-blue-100">${emailDetails.recipient}</p>
+                            </div>
+                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Email Info Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                    <i class="ri-information-line mr-2 text-blue-600"></i>
+                                    Informations Générales
+                                </h4>
+                                <div class="space-y-2 text-sm">
+                                    <div><span class="text-gray-600">Destinataire:</span> <span class="font-medium">${emailDetails.recipientName}</span></div>
+                                    <div><span class="text-gray-600">Email:</span> <span class="font-medium">${emailDetails.recipient}</span></div>
+                                    <div><span class="text-gray-600">Formulaire:</span> <span class="font-medium">${emailDetails.formName}</span></div>
+                                    <div><span class="text-gray-600">Campagne:</span> <span class="font-medium">${emailDetails.campaign}</span></div>
+                                    <div><span class="text-gray-600">Objet:</span> <span class="font-medium">${emailDetails.subject}</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                    <i class="ri-bar-chart-line mr-2 text-green-600"></i>
+                                    Statistiques
+                                </h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Statut:</span>
+                                        ${getStatusBadge(emailDetails.status)}
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Ouvertures:</span>
+                                        <span class="font-medium">${emailDetails.openCount}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Clics:</span>
+                                        <span class="font-medium">${emailDetails.clickCount}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Engagement:</span>
+                                        <span class="font-medium text-blue-600">${emailDetails.engagement}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                                    <i class="ri-settings-line mr-2 text-purple-600"></i>
+                                    Informations Techniques
+                                </h4>
+                                <div class="space-y-2 text-sm">
+                                    <div><span class="text-gray-600">Device:</span> <span class="font-medium">${emailDetails.device || 'N/A'}</span></div>
+                                    <div><span class="text-gray-600">Client Email:</span> <span class="font-medium">${emailDetails.emailClient || 'N/A'}</span></div>
+                                    <div><span class="text-gray-600">Localisation:</span> <span class="font-medium">${emailDetails.location ? `${emailDetails.location.city}, ${emailDetails.location.country}` : 'N/A'}</span></div>
+                                    <div><span class="text-gray-600">Score Délivrabilité:</span> <span class="font-medium text-green-600">${emailDetails.deliverabilityScore}%</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timeline -->
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <i class="ri-timeline-line mr-2 text-blue-600"></i>
+                                Timeline des Événements
+                            </h4>
+                            <div class="space-y-4">
+                                ${emailDetails.timeline.map(event => `
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-${event.color}-100 flex items-center justify-center">
+                                            <i class="${event.icon} text-${event.color}-600"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900">${event.description}</p>
+                                            <p class="text-xs text-gray-500">${formatDate(event.timestamp)}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        ${emailDetails.clicks.length > 0 ? `
+                        <!-- Clicks Details -->
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <i class="ri-cursor-line mr-2 text-orange-600"></i>
+                                Détail des Clics
+                            </h4>
+                            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                <table class="min-w-full">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">URL</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        ${emailDetails.clicks.map(click => `
+                                            <tr>
+                                                <td class="px-4 py-2 text-sm text-gray-900 truncate max-w-xs" title="${click.url}">${click.url}</td>
+                                                <td class="px-4 py-2 text-sm text-gray-500">${formatDate(click.timestamp)}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${emailDetails.bounceReason ? `
+                        <!-- Bounce Information -->
+                        <div class="mb-6">
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-red-900 mb-2 flex items-center">
+                                    <i class="ri-error-warning-line mr-2"></i>
+                                    Raison de l'Échec
+                                </h4>
+                                <p class="text-sm text-red-700">${emailDetails.bounceReason}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Actions -->
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="resendEmail('${emailDetails.id}'); this.closest('.fixed').remove();" 
+                                    class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                                <i class="ri-refresh-line mr-2"></i>Renvoyer
+                            </button>
+                            <button onclick="exportEmailData('${emailDetails.id}')" 
+                                    class="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
+                                <i class="ri-download-line mr-2"></i>Exporter
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                <i class="ri-close-line mr-2"></i>Fermer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function viewClicks(emailId) {
+            const emailDetails = emailTracker.getEmailDetails(emailId);
+            if (!emailDetails || emailDetails.clicks.length === 0) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                    <div class="bg-orange-600 text-white p-6 rounded-t-lg">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold">
+                                <i class="ri-cursor-line mr-2"></i>
+                                Historique des Clics
+                            </h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600">Email: <span class="font-medium">${emailDetails.recipient}</span></p>
+                            <p class="text-sm text-gray-600">Total des clics: <span class="font-medium">${emailDetails.clickCount}</span></p>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            ${emailDetails.clicks.map((click, index) => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+                                            <span class="text-orange-600 font-semibold text-sm">${index + 1}</span>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 break-all">${click.url}</p>
+                                            <p class="text-xs text-gray-500 mt-1">${formatDate(click.timestamp)}</p>
+                                        </div>
+                                        <button onclick="window.open('${click.url}', '_blank')" class="text-blue-600 hover:text-blue-800 p-1">
+                                            <i class="ri-external-link-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end">
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Fermer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function resendEmail(emailId) {
+            const email = emailTracker.emailDatabase.find(e => e.id === emailId);
+            if (!email) return;
+
+            if (confirm(`Voulez-vous renvoyer l'email à ${email.recipient} ?`)) {
+                showNotification('Email en cours de renvoi...', 'info');
+                
+                try {
+                    const result = await emailTracker.resendEmail(emailId);
+                    if (result.success) {
+                        showNotification(`Email renvoyé avec succès à ${email.recipient}`, 'success');
+                        renderTable(); // Refresh table to show new email
+                    }
+                } catch (error) {
+                    showNotification('Erreur lors du renvoi de l\'email', 'error');
+                }
+            }
+        }
+
+        function exportTracking() {
+            showNotification('Export en cours...', 'info');
+            
+            try {
+                const csvData = emailTracker.exportTrackingData('csv', currentFilters);
+                const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `email-tracking-${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Export terminé avec succès', 'success');
+            } catch (error) {
+                showNotification('Erreur lors de l\'export', 'error');
+            }
+        }
+
+        function exportEmailData(emailId) {
+            const emailDetails = emailTracker.getEmailDetails(emailId);
+            if (!emailDetails) return;
+
+            const data = {
+                email: emailDetails,
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `email-details-${emailId}.json`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Données exportées avec succès', 'success');
+        }
+
+        function refreshData() {
+            showDynamicNotification('Actualisation des données en cours...', 'info');
+            
+            setTimeout(() => {
+                renderTable();
+                updateStats();
+                showDynamicNotification('Données actualisées avec succès !', 'success');
+            }, 1000);
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-tremor-default text-tremor-content-inverted z-50 transition-all duration-300 transform translate-x-0 shadow-tremor-dropdown border ${
+                type === 'success' ? 'bg-emerald-600 border-emerald-700' : 
+                type === 'warning' ? 'bg-amber-600 border-amber-700' : 
+                type === 'error' ? 'bg-red-600 border-red-700' : 'bg-tremor-brand border-tremor-brand-emphasis'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-${type === 'success' ? 'check' : type === 'warning' ? 'alert' : type === 'error' ? 'error-warning' : 'information'}-line mr-2"></i>
+                    <span class="text-tremor-default font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Advanced filtering
+        function setupAdvancedFilters() {
+            // Add date range picker, search functionality, etc.
+            // This could be expanded based on requirements
+        }
+
+        // Real-time updates (would connect to WebSocket in production)
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                // In production, this would listen to WebSocket events
+                // For demo, we could simulate some updates
+                updateStats();
+            }, 30000); // Update every 30 seconds
+        }
+
+        // Start real-time updates
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(startRealTimeUpdates, 5000);
+        });
+        
+        // Fonctions pour rendre le menu dynamique
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notifications-dropdown');
+            const userDropdown = document.getElementById('user-menu-dropdown');
+            const btn = document.getElementById('notifications-btn');
+            
+            // Fermer le menu utilisateur s'il est ouvert
+            if (!userDropdown.classList.contains('hidden')) {
+                userDropdown.classList.add('hidden');
+                document.getElementById('user-menu-btn').setAttribute('aria-expanded', 'false');
+            }
+            
+            const isHidden = dropdown.classList.contains('hidden');
+            dropdown.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            
+            // Focus management
+            if (!isHidden) {
+                btn.focus();
+            }
+        }
+        
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('user-menu-dropdown');
+            const notifDropdown = document.getElementById('notifications-dropdown');
+            const btn = document.getElementById('user-menu-btn');
+            
+            // Fermer les notifications si elles sont ouvertes
+            if (!notifDropdown.classList.contains('hidden')) {
+                notifDropdown.classList.add('hidden');
+                document.getElementById('notifications-btn').setAttribute('aria-expanded', 'false');
+            }
+            
+            const isHidden = dropdown.classList.contains('hidden');
+            dropdown.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            
+            // Focus management
+            if (!isHidden) {
+                btn.focus();
+            }
+        }
+        
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const icon = menuBtn.querySelector('i');
+            
+            const isHidden = mobileMenu.classList.contains('hidden');
+            mobileMenu.classList.toggle('hidden');
+            menuBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            
+            // Changer l'icône
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.className = 'ri-menu-line text-lg';
+            } else {
+                icon.className = 'ri-close-line text-lg';
+            }
+            
+            // Focus management
+            if (isHidden) {
+                menuBtn.focus();
+            }
+        }
+        
+        function markAsRead(notificationId) {
+            console.log('Notification marquée comme lue:', notificationId);
+            // Ici vous pouvez ajouter la logique pour marquer comme lu
+            
+            // Simuler la suppression du badge si toutes les notifications sont lues
+            updateNotificationBadge();
+        }
+        
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notification-badge');
+            const currentCount = parseInt(badge.textContent);
+            
+            if (currentCount > 1) {
+                badge.textContent = currentCount - 1;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function showSettings() {
+            // Ouvrir une modal de paramètres
+            showNotification('Paramètres bientôt disponibles', 'info');
+        }
+        
+        function showHelp() {
+            // Ouvrir une modal d'aide
+            showNotification('Centre d\'aide en développement', 'info');
+        }
+        
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                showNotification('Déconnexion en cours...', 'info');
+                // Ici vous pouvez rediriger vers la page de connexion
+                // window.location.href = '/login';
+            }
+        }
+        
+        // Fermer les dropdowns quand on clique ailleurs
+        document.addEventListener('click', function(event) {
+            const notifBtn = document.getElementById('notifications-btn');
+            const userBtn = document.getElementById('user-menu-btn');
+            const notifDropdown = document.getElementById('notifications-dropdown');
+            const userDropdown = document.getElementById('user-menu-dropdown');
+            
+            // Fermer notifications dropdown
+            if (notifBtn && notifDropdown && !notifBtn.contains(event.target) && !notifDropdown.contains(event.target)) {
+                notifDropdown.classList.add('hidden');
+                notifBtn.setAttribute('aria-expanded', 'false');
+            }
+            
+            // Fermer user dropdown
+            if (userBtn && userDropdown && !userBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.add('hidden');
+                userBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+        
+        // Gestion du clavier pour l'accessibilité
+        document.addEventListener('keydown', function(event) {
+            // Échapper pour fermer les menus
+            if (event.key === 'Escape') {
+                const notifDropdown = document.getElementById('notifications-dropdown');
+                const userDropdown = document.getElementById('user-menu-dropdown');
+                const mobileMenu = document.getElementById('mobile-menu');
+                
+                if (!notifDropdown.classList.contains('hidden')) {
+                    notifDropdown.classList.add('hidden');
+                    document.getElementById('notifications-btn').setAttribute('aria-expanded', 'false');
+                    document.getElementById('notifications-btn').focus();
+                }
+                
+                if (!userDropdown.classList.contains('hidden')) {
+                    userDropdown.classList.add('hidden');
+                    document.getElementById('user-menu-btn').setAttribute('aria-expanded', 'false');
+                    document.getElementById('user-menu-btn').focus();
+                }
+                
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    document.getElementById('mobile-menu-btn').setAttribute('aria-expanded', 'false');
+                    document.getElementById('mobile-menu-btn').focus();
+                }
+            }
+        });
+        
+        // Animation d'entrée pour les nouvelles notifications toast
+        function showDynamicNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 max-w-sm bg-white rounded-lg shadow-lg border-l-4 ${
+                type === 'success' ? 'border-green-500' : 
+                type === 'error' ? 'border-red-500' : 
+                type === 'warning' ? 'border-yellow-500' : 'border-blue-500'
+            } p-4 z-50 transform translate-x-full transition-transform duration-300`;
+            
+            notification.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="ri-${
+                            type === 'success' ? 'check-line text-green-500' : 
+                            type === 'error' ? 'error-warning-line text-red-500' : 
+                            type === 'warning' ? 'alert-line text-yellow-500' : 'information-line text-blue-500'
+                        }"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-gray-900">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-auto -mx-1.5 -my-1.5 p-1.5 text-gray-400 hover:text-gray-900">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animer l'entrée
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto-suppression après 5 secondes
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+        
+        // Simulation de nouvelles notifications périodiques
+        function startDynamicNotifications() {
+            setInterval(() => {
+                const messages = [
+                    'Nouvel email envoyé avec succès',
+                    'Taux d\'ouverture en amélioration',
+                    'Nouveau formulaire soumis',
+                    'Rapport analytique disponible'
+                ];
+                
+                const types = ['success', 'info', 'warning'];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                const randomType = types[Math.floor(Math.random() * types.length)];
+                
+                // Chance de 20% d'avoir une nouvelle notification toutes les 20 secondes
+                if (Math.random() < 0.2) {
+                    showDynamicNotification(randomMessage, randomType);
+                    
+                    // Mettre à jour le badge de notification
+                    const badge = document.getElementById('notification-badge');
+                    if (badge) {
+                        if (badge.style.display === 'none') {
+                            badge.style.display = 'flex';
+                            badge.textContent = '1';
+                        } else {
+                            const currentCount = parseInt(badge.textContent) || 0;
+                            badge.textContent = currentCount + 1;
+                        }
+                    }
+                }
+            }, 20000); // Vérifier toutes les 20 secondes
+        }
+        
+        // Démarrer les notifications dynamiques après le chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ajouter les event listeners pour les éléments du menu
+            setupMenuEventListeners();
+            setTimeout(startDynamicNotifications, 10000); // Attendre 10 secondes après le chargement
+        });
+        
+        // Configuration des event listeners pour le menu
+        function setupMenuEventListeners() {
+            // Bouton notifications
+            const notificationsBtn = document.getElementById('notifications-btn');
+            if (notificationsBtn) {
+                notificationsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleNotifications();
+                });
+                
+                // Support clavier
+                notificationsBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleNotifications();
+                    }
+                });
+            }
+            
+            // Bouton menu utilisateur
+            const userMenuBtn = document.getElementById('user-menu-btn');
+            if (userMenuBtn) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleUserMenu();
+                });
+                
+                // Support clavier
+                userMenuBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleUserMenu();
+                    }
+                });
+            }
+            
+            // Bouton menu mobile
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleMobileMenu();
+                });
+                
+                // Support clavier
+                mobileMenuBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleMobileMenu();
+                    }
+                });
+            }
+            
+            // Bouton actualiser
+            const refreshBtn = document.querySelector('button[class*="bg-tremor-brand"]');
+            if (refreshBtn && refreshBtn.textContent.includes('Actualiser')) {
+                refreshBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    refreshData();
+                });
+            }
+            
+            // Liens du menu utilisateur
+            const userDropdown = document.getElementById('user-menu-dropdown');
+            if (userDropdown) {
+                // Lien paramètres
+                const settingsLink = userDropdown.querySelector('a[href="#"]:has(i.ri-settings-3-line)');
+                if (settingsLink) {
+                    settingsLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showSettings();
+                    });
+                }
+                
+                // Lien aide
+                const helpLink = userDropdown.querySelector('a[href="#"]:has(i.ri-question-line)');
+                if (helpLink) {
+                    helpLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showHelp();
+                    });
+                }
+                
+                // Lien déconnexion
+                const logoutLink = userDropdown.querySelector('a[href="#"]:has(i.ri-logout-box-line)');
+                if (logoutLink) {
+                    logoutLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        logout();
+                    });
+                }
+            }
+            
+            // Notifications dans le dropdown
+            const notificationItems = document.querySelectorAll('#notifications-dropdown [role="menuitem"]');
+            notificationItems.forEach((item, index) => {
+                item.addEventListener('click', function() {
+                    markAsRead(index + 1);
+                });
+                
+                // Support clavier
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        markAsRead(index + 1);
+                    }
+                });
+            });
+            
+            console.log('Menu event listeners configurés avec succès');
+        }
+    </script>
+</body>
+</html>

@@ -44,6 +44,7 @@ model User {
   createdCoupons  Coupon[]
   couponUsages    CouponUsage[]
   refreshTokens   RefreshToken[]
+  smsMessages     SMS[]
 }
 
 model Payment {
@@ -59,7 +60,7 @@ model Payment {
 }
 
 model Form {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   user_id     Int
   title       String
   description String
@@ -74,11 +75,12 @@ model Form {
   archived_at DateTime?
   exportLogs     ExportLog[]
   formPayment    FormPayment?
+  smsMessages    SMS[]
 }
 
 model Submission {
   id           Int      @id @default(autoincrement())
-  form_id      Int
+  form_id      String
   data         Json
   status       String   // new, validated, trashed
   validated_at DateTime?
@@ -94,7 +96,7 @@ model Submission {
 
 model FormField {
   id             Int      @id @default(autoincrement())
-  form_id        Int
+  form_id        String
   type           String
   label_fr       String
   label_en       String
@@ -144,7 +146,7 @@ model ActionLog {
 model ExportLog {
   id        Int      @id @default(autoincrement())
   user_id   Int
-  form_id   Int?
+  form_id   String?
   type      String   // 'csv', 'pdf'
   filename  String
   created_at DateTime @default(now())
@@ -165,7 +167,7 @@ model EmailLog {
 
 model FormPayment {
   id             Int      @id @default(autoincrement())
-  form_id        Int      @unique
+  form_id        String   @unique
   enabled        Boolean  @default(false)
   amount         Float    // Montant en euros
   currency       String   @default("EUR")
@@ -307,4 +309,31 @@ model RefreshToken {
   
   @@index([user_id])
   @@index([expires_at])
+}
+
+// 📱 Modèle SMS pour la gestion des messages SMS
+model SMS {
+  id         String   @id @default(uuid())
+  to         String   // Numéro de téléphone destinataire
+  message    String   // Contenu du SMS
+  provider   String   // Provider utilisé (twilio, mailersend, freemobile)
+  providerId String?  // ID du provider (sid Twilio, etc.)
+  status     String   // sent, failed, pending
+  error      String?  // Message d'erreur si échec
+  metadata   Json     @default("{}")
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  formId     String?
+  userId     Int?
+  form       Form?    @relation(fields: [formId], references: [id], onDelete: SetNull)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([formId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("sms")
 }

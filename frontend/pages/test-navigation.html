@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Navigation Component -->
+    <script src="../components/navigation.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#eff6ff',
+                                muted: '#bfdbfe', 
+                                subtle: '#60a5fa',
+                                DEFAULT: '#3b82f6',
+                                emphasis: '#1d4ed8',
+                                inverted: '#ffffff',
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff',
+                                emphasis: '#374151'
+                            },
+                            border: {
+                                DEFAULT: '#e5e7eb',
+                                emphasis: '#d1d5db'
+                            },
+                            content: {
+                                subtle: '#9ca3af',
+                                DEFAULT: '#6b7280',
+                                emphasis: '#374151',
+                                strong: '#111827',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-tremor-background-muted font-sans antialiased">
+    <!-- Navigation will be injected here -->
+    <div id="navigation-container"></div>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-2xl font-bold text-tremor-content-strong mb-4">
+                    Test de Navigation
+                </h1>
+                <p class="text-tremor-content-emphasis mb-6">
+                    Cette page teste le système de navigation FormEase.
+                </p>
+                
+                <div id="debug-info" class="bg-gray-100 rounded-lg p-4 mb-6">
+                    <h3 class="font-semibold mb-2">Informations de Debug :</h3>
+                    <div id="debug-content"></div>
+                </div>
+                
+                <button onclick="testNavigation()" class="bg-tremor-brand text-white px-4 py-2 rounded-lg hover:bg-tremor-brand-emphasis transition-colors">
+                    Tester Navigation
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function logDebug(message) {
+            const debugContent = document.getElementById('debug-content');
+            const time = new Date().toLocaleTimeString();
+            debugContent.innerHTML += `<div class="text-sm text-gray-600">[${time}] ${message}</div>`;
+        }
+
+        function testNavigation() {
+            logDebug('Test de navigation lancé...');
+            
+            try {
+                const navigation = new FormEaseNavigation('test');
+                navigation.addNotification({
+                    type: 'info',
+                    title: 'Test notification',
+                    message: 'Ceci est un test'
+                });
+                navigation.render('navigation-container');
+                logDebug('✅ Navigation créée et rendue avec succès');
+            } catch (error) {
+                logDebug('❌ Erreur lors de la création de la navigation: ' + error.message);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('DOM chargé');
+            
+            // Vérifier si FormEaseNavigation est disponible
+            if (typeof FormEaseNavigation === 'undefined') {
+                logDebug('❌ FormEaseNavigation non trouvé !');
+                return;
+            }
+            logDebug('✅ FormEaseNavigation trouvé');
+            
+            try {
+                // Initialize navigation
+                const navigation = new FormEaseNavigation('email');
+                logDebug('✅ Instance de navigation créée');
+                
+                navigation.addNotification({
+                    type: 'success',
+                    title: 'Page chargée',
+                    message: 'Navigation initialisée avec succès'
+                });
+                
+                navigation.render('navigation-container');
+                logDebug('✅ Navigation rendue dans le conteneur');
+                
+            } catch (error) {
+                logDebug('❌ Erreur d\'initialisation: ' + error.message);
+                console.error('Erreur détaillée:', error);
+            }
+        });
+    </script>
+</body>
+</html>

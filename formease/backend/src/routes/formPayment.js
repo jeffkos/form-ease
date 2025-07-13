@@ -1,8 +1,8 @@
-// Routes pour la gestion des formulaires payants
+﻿// Routes pour la gestion des formulaires payants
 const express = require('express');
 const router = express.Router();
 const formPaymentController = require('../controllers/formPaymentController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 // Configurer le paiement pour un formulaire (propriétaire uniquement)
 router.post('/:formId/configure', auth, formPaymentController.configureFormPayment);

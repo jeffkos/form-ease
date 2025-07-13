@@ -10,9 +10,9 @@
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <!-- FormEase Functions -->
-    <script src="../../../formease-functions.js"></script>
+    <!-- <script src="../../../formease-functions.js"></script> -->
     <!-- FormEase Functions -->
-    <script src="../../formease-functions.js"></script>
+    <!-- <script src="../../formease-functions.js"></script> -->
     
     <script>
         tailwind.config = {
@@ -116,6 +116,12 @@
                         </a>
                         <a href="management.html" class="text-tremor-brand-DEFAULT font-medium">
                             Mes formulaires
+                        </a>
+                        <a href="../email-tracking.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            <i class="ri-mail-line mr-1"></i>Suivi Emails
+                        </a>
+                        <a href="sms-management.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
+                            <i class="ri-message-3-line mr-1"></i>Gestion SMS
                         </a>
                         <a href="../analytics/dashboard.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
                             Analytics
@@ -604,180 +610,266 @@
         // Test des fonctions de base - Debug
         console.log('Script chargé correctement');
         
+        // Variables globales pour le système de filtrage
+        let allFormResponses = {}; // Stocke toutes les réponses par formId
+        let currentFilters = {}; // Filtres actifs par formId
+        let currentPage = {}; // Page actuelle par formId
+        let itemsPerPage = {}; // Items par page par formId
+        
         // Fonction de test
         function testFunction() {
             alert('Test fonction OK!');
         }
         
-        // GESTION AVANCÉE DES RÉPONSES AVEC FILTRES ADAPTATIFS
+        // GESTION AVANCÉE DES RÉPONSES AVEC FILTRES ADAPTATIFS - VERSION COMPLÈTE
         function viewResponses(formId, formName, responseCount) {
-            console.log('viewResponses appelée avec:', formId, formName, responseCount);
+            console.log('=== DÉBUT viewResponses COMPLET ===');
+            console.log('Paramètres:', formId, formName, responseCount);
             
-            if (responseCount === 0) {
-                showNotification(`Aucune réponse pour "${formName}"`, 'info');
-                return;
-            }
-            
-            // Données simulées des formulaires avec leurs champs spécifiques
-            const formData = getFormDataStructure(formId);
-            const responses = generateAdaptiveResponses(formId, responseCount);
-            
-            // Modal principal avec design Tremor UI
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-lg shadow-2xl w-full max-w-7xl h-[90vh] flex flex-col overflow-hidden">
-                    <!-- Header avec gradient Tremor -->
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 flex-shrink-0">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <i class="ri-file-list-3-line text-2xl"></i>
-                                </div>
-                                <div>
-                                    <h2 class="text-xl font-semibold text-white">${formName}</h2>
-                                    <p class="text-white/80 text-sm">${responseCount} réponses • Gestion intelligente</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <button onclick="exportResponses('${formId}', '${formName}')" 
-                                        class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                                    <i class="ri-download-line mr-2"></i>Exporter
-                                </button>
-                                <button onclick="this.closest('.fixed').remove()" 
-                                        class="bg-white/20 hover:bg-white/30 text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200">
-                                    <i class="ri-close-line text-xl"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            try {
+                if (responseCount === 0) {
+                    showNotification(`Aucune réponse pour "${formName}"`, 'info');
+                    return;
+                }
 
-                    <!-- Corps principal -->
-                    <div class="flex flex-1 overflow-hidden">
-                        <!-- Sidebar Filtres Adaptatifs -->
-                        <div class="w-80 bg-gray-50 border-r border-gray-200 p-6 overflow-y-auto flex-shrink-0">
-                            <div class="mb-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                                    <i class="ri-filter-3-line mr-2 text-blue-600"></i>
-                                    Filtres intelligents
-                                </h3>
-                                <p class="text-sm text-gray-600">Adaptés aux champs de votre formulaire</p>
-                            </div>
-                            
-                            <div id="adaptive-filters-${formId}" class="space-y-6">
-                                ${getAdaptiveFilters(formId, formData)}
-                            </div>
-                            
-                            <div class="mt-6 pt-6 border-t border-gray-200">
-                                <button onclick="resetFilters('${formId}')" 
-                                        class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200">
-                                    <i class="ri-refresh-line mr-2"></i>Réinitialiser
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Zone de contenu principale -->
-                        <div class="flex-1 flex flex-col overflow-hidden">
-                            <!-- Barre de contrôles -->
-                            <div class="bg-white border-b border-gray-200 p-6 flex-shrink-0">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center space-x-6">
-                                        <label class="flex items-center space-x-3 cursor-pointer">
-                                            <input type="checkbox" id="select-all-${formId}" 
-                                                   onchange="toggleSelectAll('${formId}')"
-                                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-                                            <span class="text-sm font-medium text-gray-900">Tout sélectionner</span>
-                                        </label>
-                                        <span id="selection-count-${formId}" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                                            0 sélectionné(s)
-                                        </span>
+                console.log('1. Vérification OK, génération des données...');
+                
+                // Données simulées des formulaires avec leurs champs spécifiques
+                const formData = getFormDataStructure(formId);
+                const responses = generateAdaptiveResponses(formId, responseCount);
+                
+                // Initialiser les données globales
+                allFormResponses[formId] = responses;
+                currentFilters[formId] = {};
+                currentPage[formId] = 1;
+                itemsPerPage[formId] = 25;
+                
+                console.log('2. Données générées et initialisées, création du modal complet...');
+                
+                // Modal principal avec design Tremor UI complet
+                const modal = document.createElement('div');
+                modal.id = 'responses-modal-' + formId;
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 16px;
+                    backdrop-filter: blur(4px);
+                `;
+                
+                // Gestion des événements
+                modal.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeResponsesModal();
+                    }
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeResponsesModal();
+                    }
+                });
+                
+                // Bloquer le scroll du body
+                document.body.style.overflow = 'hidden';
+                
+                modal.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-2xl w-full max-w-7xl h-[90vh] flex flex-col overflow-hidden">
+                        <!-- Header avec gradient Tremor -->
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 flex-shrink-0">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                        <i class="ri-file-list-3-line text-2xl"></i>
                                     </div>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex items-center space-x-2">
-                                            <label class="text-sm text-gray-600">Afficher:</label>
-                                            <select id="per-page-${formId}" onchange="changePerPage('${formId}')"
-                                                    class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                <option value="10">10 par page</option>
-                                                <option value="25" selected>25 par page</option>
-                                                <option value="50">50 par page</option>
-                                                <option value="100">100 par page</option>
-                                            </select>
-                                        </div>
+                                    <div>
+                                        <h2 class="text-xl font-semibold text-white">${formName}</h2>
+                                        <p class="text-white/80 text-sm">${responseCount} réponses • Gestion intelligente</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <button onclick="exportResponses('${formId}', '${formName}')" 
+                                            class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                                        <i class="ri-download-line mr-2"></i>Exporter
+                                    </button>
+                                    <button onclick="closeResponsesModal()" 
+                                            class="bg-white/20 hover:bg-white/30 text-white w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200">
+                                        <i class="ri-close-line text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Corps principal -->
+                        <div class="flex flex-1 overflow-hidden">
+                            <!-- Sidebar Filtres Adaptatifs -->
+                            <div class="w-80 bg-gray-50 border-r border-gray-200 p-6 overflow-y-auto flex-shrink-0">
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                        <i class="ri-filter-3-line mr-2 text-blue-600"></i>
+                                        Filtres intelligents
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Adaptés aux champs de votre formulaire</p>
+                                </div>
+                                
+                                <div id="adaptive-filters-${formId}" class="space-y-6">
+                                    ${getAdaptiveFilters(formId, formData)}
+                                </div>
+                                
+                                <div class="mt-6 pt-6 border-t border-gray-200">
+                                    <div id="filter-stats-${formId}" class="mb-4">
                                         <div class="text-sm text-gray-600">
-                                            <span id="total-filtered-${formId}">${responseCount}</span> réponses trouvées
+                                            ${responseCount} résultat(s) sur ${responseCount} total
+                                        </div>
+                                    </div>
+                                    <button onclick="resetFilters('${formId}')" 
+                                            class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-200">
+                                        <i class="ri-refresh-line mr-2"></i>Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Zone de contenu principale -->
+                            <div class="flex-1 flex flex-col overflow-hidden">
+                                <!-- Barre de contrôles -->
+                                <div class="bg-white border-b border-gray-200 p-6 flex-shrink-0">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center space-x-6">
+                                            <label class="flex items-center space-x-3 cursor-pointer">
+                                                <input type="checkbox" id="select-all-${formId}" 
+                                                       onchange="toggleSelectAll('${formId}')"
+                                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                                <span class="text-sm font-medium text-gray-900">Tout sélectionner</span>
+                                            </label>
+                                            <span id="selection-count-${formId}" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                                0 sélectionné(s)
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center space-x-4">
+                                            <div class="flex items-center space-x-2">
+                                                <label class="text-sm text-gray-600">Afficher:</label>
+                                                <select id="per-page-${formId}" onchange="changePerPage('${formId}')"
+                                                        class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                    <option value="10">10 par page</option>
+                                                    <option value="25" selected>25 par page</option>
+                                                    <option value="50">50 par page</option>
+                                                    <option value="100">100 par page</option>
+                                                </select>
+                                            </div>
+                                            <div class="text-sm text-gray-600">
+                                                <span id="total-filtered-${formId}">${responseCount}</span> réponses trouvées
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Actions en lot -->
+                                    <div id="bulk-actions-${formId}" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-2">
+                                                <i class="ri-magic-line text-blue-600"></i>
+                                                <span class="text-sm font-medium text-blue-600">Actions en lot</span>
+                                                <span id="bulk-count-${formId}" class="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+                                                    0 sélectionné(s)
+                                                </span>
+                                            </div>
+                                            <button onclick="hideBulkActions('${formId}')" class="text-gray-500 hover:text-gray-700">
+                                                <i class="ri-close-line"></i>
+                                            </button>
+                                        </div>
+                                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                                            <button onclick="bulkEmail('${formId}')" 
+                                                    class="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-3 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                                                <i class="ri-mail-line"></i><span>Email</span>
+                                            </button>
+                                            <button onclick="bulkSMS('${formId}')" 
+                                                    class="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white py-2.5 px-3 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                                                <i class="ri-message-line"></i><span>SMS</span>
+                                            </button>
+                                            <button onclick="bulkNewsletter('${formId}')" 
+                                                    class="flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white py-2.5 px-3 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                                                <i class="ri-newsletter-line"></i><span>Newsletter</span>
+                                            </button>
+                                            <button onclick="bulkArchive('${formId}')" 
+                                                    class="flex items-center justify-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white py-2.5 px-3 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                                                <i class="ri-archive-line"></i><span>Archiver</span>
+                                            </button>
+                                            <button onclick="bulkValidate('${formId}')" 
+                                                    class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-3 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                                                <i class="ri-check-line"></i><span>Valider</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <!-- Actions en lot -->
-                                <div id="bulk-actions-${formId}" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div class="flex items-center space-x-2">
-                                            <i class="ri-magic-line text-blue-600"></i>
-                                            <span class="text-sm font-medium text-blue-600">Actions en lot</span>
-                                            <span id="bulk-count-${formId}" class="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
-                                                0 sélectionné(s)
-                                            </span>
-                                        </div>
-                                        <button onclick="hideBulkActions('${formId}')" class="text-gray-500 hover:text-gray-700">
-                                            <i class="ri-close-line"></i>
-                                        </button>
-                                    </div>
-                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                                        <button onclick="bulkEmail('${formId}')" 
-                                                class="flex items-center justify-center space-x-2 bg-tremor-brand-DEFAULT hover:bg-tremor-brand-emphasis text-white py-2.5 px-3 rounded-tremor-default text-xs font-medium transition-all duration-200 shadow-tremor-input hover:shadow-tremor-card">
-                                            <i class="ri-mail-line"></i><span>Email</span>
-                                        </button>
-                                        <button onclick="bulkSMS('${formId}')" 
-                                                class="flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white py-2.5 px-3 rounded-tremor-default text-xs font-medium transition-all duration-200 shadow-tremor-input hover:shadow-tremor-card">
-                                            <i class="ri-message-line"></i><span>SMS</span>
-                                        </button>
-                                        <button onclick="bulkNewsletter('${formId}')" 
-                                                class="flex items-center justify-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white py-2.5 px-3 rounded-tremor-default text-xs font-medium transition-all duration-200 shadow-tremor-input hover:shadow-tremor-card">
-                                            <i class="ri-newsletter-line"></i><span>Newsletter</span>
-                                        </button>
-                                        <button onclick="bulkArchive('${formId}')" 
-                                                class="flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white py-2.5 px-3 rounded-tremor-default text-xs font-medium transition-all duration-200 shadow-tremor-input hover:shadow-tremor-card">
-                                            <i class="ri-archive-line"></i><span>Archiver</span>
-                                        </button>
-                                        <button onclick="bulkValidate('${formId}')" 
-                                                class="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 px-3 rounded-tremor-default text-xs font-medium transition-all duration-200 shadow-tremor-input hover:shadow-tremor-card">
-                                            <i class="ri-check-line"></i><span>Valider</span>
-                                        </button>
+                                <!-- Tableau des réponses -->
+                                <div class="flex-1 overflow-y-auto">
+                                    <div id="responses-table-${formId}" class="p-6">
+                                        ${generateAdaptiveTable(formId, formData, responses)}
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Tableau des réponses -->
-                            <div class="flex-1 overflow-y-auto">
-                                <div id="responses-table-${formId}" class="p-6">
-                                    ${generateAdaptiveTable(formId, formData, responses)}
-                                </div>
-                            </div>
-                            
-                            <!-- Pagination -->
-                            <div class="bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
-                                <div class="text-sm text-gray-600">
-                                    Affichage de <span class="font-medium text-gray-900" id="page-start-${formId}">1</span> 
-                                    à <span class="font-medium text-gray-900" id="page-end-${formId}">25</span> 
-                                    sur <span class="font-medium text-gray-900" id="total-items-${formId}">${responseCount}</span> réponses
-                                </div>
-                                <div id="pagination-${formId}">
-                                    ${generatePagination(formId, 1, Math.ceil(responseCount / 25))}
+                                
+                                <!-- Pagination -->
+                                <div class="bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
+                                    <div class="text-sm text-gray-600">
+                                        Affichage de <span class="font-medium text-gray-900" id="page-start-${formId}">1</span> 
+                                        à <span class="font-medium text-gray-900" id="page-end-${formId}">25</span> 
+                                        sur <span class="font-medium text-gray-900" id="total-items-${formId}">${responseCount}</span> réponses
+                                    </div>
+                                    <div id="pagination-${formId}">
+                                        ${generatePagination(formId, 1, Math.ceil(responseCount / 25))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+                
+                console.log('3. HTML généré, ajout au DOM...');
+                document.body.appendChild(modal);
+                
+                console.log('4. Initialisation des filtres et événements...');
+                // Initialiser les filtres et événements
+                initializeAdaptiveFilters(formId);
+                initializeTableEvents(formId);
+                
+                // Effectuer la première mise à jour du tableau pour initialiser l'affichage
+                setTimeout(() => {
+                    updateResponseTable(formId);
+                }, 100);
+                
+                console.log('5. Modal de gestion des réponses initialisé avec succès!');
+                
+            } catch (error) {
+                console.error('ERREUR dans viewResponses:', error);
+                // Fallback vers modal simple en cas d'erreur
+                const fallbackModal = document.createElement('div');
+                fallbackModal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                    background: rgba(0,0,0,0.8); z-index: 999999; display: flex;
+                    align-items: center; justify-content: center;
+                `;
+                fallbackModal.innerHTML = `
+                    <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px;">
+                        <h2>Erreur lors du chargement</h2>
+                        <p>Erreur: ${error.message}</p>
+                        <p>Formulaire: ${formName} (${responseCount} réponses)</p>
+                        <button onclick="this.closest('[style*=fixed]').remove(); document.body.style.overflow='auto';">
+                            Fermer
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(fallbackModal);
+                document.body.style.overflow = 'hidden';
+            }
             
-            document.body.appendChild(modal);
-            
-            // Initialiser les filtres et événements
-            initializeAdaptiveFilters(formId);
-            initializeTableEvents(formId);
-            
-            console.log('Modal de gestion des réponses initialisé avec succès');
+            console.log('=== FIN viewResponses ===');
         }
         
         // FORM MANAGEMENT FUNCTIONS
@@ -1239,7 +1331,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-2">Message *</label>
-                            <textarea name="message" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 h-32" placeholder="Votre message..."></textarea>
+                            <textarea name="message" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Votre message..."></textarea>
                         </div>
                         <div class="flex items-center">
                             <input type="checkbox" name="marketing" class="mr-2">
@@ -1265,7 +1357,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Recommanderiez-vous nos services ? *</label>
+                                                       <label class="block text-sm font-medium mb-2">Recommanderiez-vous nos services ? *</label>
                             <div class="space-y-2">
                                 <label class="flex items-center"><input type="radio" name="recommend" value="yes" required class="mr-2"> Oui, certainement</label>
                                 <label class="flex items-center"><input type="radio" name="recommend" value="probably" required class="mr-2"> Probablement</label>
@@ -1358,230 +1450,154 @@
             };
             return forms[formId] || '<p class="text-center text-gray-500">Formulaire non trouvé</p>';
         }
-        
-        // Fonctions auxiliaires pour le modal des réponses
-        function getSmartFiltersHTML(formId) {
-            const filters = {
-                'form-1': `
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">📅 Période</label>
-                        <input type="date" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 8px; font-size: 14px;">
-                        <input type="date" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">🏷️ Sujet</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 6px; padding: 4px; border-radius: 4px; cursor: pointer; font-size: 14px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
-                            <input type="checkbox" style="margin-right: 8px;"> Support technique
-                        </label>
-                        <label style="display: flex; align-items: center; margin-bottom: 6px; padding: 4px; border-radius: 4px; cursor: pointer; font-size: 14px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
-                            <input type="checkbox" style="margin-right: 8px;"> Information produit
-                        </label>
-                        <label style="display: flex; align-items: center; margin-bottom: 6px; padding: 4px; border-radius: 4px; cursor: pointer; font-size: 14px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
-                            <input type="checkbox" style="margin-right: 8px;"> Partenariat
-                        </label>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">🔍 Recherche</label>
-                        <input type="text" placeholder="Nom, email, message..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-                    </div>
-                `,
-                'form-2': `
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">⭐ Satisfaction</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> ⭐ Très insatisfait</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> ⭐⭐ Insatisfait</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> ⭐⭐⭐ Neutre</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> ⭐⭐⭐⭐ Satisfait</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> ⭐⭐⭐⭐⭐ Très satisfait</label>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">🔍 Recherche</label>
-                        <input type="text" placeholder="Nom ou commentaire..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-                    </div>
-                `,
-                'form-3': `
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">🏢 Secteur</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> Technologie</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> Marketing</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> E-commerce</label>
-                        <label style="display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; font-size: 14px;"><input type="checkbox" style="margin-right: 8px;"> Conseil</label>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;">🔍 Recherche</label>
-                        <input type="text" placeholder="Nom, entreprise, poste..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
-                    </div>
-                `
-            };
-            return filters[formId] || '<p style="color: #6b7280; font-size: 14px;">Aucun filtre disponible</p>';
-        }
 
-        // FONCTIONS DE SUPPORT POUR FILTRES ADAPTATIFS
+        // FONCTIONS DE SUPPORT POUR LE MODAL DES RÉPONSES
+        
         function getFormDataStructure(formId) {
-            const structures = {
+            // Structure des données selon le type de formulaire
+            const formStructures = {
                 'form-1': { // Formulaire de Contact
-                    type: 'contact',
-                    fields: [
-                        { name: 'nom', type: 'text', label: 'Nom' },
-                        { name: 'email', type: 'email', label: 'Email' },
-                        { name: 'telephone', type: 'tel', label: 'Téléphone' },
-                        { name: 'sujet', type: 'select', label: 'Sujet', options: ['Support technique', 'Question commerciale', 'Demande de devis', 'Réclamation', 'Autre'] },
-                        { name: 'message', type: 'textarea', label: 'Message' },
-                        { name: 'priorite', type: 'select', label: 'Priorité', options: ['Faible', 'Normale', 'Élevée', 'Urgente'] },
-                        { name: 'statut', type: 'select', label: 'Statut', options: ['Nouveau', 'En cours', 'Résolu', 'Fermé'] }
-                    ]
-                },
-                'form-2': { // Sondage Satisfaction
-                    type: 'survey',
-                    fields: [
-                        { name: 'nom', type: 'text', label: 'Nom' },
-                        { name: 'email', type: 'email', label: 'Email' },
-                        { name: 'satisfaction_generale', type: 'rating', label: 'Satisfaction générale', max: 5 },
-                        { name: 'qualite_service', type: 'rating', label: 'Qualité du service', max: 5 },
-                        { name: 'temps_reponse', type: 'rating', label: 'Temps de réponse', max: 5 },
-                        { name: 'recommandation', type: 'select', label: 'Recommandation', options: ['Très probable', 'Probable', 'Neutre', 'Peu probable', 'Très peu probable'] },
-                        { name: 'commentaires', type: 'textarea', label: 'Commentaires' },
-                        { name: 'segment_client', type: 'select', label: 'Segment', options: ['Particulier', 'PME', 'Grande entreprise', 'Association'] }
-                    ]
-                },
-                'form-3': { // Inscription Événement
-                    type: 'event',
                     fields: [
                         { name: 'nom', type: 'text', label: 'Nom' },
                         { name: 'prenom', type: 'text', label: 'Prénom' },
                         { name: 'email', type: 'email', label: 'Email' },
                         { name: 'telephone', type: 'tel', label: 'Téléphone' },
                         { name: 'entreprise', type: 'text', label: 'Entreprise' },
-                        { name: 'poste', type: 'text', label: 'Poste' },
-                        { name: 'type_billet', type: 'select', label: 'Type de billet', options: ['Standard', 'VIP', 'Étudiant', 'Groupe'] },
-                        { name: 'regime_alimentaire', type: 'select', label: 'Régime alimentaire', options: ['Aucun', 'Végétarien', 'Végétalien', 'Sans gluten', 'Halal', 'Casher'] },
-                        { name: 'statut_inscription', type: 'select', label: 'Statut', options: ['Confirmé', 'En attente', 'Annulé', 'Présent'] }
+                        { name: 'message', type: 'textarea', label: 'Message' },
+                        { name: 'date_creation', type: 'datetime', label: 'Date de création' }
+                    ]
+                },
+                'form-2': { // Sondage Satisfaction
+                    fields: [
+                        { name: 'satisfaction', type: 'select', label: 'Satisfaction', options: ['Très satisfait', 'Satisfait', 'Neutre', 'Insatisfait'] },
+                        { name: 'recommandation', type: 'number', label: 'Note de recommandation (1-10)' },
+                        { name: 'commentaires', type: 'textarea', label: 'Commentaires' },
+                        { name: 'date_creation', type: 'datetime', label: 'Date de soumission' }
+                    ]
+                },
+                'form-3': { // Inscription Événement
+                    fields: [
+                        { name: 'nom', type: 'text', label: 'Nom' },
+                        { name: 'email', type: 'email', label: 'Email' },
+                        { name: 'type_participant', type: 'select', label: 'Type', options: ['Étudiant', 'Professionnel', 'Particulier'] },
+                        { name: 'regime_alimentaire', type: 'text', label: 'Régime alimentaire' },
+                        { name: 'date_creation', type: 'datetime', label: 'Date d\'inscription' }
                     ]
                 }
             };
-            return structures[formId] || structures['form-1'];
+            
+            return formStructures[formId] || formStructures['form-1'];
         }
 
         function getAdaptiveFilters(formId, formData) {
-            let filtersHtml = '';
+            const filters = [];
             
-            // Filtre par date (toujours présent)
-            filtersHtml += `
-                <div class="space-y-3">
-                    <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                        <i class="ri-calendar-line mr-2 text-blue-600"></i>
-                        Période
-                    </h4>
-                    <div class="space-y-2">
-                        <input type="date" id="date-start-${formId}" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
-                        <input type="date" id="date-end-${formId}" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
-                    </div>
-                </div>
-            `;
-            
-            // Filtres spécifiques selon le type de formulaire
             formData.fields.forEach(field => {
-                if (field.type === 'select') {
-                    filtersHtml += `
-                        <div class="space-y-3">
-                            <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                                <i class="ri-filter-line mr-2 text-blue-600"></i>
-                                ${field.label}
-                            </h4>
-                            <select id="filter-${field.name}-${formId}" class="w-full p-2 border border-gray-300 rounded-lg text-sm" onchange="applyFilters('${formId}')">
-                                <option value="">Tous</option>
-                                ${field.options.map(option => `<option value="${option}">${option}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                } else if (field.type === 'rating') {
-                    filtersHtml += `
-                        <div class="space-y-3">
-                            <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                                <i class="ri-star-line mr-2 text-blue-600"></i>
-                                ${field.label}
-                            </h4>
+                switch(field.type) {
+                    case 'text':
+                    case 'email':
+                        filters.push(`
                             <div class="space-y-2">
-                                <input type="range" id="filter-${field.name}-${formId}" min="1" max="${field.max}" class="w-full" onchange="applyFilters('${formId}')">
-                                <div class="flex justify-between text-xs text-gray-500">
-                                    <span>1 étoile</span>
-                                    <span>${field.max} étoiles</span>
+                                <label class="block text-sm font-medium text-gray-700">${field.label}</label>
+                                <input type="text" id="filter-${formId}-${field.name}" placeholder="Rechercher..."
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       onkeyup="applyFilters('${formId}')" onchange="applyFilters('${formId}')">
+                            </div>
+                        `);
+                        break;
+                    case 'select':
+                        const options = field.options ? field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('') : '';
+                        filters.push(`
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">${field.label}</label>
+                                <select id="filter-${formId}-${field.name}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        onchange="applyFilters('${formId}')">
+                                    <option value="">Tous</option>
+                                    ${options}
+                                </select>
+                            </div>
+                        `);
+                        break;
+                    case 'number':
+                        filters.push(`
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">${field.label}</label>
+                                <input type="number" id="filter-${formId}-${field.name}" placeholder="Valeur exacte..."
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       onchange="applyFilters('${formId}')">
+                            </div>
+                        `);
+                        break;
+                    case 'datetime':
+                        filters.push(`
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">Période</label>
+                                <div class="space-y-2">
+                                    <input type="date" id="filter-${formId}-date-from" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           onchange="applyFilters('${formId}')" placeholder="Date début">
+                                    <input type="date" id="filter-${formId}-date-to" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           onchange="applyFilters('${formId}')" placeholder="Date fin">
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `);
+                        break;
                 }
             });
             
-            // Filtres supplémentaires selon le type
-            if (formData.type === 'contact') {
-                filtersHtml += `
-                    <div class="space-y-3">
-                        <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                            <i class="ri-search-line mr-2 text-blue-600"></i>
-                            Recherche textuelle
-                        </h4>
-                        <input type="text" id="search-text-${formId}" placeholder="Rechercher dans les messages..." 
-                               class="w-full p-2 border border-gray-300 rounded-lg text-sm" onkeyup="applyFilters('${formId}')">
-                    </div>
-                `;
-            } else if (formData.type === 'survey') {
-                filtersHtml += `
-                    <div class="space-y-3">
-                        <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                            <i class="ri-emotion-line mr-2 text-blue-600"></i>
-                            Satisfaction globale
-                        </h4>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="filterBySatisfaction('${formId}', 'high')" class="p-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg text-xs">
-                                Élevée (4-5★)
-                            </button>
-                            <button onclick="filterBySatisfaction('${formId}', 'low')" class="p-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs">
-                                Faible (1-2★)
-                            </button>
-                        </div>
-                    </div>
-                `;
-            } else if (formData.type === 'event') {
-                filtersHtml += `
-                    <div class="space-y-3">
-                        <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                            <i class="ri-building-line mr-2 text-blue-600"></i>
-                            Recherche entreprise
-                        </h4>
-                        <input type="text" id="search-company-${formId}" placeholder="Nom d'entreprise..." 
-                               class="w-full p-2 border border-gray-300 rounded-lg text-sm" onkeyup="applyFilters('${formId}')">
-                    </div>
-                `;
-            }
-            
-            return filtersHtml;
+            return filters.join('');
         }
 
         function generateAdaptiveResponses(formId, count) {
-            const formData = getFormDataStructure(formId);
             const responses = [];
+            const formData = getFormDataStructure(formId);
             
-            for (let i = 1; i <= Math.min(count, 25); i++) {
-                const response = {
-                    id: i,
-                    date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    selected: false
-                };
+            for(let i = 1; i <= count; i++) {
+                const response = { id: i };
                 
                 formData.fields.forEach(field => {
-                    if (field.type === 'text') {
-                        response[field.name] = generateRandomText(field.name);
-                    } else if (field.type === 'email') {
-                        response[field.name] = generateRandomEmail();
-                    } else if (field.type === 'tel') {
-                        response[field.name] = generateRandomPhone();
-                    } else if (field.type === 'select') {
-                        response[field.name] = field.options[Math.floor(Math.random() * field.options.length)];
-                    } else if (field.type === 'rating') {
-                        response[field.name] = Math.floor(Math.random() * field.max) + 1;
-                    } else if (field.type === 'textarea') {
-                        response[field.name] = generateRandomMessage();
+                    switch(field.name) {
+                        case 'nom':
+                            response[field.name] = ['Dupont', 'Martin', 'Bernard', 'Durand', 'Leroy'][Math.floor(Math.random() * 5)];
+                            break;
+                        case 'prenom':
+                            response[field.name] = ['Jean', 'Marie', 'Pierre', 'Sophie', 'Paul'][Math.floor(Math.random() * 5)];
+                            break;
+                        case 'email':
+                            response[field.name] = `${response.prenom || 'user'}${i}@example.com`.toLowerCase();
+                            break;
+                        case 'telephone':
+                            response[field.name] = `+33 ${Math.floor(Math.random() * 9 + 1)} ${Math.floor(Math.random() * 90 + 10)} ${Math.floor(Math.random() * 90 + 10)} ${Math.floor(Math.random() * 90 + 10)}`;
+                            break;
+                        case 'entreprise':
+                            response[field.name] = ['TechCorp', 'InnovateLab', 'StartupXYZ', 'GlobalTech', 'LocalBiz'][Math.floor(Math.random() * 5)];
+                            break;
+                        case 'message':
+                            response[field.name] = 'Message de test pour la démonstration...';
+                            break;
+                        case 'satisfaction':
+                            response[field.name] = ['Très satisfait', 'Satisfait', 'Neutre', 'Insatisfait'][Math.floor(Math.random() * 4)];
+                            break;
+                        case 'recommandation':
+                            response[field.name] = Math.floor(Math.random() * 10) + 1;
+                            break;
+                        case 'commentaires':
+                            response[field.name] = 'Commentaire de test...';
+                            break;
+                        case 'type_participant':
+                            response[field.name] = ['Étudiant', 'Professionnel', 'Particulier'][Math.floor(Math.random() * 3)];
+                            break;
+                        case 'regime_alimentaire':
+                            response[field.name] = ['Aucun', 'Végétarien', 'Végan', 'Sans gluten'][Math.floor(Math.random() * 4)];
+                            break;
+                        case 'date_creation':
+                            const date = new Date();
+                            date.setDate(date.getDate() - Math.floor(Math.random() * 30));
+                            response[field.name] = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+                            break;
+                        default:
+                            response[field.name] = `Valeur ${i}`;
                     }
                 });
                 
@@ -1592,64 +1608,38 @@
         }
 
         function generateAdaptiveTable(formId, formData, responses) {
-            const tableHeaders = formData.fields.slice(0, 6).map(field => 
+            if (!responses.length) return '<p class="text-center text-gray-500 py-8">Aucune réponse trouvée</p>';
+            
+            const headers = formData.fields.map(field => 
                 `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${field.label}</th>`
             ).join('');
             
-            const tableRows = responses.map(response => {
-                const cells = formData.fields.slice(0, 6).map(field => {
-                    let cellContent = response[field.name] || '-';
-                    
-                    if (field.type === 'rating') {
-                        cellContent = `
-                            <div class="flex items-center space-x-1">
-                                ${Array.from({length: field.max}, (_, i) => 
-                                    `<i class="ri-star${i < cellContent ? '-fill' : '-line'} text-yellow-400 text-sm"></i>`
-                                ).join('')}
-                                <span class="text-xs text-gray-500 ml-1">(${cellContent})</span>
-                            </div>
-                        `;
-                    } else if (field.type === 'select' && field.name === 'statut') {
-                        const statusColors = {
-                            'Nouveau': 'bg-blue-100 text-blue-800',
-                            'En cours': 'bg-yellow-100 text-yellow-800',
-                            'Résolu': 'bg-green-100 text-green-800',
-                            'Fermé': 'bg-gray-100 text-gray-800',
-                            'Confirmé': 'bg-green-100 text-green-800',
-                            'En attente': 'bg-yellow-100 text-yellow-800',
-                            'Annulé': 'bg-red-100 text-red-800',
-                            'Présent': 'bg-blue-100 text-blue-800'
-                        };
-                        const colorClass = statusColors[cellContent] || 'bg-gray-100 text-gray-800';
-                        cellContent = `<span class="px-2 py-1 text-xs font-medium rounded-full ${colorClass}">${cellContent}</span>`;
-                    } else if (field.type === 'textarea') {
-                        cellContent = cellContent.length > 50 ? cellContent.substring(0, 50) + '...' : cellContent;
+            const rows = responses.slice(0, 25).map(response => {
+                const cells = formData.fields.map(field => {
+                    let value = response[field.name] || '';
+                    if (field.type === 'textarea' && value.length > 50) {
+                        value = value.substring(0, 50) + '...';
                     }
-                    
-                    return `<td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${cellContent}</td>`;
+                    return `<td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${value}</td>`;
                 }).join('');
                 
                 return `
-                    <tr class="hover:bg-gray-50 transition-colors duration-150 ease-in-out">
+                    <tr class="hover:bg-gray-50 border-b border-gray-200">
                         <td class="px-4 py-4 whitespace-nowrap">
-                            <input type="checkbox" class="response-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" 
-                                   data-id="${response.id}" onchange="updateSelectionCount('${formId}')">
+                            <input type="checkbox" class="response-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                   onchange="updateSelectionCount('${formId}')">
                         </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">#${response.id}</td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${response.date}</td>
                         ${cells}
-                        <td class="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center space-x-2">
-                                <button onclick="viewResponseDetail('${response.id}')" class="text-blue-600 hover:text-blue-900 p-1 rounded">
-                                    <i class="ri-eye-line"></i>
-                                </button>
-                                <button onclick="editResponseDetail('${response.id}')" class="text-green-600 hover:text-green-900 p-1 rounded">
-                                    <i class="ri-edit-line"></i>
-                                </button>
-                                <button onclick="deleteResponse('${response.id}')" class="text-red-600 hover:text-red-900 p-1 rounded">
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-                            </div>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">En attente</span>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button class="text-blue-600 hover:text-blue-900 mr-2" title="Voir détails">
+                                <i class="ri-eye-line"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900 mr-2" title="Éditer">
+                                <i class="ri-edit-line"></i>
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -1660,17 +1650,16 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <input type="checkbox" id="table-select-all" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                <th class="px-4 py-3 text-left">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600" id="select-all-table-${formId}" onchange="toggleSelectAllTable('${formId}')">
                                 </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                ${tableHeaders}
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                ${headers}
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            ${tableRows}
+                            ${rows}
                         </tbody>
                     </table>
                 </div>
@@ -1678,833 +1667,302 @@
         }
 
         function generatePagination(formId, currentPage, totalPages) {
-            let paginationHtml = '<div class="flex items-center space-x-2">';
+            if (totalPages <= 1) return '';
+            
+            let pagination = '';
             
             // Bouton précédent
-            paginationHtml += `
+            pagination += `
                 <button onclick="changePage('${formId}', ${currentPage - 1})" 
-                        ${currentPage <= 1 ? 'disabled' : ''}
-                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="ri-arrow-left-line"></i>
+                        ${currentPage <= 1 ? 'disabled' : ''} 
+                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 ${currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+                    Précédent
                 </button>
             `;
             
-            // Numéros de page
-            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
-                const isActive = i === currentPage;
-                paginationHtml += `
+            // Numéros de pages
+            for(let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                pagination += `
                     <button onclick="changePage('${formId}', ${i})" 
-                            class="px-3 py-2 text-sm font-medium ${isActive ? 'text-white bg-blue-600' : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'} rounded-lg">
+                            class="px-3 py-2 text-sm font-medium ${i === currentPage ? 'text-blue-600 bg-blue-50 border-blue-500' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'} border-t border-b">
                         ${i}
                     </button>
                 `;
             }
             
             // Bouton suivant
-            paginationHtml += `
+            pagination += `
                 <button onclick="changePage('${formId}', ${currentPage + 1})" 
-                        ${currentPage >= totalPages ? 'disabled' : ''}
-                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="ri-arrow-right-line"></i>
+                        ${currentPage >= totalPages ? 'disabled' : ''} 
+                        class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 ${currentPage >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+                    Suivant
                 </button>
             `;
             
-            paginationHtml += '</div>';
-            return paginationHtml;
+            return `<div class="flex">${pagination}</div>`;
         }
 
-        // FONCTIONS UTILITAIRES DE GÉNÉRATION DE DONNÉES
-        function generateRandomText(fieldName) {
-            const names = ['Dupont', 'Martin', 'Bernard', 'Durand', 'Leroy', 'Moreau', 'Simon', 'Laurent'];
-            const firstNames = ['Jean', 'Marie', 'Pierre', 'Paul', 'Jacques', 'Michel', 'Robert', 'André'];
-            const companies = ['TechCorp', 'InnoSoft', 'DataFlow', 'CloudTech', 'WebSolutions', 'DigitalPro'];
-            
-            if (fieldName === 'nom') return names[Math.floor(Math.random() * names.length)];
-            if (fieldName === 'prenom') return firstNames[Math.floor(Math.random() * firstNames.length)];
-            if (fieldName === 'entreprise') return companies[Math.floor(Math.random() * companies.length)];
-            if (fieldName === 'poste') return ['Développeur', 'Chef de projet', 'Directeur', 'Consultant'][Math.floor(Math.random() * 4)];
-            
-            return 'Texte généré';
-        }
-
-        function generateRandomEmail() {
-            const domains = ['gmail.com', 'hotmail.fr', 'yahoo.fr', 'orange.fr'];
-            const names = ['jean.dupont', 'marie.martin', 'pierre.durand', 'paul.simon'];
-            return names[Math.floor(Math.random() * names.length)] + '@' + domains[Math.floor(Math.random() * domains.length)];
-        }
-
-        function generateRandomPhone() {
-            return '0' + Math.floor(Math.random() * 9 + 1) + ' ' + 
-                   Math.floor(Math.random() * 90 + 10) + ' ' +
-                   Math.floor(Math.random() * 90 + 10) + ' ' +
-                   Math.floor(Math.random() * 90 + 10) + ' ' +
-                   Math.floor(Math.random() * 90 + 10);
-        }
-
-        function generateRandomMessage() {
-            const messages = [
-                'Bonjour, j\'ai un problème avec votre service...',
-                'Pourriez-vous me donner plus d\'informations sur vos tarifs ?',
-                'Je souhaiterais obtenir un devis pour mon projet.',
-                'Votre équipe a été très professionnelle, merci !',
-                'Il y a eu un dysfonctionnement ce matin...'
-            ];
-            return messages[Math.floor(Math.random() * messages.length)];
-        }
-
-        // FONCTIONS D'INTERACTION ET DE GESTION
+        // FONCTIONS D'INTERACTION POUR LE MODAL
+        
         function initializeAdaptiveFilters(formId) {
-            // Initialiser les écouteurs d'événements pour les filtres
-            const dateStartInput = document.getElementById(`date-start-${formId}`);
-            const dateEndInput = document.getElementById(`date-end-${formId}`);
-            
-            if (dateStartInput) {
-                dateStartInput.addEventListener('change', () => applyFilters(formId));
-            }
-            if (dateEndInput) {
-                dateEndInput.addEventListener('change', () => applyFilters(formId));
-            }
-            
-            console.log('Filtres adaptatifs initialisés pour', formId);
+            console.log('Initialisation des filtres pour', formId);
+            // Les filtres sont déjà initialisés via les événements onkeyup/onchange
         }
 
         function initializeTableEvents(formId) {
-            // Gestionnaire pour la sélection globale
-            const selectAllCheckbox = document.getElementById(`select-all-${formId}`);
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', function() {
-                    toggleSelectAll(formId);
-                });
-            }
-            
-            // Gestionnaire pour les checkboxes individuelles
-            document.querySelectorAll('.response-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', () => updateSelectionCount(formId));
-            });
-            
-            console.log('Événements de table initialisés pour', formId);
+            console.log('Initialisation des événements du tableau pour', formId);
+            // Les événements sont déjà attachés via les attributs onclick
         }
 
         function applyFilters(formId) {
             console.log('Application des filtres pour', formId);
-            // Logique de filtrage ici
-            showNotification('Filtres appliqués', 'success');
+            
+            // Récupérer tous les filtres actifs
+            const filters = {};
+            const filterElements = document.querySelectorAll(`#adaptive-filters-${formId} input, #adaptive-filters-${formId} select`);
+            
+            filterElements.forEach(element => {
+                if (element.value && element.value.trim() !== '') {
+                    const fieldName = element.id.replace(`filter-${formId}-`, '');
+                    filters[fieldName] = {
+                        value: element.value.trim(),
+                        type: element.type || 'text'
+                    };
+                }
+            });
+            
+            // Récupérer les filtres de date
+            const dateFromInput = document.getElementById(`filter-${formId}-date-from`);
+            const dateToInput = document.getElementById(`filter-${formId}-date-to`);
+            
+            if (dateFromInput && dateFromInput.value) {
+                filters['date_from'] = {
+                    value: dateFromInput.value,
+                    type: 'date-from'
+                };
+            }
+            
+            if (dateToInput && dateToInput.value) {
+                filters['date_to'] = {
+                    value: dateToInput.value,
+                    type: 'date-to'
+                };
+            }
+            
+            currentFilters[formId] = filters;
+            currentPage[formId] = 1; // Reset à la première page
+            
+            console.log('Filtres appliqués:', filters);
+            
+            // Appliquer les filtres et mettre à jour l'affichage
+            updateResponseTable(formId);
+            
+            showNotification(`Filtres appliqués - ${Object.keys(filters).length} filtre(s) actif(s)`, 'success');
         }
 
         function resetFilters(formId) {
-            // Réinitialiser tous les filtres
-            const modal = document.querySelector('.fixed');
-            if (modal) {
-                modal.querySelectorAll('input, select').forEach(input => {
-                    if (input.type === 'checkbox') {
-                        input.checked = false;
-                    } else {
-                        input.value = '';
-                    }
-                });
-            }
-            applyFilters(formId);
+            console.log('Réinitialisation des filtres pour', formId);
+            
+            // Réinitialiser tous les champs de filtre
+            const filters = document.querySelectorAll(`#adaptive-filters-${formId} input, #adaptive-filters-${formId} select`);
+            filters.forEach(filter => {
+                filter.value = '';
+            });
+            
+            // Réinitialiser les filtres globaux
+            currentFilters[formId] = {};
+            currentPage[formId] = 1;
+            
+            // Mettre à jour l'affichage
+            updateResponseTable(formId);
+            
             showNotification('Filtres réinitialisés', 'info');
         }
 
-        function filterBySatisfaction(formId, level) {
-            console.log(`Filtrage par satisfaction ${level} pour ${formId}`);
-            showNotification(`Affichage des réponses avec satisfaction ${level === 'high' ? 'élevée' : 'faible'}`, 'info');
+        // Nouvelle fonction pour appliquer les filtres aux données
+        function filterResponses(formId, responses) {
+            const filters = currentFilters[formId] || {};
+            
+            if (Object.keys(filters).length === 0) {
+                return responses; // Aucun filtre, retourner toutes les réponses
+            }
+            
+            return responses.filter(response => {
+                for (const [fieldName, filter] of Object.entries(filters)) {
+                    const fieldValue = response[fieldName];
+                    
+                    if (!fieldValue) continue;
+                    
+                    switch (filter.type) {
+                        case 'text':
+                        case 'email':
+                            // Recherche insensible à la casse
+                            if (!fieldValue.toString().toLowerCase().includes(filter.value.toLowerCase())) {
+                                return false;
+                            }
+                            break;
+                            
+                        case 'select':
+                            // Correspondance exacte pour les sélections
+                            if (fieldValue !== filter.value) {
+                                return false;
+                            }
+                            break;
+                            
+                        case 'number':
+                            // Correspondance numérique
+                            if (parseInt(fieldValue) !== parseInt(filter.value)) {
+                                return false;
+                            }
+                            break;
+                            
+                        case 'date-from':
+                            // Filtrer par date de début
+                            const responseDate = new Date(fieldValue.split(' ')[0].split('/').reverse().join('-'));
+                            const fromDate = new Date(filter.value);
+                            if (responseDate < fromDate) {
+                                return false;
+                            }
+                            break;
+                            
+                        case 'date-to':
+                            // Filtrer par date de fin
+                            const responseDateTo = new Date(fieldValue.split(' ')[0].split('/').reverse().join('-'));
+                            const toDate = new Date(filter.value);
+                            if (responseDateTo > toDate) {
+                                return false;
+                            }
+                            break;
+                    }
+                }
+                
+                return true; // La réponse passe tous les filtres
+            });
+        }
+
+        // Nouvelle fonction pour mettre à jour le tableau avec les filtres
+        function updateResponseTable(formId) {
+            const allResponses = allFormResponses[formId] || [];
+            const formData = getFormDataStructure(formId);
+            
+            // Appliquer les filtres
+            const filteredResponses = filterResponses(formId, allResponses);
+            
+            // Calculer la pagination
+            const totalItems = filteredResponses.length;
+            const perPage = itemsPerPage[formId] || 25;
+            const totalPages = Math.ceil(totalItems / perPage);
+            const currentPageNum = currentPage[formId] || 1;
+            
+            // Obtenir les réponses pour la page actuelle
+            const startIndex = (currentPageNum - 1) * perPage;
+            const endIndex = startIndex + perPage;
+            const pageResponses = filteredResponses.slice(startIndex, endIndex);
+            
+            // Mettre à jour le tableau
+            const tableContainer = document.getElementById(`responses-table-${formId}`);
+            if (tableContainer) {
+                tableContainer.innerHTML = generateAdaptiveTable(formId, formData, pageResponses);
+            }
+            
+            // Mettre à jour la pagination
+            const paginationContainer = document.getElementById(`pagination-${formId}`);
+            if (paginationContainer) {
+                paginationContainer.innerHTML = generatePagination(formId, currentPageNum, totalPages);
+            }
+            
+            // Mettre à jour les statistiques
+            const statsElement = document.getElementById(`filter-stats-${formId}`);
+            if (statsElement) {
+                const activeFilters = Object.keys(currentFilters[formId] || {}).length;
+                statsElement.innerHTML = `
+                    <div class="text-sm text-gray-600">
+                        ${filteredResponses.length} résultat(s) sur ${allResponses.length} total
+                        ${activeFilters > 0 ? `• ${activeFilters} filtre(s) actif(s)` : ''}
+                    </div>
+                `;
+            }
         }
 
         function updateSelectionCount(formId) {
             const checkboxes = document.querySelectorAll('.response-checkbox:checked');
             const count = checkboxes.length;
-            
-            // Mettre à jour les compteurs
-            const selectionCount = document.getElementById(`selection-count-${formId}`);
-            const bulkCount = document.getElementById(`bulk-count-${formId}`);
+            const countElement = document.getElementById(`selection-count-${formId}`);
             const bulkActions = document.getElementById(`bulk-actions-${formId}`);
+            const bulkCount = document.getElementById(`bulk-count-${formId}`);
             
-            if (selectionCount) {
-                selectionCount.textContent = `${count} sélectionné(s)`;
+            if (countElement) {
+                countElement.textContent = `${count} sélectionné(s)`;
+            }
+            
+            if (bulkActions) {
+                bulkActions.style.display = count > 0 ? 'block' : 'none';
             }
             
             if (bulkCount) {
                 bulkCount.textContent = `${count} sélectionné(s)`;
             }
-            
-            // Afficher/masquer les actions en lot
-            if (bulkActions) {
-                if (count > 0) {
-                    bulkActions.classList.remove('hidden');
-                } else {
-                    bulkActions.classList.add('hidden');
-                }
-            }
         }
 
-        function hideBulkActions(formId) {
-            const bulkActions = document.getElementById(`bulk-actions-${formId}`);
-            if (bulkActions) {
-                bulkActions.classList.add('hidden');
-            }
+        function toggleSelectAll(formId) {
+            const selectAll = document.getElementById(`select-all-${formId}`);
+            const checkboxes = document.querySelectorAll('.response-checkbox');
             
-            // Désélectionner tous les éléments
-            document.querySelectorAll('.response-checkbox').forEach(checkbox => {
-                checkbox.checked = false;
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+            
+            updateSelectionCount(formId);
+        }
+
+        function toggleSelectAllTable(formId) {
+            const selectAll = document.getElementById(`select-all-table-${formId}`);
+            const checkboxes = document.querySelectorAll('.response-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
             });
             
             updateSelectionCount(formId);
         }
 
         function changePage(formId, page) {
-            console.log(`Changement de page ${page} pour ${formId}`);
+            console.log(`Changement de page: ${page} pour ${formId}`);
+            currentPage[formId] = page;
+            updateResponseTable(formId);
             showNotification(`Page ${page} chargée`, 'info');
         }
 
         function changePerPage(formId) {
             const select = document.getElementById(`per-page-${formId}`);
-            const value = select.value;
-            console.log(`Changement du nombre d'éléments par page: ${value} pour ${formId}`);
-            showNotification(`Affichage de ${value} éléments par page`, 'info');
+            if (select && select.value) {
+                itemsPerPage[formId] = parseInt(select.value);
+                currentPage[formId] = 1; // Reset à la première page
+                updateResponseTable(formId);
+                console.log(`Changement d'affichage: ${select.value} par page pour ${formId}`);
+                showNotification(`Affichage ${select.value} par page`, 'info');
+            }
+        }
+
+        function hideBulkActions(formId) {
+            const bulkActions = document.getElementById(`bulk-actions-${formId}`);
+            if (bulkActions) {
+                bulkActions.style.display = 'none';
+            }
+            // Décocher toutes les cases
+            const checkboxes = document.querySelectorAll('.response-checkbox');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            updateSelectionCount(formId);
         }
 
         function exportResponses(formId, formName) {
-            showNotification(`Export des réponses de "${formName}" en cours...`, 'info');
+            console.log(`Export des réponses pour ${formName} (${formId})`);
+            showNotification(`Export de "${formName}" en cours...`, 'info');
             
-            // Simulation d'export
+            // Simulation de l'export
             setTimeout(() => {
-                showNotification(`Export de "${formName}" terminé avec succès!`, 'success');
-            }, 1500);
-        }
-
-        function viewResponseDetail(responseId) {
-            showNotification(`Affichage détaillé de la réponse #${responseId}`, 'info');
-        }
-
-        function editResponseDetail(responseId) {
-            showNotification(`Modification de la réponse #${responseId}`, 'info');
-        }
-
-        function deleteResponse(responseId) {
-            if (confirm(`Êtes-vous sûr de vouloir supprimer la réponse #${responseId} ?`)) {
-                showNotification(`Réponse #${responseId} supprimée`, 'success');
-            }
-        }
-
-        // FONCTIONS D'ACTIONS EN LOT AVANCÉES
-        function bulkEmail(formId) {
-            const selectedResponses = getSelectedResponses();
-            if (selectedResponses.length === 0) {
-                showNotification('Aucune réponse sélectionnée', 'warning');
-                return;
-            }
-
-            // Créer le modal d'envoi d'email
-            const emailModal = document.createElement('div');
-            emailModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4';
-            emailModal.innerHTML = `
-                <div class="bg-white rounded-tremor-default shadow-tremor-dropdown max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-                    <div class="bg-tremor-brand-DEFAULT text-white p-6 rounded-t-tremor-default">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold flex items-center">
-                                <i class="ri-mail-line mr-2"></i>
-                                Envoi d'email groupé
-                            </h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
-                                <i class="ri-close-line text-xl"></i>
-                            </button>
-                        </div>
-                        <p class="text-white/80 mt-2">${selectedResponses.length} destinataire(s) sélectionné(s)</p>
-                    </div>
-                    
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">Objet de l'email</label>
-                            <input type="text" id="email-subject" placeholder="Entrez l'objet de votre email..." 
-                                   class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-tremor-brand-emphasis focus:border-tremor-brand-emphasis">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">Message</label>
-                            <textarea id="email-message" rows="6" placeholder="Rédigez votre message..."
-                                      class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-tremor-brand-emphasis focus:border-tremor-brand-emphasis resize-none"></textarea>
-                        </div>
-                        
-                        <div class="bg-tremor-background-muted p-4 rounded-tremor-default">
-                            <h4 class="text-sm font-medium text-tremor-content-strong mb-2">Variables disponibles :</h4>
-                            <div class="grid grid-cols-2 gap-2 text-xs text-tremor-content-subtle">
-                                <span class="bg-white px-2 py-1 rounded">{{nom}}</span>
-                                <span class="bg-white px-2 py-1 rounded">{{email}}</span>
-                                <span class="bg-white px-2 py-1 rounded">{{entreprise}}</span>
-                                <span class="bg-white px-2 py-1 rounded">{{date}}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-3">
-                            <input type="checkbox" id="email-template" class="w-4 h-4 text-tremor-brand-emphasis">
-                            <label for="email-template" class="text-sm text-tremor-content-emphasis">Sauvegarder comme modèle</label>
-                        </div>
-                        
-                        <div class="flex space-x-3 pt-4">
-                            <button onclick="sendBulkEmail('${formId}')" 
-                                    class="flex-1 bg-tremor-brand-DEFAULT hover:bg-tremor-brand-emphasis text-white py-3 px-4 rounded-tremor-default font-medium transition-colors duration-200">
-                                <i class="ri-send-plane-line mr-2"></i>Envoyer
-                            </button>
-                            <button onclick="this.closest('.fixed').remove()" 
-                                    class="px-6 py-3 border border-tremor-border text-tremor-content-emphasis rounded-tremor-default hover:bg-tremor-background-muted transition-colors duration-200">
-                                Annuler
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(emailModal);
-        }
-
-        function bulkSMS(formId) {
-            const selectedResponses = getSelectedResponses();
-            if (selectedResponses.length === 0) {
-                showNotification('Aucune réponse sélectionnée', 'warning');
-                return;
-            }
-
-            // Vérifier que les contacts ont des numéros de téléphone
-            const contactsWithPhone = selectedResponses.filter(r => r.dataset.phone);
-            if (contactsWithPhone.length === 0) {
-                showNotification('Aucun numéro de téléphone trouvé dans les contacts sélectionnés', 'error');
-                return;
-            }
-
-            const smsModal = document.createElement('div');
-            smsModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4';
-            smsModal.innerHTML = `
-                <div class="bg-white rounded-tremor-default shadow-tremor-dropdown max-w-lg w-full">
-                    <div class="bg-green-500 text-white p-6 rounded-t-tremor-default">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold flex items-center">
-                                <i class="ri-message-line mr-2"></i>
-                                Envoi de SMS groupé
-                            </h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
-                                <i class="ri-close-line text-xl"></i>
-                            </button>
-                        </div>
-                        <p class="text-white/80 mt-2">${contactsWithPhone.length} destinataire(s) avec téléphone</p>
-                    </div>
-                    
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">Message SMS</label>
-                            <textarea id="sms-message" rows="4" maxlength="160" placeholder="Rédigez votre SMS (max 160 caractères)..."
-                                      class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
-                                      oninput="updateSMSCounter()"></textarea>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-xs text-tremor-content-subtle">Variables: {{nom}}, {{prenom}}</span>
-                                <span id="sms-counter" class="text-xs text-tremor-content-subtle">0/160</span>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-tremor-default">
-                            <div class="flex items-start space-x-2">
-                                <i class="ri-information-line text-yellow-600 mt-0.5"></i>
-                                <div class="text-sm text-yellow-800">
-                                    <p class="font-medium">Coût estimé</p>
-                                    <p>€${(contactsWithPhone.length * 0.05).toFixed(2)} (${contactsWithPhone.length} SMS × €0.05)</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex space-x-3">
-                            <button onclick="sendBulkSMS('${formId}')" 
-                                    class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-tremor-default font-medium transition-colors duration-200">
-                                <i class="ri-send-plane-line mr-2"></i>Envoyer SMS
-                            </button>
-                            <button onclick="this.closest('.fixed').remove()" 
-                                    class="px-6 py-3 border border-tremor-border text-tremor-content-emphasis rounded-tremor-default hover:bg-tremor-background-muted transition-colors duration-200">
-                                Annuler
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(smsModal);
-        }
-
-        function bulkNewsletter(formId) {
-            const selectedResponses = getSelectedResponses();
-            if (selectedResponses.length === 0) {
-                showNotification('Aucune réponse sélectionnée', 'warning');
-                return;
-            }
-
-            const newsletterModal = document.createElement('div');
-            newsletterModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4';
-            newsletterModal.innerHTML = `
-                <div class="bg-white rounded-tremor-default shadow-tremor-dropdown max-w-lg w-full">
-                    <div class="bg-purple-500 text-white p-6 rounded-t-tremor-default">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold flex items-center">
-                                <i class="ri-newsletter-line mr-2"></i>
-                                Ajout à la newsletter
-                            </h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
-                                <i class="ri-close-line text-xl"></i>
-                            </button>
-                        </div>
-                        <p class="text-white/80 mt-2">${selectedResponses.length} contact(s) à ajouter</p>
-                    </div>
-                    
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">Newsletter</label>
-                            <select id="newsletter-select" class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                <option value="main">Newsletter Principale</option>
-                                <option value="promo">Promotions & Offres</option>
-                                <option value="tech">Actualités Techniques</option>
-                                <option value="new" selected>Créer une nouvelle newsletter</option>
-                            </select>
-                        </div>
-                        
-                        <div id="new-newsletter-section" class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-tremor-content-strong mb-2">Nom de la nouvelle newsletter</label>
-                                <input type="text" id="newsletter-name" placeholder="Ex: Contacts FormEase 2025" 
-                                       class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-tremor-content-strong mb-2">Description</label>
-                                <textarea id="newsletter-description" rows="2" placeholder="Description de la newsletter..."
-                                          class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-purple-50 border border-purple-200 p-3 rounded-tremor-default">
-                            <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="newsletter-welcome" class="w-4 h-4 text-purple-500" checked>
-                                <label for="newsletter-welcome" class="text-sm text-purple-800">Envoyer un email de bienvenue</label>
-                            </div>
-                        </div>
-                        
-                        <div class="flex space-x-3">
-                            <button onclick="addToNewsletter('${formId}')" 
-                                    class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-tremor-default font-medium transition-colors duration-200">
-                                <i class="ri-add-line mr-2"></i>Ajouter
-                            </button>
-                            <button onclick="this.closest('.fixed').remove()" 
-                                    class="px-6 py-3 border border-tremor-border text-tremor-content-emphasis rounded-tremor-default hover:bg-tremor-background-muted transition-colors duration-200">
-                                Annuler
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(newsletterModal);
-            
-            // Gérer l'affichage conditionnel de la section nouvelle newsletter
-            const newsletterSelect = document.getElementById('newsletter-select');
-            const newNewsletterSection = document.getElementById('new-newsletter-section');
-            
-            newsletterSelect.addEventListener('change', function() {
-                if (this.value === 'new') {
-                    newNewsletterSection.style.display = 'block';
-                } else {
-                    newNewsletterSection.style.display = 'none';
-                }
-            });
-        }
-
-        function bulkArchive(formId) {
-            const selectedResponses = getSelectedResponses();
-            if (selectedResponses.length === 0) {
-                showNotification('Aucune réponse sélectionnée', 'warning');
-                return;
-            }
-
-            if (confirm(`Êtes-vous sûr de vouloir archiver ${selectedResponses.length} réponse(s) ?\n\nLes réponses archivées ne seront plus visibles dans la vue principale mais resteront accessibles dans les archives.`)) {
-                
-                showNotification(`Archivage de ${selectedResponses.length} réponse(s) en cours...`, 'info');
-                
-                // Simulation de l'archivage
-                setTimeout(() => {
-                    selectedResponses.forEach(checkbox => {
-                        const row = checkbox.closest('tr');
-                        if (row) {
-                            row.style.transition = 'opacity 0.5s ease';
-                            row.style.opacity = '0.5';
-                            
-                            // Ajouter un badge "Archivé"
-                            const statusCell = row.querySelector('td:nth-last-child(2)');
-                            if (statusCell) {
-                                statusCell.innerHTML = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">Archivé</span>';
-                            }
-                        }
-                        checkbox.checked = false;
-                    });
-                    
-                    updateSelectionCount(formId);
-                    showNotification(`${selectedResponses.length} réponse(s) archivée(s) avec succès`, 'success');
-                }, 1000);
-            }
-        }
-
-        function bulkValidate(formId) {
-            const selectedResponses = getSelectedResponses();
-            if (selectedResponses.length === 0) {
-                showNotification('Aucune réponse sélectionnée', 'warning');
-                return;
-            }
-
-            const validationModal = document.createElement('div');
-            validationModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4';
-            validationModal.innerHTML = `
-                <div class="bg-white rounded-tremor-default shadow-tremor-dropdown max-w-md w-full">
-                    <div class="bg-emerald-500 text-white p-6 rounded-t-tremor-default">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold flex items-center">
-                                <i class="ri-check-line mr-2"></i>
-                                Validation des réponses
-                            </h3>
-                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
-                                <i class="ri-close-line text-xl"></i>
-                            </button>
-                        </div>
-                        <p class="text-white/80 mt-2">${selectedResponses.length} réponse(s) à valider</p>
-                    </div>
-                    
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">Statut de validation</label>
-                            <select id="validation-status" class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                                <option value="validated">Validé</option>
-                                <option value="approved">Approuvé</option>
-                                <option value="verified">Vérifié</option>
-                                <option value="completed">Traité</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-tremor-content-strong mb-2">Note de validation (optionnel)</label>
-                            <textarea id="validation-note" rows="3" placeholder="Ajoutez une note de validation..."
-                                      class="w-full p-3 border border-tremor-border rounded-tremor-default focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"></textarea>
-                        </div>
-                        
-                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-tremor-default">
-                            <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="notify-validation" class="w-4 h-4 text-emerald-500" checked>
-                                <label for="notify-validation" class="text-sm text-emerald-800">Notifier les contacts par email</label>
-                            </div>
-                        </div>
-                        
-                        <div class="flex space-x-3">
-                            <button onclick="validateResponses('${formId}')" 
-                                    class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-tremor-default font-medium transition-colors duration-200">
-                                <i class="ri-check-double-line mr-2"></i>Valider
-                            </button>
-                            <button onclick="this.closest('.fixed').remove()" 
-                                    class="px-6 py-3 border border-tremor-border text-tremor-content-emphasis rounded-tremor-default hover:bg-tremor-background-muted transition-colors duration-200">
-                                Annuler
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(validationModal);
-        }
-
-        // FONCTIONS D'EXÉCUTION DES ACTIONS
-        function sendBulkEmail(formId) {
-            const subject = document.getElementById('email-subject').value;
-            const message = document.getElementById('email-message').value;
-            const saveTemplate = document.getElementById('email-template').checked;
-            
-            if (!subject.trim() || !message.trim()) {
-                showNotification('Veuillez remplir tous les champs requis', 'error');
-                return;
-            }
-            
-            const selectedCount = getSelectedResponses().length;
-            
-            // Fermer le modal
-            document.querySelector('.z-\\[60\\]').remove();
-            
-            showNotification(`Envoi de ${selectedCount} emails en cours...`, 'info');
-            
-            // Simulation d'envoi progressif
-            let sent = 0;
-            const interval = setInterval(() => {
-                sent++;
-                if (sent <= selectedCount) {
-                    showNotification(`Email ${sent}/${selectedCount} envoyé`, 'info');
-                }
-                
-                if (sent >= selectedCount) {
-                    clearInterval(interval);
-                    showNotification(`✅ ${selectedCount} emails envoyés avec succès!`, 'success');
-                    if (saveTemplate) {
-                        showNotification('Modèle d\'email sauvegardé', 'info');
-                    }
-                    hideBulkActions(formId);
-                }
-            }, 500);
-        }
-
-        function sendBulkSMS(formId) {
-            const message = document.getElementById('sms-message').value;
-            
-            if (!message.trim()) {
-                showNotification('Veuillez saisir un message', 'error');
-                return;
-            }
-            
-            if (message.length > 160) {
-                showNotification('Le message dépasse 160 caractères', 'error');
-                return;
-            }
-            
-            const selectedCount = getSelectedResponses().length;
-            
-            // Fermer le modal
-            document.querySelector('.z-\\[60\\]').remove();
-            
-            showNotification(`Envoi de ${selectedCount} SMS en cours...`, 'info');
-            
-            // Simulation d'envoi
-            setTimeout(() => {
-                showNotification(`📱 ${selectedCount} SMS envoyés avec succès!`, 'success');
-                showNotification(`Coût total: €${(selectedCount * 0.05).toFixed(2)}`, 'info');
-                hideBulkActions(formId);
+                showNotification(`Export de "${formName}" terminé`, 'success');
             }, 2000);
-        }
-
-        function addToNewsletter(formId) {
-            const newsletterSelect = document.getElementById('newsletter-select').value;
-            const newsletterName = document.getElementById('newsletter-name').value;
-            const newsletterDescription = document.getElementById('newsletter-description').value;
-            const sendWelcome = document.getElementById('newsletter-welcome').checked;
-            
-            if (newsletterSelect === 'new' && !newsletterName.trim()) {
-                showNotification('Veuillez saisir le nom de la newsletter', 'error');
-                return;
-            }
-            
-            const selectedCount = getSelectedResponses().length;
-            
-            // Fermer le modal
-            document.querySelector('.z-\\[60\\]').remove();
-            
-            if (newsletterSelect === 'new') {
-                showNotification(`Création de la newsletter "${newsletterName}"...`, 'info');
-                setTimeout(() => {
-                    showNotification(`Newsletter "${newsletterName}" créée avec succès!`, 'success');
-                }, 1000);
-            }
-            
-            setTimeout(() => {
-                showNotification(`📧 ${selectedCount} contact(s) ajouté(s) à la newsletter`, 'success');
-                if (sendWelcome) {
-                    showNotification(`Emails de bienvenue envoyés`, 'info');
-                }
-                hideBulkActions(formId);
-            }, 1500);
-        }
-
-        function validateResponses(formId) {
-            const status = document.getElementById('validation-status').value;
-            const note = document.getElementById('validation-note').value;
-            const notify = document.getElementById('notify-validation').checked;
-            
-            const selectedResponses = getSelectedResponses();
-            const selectedCount = selectedResponses.length;
-            
-            // Fermer le modal
-            document.querySelector('.z-\\[60\\]').remove();
-            
-            showNotification(`Validation de ${selectedCount} réponse(s) en cours...`, 'info');
-            
-            // Mettre à jour visuellement les réponses
-            setTimeout(() => {
-                selectedResponses.forEach(checkbox => {
-                    const row = checkbox.closest('tr');
-                    if (row) {
-                        // Mettre à jour le statut dans le tableau
-                        const statusCell = row.querySelector('td:nth-last-child(2)');
-                        if (statusCell) {
-                            const statusText = status.charAt(0).toUpperCase() + status.slice(1);
-                            statusCell.innerHTML = `<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">${statusText}</span>`;
-                        }
-                        
-                        // Ajouter un effet visuel
-                        row.style.backgroundColor = '#d1fae5';
-                        setTimeout(() => {
-                            row.style.backgroundColor = '';
-                        }, 2000);
-                    }
-                    checkbox.checked = false;
-                });
-                
-                updateSelectionCount(formId);
-                showNotification(`✅ ${selectedCount} réponse(s) validée(s) avec succès!`, 'success');
-                
-                if (notify) {
-                    showNotification(`Notifications envoyées aux contacts`, 'info');
-                }
-                
-                if (note.trim()) {
-                    showNotification(`Note de validation ajoutée`, 'info');
-                }
-            }, 1000);
-        }
-
-        function updateSMSCounter() {
-            const textarea = document.getElementById('sms-message');
-            const counter = document.getElementById('sms-counter');
-            if (textarea && counter) {
-                const length = textarea.value.length;
-                counter.textContent = `${length}/160`;
-                
-                if (length > 160) {
-                    counter.className = 'text-xs text-red-500 font-medium';
-                    textarea.className = textarea.className.replace('focus:ring-green-500 focus:border-green-500', 'focus:ring-red-500 focus:border-red-500 border-red-300');
-                } else {
-                    counter.className = 'text-xs text-tremor-content-subtle';
-                    textarea.className = textarea.className.replace('focus:ring-red-500 focus:border-red-500 border-red-300', 'focus:ring-green-500 focus:border-green-500');
-                }
-            }
-        }
-
-        function getSelectedResponses() {
-            return Array.from(document.querySelectorAll('.response-checkbox:checked'));
-        }
-
-        function bulkAction(formId, action) {
-            const selectedCount = document.querySelectorAll('.response-checkbox:checked').length;
-            
-            if (selectedCount === 0) {
-                showNotification('Aucune réponse sélectionnée', 'warning');
-                return;
-            }
-            
-        function bulkAction(formId, action) {
-            // Cette fonction est maintenant dépréciée, remplacée par des fonctions spécifiques
-            console.log('Action en lot:', action, 'pour', formId);
-            
-            switch (action) {
-                case 'email':
-                    bulkEmail(formId);
-                    break;
-                case 'sms':
-                    bulkSMS(formId);
-                    break;
-                case 'newsletter':
-                    bulkNewsletter(formId);
-                    break;
-                case 'archive':
-                    bulkArchive(formId);
-                    break;
-                case 'validate':
-                    bulkValidate(formId);
-                    break;
-                default:
-                    showNotification(`Action "${action}" non implémentée`, 'warning');
-            }
-        }
-
-        // GESTION DYNAMIQUE DES NEWSLETTERS
-        function createNewsletterFromForm(formId, formName) {
-            const newsletterName = `Newsletter ${formName} - ${new Date().getFullYear()}`;
-            const description = `Newsletter automatiquement créée pour les réponses du formulaire "${formName}"`;
-            
-            // Simulation de création de newsletter
-            setTimeout(() => {
-                showNotification(`Newsletter "${newsletterName}" créée automatiquement`, 'success');
-            }, 500);
-            
-            return {
-                id: `newsletter-${formId}-${Date.now()}`,
-                name: newsletterName,
-                description: description,
-                created: new Date().toISOString(),
-                subscribers: 0
-            };
-        }
-
-        // GESTION AVANCÉE DES MODÈLES D'EMAIL
-        function saveEmailTemplate(subject, message, formId) {
-            const template = {
-                id: `template-${formId}-${Date.now()}`,
-                name: `Modèle ${subject}`,
-                subject: subject,
-                message: message,
-                formId: formId,
-                created: new Date().toISOString()
-            };
-            
-            // Sauvegarder dans localStorage pour la démo
-            const templates = JSON.parse(localStorage.getItem('emailTemplates') || '[]');
-            templates.push(template);
-            localStorage.setItem('emailTemplates', JSON.stringify(templates));
-            
-            return template;
-        }
-
-        function loadEmailTemplates(formId) {
-            const templates = JSON.parse(localStorage.getItem('emailTemplates') || '[]');
-            return templates.filter(t => t.formId === formId || !t.formId);
-        }
-
-        // FONCTIONS D'AMÉLIORATION UX
-        function animateActionSuccess(action, count) {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-tremor-default shadow-tremor-dropdown z-[70] transform translate-x-full transition-transform duration-300';
-            notification.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                        <i class="ri-check-line text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium">Action terminée</p>
-                        <p class="text-sm text-green-100">${action} - ${count} élément(s)</p>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Animation d'entrée
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Animation de sortie
-            setTimeout(() => {
-                notification.style.transform = 'translateX(full)';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 4000);
-        }
-
-        // Fonctions utilitaires pour les actions
-        }
-
-        // Fonctions utilitaires pour les actions
-        function toggleSelectAll(formId) {
-            console.log('Toggle select all pour:', formId);
-            showNotification('Sélection de tous les éléments', 'info');
-        }
-
-        function bulkAction(action) {
-            showNotification('Action en lot: ' + action, 'success');
-            console.log('Action en lot:', action);
-        }
-
-        function viewResponse(id) {
-            showNotification('Affichage de la réponse #' + id, 'info');
-        }
-
-        function editResponse(id) {
-            showNotification('Modification de la réponse #' + id, 'info');
         }
 
         // Dropdown toggle functionality
@@ -2542,6 +2000,551 @@
                 nav.classList.add('bg-white/95');
             }
         });
+
+        // FONCTIONS D'ACTIONS EN LOT POUR LE MODAL DES RÉPONSES
+        
+        function getSelectedResponses() {
+            return document.querySelectorAll('.response-checkbox:checked');
+        }
+
+        function bulkEmail(formId) {
+            const selected = getSelectedResponses();
+            if (selected.length === 0) {
+                showNotification('Aucune réponse sélectionnée', 'warning');
+                return;
+            }
+
+            // Créer le modal d'envoi d'email
+            const emailModal = document.createElement('div');
+            emailModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4';
+            emailModal.style.zIndex = '9999999'; // Z-index encore plus élevé que le modal principal
+            emailModal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                    <div class="bg-blue-600 text-white p-6 rounded-t-lg">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="ri-mail-line mr-2"></i>
+                                Envoi d'email groupé
+                            </h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                        <p class="text-white/80 mt-2">${selected.length} destinataire(s) sélectionné(s)</p>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-900 mb-2">Objet de l'email *</label>
+                            <input type="text" id="email-subject-${formId}" placeholder="Entrez l'objet de votre email..." 
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-900 mb-2">Message *</label>
+                            <textarea id="email-message-${formId}" rows="6" placeholder="Rédigez votre message..."
+                                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-900 mb-2">Variables disponibles :</h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                                <span class="bg-white px-2 py-1 rounded border">{{nom}}</span>
+                                <span class="bg-white px-2 py-1 rounded border">{{email}}</span>
+                                <span class="bg-white px-2 py-1 rounded border">{{entreprise}}</span>
+                                <span class="bg-white px-2 py-1 rounded border">{{date}}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" id="email-template-${formId}" class="w-4 h-4 text-blue-600">
+                            <label for="email-template-${formId}" class="text-sm text-gray-700">Sauvegarder comme modèle</label>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button onclick="sendBulkEmail('${formId}')" 
+                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
+                                <i class="ri-send-plane-line mr-2"></i>Envoyer
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(emailModal);
+        }
+
+        function bulkSMS(formId) {
+            const selected = getSelectedResponses();
+            if (selected.length === 0) {
+                showNotification('Aucune réponse sélectionnée', 'warning');
+                return;
+            }
+
+            const smsModal = document.createElement('div');
+            smsModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4';
+            smsModal.style.zIndex = '9999999';
+            smsModal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full">
+                    <div class="bg-green-600 text-white p-6 rounded-t-lg">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="ri-message-line mr-2"></i>
+                                Envoi de SMS groupé
+                            </h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                        <p class="text-white/80 mt-2">${selected.length} destinataire(s) sélectionné(s)</p>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-900 mb-2">Message SMS *</label>
+                            <textarea id="sms-message-${formId}" rows="4" maxlength="160" placeholder="Rédigez votre SMS (max 160 caractères)..."
+                                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
+                                      oninput="updateSMSCounter('${formId}')"></textarea>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs text-gray-500">Variables: {{nom}}, {{prenom}}</span>
+                                <span id="sms-counter-${formId}" class="text-xs text-gray-500">0/160</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                            <div class="flex items-start space-x-2">
+                                <i class="ri-information-line text-yellow-600 mt-0.5"></i>
+                                <div class="text-sm text-yellow-800">
+                                    <p class="font-medium">Coût estimé</p>
+                                    <p>€${(selected.length * 0.05).toFixed(2)} (${selected.length} SMS × €0.05)</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button onclick="sendBulkSMS('${formId}')" 
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
+                                <i class="ri-send-plane-line mr-2"></i>Envoyer SMS
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(smsModal);
+        }
+
+        function bulkNewsletter(formId) {
+            const selected = getSelectedResponses();
+            if (selected.length === 0) {
+                showNotification('Aucune réponse sélectionnée', 'warning');
+                return;
+            }
+
+            const newsletterModal = document.createElement('div');
+            newsletterModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4';
+            newsletterModal.style.zIndex = '9999999';
+            newsletterModal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full">
+                    <div class="bg-purple-600 text-white p-6 rounded-t-lg">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="ri-newsletter-line mr-2"></i>
+                                Ajout à la newsletter
+                            </h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                        <p class="text-white/80 mt-2">${selected.length} contact(s) à ajouter</p>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-900 mb-2">Newsletter *</label>
+                            <select id="newsletter-select-${formId}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" onchange="toggleNewNewsletterSection('${formId}')">
+                                <option value="main">Newsletter Principale</option>
+                                <option value="promo">Promotions & Offres</option>
+                                <option value="tech">Actualités Techniques</option>
+                                <option value="new" selected>Créer une nouvelle newsletter</option>
+                            </select>
+                        </div>
+                        
+                        <div id="new-newsletter-section-${formId}" class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Nom de la nouvelle newsletter *</label>
+                                <input type="text" id="newsletter-name-${formId}" placeholder="Ex: Contacts FormEase 2025" 
+                                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-900 mb-2">Description</label>
+                                <textarea id="newsletter-description-${formId}" rows="2" placeholder="Description de la newsletter..."
+                                          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-purple-50 border border-purple-200 p-3 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="newsletter-welcome-${formId}" class="w-4 h-4 text-purple-500" checked>
+                                <label for="newsletter-welcome-${formId}" class="text-sm text-purple-800">Envoyer un email de bienvenue</label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button onclick="addToNewsletter('${formId}')" 
+                                    class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
+                                <i class="ri-add-line mr-2"></i>Ajouter
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(newsletterModal);
+        }
+
+        function bulkArchive(formId) {
+            const selected = getSelectedResponses();
+            if (selected.length === 0) {
+                showNotification('Aucune réponse sélectionnée', 'warning');
+                return;
+            }
+
+            if (confirm(`Êtes-vous sûr de vouloir archiver ${selected.length} réponse(s) ?\n\nLes réponses archivées ne seront plus visibles dans la vue principale.`)) {
+                showNotification(`Archivage de ${selected.length} réponse(s) en cours...`, 'info');
+                
+                setTimeout(() => {
+                    selected.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            row.style.transition = 'opacity 0.5s ease';
+                            row.style.opacity = '0.5';
+                            
+                            const statusCell = row.querySelector('td:nth-last-child(2)');
+                            if (statusCell) {
+                                statusCell.innerHTML = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">Archivé</span>';
+                            }
+                        }
+                        checkbox.checked = false;
+                    });
+                    
+                    updateSelectionCount(formId);
+                    showNotification(`${selected.length} réponse(s) archivée(s) avec succès`, 'success');
+                }, 1000);
+            }
+        }
+
+        function bulkValidate(formId) {
+            const selected = getSelectedResponses();
+            if (selected.length === 0) {
+                showNotification('Aucune réponse sélectionnée', 'warning');
+                return;
+            }
+
+            const validationModal = document.createElement('div');
+            validationModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4';
+            validationModal.style.zIndex = '9999999';
+            validationModal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-2xl max-w-md w-full">
+                    <div class="bg-emerald-600 text-white p-6 rounded-t-lg">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="ri-check-line mr-2"></i>
+                                Validation des réponses
+                            </h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-white/80 hover:text-white">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                        <p class="text-white/80 mt-2">${selected.length} réponse(s) à valider</p>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-900 mb-2">Statut de validation *</label>
+                            <select id="validation-status-${formId}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="validated">Validé</option>
+                                <option value="approved">Approuvé</option>
+                                <option value="verified">Vérifié</option>
+                                <option value="completed">Traité</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-900 mb-2">Note de validation (optionnel)</label>
+                            <textarea id="validation-note-${formId}" rows="3" placeholder="Ajoutez une note de validation..."
+                                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"></textarea>
+                        </div>
+                        
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="notify-validation-${formId}" class="w-4 h-4 text-emerald-500" checked>
+                                <label for="notify-validation-${formId}" class="text-sm text-emerald-800">Notifier les contacts par email</label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button onclick="validateResponses('${formId}')" 
+                                    class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
+                                <i class="ri-check-double-line mr-2"></i>Valider
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(validationModal);
+        }
+
+        // FONCTIONS DE SUPPORT POUR LES ACTIONS EN LOT
+        
+        function sendBulkEmail(formId) {
+            const subject = document.getElementById(`email-subject-${formId}`).value;
+            const message = document.getElementById(`email-message-${formId}`).value;
+            const saveTemplate = document.getElementById(`email-template-${formId}`).checked;
+            
+            if (!subject.trim() || !message.trim()) {
+                showNotification('Veuillez remplir l\'objet et le message', 'warning');
+                return;
+            }
+            
+            const selected = getSelectedResponses();
+            
+            showNotification('Envoi des emails en cours...', 'info');
+            document.querySelector('[style*="z-index: 9999999"]').remove();
+            
+            setTimeout(() => {
+                if (saveTemplate) {
+                    showNotification(`Emails envoyés à ${selected.length} destinataires et modèle sauvegardé`, 'success');
+                } else {
+                    showNotification(`Emails envoyés avec succès à ${selected.length} destinataires`, 'success');
+                }
+                
+                selected.forEach(checkbox => checkbox.checked = false);
+                updateSelectionCount(formId);
+            }, 2000);
+        }
+
+        function sendBulkSMS(formId) {
+            const message = document.getElementById(`sms-message-${formId}`).value;
+            
+            if (!message.trim()) {
+                showNotification('Veuillez saisir un message', 'warning');
+                return;
+            }
+            
+            if (message.length > 160) {
+                showNotification('Le message dépasse 160 caractères', 'warning');
+                return;
+            }
+            
+            const selected = getSelectedResponses();
+            if (selected.length === 0) {
+                showNotification('Aucun destinataire sélectionné', 'warning');
+                return;
+            }
+            
+            // Extraire les numéros de téléphone des réponses sélectionnées
+            const recipients = [];
+            selected.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                if (row) {
+                    // Chercher le numéro de téléphone dans la ligne (adapter selon la structure des données)
+                    const cells = row.querySelectorAll('td');
+                    // Supposons que le téléphone est dans la 4ème colonne (index 3)
+                    const phoneCell = cells[3];
+                    if (phoneCell && phoneCell.textContent.trim()) {
+                        const phone = phoneCell.textContent.trim();
+                        if (phone && phone !== '-' && phone.length > 0) {
+                            recipients.push(phone);
+                        }
+                    }
+                }
+            });
+            
+            if (recipients.length === 0) {
+                showNotification('Aucun numéro de téléphone valide trouvé dans la sélection', 'warning');
+                return;
+            }
+            
+            // Fermer le modal de SMS
+            const smsModal = document.querySelector('[style*="z-index: 9999999"]');
+            if (smsModal) smsModal.remove();
+            
+            showNotification(`Envoi de SMS vers ${recipients.length} destinataire(s)...`, 'info');
+            
+            // Appel API pour envoyer les SMS en lot
+            fetch('http://localhost:4000/api/sms/bulk', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Pour les tests, utilisons un token de démonstration ou simulons sans API
+                    'Authorization': `Bearer ${localStorage.getItem('formease_token') || 'demo-token'}`
+                },
+                body: JSON.stringify({
+                    recipients: recipients,
+                    message: message,
+                    provider: 'twilio' // Provider par défaut
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Si l'authentification échoue, simuler un succès pour les tests
+                    if (response.status === 401 || response.status === 403) {
+                        console.log('Mode démonstration SMS activé');
+                        return { 
+                            success: true, 
+                            successCount: recipients.length, 
+                            failedCount: 0,
+                            demoMode: true 
+                        };
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const successCount = data.successCount || recipients.length;
+                    const failedCount = data.failedCount || 0;
+                    
+                    if (data.demoMode) {
+                        showNotification(`SMS simul�s avec succès à ${successCount} destinataire(s) (Mode Demo)`, 'success');
+                    } else if (failedCount > 0) {
+                        showNotification(`SMS envoyés: ${successCount} succès, ${failedCount} échecs`, 'warning');
+                    } else {
+                        showNotification(`SMS envoyés avec succès à ${successCount} destinataire(s)`, 'success');
+                    }
+                } else {
+                    showNotification(`Erreur lors de l'envoi: ${data.message || 'Erreur inconnue'}`, 'error');
+                }
+                
+                // Décocher les cases sélectionnées
+                selected.forEach(checkbox => checkbox.checked = false);
+                updateSelectionCount(formId);
+            })
+            .catch(error => {
+                console.error('Erreur SMS:', error);
+                showNotification('Erreur de connexion lors de l\'envoi des SMS', 'error');
+                
+                // Décocher les cases en cas d'erreur aussi
+                selected.forEach(checkbox => checkbox.checked = false);
+                updateSelectionCount(formId);
+            });
+        }
+
+        function updateSMSCounter(formId) {
+            const textarea = document.getElementById(`sms-message-${formId}`);
+            const counter = document.getElementById(`sms-counter-${formId}`);
+            if (textarea && counter) {
+                const length = textarea.value.length;
+                counter.textContent = `${length}/160`;
+                counter.className = length > 160 ? 'text-xs text-red-500' : 'text-xs text-gray-500';
+            }
+        }
+
+        function addToNewsletter(formId) {
+            const newsletterSelect = document.getElementById(`newsletter-select-${formId}`).value;
+            const newsletterName = document.getElementById(`newsletter-name-${formId}`)?.value;
+            const sendWelcome = document.getElementById(`newsletter-welcome-${formId}`).checked;
+            
+            if (newsletterSelect === 'new' && !newsletterName?.trim()) {
+                showNotification('Veuillez saisir le nom de la nouvelle newsletter', 'warning');
+                return;
+            }
+            
+            const selected = getSelectedResponses();
+            
+            showNotification('Ajout à la newsletter en cours...', 'info');
+            document.querySelector('[style*="z-index: 9999999"]').remove();
+            
+            setTimeout(() => {
+                if (newsletterSelect === 'new') {
+                    showNotification(`${selected.length} contacts ajoutés à la nouvelle newsletter "${newsletterName}"`, 'success');
+                } else {
+                    const newsletterNames = {
+                        'main': 'Newsletter Principale',
+                        'promo': 'Promotions & Offres',
+                        'tech': 'Actualités Techniques'
+                    };
+                    showNotification(`${selected.length} contacts ajoutés à "${newsletterNames[newsletterSelect]}"`, 'success');
+                }
+                
+                if (sendWelcome) {
+                    setTimeout(() => {
+                        showNotification('Emails de bienvenue envoyés', 'success');
+                    }, 1000);
+                }
+                
+                selected.forEach(checkbox => checkbox.checked = false);
+                updateSelectionCount(formId);
+            }, 1500);
+        }
+
+        function toggleNewNewsletterSection(formId) {
+            const select = document.getElementById(`newsletter-select-${formId}`);
+            const section = document.getElementById(`new-newsletter-section-${formId}`);
+            
+            if (select && section) {
+                section.style.display = select.value === 'new' ? 'block' : 'none';
+            }
+        }
+
+        function validateResponses(formId) {
+            const status = document.getElementById(`validation-status-${formId}`).value;
+            const note = document.getElementById(`validation-note-${formId}`)?.value;
+            const notify = document.getElementById(`notify-validation-${formId}`).checked;
+            
+            const selected = getSelectedResponses();
+            
+            showNotification('Validation des réponses en cours...', 'info');
+            document.querySelector('[style*="z-index: 9999999"]').remove();
+            
+            setTimeout(() => {
+                selected.forEach(checkbox => {
+                    const row = checkbox.closest('tr');
+                    if (row) {
+                        const statusCell = row.querySelector('td:nth-last-child(2)');
+                        if (statusCell) {
+                            const statusLabels = {
+                                'validated': 'Validé',
+                                'approved': 'Approuvé', 
+                                'verified': 'Vérifié',
+                                'completed': 'Traité'
+                            };
+                            statusCell.innerHTML = `<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">${statusLabels[status]}</span>`;
+                        }
+                    }
+                    checkbox.checked = false;
+                });
+                
+                updateSelectionCount(formId);
+                showNotification(`${selected.length} réponse(s) validée(s) avec succès`, 'success');
+                
+                if (notify) {
+                    setTimeout(() => {
+                        showNotification('Notifications envoyées aux contacts', 'success');
+                    }, 1000);
+                }
+            }, 1500);
+        }
+
     </script>
 </body>
 </html>

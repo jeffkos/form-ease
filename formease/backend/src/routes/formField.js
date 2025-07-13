@@ -1,8 +1,8 @@
-// Routes des champs de formulaire pour FormEase
+﻿// Routes des champs de formulaire pour FormEase
 const express = require('express');
 const router = express.Router();
 const formFieldController = require('../controllers/formFieldController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 // Ajouter un champ à un formulaire (authentifié)
 router.post('/:formId/fields', auth, formFieldController.addField);

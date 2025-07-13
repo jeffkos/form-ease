@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Navigation Component -->
+    <script src="../components/navigation.js"></script>
     <!-- Tremor charts - pas besoin de Chart.js -->
     
     <script>
@@ -112,45 +114,8 @@
 </head>
 <body class="bg-gray-50">
     
-    <!-- Navigation -->
-    <nav class="border-b border-gray-200 bg-white/95 backdrop-blur-md fixed w-full z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="../dashboard/home.html" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
-                        <i class="ri-form-line text-2xl text-tremor-brand-DEFAULT mr-2"></i>
-                        <span class="text-xl font-bold text-tremor-content-strong">FormEase</span>
-                    </a>
-                    <div class="hidden md:ml-10 md:flex md:space-x-8">
-                        <a href="../dashboard/home.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
-                            Tableau de bord
-                        </a>
-                        <a href="../forms/management.html" class="text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT transition-colors">
-                            Mes formulaires
-                        </a>
-                        <a href="dashboard.html" class="text-tremor-brand-DEFAULT font-medium">
-                            Analytics
-                        </a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <button class="p-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
-                            <i class="ri-notification-line text-xl"></i>
-                        </button>
-                    </div>
-                    <div class="relative">
-                        <button class="flex items-center space-x-2 text-tremor-content-DEFAULT hover:text-tremor-brand-DEFAULT">
-                            <div class="w-8 h-8 bg-tremor-brand-DEFAULT rounded-full flex items-center justify-center">
-                                <i class="ri-user-line text-white"></i>
-                            </div>
-                            <span class="hidden md:block">Mon compte</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation will be injected here -->
+    <div id="navigation-container"></div>
 
     <!-- Header Section -->
     <section class="pt-20 pb-8 bg-white">
@@ -912,6 +877,20 @@
 
         // Initialiser le graphique au chargement
         window.addEventListener('load', function() {
+            // Initialize navigation
+            const navigation = new FormEaseNavigation('analytics');
+            navigation.addNotification({
+                type: 'info',
+                title: 'Nouveau rapport disponible',
+                message: 'Analytics mensuel généré'
+            });
+            navigation.addNotification({
+                type: 'success',
+                title: 'Export terminé',
+                message: 'Données exportées avec succès'
+            });
+            navigation.render('navigation-container');
+            
             initTremorComboChart();
         });
     </script>

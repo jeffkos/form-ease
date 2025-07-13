@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Navigation - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="max-w-4xl mx-auto p-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Diagnostic Navigation FormEase</h1>
+        
+        <div id="diagnostic-results" class="space-y-6">
+            <!-- Les résultats apparaîtront ici -->
+        </div>
+        
+        <div class="mt-8">
+            <button onclick="runDiagnostic()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                Exécuter le diagnostic
+            </button>
+            <button onclick="testNavigation()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors ml-4">
+                Tester la navigation
+            </button>
+        </div>
+        
+        <!-- Container pour tester la navigation -->
+        <div id="test-navigation-container" class="mt-8"></div>
+    </div>
+
+    <script>
+        function log(type, message) {
+            const results = document.getElementById('diagnostic-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'success' ? 'text-green-600' : 
+                         type === 'error' ? 'text-red-600' : 
+                         type === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+            
+            results.innerHTML += `
+                <div class="border rounded-lg p-4 bg-white shadow-sm">
+                    <div class="flex items-start space-x-3">
+                        <div class="text-lg">
+                            ${type === 'success' ? '✅' : 
+                              type === 'error' ? '❌' : 
+                              type === 'warning' ? '⚠️' : 'ℹ️'}
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs text-gray-500">${timestamp}</div>
+                            <div class="${color} font-medium">${message}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function runDiagnostic() {
+            document.getElementById('diagnostic-results').innerHTML = '';
+            log('info', 'Début du diagnostic...');
+            
+            // Test 1: Vérifier l'environnement
+            log('info', 'Test 1: Vérification de l\'environnement');
+            log('info', `User Agent: ${navigator.userAgent}`);
+            log('info', `URL actuelle: ${window.location.href}`);
+            
+            // Test 2: Vérifier les chemins des fichiers
+            log('info', 'Test 2: Vérification des chemins de fichiers');
+            
+            const scripts = [
+                '../components/navigation.js',
+                '../components/navigation-standalone.js',
+                '../js/email-tracking-system.js'
+            ];
+            
+            scripts.forEach(script => {
+                fetch(script)
+                    .then(response => {
+                        if (response.ok) {
+                            log('success', `✓ Fichier trouvé: ${script}`);
+                        } else {
+                            log('error', `✗ Fichier non trouvé: ${script} (${response.status})`);
+                        }
+                    })
+                    .catch(error => {
+                        log('error', `✗ Erreur de chargement: ${script} - ${error.message}`);
+                    });
+            });
+            
+            // Test 3: Charger et tester les scripts
+            setTimeout(() => {
+                log('info', 'Test 3: Chargement dynamique des scripts');
+                loadScript('../components/navigation-standalone.js')
+                    .then(() => {
+                        log('success', '✓ navigation-standalone.js chargé');
+                        
+                        // Test 4: Tester la classe
+                        if (typeof FormEaseNavigation !== 'undefined') {
+                            log('success', '✓ FormEaseNavigation disponible');
+                            
+                            try {
+                                const nav = new FormEaseNavigation('test');
+                                log('success', '✓ Instance créée avec succès');
+                                
+                                nav.addNotification({
+                                    type: 'info',
+                                    title: 'Test',
+                                    message: 'Notification de test'
+                                });
+                                log('success', '✓ Notification ajoutée');
+                                
+                                const html = nav.generateHTML();
+                                if (html && html.length > 100) {
+                                    log('success', '✓ HTML généré correctement');
+                                } else {
+                                    log('error', '✗ HTML généré incorrect ou vide');
+                                }
+                                
+                            } catch (error) {
+                                log('error', `✗ Erreur lors de la création: ${error.message}`);
+                            }
+                        } else {
+                            log('error', '✗ FormEaseNavigation non disponible après chargement');
+                        }
+                    })
+                    .catch(error => {
+                        log('error', `✗ Erreur de chargement: ${error.message}`);
+                    });
+            }, 1000);
+        }
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        function testNavigation() {
+            log('info', 'Test de navigation en cours...');
+            
+            if (typeof FormEaseNavigation === 'undefined') {
+                log('error', 'FormEaseNavigation non disponible');
+                return;
+            }
+            
+            try {
+                const nav = new FormEaseNavigation('diagnostic');
+                nav.addNotification({
+                    type: 'success',
+                    title: 'Test réussi',
+                    message: 'Navigation fonctionnelle'
+                });
+                
+                const container = document.getElementById('test-navigation-container');
+                container.innerHTML = '<div id="nav-test"></div>';
+                
+                nav.render('nav-test');
+                log('success', '✓ Navigation rendue avec succès');
+                
+            } catch (error) {
+                log('error', `✗ Erreur de test: ${error.message}`);
+            }
+        }
+
+        // Auto-diagnostic au chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('info', 'Diagnostic automatique au chargement');
+                runDiagnostic();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

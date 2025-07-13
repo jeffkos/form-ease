@@ -1,21 +1,21 @@
-// Routes des inscriptions (submissions) pour FormEase
-const express = require('express');
-const { param } = require('express-validator');
+﻿// Routes des inscriptions (submissions) pour FormEase
+const express = require("express");
+const { param } = require("express-validator");
 const router = express.Router();
-const submissionController = require('../controllers/submissionController');
-const auth = require('../middleware/auth');
-const captcha = require('../middleware/captcha');
-const quota = require('../middleware/quota');
-const { 
-  validateRequest, 
+const submissionController = require("../controllers/submissionController");
+const { default: auth } = require("../middleware/auth");
+const captcha = require("../middleware/captcha");
+const quota = require("../middleware/quota");
+const {
+  validateRequest,
   submitFormValidation,
-  paginationValidation
-} = require('../middleware/validation');
-const { 
-  apiLimiter, 
+  paginationValidation,
+} = require("../middleware/validation");
+const {
+  apiLimiter,
   strictLimiter,
-  securityLogger 
-} = require('../middleware/security');
+  securityLogger,
+} = require("../middleware/security");
 
 // Middleware de sécurité pour toutes les routes
 router.use(securityLogger);
@@ -49,12 +49,13 @@ router.use(securityLogger);
  *         description: Inscription créée
  */
 // Création d'une inscription (publique, avec captcha et quota)
-router.post('/form/:formId', 
+router.post(
+  "/form/:formId",
   strictLimiter, // Rate limiting strict pour les soumissions
-  captcha, 
-  quota.checkSubmissionQuota, 
+  captcha,
+  quota.checkSubmissionQuota,
   validateRequest([
-    param('formId').isInt({ min: 1 }).withMessage('ID de formulaire invalide'),
+    param("formId").isInt({ min: 1 }).withMessage("ID de formulaire invalide"),
     // Validation générique, la validation spécifique sera faite côté contrôleur
   ]),
   submissionController.createSubmission
@@ -78,48 +79,60 @@ router.post('/form/:formId',
  *         description: Inscription validée et notification envoyée
  */
 // Valider une inscription
-router.post('/:submissionId/validate', 
-  auth, 
+router.post(
+  "/:submissionId/validate",
+  auth,
   validateRequest([
-    param('submissionId').isInt({ min: 1 }).withMessage('ID de soumission invalide')
+    param("submissionId")
+      .isInt({ min: 1 })
+      .withMessage("ID de soumission invalide"),
   ]),
   submissionController.validateSubmission
 );
 
 // Mettre à la corbeille
-router.post('/:submissionId/trash', 
-  auth, 
+router.post(
+  "/:submissionId/trash",
+  auth,
   validateRequest([
-    param('submissionId').isInt({ min: 1 }).withMessage('ID de soumission invalide')
+    param("submissionId")
+      .isInt({ min: 1 })
+      .withMessage("ID de soumission invalide"),
   ]),
   submissionController.trashSubmission
 );
 
 // Supprimer définitivement
-router.delete('/:submissionId', 
-  auth, 
+router.delete(
+  "/:submissionId",
+  auth,
   validateRequest([
-    param('submissionId').isInt({ min: 1 }).withMessage('ID de soumission invalide')
+    param("submissionId")
+      .isInt({ min: 1 })
+      .withMessage("ID de soumission invalide"),
   ]),
   submissionController.deleteSubmission
 );
 
 // Export CSV (quota export)
-router.get('/form/:formId/export/csv', 
-  auth, 
-  quota.checkExportQuota, 
+router.get(
+  "/form/:formId/export/csv",
+  auth,
+  quota.checkExportQuota,
   validateRequest([
-    param('formId').isInt({ min: 1 }).withMessage('ID de formulaire invalide')
+    param("formId").notEmpty().withMessage("ID de formulaire invalide"),
   ]),
   submissionController.exportSubmissionsCSV
 );
 
-// Export PDF (quota export)
-router.get('/form/:formId/export/pdf', 
-  auth, 
-  quota.checkExportQuota, 
+// Export PDF (quota export - PREMIUM uniquement)
+router.get(
+  "/form/:formId/export/pdf",
+  auth,
+  quota.checkFeatureAccess("pdf_export"),
+  quota.checkExportQuota,
   validateRequest([
-    param('formId').isInt({ min: 1 }).withMessage('ID de formulaire invalide')
+    param("formId").notEmpty().withMessage("ID de formulaire invalide"),
   ]),
   submissionController.exportSubmissionsPDF
 );

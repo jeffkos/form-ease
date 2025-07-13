@@ -124,7 +124,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/refresh')
         .send({
           refresh_token: 'test_refresh_token_12345'
@@ -152,7 +152,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/refresh')
         .send({
           refresh_token: 'invalid_token'
@@ -179,7 +179,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/refresh')
         .send({
           refresh_token: 'expired_token'
@@ -199,7 +199,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/refresh')
         .send({});
 
@@ -221,7 +221,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/logout')
         .set('Authorization', 'Bearer valid_jwt_token')
         .send({
@@ -243,7 +243,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/logout')
         .set('Authorization', 'Bearer valid_jwt_token')
         .send({
@@ -263,7 +263,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/logout')
         .set('Authorization', 'Bearer valid_jwt_token')
         .send({});
@@ -286,7 +286,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/revoke-all-tokens')
         .set('Authorization', 'Bearer valid_jwt_token');
 
@@ -304,7 +304,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         }
       };
 
-      const response = await request(require('../src/app'))
+      const response = await request(require('../../src/app'))
         .post('/api/v2/auth/revoke-all-tokens');
 
       expect(response.body.success).toBe(false);
@@ -364,7 +364,7 @@ describe('🔐 API v2.0 - Tests d\'authentification avancés', () => {
         headers: { 'x-response-time': '50ms' }
       };
 
-      await request(require('../src/app'))
+      await request(require('../../src/app'))
         .post('/api/v2/auth/refresh')
         .send({ refresh_token: 'test_token' });
 

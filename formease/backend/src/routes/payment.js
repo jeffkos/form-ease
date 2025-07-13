@@ -1,9 +1,9 @@
-// Routes de paiement pour FormEase avec Stripe
+﻿// Routes de paiement pour FormEase avec Stripe
 const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
 const quotaMiddleware = require('../middleware/quota');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 // === ABONNEMENTS PREMIUM ===
 // Créer une session de paiement Stripe pour abonnement (authentifié)

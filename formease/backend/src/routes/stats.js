@@ -1,8 +1,8 @@
-// Routes des statistiques pour FormEase
+﻿// Routes des statistiques pour FormEase
 const express = require('express');
 const router = express.Router();
 const statsController = require('../controllers/statsController');
-const auth = require('../middleware/auth');
+const { default: auth } = require('../middleware/auth');
 
 // Statistiques globales (admin)
 router.get('/overview', auth, statsController.getOverviewStats);
