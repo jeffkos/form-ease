@@ -1,26 +1,66 @@
 {
-  "dependencies": {
-    "@heroicons/react": "^2.2.0"
-  },
-  "name": "formease",
+  "name": "formease-full-stack",
   "version": "1.0.0",
-  "description": "[![Next.js](https://img.shields.io/badge/Next.js-14.2.30-black)](https://nextjs.org/)\r [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)\r [![Prisma](https://img.shields.io/badge/Prisma-5.0-green)](https://www.prisma.io/)\r [![Tremor UI](https://img.shields.io/badge/Tremor-UI-purple)](https://www.tremor.so/)\r [![Licence MIT](https://img.shields.io/badge/Licence-MIT-yellow.svg)](https://opensource.org/licenses/MIT)",
-  "main": "optimized-server.js",
-  "devDependencies": {
-    "tailwindcss": "^4.1.11"
-  },
+  "description": "FormEase - Plateforme complète de création de formulaires intelligents",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd formease/backend && npm run dev",
+    "dev:frontend": "cd formease/frontend && npm run dev",
+    "dev:full": "cd formease/backend && npm run dev:full",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd formease/backend && npm start",
+    "start:frontend": "cd formease/frontend && npm start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd formease/backend && npm run build",
+    "build:frontend": "cd formease/frontend && npm run build",
+    "install:all": "npm install && npm run install:backend && npm run install:frontend",
+    "install:backend": "cd formease/backend && npm install",
+    "install:frontend": "cd formease/frontend && npm install",
+    "setup": "npm run install:all && npm run setup:backend",
+    "setup:backend": "cd formease/backend && npm run env:setup && npm run db:setup",
+    "setup:windows": "cd formease/backend && npm run install:windows",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd formease/backend && npm test",
+    "test:frontend": "cd formease/frontend && npm test",
+    "health": "cd formease/backend && npm run health",
+    "logs": "cd formease/backend && npm run logs:view",
+    "db:setup": "cd formease/backend && npm run db:setup",
+    "db:reset": "cd formease/backend && npm run db:reset",
+    "db:studio": "cd formease/backend && npm run db:studio",
+    "maintenance": "cd formease/backend && npm run maintenance",
+    "config:check": "cd formease/backend && npm run config:check",
+    "clean": "npm run clean:backend && npm run clean:frontend",
+    "clean:backend": "cd formease/backend && npm run logs:clear",
+    "clean:frontend": "cd formease/frontend && rm -rf .next",
+    "version:info": "echo 'FormEase Full Stack v1.0.0' && cd formease/backend && npm run version:info && cd ../frontend && npm run version:info",
+    "help": "echo 'FormEase - Scripts disponibles:' && echo '  npm run dev        - Démarrer backend + frontend' && echo '  npm run dev:full   - Installation complète + démarrage' && echo '  npm run setup      - Configuration initiale' && echo '  npm run health     - Vérifier la santé du système' && echo '  npm run db:setup   - Configurer la base de données' && echo '  npm run help       - Afficher cette aide'"
   },
+  "workspaces": [
+    "formease/backend",
+    "formease/frontend"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": "FormEase Team",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jeffkos/form-ease.git"
+    "url": "https://github.com/formease/formease.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jeffkos/form-ease/issues"
-  },
-  "homepage": "https://github.com/jeffkos/form-ease#readme"
+  "keywords": [
+    "formease",
+    "forms",
+    "builder",
+    "typescript",
+    "nextjs",
+    "prisma",
+    "stripe",
+    "ai"
+  ]
 }

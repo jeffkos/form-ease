@@ -22,7 +22,7 @@ class EmailService {
   }
 
   /**
-   * 🔧 Initialisation des fournisseurs email
+   * 🔧 Initialisation des fournisseurs d'email
    */
   initializeProviders() {
     try {
@@ -34,38 +34,67 @@ class EmailService {
         logger.info("SendGrid email provider initialized");
       }
 
-      // Configuration MailerSend
+      // Configuration MailerSend (optionnel)
       if (process.env.MAILERSEND_API_KEY) {
-        const { MailerSend } = require("mailersend");
-        this.providers.mailersend = new MailerSend({
-          apiKey: process.env.MAILERSEND_API_KEY,
-        });
-        logger.info("MailerSend email provider initialized");
+        try {
+          const { MailerSend } = require("mailersend");
+          this.providers.mailersend = new MailerSend({
+            apiKey: process.env.MAILERSEND_API_KEY,
+          });
+          logger.info("MailerSend email provider initialized");
+        } catch (error) {
+          logger.warn("MailerSend module not found, skipping initialization");
+        }
       }
 
-      // Configuration Nodemailer (SMTP)
+      // Configuration Nodemailer (SMTP) - Provider par défaut
       if (
         process.env.SMTP_HOST &&
         process.env.SMTP_USER &&
         process.env.SMTP_PASS
       ) {
         const nodemailer = require("nodemailer");
-        this.providers.nodemailer = nodemailer.createTransporter({
+        this.providers.nodemailer = nodemailer.createTransport({
           host: process.env.SMTP_HOST,
-          port: parseInt(process.env.SMTP_PORT) || 587,
-          secure: process.env.SMTP_SECURE === "true",
+          port: process.env.SMTP_PORT || 587,
+          secure: process.env.SMTP_SECURE === "true", // true pour port 465
           auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
           },
+          // Configuration TLS
+          tls: {
+            rejectUnauthorized:
+              process.env.SMTP_REJECT_UNAUTHORIZED !== "false",
+          },
         });
-        logger.info("Nodemailer email provider initialized");
+        logger.info("Nodemailer SMTP provider initialized");
+      } else {
+        // Configuration SMTP par défaut pour développement
+        const nodemailer = require("nodemailer");
+        this.providers.nodemailer = nodemailer.createTransport({
+          host: "localhost",
+          port: 1025,
+          secure: false,
+          auth: false,
+          // Pour MailHog ou autre serveur SMTP de développement
+        });
+        logger.info("Nodemailer SMTP provider initialized (development mode)");
+      }
+
+      // Définir le provider par défaut
+      this.activeProvider = process.env.EMAIL_PROVIDER || "nodemailer";
+
+      // Vérifier qu'au moins un provider est disponible
+      if (Object.keys(this.providers).length === 0) {
+        throw new Error("Aucun fournisseur d'email configuré");
       }
     } catch (error) {
       logger.error(
         "Erreur lors de l'initialisation des providers email:",
         error
       );
+      // Ne pas lancer d'erreur, permettre au serveur de démarrer
     }
   }
 

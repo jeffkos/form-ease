@@ -240,6 +240,18 @@ app.use("/api/feedback", feedbackRoute);
 const couponRoutes = require("./routes/coupon");
 app.use("/api", couponRoutes);
 
+// Importation de la route d'administration
+const adminRoutes = require("./routes/admin");
+app.use("/api/admin", adminRoutes);
+
+// Importation de la route des tickets de support
+const ticketRoutes = require("./routes/ticket");
+app.use("/api/tickets", ticketRoutes);
+
+// Importation de la route de monitoring business
+const monitoringRoutes = require("./routes/monitoring");
+app.use("/api/monitoring", monitoringRoutes);
+
 // Documentation Swagger
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpecs = require("./docs/swagger");
@@ -248,7 +260,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 // Gestion globale des erreurs (middleware de sécurité)
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 // Ne démarrer le serveur que si ce fichier est exécuté directement
 if (require.main === module) {

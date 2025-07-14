@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -45,6 +45,8 @@ model User {
   couponUsages    CouponUsage[]
   refreshTokens   RefreshToken[]
   smsMessages     SMS[]
+  tickets         Ticket[]
+  ticketComments  TicketComment[]
 }
 
 model Payment {
@@ -64,7 +66,7 @@ model Form {
   user_id     Int
   title       String
   description String
-  config      Json
+  config      String
   is_active   Boolean   @default(true)
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
@@ -81,7 +83,7 @@ model Form {
 model Submission {
   id           Int      @id @default(autoincrement())
   form_id      String
-  data         Json
+  data         String
   status       String   // new, validated, trashed
   validated_at DateTime?
   notified     Boolean  @default(false)
@@ -100,10 +102,10 @@ model FormField {
   type           String
   label_fr       String
   label_en       String
-  options        Json?
+  options        String?
   is_required    Boolean @default(false)
   order          Int
-  style          Json?
+  style          String?
   placeholder_fr String?
   placeholder_en String?
   default_value  String?
@@ -138,7 +140,7 @@ model ActionLog {
   action    String   // ex: 'validate_submission', 'delete_user', etc.
   entity    String?  // ex: 'Submission', 'User', 'Form', etc.
   entity_id Int?
-  details   Json?
+  details   String?
   date      DateTime @default(now())
   user      User?    @relation(fields: [user_id], references: [id])
 }
@@ -203,7 +205,7 @@ model Contact {
   last_name    String?
   city         String?
   country      String?
-  tags         String[]
+  tags         String?
   source_form_id Int?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
@@ -215,7 +217,7 @@ model EmailCampaign {
   user_id    Int
   subject    String
   content    String
-  recipients Int[]
+  recipients String?
   sent_at    DateTime?
   status     String   // 'draft', 'sending', 'sent'
   user       User     @relation(fields: [user_id], references: [id])
@@ -320,7 +322,7 @@ model SMS {
   providerId String?  // ID du provider (sid Twilio, etc.)
   status     String   // sent, failed, pending
   error      String?  // Message d'erreur si échec
-  metadata   Json     @default("{}")
+  metadata   String   @default("{}")
   sentAt     DateTime?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -336,4 +338,50 @@ model SMS {
   @@index([status])
   @@index([createdAt])
   @@map("sms")
+}
+
+// Modèle Ticket pour le système de support
+model Ticket {
+  id          Int      @id @default(autoincrement())
+  subject     String
+  description String
+  priority    String   @default("medium") // low, medium, high, urgent
+  category    String   @default("general") // general, technical, billing, feature
+  status      String   @default("open") // open, in_progress, resolved, closed
+  resolution  String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  resolved_at DateTime?
+  
+  // Relations
+  user_id     Int
+  user        User     @relation(fields: [user_id], references: [id])
+  comments    TicketComment[]
+  
+  @@index([user_id])
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([created_at])
+  @@map("tickets")
+}
+
+// Modèle TicketComment pour les commentaires des tickets
+model TicketComment {
+  id         Int      @id @default(autoincrement())
+  content    String
+  is_admin   Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  // Relations
+  ticket_id  Int
+  user_id    Int
+  ticket     Ticket   @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id])
+  
+  @@index([ticket_id])
+  @@index([user_id])
+  @@index([created_at])
+  @@map("ticket_comments")
 }

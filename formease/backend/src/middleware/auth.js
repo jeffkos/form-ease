@@ -135,5 +135,6 @@ const requireRole = (requiredRole) => {
 // Export both named and default exports for flexibility and testability
 module.exports = authMiddleware;
 module.exports.auth = authMiddleware;
+module.exports.authenticateToken = authMiddleware;
 module.exports.default = authMiddleware;
 module.exports.requireRole = requireRole;

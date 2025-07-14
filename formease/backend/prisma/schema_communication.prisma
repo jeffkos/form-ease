@@ -1,0 +1,168 @@
+// Schéma Prisma pour le système de communication FormEase
+
+model CommunicationCampaign {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  type            String   // 'email', 'sms', 'newsletter'
+  status          String   // 'draft', 'scheduled', 'sent', 'completed'
+  subject         String?
+  content         String?
+  newsletterName  String?
+  
+  // Statistiques
+  recipientCount  Int      @default(0)
+  sentCount       Int      @default(0)
+  deliveredCount  Int      @default(0)
+  openedCount     Int      @default(0)
+  clickedCount    Int      @default(0)
+  failedCount     Int      @default(0)
+  
+  scheduledDate   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs            CommunicationLog[]
+  
+  @@map("communication_campaigns")
+}
+
+model CommunicationLog {
+  id              String   @id @default(cuid())
+  campaignId      String
+  submissionId    String
+  type            String   // 'email', 'sms'
+  status          String   // 'sent', 'delivered', 'opened', 'clicked', 'bounced', 'failed'
+  trackingId      String?
+  subject         String?
+  content         String?
+  recipientEmail  String?
+  recipientPhone  String?
+  
+  // Timestamps de tracking
+  sentAt          DateTime @default(now())
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  bouncedAt       DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  campaign        CommunicationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  submission      Submission           @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  
+  @@index([trackingId])
+  @@index([campaignId])
+  @@index([submissionId])
+  @@map("communication_logs")
+}
+
+model NewsletterSubscription {
+  id             String   @id @default(cuid())
+  userId         String
+  email          String
+  name           String
+  newsletterName String
+  isActive       Boolean  @default(true)
+  submissionId   String?
+  
+  // Métadonnées
+  subscriptionSource String? // 'form', 'manual', 'import'
+  tags           String[] // Tags pour segmentation
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  // Relations
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submission     Submission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+  
+  @@unique([email, newsletterName])
+  @@index([userId])
+  @@index([newsletterName])
+  @@map("newsletter_subscriptions")
+}
+
+model EmailTemplate {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  subject     String
+  content     String
+  type        String   // 'email', 'newsletter'
+  isDefault   Boolean  @default(false)
+  
+  // Métadonnées
+  variables   String[] // Variables disponibles: {{nom}}, {{email}}, etc.
+  category    String?  // 'formation', 'marketing', 'notification'
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([type])
+  @@map("email_templates")
+}
+
+model CommunicationSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  
+  // Configuration Email
+  emailEnabled      Boolean  @default(true)
+  emailFromName     String?
+  emailFromAddress  String?
+  emailSignature    String?
+  
+  // Configuration SMS
+  smsEnabled        Boolean  @default(false)
+  smsFromNumber     String?
+  smsSignature      String?
+  
+  // Configuration Newsletter
+  newsletterEnabled Boolean  @default(true)
+  defaultNewsletter String?
+  
+  // Limites et quotas
+  dailyEmailLimit   Int      @default(1000)
+  dailySmsLimit     Int      @default(100)
+  monthlyEmailLimit Int      @default(10000)
+  monthlySmsLimit   Int      @default(1000)
+  
+  // Tracking
+  trackingEnabled   Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("communication_settings")
+}
+
+// Ajout des relations aux modèles existants
+model User {
+  // ... champs existants ...
+  
+  // Nouvelles relations
+  communicationCampaigns CommunicationCampaign[]
+  newsletterSubscriptions NewsletterSubscription[]
+  emailTemplates         EmailTemplate[]
+  communicationSettings  CommunicationSettings?
+}
+
+model Submission {
+  // ... champs existants ...
+  
+  // Nouvelles relations
+  communicationLogs      CommunicationLog[]
+  newsletterSubscriptions NewsletterSubscription[]
+} 
