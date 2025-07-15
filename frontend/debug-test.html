@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Debug - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4">Test de Debug</h1>
+        <div id="loadStatus" class="mb-4 p-3 rounded bg-yellow-100">
+            Chargement en cours...
+        </div>
+        <div id="scriptStatus" class="space-y-2">
+            <!-- Status des scripts -->
+        </div>
+    </div>
+
+    <script>
+        console.log('🔧 Test de debug démarré');
+        
+        // Test de base
+        document.getElementById('loadStatus').innerHTML = 'Scripts de base chargés ✅';
+        document.getElementById('loadStatus').className = 'mb-4 p-3 rounded bg-green-100';
+        
+        // Test de fetch API
+        fetch('http://localhost:3001/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ Backend accessible:', data);
+                document.getElementById('scriptStatus').innerHTML += 
+                    '<div class="p-2 bg-green-100 rounded">Backend: ✅ Accessible</div>';
+            })
+            .catch(error => {
+                console.error('❌ Backend inaccessible:', error);
+                document.getElementById('scriptStatus').innerHTML += 
+                    '<div class="p-2 bg-red-100 rounded">Backend: ❌ Erreur</div>';
+            });
+        
+        // Test du chargement des scripts
+        const scripts = [
+            '/js/auto-loader.js',
+            '/js/services/ApiService.js',
+            '/js/services/DynamicPageService.js',
+            '/js/pages/login.js'
+        ];
+        
+        scripts.forEach(scriptPath => {
+            fetch(`http://localhost:8080${scriptPath}`)
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('scriptStatus').innerHTML += 
+                            `<div class="p-2 bg-green-100 rounded">${scriptPath}: ✅ Accessible</div>`;
+                    } else {
+                        document.getElementById('scriptStatus').innerHTML += 
+                            `<div class="p-2 bg-red-100 rounded">${scriptPath}: ❌ ${response.status}</div>`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('scriptStatus').innerHTML += 
+                        `<div class="p-2 bg-red-100 rounded">${scriptPath}: ❌ Erreur réseau</div>`;
+                });
+        });
+        
+        // Test de l'auto-loader après 2 secondes
+        setTimeout(() => {
+            const script = document.createElement('script');
+            script.src = '/js/auto-loader.js';
+            script.onload = () => {
+                console.log('✅ Auto-loader chargé');
+                document.getElementById('scriptStatus').innerHTML += 
+                    '<div class="p-2 bg-green-100 rounded">Auto-loader: ✅ Chargé</div>';
+            };
+            script.onerror = () => {
+                console.error('❌ Erreur auto-loader');
+                document.getElementById('scriptStatus').innerHTML += 
+                    '<div class="p-2 bg-red-100 rounded">Auto-loader: ❌ Erreur</div>';
+            };
+            document.head.appendChild(script);
+        }, 2000);
+    </script>
+</body>
+</html>

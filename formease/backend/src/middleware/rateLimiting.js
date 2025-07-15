@@ -17,10 +17,15 @@ let redisClient = null;
 
 // Fonction pour créer la connexion Redis de manière paresseuse
 const getRedisClient = () => {
-  if (!redisClient && process.env.NODE_ENV !== "test") {
+  // Désactiver Redis complètement si pas configuré ou en mode test
+  if (process.env.NODE_ENV === "test" || !process.env.REDIS_URL) {
+    return null;
+  }
+
+  if (!redisClient) {
     try {
       redisClient = createClient({
-        url: process.env.REDIS_URL || "redis://localhost:6379",
+        url: process.env.REDIS_URL,
         retry_strategy: (options) => {
           if (options.error && options.error.code === "ECONNREFUSED") {
             logger.warn(
@@ -35,7 +40,11 @@ const getRedisClient = () => {
       // Gestion des erreurs Redis avec vérification
       if (redisClient && typeof redisClient.on === "function") {
         redisClient.on("error", (err) => {
-          logger.error("Redis Client Error:", err);
+          logger.warn("Redis Client Error (falling back to memory):", {
+            code: err.code,
+            message: err.message,
+          });
+          // Ne pas spammer les logs avec la stack trace complète
         });
 
         redisClient.on("connect", () => {
@@ -51,7 +60,10 @@ const getRedisClient = () => {
         });
       }
     } catch (error) {
-      logger.error("Failed to create Redis client:", error);
+      logger.warn(
+        "Failed to create Redis client, using memory fallback:",
+        error.message
+      );
       redisClient = null;
     }
   }

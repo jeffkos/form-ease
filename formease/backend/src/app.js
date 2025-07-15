@@ -61,6 +61,12 @@ app.use(
 // Rate limiting global
 app.use("/api", apiLimiter);
 
+// Reset rate limiting pour développement
+if (process.env.NODE_ENV !== "production") {
+  const devResetUtil = require("./utils/devReset");
+  devResetUtil.setupResetEndpoint(app);
+}
+
 // Middleware de parsing JSON
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));

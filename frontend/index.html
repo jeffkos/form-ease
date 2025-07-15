@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .glassmorphism {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .page-card {
+            transition: all 0.3s ease;
+        }
+        .page-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+    
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+                <i class="ri-form-line text-white text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">FormEase</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Plateforme de gestion de formulaires avec synchronisation dynamique
+            </p>
+            <div class="mt-4 flex items-center justify-center space-x-4 text-sm text-gray-500">
+                <div class="flex items-center">
+                    <div id="backend-status" class="w-3 h-3 bg-gray-400 rounded-full mr-2"></div>
+                    <span>Backend: <span id="backend-text">Vérification...</span></span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
+                    <span>Frontend: Actif</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            
+            <!-- Test API -->
+            <a href="/test-api.html" class="page-card glassmorphism rounded-xl p-6 block">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-bug-line text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Test API</h3>
+                        <p class="text-gray-600 text-sm mb-3">Interface de test complète pour vérifier les services et l'API</p>
+                        <div class="flex items-center text-green-600 text-sm font-medium">
+                            Tester maintenant <i class="ri-arrow-right-line ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Connexion -->
+            <a href="/pages/auth/login.html" class="page-card glassmorphism rounded-xl p-6 block">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-login-box-line text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Connexion</h3>
+                        <p class="text-gray-600 text-sm mb-3">Page de connexion avec authentification dynamique</p>
+                        <div class="flex items-center text-blue-600 text-sm font-medium">
+                            Se connecter <i class="ri-arrow-right-line ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Dashboard -->
+            <a href="/pages/dashboard.html" class="page-card glassmorphism rounded-xl p-6 block">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-dashboard-line text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Dashboard</h3>
+                        <p class="text-gray-600 text-sm mb-3">Tableau de bord principal avec données en temps réel</p>
+                        <div class="flex items-center text-purple-600 text-sm font-medium">
+                            Accéder <i class="ri-arrow-right-line ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Gestion Formulaires -->
+            <a href="/pages/forms/management.html" class="page-card glassmorphism rounded-xl p-6 block">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-file-list-line text-orange-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Gestion Formulaires</h3>
+                        <p class="text-gray-600 text-sm mb-3">Gérer tous vos formulaires en un seul endroit</p>
+                        <div class="flex items-center text-orange-600 text-sm font-medium">
+                            Gérer <i class="ri-arrow-right-line ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Gestion SMS -->
+            <a href="/pages/forms/sms-management.html" class="page-card glassmorphism rounded-xl p-6 block">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-message-line text-indigo-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Gestion SMS</h3>
+                        <p class="text-gray-600 text-sm mb-3">Envoi et gestion des notifications SMS</p>
+                        <div class="flex items-center text-indigo-600 text-sm font-medium">
+                            Gérer SMS <i class="ri-arrow-right-line ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Analytics -->
+            <a href="/pages/analytics/dashboard.html" class="page-card glassmorphism rounded-xl p-6 block">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="ri-bar-chart-line text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Analytics</h3>
+                        <p class="text-gray-600 text-sm mb-3">Statistiques et analyses détaillées</p>
+                        <div class="flex items-center text-green-600 text-sm font-medium">
+                            Analyser <i class="ri-arrow-right-line ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="glassmorphism rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Actions rapides</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button onclick="testBackend()" class="flex items-center justify-center p-3 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors">
+                    <i class="ri-server-line text-blue-600 mr-2"></i>
+                    <span class="text-blue-600 font-medium">Tester Backend</span>
+                </button>
+                <button onclick="testLogin()" class="flex items-center justify-center p-3 bg-green-100 hover:bg-green-200 rounded-lg transition-colors">
+                    <i class="ri-user-line text-green-600 mr-2"></i>
+                    <span class="text-green-600 font-medium">Test Connexion</span>
+                </button>
+                <button onclick="checkServices()" class="flex items-center justify-center p-3 bg-purple-100 hover:bg-purple-200 rounded-lg transition-colors">
+                    <i class="ri-settings-line text-purple-600 mr-2"></i>
+                    <span class="text-purple-600 font-medium">Vérifier Services</span>
+                </button>
+                <button onclick="openDocs()" class="flex items-center justify-center p-3 bg-orange-100 hover:bg-orange-200 rounded-lg transition-colors">
+                    <i class="ri-book-line text-orange-600 mr-2"></i>
+                    <span class="text-orange-600 font-medium">Documentation</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Info -->
+        <div class="glassmorphism rounded-xl p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">État du système</h2>
+            <div id="system-status" class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">Serveur Frontend</span>
+                    <span class="text-green-600 font-medium">✓ Actif (Port 3000)</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">Serveur Backend</span>
+                    <span id="backend-status-text" class="text-gray-500">Vérification...</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">Services synchronisés</span>
+                    <span id="services-status" class="text-gray-500">En attente...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 text-gray-500">
+            <p>&copy; 2025 FormEase - Plateforme de gestion de formulaires intelligente</p>
+            <p class="text-sm mt-2">Backend: Node.js + Express + Prisma | Frontend: HTML + Tailwind + Services JS</p>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Test de connectivité au backend
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('http://localhost:4000/api/health', {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    document.getElementById('backend-status').className = 'w-3 h-3 bg-green-400 rounded-full mr-2';
+                    document.getElementById('backend-text').textContent = 'Actif (Port 4000)';
+                    document.getElementById('backend-status-text').innerHTML = '<span class="text-green-600 font-medium">✓ Actif (Port 4000)</span>';
+                    checkServices();
+                } else {
+                    throw new Error('Backend non accessible');
+                }
+            } catch (error) {
+                document.getElementById('backend-status').className = 'w-3 h-3 bg-red-400 rounded-full mr-2';
+                document.getElementById('backend-text').textContent = 'Hors ligne';
+                document.getElementById('backend-status-text').innerHTML = '<span class="text-red-600 font-medium">✗ Hors ligne</span>';
+                document.getElementById('services-status').innerHTML = '<span class="text-red-600 font-medium">✗ Backend requis</span>';
+            }
+        }
+
+        async function checkServices() {
+            try {
+                // Vérifier si les services JS sont disponibles
+                const servicesOk = window.ApiService && window.StateService && window.NavigationService;
+                
+                if (servicesOk) {
+                    document.getElementById('services-status').innerHTML = '<span class="text-green-600 font-medium">✓ Services chargés</span>';
+                } else {
+                    document.getElementById('services-status').innerHTML = '<span class="text-yellow-600 font-medium">⚠ Services partiels</span>';
+                }
+            } catch (error) {
+                document.getElementById('services-status').innerHTML = '<span class="text-red-600 font-medium">✗ Erreur services</span>';
+            }
+        }
+
+        async function testBackend() {
+            showNotification('Test du backend en cours...', 'info');
+            await checkBackendStatus();
+            showNotification('Test terminé - Vérifiez le statut ci-dessus', 'success');
+        }
+
+        function testLogin() {
+            showNotification('Redirection vers la page de test...', 'info');
+            setTimeout(() => {
+                window.location.href = '/test-api.html';
+            }, 1000);
+        }
+
+        function openDocs() {
+            showNotification('Consultation de la documentation...', 'info');
+            // Ici vous pourriez ouvrir un modal avec la documentation
+            setTimeout(() => {
+                alert('Documentation:\n\n1. Démarrer les serveurs avec start-all-servers.bat\n2. Tester avec /test-api.html\n3. Se connecter avec admin@formease.com / admin123\n4. Explorer le dashboard et les fonctionnalités');
+            }, 500);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `px-4 py-3 rounded-lg text-white shadow-lg transform transition-all duration-300 translate-x-full ${
+                type === 'success' ? 'bg-green-600' : 
+                type === 'error' ? 'bg-red-600' : 
+                type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'
+            }`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-${type === 'success' ? 'check' : type === 'error' ? 'error-warning' : type === 'warning' ? 'alert' : 'information'}-line mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.getElementById('notifications').appendChild(notification);
+            
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Suppression automatique
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 4000);
+        }
+
+        // Vérification automatique au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackendStatus();
+            
+            // Vérification périodique toutes les 30 secondes
+            setInterval(checkBackendStatus, 30000);
+        });
+    </script>
+</body>
+</html>

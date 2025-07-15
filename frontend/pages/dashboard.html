@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FormEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Core Services -->
+    <script src="../../js/core/init.js"></script>
+    
+    <!-- Page Controller -->
+    <script src="../../js/pages/dashboard.js"></script>
+    
+    <!-- Navigation Component -->
+    <script src="../components/navigation.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            },
+                            content: {
+                                strong: '#0f172a',
+                                emphasis: '#334155',
+                                DEFAULT: '#64748b',
+                                subtle: '#94a3b8',
+                                inverted: '#ffffff'
+                            },
+                            background: {
+                                muted: '#f8fafc',
+                                subtle: '#f1f5f9',
+                                DEFAULT: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .glassmorphism {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tremor-Card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .tremor-Card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        .quick-action-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Chargement du dashboard...</p>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <div id="navigation-container"></div>
+
+    <!-- Header Section -->
+    <section class="pt-20 pb-8 bg-gradient-to-br from-blue-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-tremor-content-strong mb-2">
+                        <span id="welcome-user">Bonjour</span> 👋
+                    </h1>
+                    <p class="text-tremor-content-DEFAULT">
+                        Voici un aperçu de vos formulaires et performances
+                    </p>
+                </div>
+                <div class="flex space-x-3 mt-4 md:mt-0">
+                    <button id="refresh-dashboard" 
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i class="ri-refresh-line mr-2"></i>
+                        Actualiser
+                    </button>
+                    <button id="export-data" 
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="ri-download-line mr-2"></i>
+                        Exporter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-xl font-bold text-tremor-content-strong mb-6">Actions rapides</h2>
+            <div id="quick-actions">
+                <!-- Sera rempli dynamiquement -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-xl font-bold text-tremor-content-strong mb-6">Statistiques</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                
+                <!-- Total Formulaires -->
+                <div id="total-forms" class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm stat-label">Formulaires créés</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong stat-value">-</p>
+                        </div>
+                        <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-file-text-line text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Soumissions -->
+                <div id="total-submissions" class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm stat-label">Soumissions reçues</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong stat-value">-</p>
+                        </div>
+                        <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-inbox-line text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Vues -->
+                <div id="total-views" class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm stat-label">Vues totales</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong stat-value">-</p>
+                        </div>
+                        <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-eye-line text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Taux Conversion -->
+                <div id="conversion-rate" class="tremor-Card p-6 metric-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-tremor-content-DEFAULT text-sm stat-label">Taux de conversion</p>
+                            <p class="text-3xl font-bold text-tremor-content-strong stat-value">-%</p>
+                        </div>
+                        <div class="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-trending-up-line text-orange-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                
+                <!-- Graphique Soumissions -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-tremor-content-strong">
+                            Évolution des soumissions
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 text-sm bg-tremor-brand-DEFAULT text-white rounded">7j</button>
+                            <button class="px-3 py-1 text-sm text-tremor-content-DEFAULT hover:bg-gray-100 rounded">30j</button>
+                        </div>
+                    </div>
+                    <div id="submissions-chart" class="chart-container">
+                        <div class="loading-skeleton w-full h-full rounded-lg"></div>
+                    </div>
+                </div>
+
+                <!-- Performance Formulaires -->
+                <div class="tremor-Card p-6">
+                    <h2 class="text-xl font-bold text-tremor-content-strong mb-6">
+                        Performance des formulaires
+                    </h2>
+                    <div id="forms-performance-chart" class="chart-container">
+                        <div class="loading-skeleton w-full h-full rounded-lg"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Forms -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-8">
+                
+                <!-- Formulaires Récents -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-tremor-content-strong">
+                            Formulaires récents
+                        </h2>
+                        <a href="/frontend/pages/forms/manage.html" 
+                           class="text-tremor-brand-DEFAULT hover:text-tremor-brand-emphasis text-sm font-medium">
+                            Voir tout
+                        </a>
+                    </div>
+                    <div id="recent-forms-list" class="space-y-4">
+                        <!-- Loading skeleton -->
+                        <div class="space-y-4">
+                            <div class="loading-skeleton h-16 rounded-lg"></div>
+                            <div class="loading-skeleton h-16 rounded-lg"></div>
+                            <div class="loading-skeleton h-16 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soumissions Récentes -->
+                <div class="tremor-Card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-tremor-content-strong">
+                            Soumissions récentes
+                        </h2>
+                        <a href="/frontend/pages/submissions/manage.html" 
+                           class="text-tremor-brand-DEFAULT hover:text-tremor-brand-emphasis text-sm font-medium">
+                            Voir tout
+                        </a>
+                    </div>
+                    <div id="recent-submissions-list" class="space-y-3">
+                        <!-- Loading skeleton -->
+                        <div class="space-y-3">
+                            <div class="loading-skeleton h-12 rounded-lg"></div>
+                            <div class="loading-skeleton h-12 rounded-lg"></div>
+                            <div class="loading-skeleton h-12 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Notifications Container -->
+    <div id="notifications-container" class="fixed top-4 right-4 z-50 space-y-4">
+        <!-- Notifications will be added here -->
+    </div>
+
+    <script>
+        // Initialize navigation and dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navigation
+            const navigation = new FormEaseNavigation('dashboard');
+            navigation.render('navigation-container');
+            
+            // Dashboard controller will be initialized automatically by dashboard.js
+        });
+        
+        // Simple chart implementation for fallback
+        function createSimpleChart(containerId, data, type = 'line') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // Remove loading skeleton
+            container.innerHTML = '';
+            
+            // Create basic chart visualization
+            const canvas = document.createElement('canvas');
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Simple line chart implementation
+            if (type === 'line' && data.length > 0) {
+                const maxValue = Math.max(...data.map(d => d.value || 0));
+                const stepX = canvas.width / (data.length - 1 || 1);
+                const stepY = canvas.height * 0.8 / (maxValue || 1);
+                
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                data.forEach((point, index) => {
+                    const x = index * stepX;
+                    const y = canvas.height - (point.value || 0) * stepY - canvas.height * 0.1;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+                
+                // Add points
+                ctx.fillStyle = '#3b82f6';
+                data.forEach((point, index) => {
+                    const x = index * stepX;
+                    const y = canvas.height - (point.value || 0) * stepY - canvas.height * 0.1;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            }
+            
+            container.appendChild(canvas);
+        }
+
+        // Navigation background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (nav) {
+                if (window.scrollY > 100) {
+                    nav.classList.add('bg-white', 'shadow-md');
+                    nav.classList.remove('bg-white/95');
+                } else {
+                    nav.classList.remove('bg-white', 'shadow-md');
+                    nav.classList.add('bg-white/95');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

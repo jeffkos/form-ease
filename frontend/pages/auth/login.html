@@ -139,6 +139,21 @@
                 </button>
             </div>
 
+            <!-- Rate Limit Reset (Development) -->
+            <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p class="text-xs text-yellow-700 mb-2">
+                    <i class="ri-warning-line mr-1"></i>
+                    <strong>Trop de tentatives ?</strong> Cliquez ci-dessous pour réinitialiser
+                </p>
+                <button 
+                    onclick="resetRateLimit()" 
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+                >
+                    <i class="ri-refresh-line mr-2"></i>
+                    Réinitialiser les tentatives
+                </button>
+            </div>
+
             <!-- Register Link -->
             <div class="text-center mt-6">
                 <p class="text-sm text-gray-600">
@@ -154,109 +169,7 @@
     <!-- Success/Error Messages -->
     <div id="messageContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
-    <script src="../../scripts/core.js"></script>
-    <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                eyeIcon.className = 'ri-eye-off-line';
-            } else {
-                passwordField.type = 'password';
-                eyeIcon.className = 'ri-eye-line';
-            }
-        });
-
-        // Form submission
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const loginBtn = document.getElementById('loginBtn');
-            const loginBtnText = document.getElementById('loginBtnText');
-            const loginBtnIcon = document.getElementById('loginBtnIcon');
-            const loginBtnLoader = document.getElementById('loginBtnLoader');
-            
-            // Show loading state
-            loginBtn.disabled = true;
-            loginBtnText.textContent = 'Connexion...';
-            loginBtnIcon.classList.add('hidden');
-            loginBtnLoader.classList.remove('hidden');
-            
-            const formData = new FormData(this);
-            const data = {
-                email: formData.get('email'),
-                password: formData.get('password')
-            };
-            
-            console.log('Tentative de connexion avec:', data.email);
-            
-            try {
-                const response = await fetch('http://localhost:4000/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                console.log('Réponse du serveur:', response.status);
-                
-                const result = await response.json();
-                console.log('Données reçues:', result);
-                
-                if (response.ok) {
-                    // Success
-                    localStorage.setItem('token', result.token);
-                    localStorage.setItem('user', JSON.stringify(result.user));
-                    showMessage('Connexion réussie ! Redirection...', 'success');
-                    setTimeout(() => {
-                        window.location.href = '../dashboard/home.html';
-                    }, 1000);
-                } else {
-                    // Error
-                    showMessage(result.message || 'Erreur de connexion', 'error');
-                }
-            } catch (error) {
-                console.error('Erreur de connexion:', error);
-                showMessage('Erreur de connexion au serveur. Vérifiez que le serveur backend est démarré.', 'error');
-            } finally {
-                // Reset button state
-                loginBtn.disabled = false;
-                loginBtnText.textContent = 'Se connecter';
-                loginBtnIcon.classList.remove('hidden');
-                loginBtnLoader.classList.add('hidden');
-            }
-        });
-
-        // Show message function
-        function showMessage(message, type) {
-            const container = document.getElementById('messageContainer');
-            const messageEl = document.createElement('div');
-            
-            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-            const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
-            
-            messageEl.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center`;
-            messageEl.innerHTML = `
-                <i class="${icon} mr-2"></i>
-                <span>${message}</span>
-            `;
-            
-            container.appendChild(messageEl);
-            
-            // Remove message after 5 seconds
-            setTimeout(() => {
-                messageEl.remove();
-            }, 5000);
-        }
-
-        // Check if already logged in
-        if (localStorage.getItem('token')) {
-            window.location.href = '../dashboard/home.html';
-        }
-    </script>
+    <!-- Auto-loader FormEase pour dynamiser la page -->
+    <script src="../../js/auto-loader.js"></script>
 </body>
 </html>

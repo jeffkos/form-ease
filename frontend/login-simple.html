@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormEase - Connexion Simple</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="flex items-center justify-center min-h-screen px-4 py-8">
+        <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-xl">
+            <!-- Logo & Title -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mb-4">
+                    <i class="ri-file-list-3-line text-2xl text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Connexion à FormEase</h1>
+                <p class="text-gray-600">Version simplifiée</p>
+            </div>
+
+            <!-- Message d'erreur -->
+            <div id="errorContainer" class="mb-4 hidden"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-6">
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Adresse email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="votre@email.com"
+                        required
+                    />
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mot de passe
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Votre mot de passe"
+                        required
+                    />
+                </div>
+
+                <!-- Login Button -->
+                <button 
+                    type="submit" 
+                    id="loginBtn"
+                    class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+                >
+                    Se connecter
+                </button>
+            </form>
+
+            <!-- Status -->
+            <div id="status" class="mt-4 text-center text-sm text-gray-600"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔐 Connexion simple initialisée');
+
+        // Pré-remplir les champs depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const password = urlParams.get('password');
+
+        if (email) {
+            document.getElementById('email').value = decodeURIComponent(email);
+        }
+        if (password) {
+            document.getElementById('password').value = decodeURIComponent(password);
+        }
+
+        // Gestion du formulaire
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const email = formData.get('email');
+            const password = formData.get('password');
+            
+            const status = document.getElementById('status');
+            const errorContainer = document.getElementById('errorContainer');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // État de chargement
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Connexion...';
+            status.textContent = 'Tentative de connexion...';
+            errorContainer.classList.add('hidden');
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    status.textContent = `✅ Connexion réussie ! Bienvenue ${data.data.user.name}`;
+                    status.className = 'mt-4 text-center text-sm text-green-600';
+                    
+                    // Sauvegarder le token
+                    localStorage.setItem('formease_token', data.data.token);
+                    localStorage.setItem('formease_user', JSON.stringify(data.data.user));
+                    
+                    // Redirection après 2 secondes
+                    setTimeout(() => {
+                        window.location.href = '/pages/dashboard/home.html';
+                    }, 2000);
+                    
+                } else {
+                    throw new Error(data.error || 'Erreur de connexion');
+                }
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                status.textContent = `❌ Erreur: ${error.message}`;
+                status.className = 'mt-4 text-center text-sm text-red-600';
+                
+                errorContainer.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                        <strong>Erreur de connexion:</strong> ${error.message}
+                    </div>
+                `;
+                errorContainer.classList.remove('hidden');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Se connecter';
+            }
+        });
+
+        // Auto-connexion si les paramètres sont fournis
+        if (email && password) {
+            setTimeout(() => {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FormEase - Tableau de Bord</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="../../js/services/dashboard-service.js"></script>
+    <style>
+      .tremor-Card {
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+      .tremor-Card:hover {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+      }
+      .tremor-CardHeader {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .tremor-CardContent {
+        padding: 1rem 1.5rem;
+      }
+      .metric-card .tremor-CardContent {
+        padding: 0.75rem 1rem;
+      }
+      .metric-card {
+        max-height: 100px;
+        min-height: 90px;
+      }
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      .error-state {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        text-align: center;
+      }
+      .empty-state {
+        background-color: #f9fafb;
+        border: 1px dashed #d1d5db;
+        color: #6b7280;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <div class="flex h-screen bg-gray-50">
+      <!-- Sidebar -->
+      <div class="w-64 bg-white shadow-lg">
+        <div class="p-6">
+          <div class="flex items-center">
+            <i class="ri-file-list-3-line text-2xl text-blue-600 mr-3"></i>
+            <h1 class="text-xl font-bold text-gray-900">FormEase</h1>
+          </div>
+        </div>
+
+        <nav class="mt-6">
+          <div class="px-6 py-3">
+            <div
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Principal
+            </div>
+          </div>
+
+          <a
+            href="home-connected.html"
+            class="flex items-center px-6 py-3 text-gray-700 bg-blue-50 border-r-2 border-blue-600"
+          >
+            <i class="ri-dashboard-line mr-3"></i>
+            <span>Tableau de bord</span>
+          </a>
+
+          <a
+            href="../forms/management.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-file-list-line mr-3"></i>
+            <span>Mes Formulaires</span>
+          </a>
+
+          <a
+            href="../forms/ai-generator-connected.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-robot-line mr-3"></i>
+            <span>IA Generator</span>
+          </a>
+
+          <a
+            href="../forms/builder.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-tools-line mr-3"></i>
+            <span>Builder</span>
+          </a>
+
+          <a
+            href="../analytics/dashboard.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-bar-chart-line mr-3"></i>
+            <span>Analytics</span>
+          </a>
+
+          <a
+            href="../forms/qr-codes.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-qr-code-line mr-3"></i>
+            <span>QR Codes</span>
+          </a>
+
+          <a
+            href="../email-tracking.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-mail-line mr-3"></i>
+            <span>Suivi Email</span>
+          </a>
+
+          <a
+            href="../analytics/reports.html"
+            class="flex items-center px-6 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <i class="ri-file-chart-line mr-3"></i>
+            <span>Rapports</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+          <div class="flex items-center justify-between px-6 py-4">
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Tableau de Bord</h1>
+              <p class="text-sm text-gray-600">
+                Vue d'ensemble de vos formulaires et performances
+              </p>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <button
+                onclick="refreshDashboard()"
+                class="p-2 text-gray-400 hover:text-gray-600"
+                title="Actualiser"
+              >
+                <i class="ri-refresh-line"></i>
+              </button>
+
+              <div class="relative">
+                <button
+                  onclick="toggleNotifications()"
+                  class="p-2 text-gray-400 hover:text-gray-600 relative"
+                  title="Notifications"
+                >
+                  <i class="ri-notification-line"></i>
+                  <span
+                    id="notificationBadge"
+                    class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                    >0</span
+                  >
+                </button>
+
+                <!-- Dropdown notifications -->
+                <div
+                  id="notificationsDropdown"
+                  class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                >
+                  <div class="p-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900">Notifications</h3>
+                  </div>
+                  <div id="notificationsList" class="max-h-64 overflow-y-auto">
+                    <!-- Notifications will be loaded here -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <button
+                  onclick="toggleUserDropdown()"
+                  class="flex items-center space-x-2 text-gray-700 hover:text-gray-900"
+                >
+                  <div
+                    class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
+                  >
+                    <span
+                      id="userInitials"
+                      class="text-white text-sm font-medium"
+                      >--</span
+                    >
+                  </div>
+                  <span id="userName" class="text-sm">Chargement...</span>
+                  <i class="ri-arrow-down-s-line"></i>
+                </button>
+
+                <!-- User dropdown -->
+                <div
+                  id="userDropdown"
+                  class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                >
+                  <div class="p-2">
+                    <a
+                      href="profile.html"
+                      class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                    >
+                      <i class="ri-user-line mr-2"></i>
+                      Mon Profil
+                    </a>
+                    <a
+                      href="#"
+                      class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                    >
+                      <i class="ri-settings-line mr-2"></i>
+                      Paramètres
+                    </a>
+                    <hr class="my-2" />
+                    <button
+                      onclick="logout()"
+                      class="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded"
+                    >
+                      <i class="ri-logout-line mr-2"></i>
+                      Déconnexion
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+          <!-- Quick Actions -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-semibold text-gray-900">
+                Actions Rapides
+              </h2>
+            </div>
+            <div class="flex items-center space-x-3">
+              <button
+                onclick="createNewForm()"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center text-sm"
+              >
+                <i class="ri-add-line mr-2"></i>
+                Nouveau formulaire
+              </button>
+              <button
+                onclick="openAIGenerator()"
+                class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center text-sm"
+              >
+                <i class="ri-robot-line mr-2"></i>
+                IA Generator
+              </button>
+              <button
+                onclick="viewAnalytics()"
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center text-sm"
+              >
+                <i class="ri-bar-chart-line mr-2"></i>
+                Analytics
+              </button>
+            </div>
+          </div>
+
+          <!-- Metrics Cards -->
+          <div
+            class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+          >
+            <div class="tremor-Card metric-card">
+              <div class="tremor-CardContent">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <p class="text-xs text-gray-600 mb-1">Formulaires</p>
+                    <p
+                      id="totalForms"
+                      class="text-xl font-bold text-gray-900 mb-1"
+                    >
+                      --
+                    </p>
+                    <div class="flex items-center">
+                      <i
+                        class="ri-arrow-up-line text-green-500 text-xs mr-1"
+                      ></i>
+                      <span
+                        id="formsChange"
+                        class="text-green-500 text-xs font-medium"
+                        >--%</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="ri-file-list-line text-blue-600 text-sm"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tremor-Card metric-card">
+              <div class="tremor-CardContent">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <p class="text-xs text-gray-600 mb-1">Réponses</p>
+                    <p
+                      id="totalResponses"
+                      class="text-xl font-bold text-gray-900 mb-1"
+                    >
+                      --
+                    </p>
+                    <div class="flex items-center">
+                      <i
+                        class="ri-arrow-up-line text-green-500 text-xs mr-1"
+                      ></i>
+                      <span
+                        id="responsesChange"
+                        class="text-green-500 text-xs font-medium"
+                        >--%</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="ri-chat-3-line text-green-600 text-sm"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tremor-Card metric-card">
+              <div class="tremor-CardContent">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <p class="text-xs text-gray-600 mb-1">Taux de conversion</p>
+                    <p
+                      id="conversionRate"
+                      class="text-xl font-bold text-gray-900 mb-1"
+                    >
+                      --%
+                    </p>
+                    <div class="flex items-center">
+                      <i
+                        class="ri-arrow-up-line text-green-500 text-xs mr-1"
+                      ></i>
+                      <span
+                        id="conversionChange"
+                        class="text-green-500 text-xs font-medium"
+                        >--%</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="ri-line-chart-line text-purple-600 text-sm"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tremor-Card metric-card">
+              <div class="tremor-CardContent">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <p class="text-xs text-gray-600 mb-1">Utilisateurs</p>
+                    <p
+                      id="totalUsers"
+                      class="text-xl font-bold text-gray-900 mb-1"
+                    >
+                      --
+                    </p>
+                    <div class="flex items-center">
+                      <i
+                        class="ri-arrow-up-line text-green-500 text-xs mr-1"
+                      ></i>
+                      <span
+                        id="usersChange"
+                        class="text-green-500 text-xs font-medium"
+                        >--%</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="h-8 w-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i class="ri-user-line text-orange-600 text-sm"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Content -->
+          <div
+            class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[calc(100vh-4rem)]"
+          >
+            <div class="p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Charts Section -->
+                <div class="lg:col-span-2 space-y-6">
+                  <!-- Responses Chart -->
+                  <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                      <h3 class="text-lg font-semibold text-gray-900">
+                        Réponses (7 derniers jours)
+                      </h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                      <div id="responsesChart" class="h-64">
+                        <div class="skeleton h-full rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Forms Status Chart -->
+                  <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                      <h3 class="text-lg font-semibold text-gray-900">
+                        Statut des Formulaires
+                      </h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                      <div id="formsStatusChart" class="h-64">
+                        <div class="skeleton h-full rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sidebar Content -->
+                <div class="space-y-6">
+                  <!-- Recent Forms -->
+                  <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                      <h3 class="text-lg font-semibold text-gray-900">
+                        Formulaires Récents
+                      </h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                      <div id="recentForms" class="space-y-3">
+                        <!-- Skeleton loaders -->
+                        <div class="skeleton h-16 rounded"></div>
+                        <div class="skeleton h-16 rounded"></div>
+                        <div class="skeleton h-16 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Recent Activity -->
+                  <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                      <h3 class="text-lg font-semibold text-gray-900">
+                        Activité Récente
+                      </h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                      <div id="recentActivity" class="space-y-3">
+                        <!-- Skeleton loaders -->
+                        <div class="skeleton h-12 rounded"></div>
+                        <div class="skeleton h-12 rounded"></div>
+                        <div class="skeleton h-12 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Plan Usage -->
+                  <div class="tremor-Card">
+                    <div class="tremor-CardHeader">
+                      <h3 class="text-lg font-semibold text-gray-900">
+                        Utilisation du Plan
+                      </h3>
+                    </div>
+                    <div class="tremor-CardContent">
+                      <div id="planUsage" class="space-y-4">
+                        <!-- Plan usage will be loaded here -->
+                        <div class="skeleton h-20 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      // Variables globales
+      let responsesChart = null;
+      let formsStatusChart = null;
+      let userDropdownOpen = false;
+      let notificationsOpen = false;
+
+      // Initialisation
+      document.addEventListener("DOMContentLoaded", function () {
+        // Vérifier l'authentification
+        if (!dashboardService.requireAuth()) {
+          return;
+        }
+
+        // Charger les données du dashboard
+        loadDashboard();
+
+        // Actualiser toutes les 5 minutes
+        setInterval(loadDashboard, 5 * 60 * 1000);
+      });
+
+      // Charger toutes les données du dashboard
+      async function loadDashboard() {
+        try {
+          // Charger en parallèle
+          const [
+            stats,
+            recentForms,
+            recentActivity,
+            userProfile,
+            notifications,
+            planLimits,
+          ] = await Promise.all([
+            dashboardService.getDashboardStats(),
+            dashboardService.getRecentForms(),
+            dashboardService.getRecentActivity(),
+            dashboardService.getUserProfile(),
+            dashboardService.getNotifications(),
+            dashboardService.getPlanLimits(),
+          ]);
+
+          // Mettre à jour l'interface
+          updateStats(stats);
+          updateRecentForms(recentForms);
+          updateRecentActivity(recentActivity);
+          updateUserProfile(userProfile);
+          updateNotifications(notifications);
+          updatePlanUsage(planLimits);
+
+          // Charger les graphiques
+          loadCharts();
+        } catch (error) {
+          console.error("Erreur lors du chargement du dashboard:", error);
+          showError("Erreur lors du chargement des données");
+        }
+      }
+
+      // Mettre à jour les statistiques
+      function updateStats(stats) {
+        document.getElementById("totalForms").textContent =
+          stats.totalForms || 0;
+        document.getElementById("totalResponses").textContent =
+          stats.totalResponses || 0;
+        document.getElementById("conversionRate").textContent = `${
+          stats.conversionRate || 0
+        }%`;
+        document.getElementById("totalUsers").textContent =
+          stats.totalUsers || 0;
+
+        document.getElementById("formsChange").textContent =
+          stats.formsChange || "+0%";
+        document.getElementById("responsesChange").textContent =
+          stats.responsesChange || "+0%";
+        document.getElementById("conversionChange").textContent =
+          stats.conversionChange || "+0%";
+        document.getElementById("usersChange").textContent =
+          stats.usersChange || "+0%";
+      }
+
+      // Mettre à jour les formulaires récents
+      function updateRecentForms(forms) {
+        const container = document.getElementById("recentForms");
+
+        if (!forms || forms.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">Aucun formulaire récent</div>';
+          return;
+        }
+
+        container.innerHTML = forms
+          .map(
+            (form) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex-1">
+                        <h4 class="font-medium text-gray-900">${form.title}</h4>
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span>${form.responses || 0} réponses</span>
+                            <span class="capitalize">${
+                              form.status?.toLowerCase() || "inconnu"
+                            }</span>
+                            <span>${dashboardService.formatRelativeDate(
+                              form.createdAt
+                            )}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="viewForm(${
+                          form.id
+                        })" class="text-blue-600 hover:text-blue-800">
+                            <i class="ri-eye-line"></i>
+                        </button>
+                        <button onclick="editForm(${
+                          form.id
+                        })" class="text-gray-600 hover:text-gray-800">
+                            <i class="ri-edit-line"></i>
+                        </button>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Mettre à jour l'activité récente
+      function updateRecentActivity(activities) {
+        const container = document.getElementById("recentActivity");
+
+        if (!activities || activities.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">Aucune activité récente</div>';
+          return;
+        }
+
+        container.innerHTML = activities
+          .map(
+            (activity) => `
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div class="flex-shrink-0 mr-3">
+                        <i class="${
+                          activity.icon || "ri-information-line"
+                        } text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-900">${activity.message}</p>
+                        <p class="text-xs text-gray-500">${dashboardService.formatRelativeDate(
+                          activity.timestamp
+                        )}</p>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Mettre à jour le profil utilisateur
+      function updateUserProfile(user) {
+        const initials = `${user.first_name?.charAt(0) || ""}${
+          user.last_name?.charAt(0) || ""
+        }`;
+        document.getElementById("userInitials").textContent = initials;
+        document.getElementById("userName").textContent = `${
+          user.first_name || ""
+        } ${user.last_name || ""}`.trim();
+      }
+
+      // Mettre à jour les notifications
+      function updateNotifications(notifications) {
+        const badge = document.getElementById("notificationBadge");
+        const list = document.getElementById("notificationsList");
+
+        const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+        if (unreadCount > 0) {
+          badge.textContent = unreadCount;
+          badge.classList.remove("hidden");
+        } else {
+          badge.classList.add("hidden");
+        }
+
+        if (notifications.length === 0) {
+          list.innerHTML =
+            '<div class="p-4 text-center text-gray-500">Aucune notification</div>';
+          return;
+        }
+
+        list.innerHTML = notifications
+          .map(
+            (notification) => `
+                <div class="p-3 border-b border-gray-100 ${
+                  notification.isRead ? "bg-white" : "bg-blue-50"
+                }" onclick="markAsRead(${notification.id})">
+                    <div class="flex items-start">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${
+                              notification.title
+                            }</h4>
+                            <p class="text-sm text-gray-600">${
+                              notification.message
+                            }</p>
+                            <p class="text-xs text-gray-500 mt-1">${dashboardService.formatRelativeDate(
+                              notification.createdAt
+                            )}</p>
+                        </div>
+                        ${
+                          !notification.isRead
+                            ? '<div class="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>'
+                            : ""
+                        }
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Mettre à jour l'utilisation du plan
+      function updatePlanUsage(planData) {
+        const container = document.getElementById("planUsage");
+
+        if (!planData || !planData.limits) {
+          container.innerHTML =
+            '<div class="error-state">Erreur de chargement</div>';
+          return;
+        }
+
+        const { limits } = planData;
+
+        container.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">Plan actuel</span>
+                        <span class="font-medium text-gray-900 capitalize">${
+                          planData.plan
+                        }</span>
+                    </div>
+                    
+                    ${Object.entries(limits)
+                      .map(([key, limit]) => {
+                        const percentage = (limit.used / limit.limit) * 100;
+                        const color =
+                          percentage > 80
+                            ? "bg-red-500"
+                            : percentage > 60
+                            ? "bg-yellow-500"
+                            : "bg-green-500";
+
+                        return `
+                            <div>
+                                <div class="flex items-center justify-between text-sm mb-1">
+                                    <span class="text-gray-600 capitalize">${key}</span>
+                                    <span class="text-gray-900">${limit.used}/${limit.limit}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="${color} h-2 rounded-full" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                        `;
+                      })
+                      .join("")}
+                </div>
+            `;
+      }
+
+      // Charger les graphiques
+      async function loadCharts() {
+        try {
+          const [responsesData, formsData] = await Promise.all([
+            dashboardService.getChartData("responses"),
+            dashboardService.getChartData("forms"),
+          ]);
+
+          loadResponsesChart(responsesData);
+          loadFormsStatusChart(formsData);
+        } catch (error) {
+          console.error("Erreur lors du chargement des graphiques:", error);
+        }
+      }
+
+      // Charger le graphique des réponses
+      function loadResponsesChart(data) {
+        const chartData = dashboardService.formatChartData(data, "line");
+
+        const options = {
+          series: [
+            {
+              name: "Réponses",
+              data: chartData.map((item) => item.y),
+            },
+          ],
+          chart: {
+            type: "line",
+            height: 250,
+            toolbar: { show: false },
+          },
+          xaxis: {
+            categories: chartData.map((item) => item.x),
+            labels: {
+              formatter: function (value) {
+                return new Date(value).toLocaleDateString("fr-FR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                });
+              },
+            },
+          },
+          colors: ["#3b82f6"],
+          stroke: {
+            curve: "smooth",
+            width: 2,
+          },
+          markers: {
+            size: 4,
+          },
+        };
+
+        if (responsesChart) {
+          responsesChart.destroy();
+        }
+
+        responsesChart = new ApexCharts(
+          document.querySelector("#responsesChart"),
+          options
+        );
+        responsesChart.render();
+      }
+
+      // Charger le graphique des statuts de formulaires
+      function loadFormsStatusChart(data) {
+        const chartData = dashboardService.formatChartData(data, "pie");
+
+        const options = {
+          series: chartData.map((item) => item.value),
+          chart: {
+            type: "donut",
+            height: 250,
+          },
+          labels: chartData.map((item) => item.name),
+          colors: ["#10b981", "#f59e0b", "#ef4444"],
+          legend: {
+            position: "bottom",
+          },
+        };
+
+        if (formsStatusChart) {
+          formsStatusChart.destroy();
+        }
+
+        formsStatusChart = new ApexCharts(
+          document.querySelector("#formsStatusChart"),
+          options
+        );
+        formsStatusChart.render();
+      }
+
+      // Actions rapides
+      function createNewForm() {
+        window.location.href = "../forms/builder.html";
+      }
+
+      function openAIGenerator() {
+        window.location.href = "../forms/ai-generator-connected.html";
+      }
+
+      function viewAnalytics() {
+        window.location.href = "../analytics/dashboard.html";
+      }
+
+      // Actions sur les formulaires
+      function viewForm(formId) {
+        window.location.href = `../forms/view.html?id=${formId}`;
+      }
+
+      function editForm(formId) {
+        window.location.href = `../forms/builder.html?id=${formId}`;
+      }
+
+      // Gestion des dropdowns
+      function toggleUserDropdown() {
+        const dropdown = document.getElementById("userDropdown");
+        userDropdownOpen = !userDropdownOpen;
+
+        if (userDropdownOpen) {
+          dropdown.classList.remove("hidden");
+          // Fermer les notifications
+          document
+            .getElementById("notificationsDropdown")
+            .classList.add("hidden");
+          notificationsOpen = false;
+        } else {
+          dropdown.classList.add("hidden");
+        }
+      }
+
+      function toggleNotifications() {
+        const dropdown = document.getElementById("notificationsDropdown");
+        notificationsOpen = !notificationsOpen;
+
+        if (notificationsOpen) {
+          dropdown.classList.remove("hidden");
+          // Fermer le dropdown utilisateur
+          document.getElementById("userDropdown").classList.add("hidden");
+          userDropdownOpen = false;
+        } else {
+          dropdown.classList.add("hidden");
+        }
+      }
+
+      // Marquer une notification comme lue
+      async function markAsRead(notificationId) {
+        try {
+          await dashboardService.markNotificationAsRead(notificationId);
+          // Recharger les notifications
+          const notifications = await dashboardService.getNotifications();
+          updateNotifications(notifications);
+        } catch (error) {
+          console.error(
+            "Erreur lors de la mise à jour de la notification:",
+            error
+          );
+        }
+      }
+
+      // Actualiser le dashboard
+      function refreshDashboard() {
+        loadDashboard();
+      }
+
+      // Afficher une erreur
+      function showError(message) {
+        // Vous pouvez implémenter un système de notification toast ici
+        console.error(message);
+      }
+
+      // Déconnexion
+      function logout() {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }
+
+      // Fermer les dropdowns en cliquant ailleurs
+      document.addEventListener("click", function (event) {
+        const userDropdown = document.getElementById("userDropdown");
+        const notificationsDropdown = document.getElementById(
+          "notificationsDropdown"
+        );
+
+        if (!event.target.closest(".relative")) {
+          userDropdown.classList.add("hidden");
+          notificationsDropdown.classList.add("hidden");
+          userDropdownOpen = false;
+          notificationsOpen = false;
+        }
+      });
+    </script>
+  </body>
+</html>

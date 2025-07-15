@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Auto-loader FormEase pour dynamiser la page -->
+    <script src="/frontend/js/auto-loader.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -265,17 +267,17 @@
             <!-- Contenu du dashboard -->
             <div class="p-6">
                 <!-- Stats Cards avec style Tremor -->
-                <div class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="main-stats">
+                <div class="metrics-container grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="main-stats" data-loading>
                     <!-- Metric Card 1 -->
                     <div class="tremor-Card metric-card">
                         <div class="tremor-CardContent">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-tremor-content-DEFAULT text-sm">Formulaires totaux</p>
-                                    <p class="text-2xl font-bold text-tremor-content-strong" id="totalForms">0</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="total-forms">0</p>
                                     <div class="flex items-center mt-1">
                                         <i class="ri-arrow-up-line text-green-500 text-xs"></i>
-                                        <span class="text-green-500 text-xs font-medium">+12%</span>
+                                        <span class="text-green-500 text-xs font-medium" id="forms-change">+0%</span>
                                     </div>
                                 </div>
                                 <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -291,10 +293,10 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-tremor-content-DEFAULT text-sm">Réponses totales</p>
-                                    <p class="text-2xl font-bold text-tremor-content-strong" id="totalResponses">0</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="total-responses">0</p>
                                     <div class="flex items-center mt-1">
                                         <i class="ri-arrow-up-line text-green-500 text-xs"></i>
-                                        <span class="text-green-500 text-xs font-medium">+23%</span>
+                                        <span class="text-green-500 text-xs font-medium" id="responses-change">+0%</span>
                                     </div>
                                 </div>
                                 <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -310,10 +312,10 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-tremor-content-DEFAULT text-sm">Taux de conversion</p>
-                                    <p class="text-2xl font-bold text-tremor-content-strong" id="conversionRate">0%</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="conversion-rate">0%</p>
                                     <div class="flex items-center mt-1">
                                         <i class="ri-arrow-up-line text-green-500 text-xs"></i>
-                                        <span class="text-green-500 text-xs font-medium">+5.2%</span>
+                                        <span class="text-green-500 text-xs font-medium" id="conversion-change">+0%</span>
                                     </div>
                                 </div>
                                 <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -328,15 +330,15 @@
                         <div class="tremor-CardContent">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-tremor-content-DEFAULT text-sm">Formulaires actifs</p>
-                                    <p class="text-2xl font-bold text-tremor-content-strong" id="activeForms">0</p>
+                                    <p class="text-tremor-content-DEFAULT text-sm">Utilisateurs totaux</p>
+                                    <p class="text-2xl font-bold text-tremor-content-strong" id="total-users">0</p>
                                     <div class="flex items-center mt-1">
                                         <i class="ri-arrow-up-line text-green-500 text-xs"></i>
-                                        <span class="text-green-500 text-xs font-medium">+8%</span>
+                                        <span class="text-green-500 text-xs font-medium" id="users-change">+0%</span>
                                     </div>
                                 </div>
                                 <div class="h-10 w-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                    <i class="ri-play-circle-line text-orange-600"></i>
+                                    <i class="ri-user-line text-orange-600"></i>
                                 </div>
                             </div>
                         </div>
@@ -408,11 +410,10 @@
                             </div>
                         </div>
                         <div class="p-6">
-                            <div class="space-y-4" id="recentForms">
+                            <div class="space-y-4" id="recent-forms-container" data-loading>
                                 <div class="text-center py-8 text-gray-500">
                                     <i class="ri-file-list-line text-4xl mb-2"></i>
-                                    <p>Aucun formulaire trouvé</p>
-                                    <p class="text-sm">Créez votre premier formulaire pour commencer</p>
+                                    <p>Chargement des formulaires...</p>
                                 </div>
                             </div>
                         </div>
@@ -424,34 +425,46 @@
                             <h3 class="text-lg font-semibold text-gray-900">Activité récente</h3>
                         </div>
                         <div class="p-6">
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                        <i class="ri-check-line text-green-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">Nouveau formulaire créé</p>
-                                        <p class="text-sm text-gray-500">"Formulaire de Contact" - Il y a 2 heures</p>
+                            <div class="space-y-4" id="recent-activity-container" data-loading>
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="ri-history-line text-4xl mb-2"></i>
+                                    <p>Chargement de l'activité...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphiques en temps réel -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Graphique des formulaires créés -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Formulaires créés (30 derniers jours)</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="dashboard-forms-chart" data-chart-type="dashboard-overview" style="height: 300px;">
+                                <div class="flex items-center justify-center h-full text-gray-500">
+                                    <div class="text-center">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                                        <p>Chargement du graphique...</p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i class="ri-chat-3-line text-blue-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">15 nouvelles réponses</p>
-                                        <p class="text-sm text-gray-500">"Sondage Satisfaction" - Il y a 4 heures</p>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <i class="ri-bar-chart-line text-purple-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-900">Rapport généré</p>
-                                        <p class="text-sm text-gray-500">"Analytics hebdomadaire" - Il y a 1 jour</p>
+                    <!-- Graphique des réponses -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Réponses reçues (30 derniers jours)</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="dashboard-responses-chart" data-chart-type="forms-submissions" style="height: 300px;">
+                                <div class="flex items-center justify-center h-full text-gray-500">
+                                    <div class="text-center">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>
+                                        <p>Chargement du graphique...</p>
                                     </div>
                                 </div>
                             </div>

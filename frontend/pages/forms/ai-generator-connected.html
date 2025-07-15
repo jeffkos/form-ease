@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FormEase AI - Génération de Formulaires par IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="../../js/services/ai-service.js"></script>
+    <style>
+      .tremor-Card {
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+      .tremor-Card:hover {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+      }
+      .tremor-CardHeader {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .tremor-CardContent {
+        padding: 1rem 1.5rem;
+      }
+      .tremor-Button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .tremor-Button:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .tremor-Button-primary {
+        background-color: #2563eb;
+        color: white;
+      }
+      .tremor-Button-primary:hover {
+        background-color: #1d4ed8;
+      }
+      .ai-loader {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ffffff;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .generation-step {
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+      }
+      .generation-step.active {
+        opacity: 1;
+      }
+      .generation-step.completed {
+        opacity: 1;
+      }
+      .error-message {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+      }
+      .success-message {
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #16a34a;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <div class="min-h-screen">
+      <!-- Header -->
+      <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+              <a href="../dashboard/home.html" class="flex items-center">
+                <i class="ri-file-list-3-line text-2xl text-blue-600 mr-3"></i>
+                <span class="text-xl font-bold text-gray-900">FormEase</span>
+              </a>
+              <nav class="hidden md:flex ml-8 space-x-8">
+                <a
+                  href="../dashboard/home.html"
+                  class="text-gray-500 hover:text-gray-700"
+                  >Dashboard</a
+                >
+                <a
+                  href="management.html"
+                  class="text-gray-500 hover:text-gray-700"
+                  >Mes Formulaires</a
+                >
+                <a
+                  href="ai-generator-connected.html"
+                  class="text-blue-600 font-medium"
+                  >IA Generator</a
+                >
+                <a href="builder.html" class="text-gray-500 hover:text-gray-700"
+                  >Builder</a
+                >
+              </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span id="userInfo" class="text-sm text-gray-600"
+                >Chargement...</span
+              >
+              <button
+                onclick="logout()"
+                class="text-gray-500 hover:text-gray-700"
+              >
+                <i class="ri-logout-line"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Sidebar -->
+          <div class="lg:col-span-1">
+            <!-- Statistiques d'utilisation -->
+            <div class="tremor-Card mb-6">
+              <div class="tremor-CardHeader">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Utilisation IA
+                </h3>
+              </div>
+              <div class="tremor-CardContent">
+                <div id="aiUsageStats" class="space-y-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600"
+                      >Formulaires générés</span
+                    >
+                    <span id="formsGenerated" class="font-semibold">-</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Limite mensuelle</span>
+                    <span id="monthlyLimit" class="font-semibold">-</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      id="usageBar"
+                      class="bg-blue-600 h-2 rounded-full"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    <span id="remainingGenerations">-</span> générations
+                    restantes
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulaires sauvegardés -->
+            <div class="tremor-Card">
+              <div class="tremor-CardHeader">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Formulaires récents
+                </h3>
+              </div>
+              <div class="tremor-CardContent">
+                <div id="recentForms" class="space-y-3">
+                  <div class="text-sm text-gray-500">Chargement...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="lg:col-span-2">
+            <!-- Générateur IA -->
+            <div class="tremor-Card mb-6">
+              <div class="tremor-CardHeader">
+                <h2 class="text-xl font-bold text-gray-900">
+                  Générateur IA de Formulaires
+                </h2>
+                <p class="text-sm text-gray-600 mt-1">
+                  Décrivez votre formulaire et l'IA le créera automatiquement
+                </p>
+              </div>
+              <div class="tremor-CardContent">
+                <div class="space-y-4">
+                  <div>
+                    <label
+                      for="promptInput"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Description du formulaire
+                    </label>
+                    <textarea
+                      id="promptInput"
+                      rows="4"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Décrivez le formulaire que vous souhaitez créer..."
+                    ></textarea>
+                    <div class="flex justify-between items-center mt-2">
+                      <span class="text-xs text-gray-500">
+                        <span id="charCount">0</span> caractères
+                      </span>
+                      <button
+                        id="generateBtn"
+                        onclick="generateForm()"
+                        class="tremor-Button tremor-Button-primary"
+                        style="padding: 0.5rem 1rem"
+                      >
+                        <i class="ri-robot-line mr-2"></i>
+                        Générer le formulaire
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Messages d'erreur/succès -->
+            <div id="messageContainer"></div>
+
+            <!-- Processus de génération -->
+            <div id="generationProcess" class="hidden tremor-Card mb-6">
+              <div class="tremor-CardHeader">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Génération en cours...
+                </h3>
+              </div>
+              <div class="tremor-CardContent">
+                <div class="space-y-4">
+                  <div class="generation-step active" id="step1">
+                    <div class="flex items-center">
+                      <i class="ri-brain-line text-blue-600 mr-3"></i>
+                      <span>Analyse de votre description</span>
+                    </div>
+                  </div>
+                  <div class="generation-step" id="step2">
+                    <div class="flex items-center">
+                      <i class="ri-settings-line text-blue-600 mr-3"></i>
+                      <span>Génération des champs</span>
+                    </div>
+                  </div>
+                  <div class="generation-step" id="step3">
+                    <div class="flex items-center">
+                      <i class="ri-palette-line text-blue-600 mr-3"></i>
+                      <span>Application du design</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulaire généré -->
+            <div id="generatedFormContainer" class="hidden">
+              <div class="tremor-Card mb-6">
+                <div
+                  class="tremor-CardHeader flex items-center justify-between"
+                >
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    Formulaire généré
+                  </h3>
+                  <div class="flex items-center space-x-2">
+                    <button
+                      id="regenerateBtn"
+                      onclick="regenerateForm()"
+                      class="tremor-Button tremor-Button-secondary"
+                      style="padding: 0.5rem 1rem"
+                    >
+                      <i class="ri-refresh-line mr-1"></i>
+                      Régénérer
+                    </button>
+                    <button
+                      id="saveBtn"
+                      onclick="saveGeneratedForm()"
+                      class="tremor-Button tremor-Button-primary"
+                      style="padding: 0.5rem 1rem"
+                    >
+                      <i class="ri-save-line mr-1"></i>
+                      Sauvegarder
+                    </button>
+                  </div>
+                </div>
+                <div class="tremor-CardContent">
+                  <div id="formPreview" class="space-y-4">
+                    <!-- Le formulaire généré apparaîtra ici -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Métadonnées -->
+              <div class="tremor-Card">
+                <div class="tremor-CardHeader">
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    Détails du formulaire
+                  </h3>
+                </div>
+                <div class="tremor-CardContent">
+                  <div id="formMetadata" class="space-y-3">
+                    <!-- Les métadonnées seront affichées ici -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Variables globales
+      let generatedFormData = null;
+      let isGenerating = false;
+
+      // Initialisation
+      document.addEventListener("DOMContentLoaded", function () {
+        // Vérifier l'authentification
+        if (!aiService.requireAuth()) {
+          return;
+        }
+
+        setupEventListeners();
+        loadUserInfo();
+        loadAIUsageStats();
+        loadRecentForms();
+      });
+
+      // Configuration des event listeners
+      function setupEventListeners() {
+        const promptInput = document.getElementById("promptInput");
+        const charCount = document.getElementById("charCount");
+
+        // Compteur de caractères
+        promptInput.addEventListener("input", function () {
+          const count = this.value.length;
+          charCount.textContent = count;
+
+          if (count > 1000) {
+            charCount.style.color = "#ef4444";
+          } else {
+            charCount.style.color = "#6b7280";
+          }
+        });
+
+        // Raccourci clavier pour générer
+        promptInput.addEventListener("keydown", function (e) {
+          if (e.ctrlKey && e.key === "Enter") {
+            generateForm();
+          }
+        });
+      }
+
+      // Charger les informations utilisateur
+      async function loadUserInfo() {
+        try {
+          const response = await fetch("http://localhost:3000/api/profile", {
+            headers: {
+              Authorization: `Bearer ${aiService.token}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById(
+              "userInfo"
+            ).textContent = `${data.user.first_name} ${data.user.last_name} (${data.user.plan})`;
+          }
+        } catch (error) {
+          console.error("Erreur lors du chargement du profil:", error);
+        }
+      }
+
+      // Charger les statistiques d'utilisation de l'IA
+      async function loadAIUsageStats() {
+        try {
+          const stats = await aiService.getAIUsageStats();
+
+          document.getElementById("formsGenerated").textContent =
+            stats.formsGenerated;
+          document.getElementById("monthlyLimit").textContent =
+            stats.monthlyLimit;
+          document.getElementById("remainingGenerations").textContent =
+            stats.remainingGenerations;
+
+          const usagePercent =
+            (stats.formsGenerated / stats.monthlyLimit) * 100;
+          document.getElementById("usageBar").style.width = `${usagePercent}%`;
+
+          if (usagePercent > 80) {
+            document.getElementById("usageBar").className =
+              "bg-red-600 h-2 rounded-full";
+          } else if (usagePercent > 60) {
+            document.getElementById("usageBar").className =
+              "bg-yellow-600 h-2 rounded-full";
+          }
+        } catch (error) {
+          console.error("Erreur lors du chargement des stats:", error);
+        }
+      }
+
+      // Charger les formulaires récents
+      async function loadRecentForms() {
+        try {
+          const forms = await aiService.getSavedForms();
+          const recentForms = forms.slice(0, 5); // 5 plus récents
+
+          const container = document.getElementById("recentForms");
+
+          if (recentForms.length === 0) {
+            container.innerHTML =
+              '<div class="text-sm text-gray-500">Aucun formulaire sauvegardé</div>';
+            return;
+          }
+
+          container.innerHTML = recentForms
+            .map(
+              (form) => `
+                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">${
+                              form.title
+                            }</div>
+                            <div class="text-xs text-gray-500">${new Date(
+                              form.created_at
+                            ).toLocaleDateString()}</div>
+                        </div>
+                        <button onclick="openForm(${
+                          form.id
+                        })" class="text-blue-600 hover:text-blue-800">
+                            <i class="ri-external-link-line"></i>
+                        </button>
+                    </div>
+                `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Erreur lors du chargement des formulaires:", error);
+          document.getElementById("recentForms").innerHTML =
+            '<div class="text-sm text-red-500">Erreur de chargement</div>';
+        }
+      }
+
+      // Générer le formulaire avec l'IA
+      async function generateForm() {
+        if (isGenerating) return;
+
+        const prompt = document.getElementById("promptInput").value.trim();
+        if (!prompt) {
+          showMessage("Veuillez entrer une description du formulaire", "error");
+          return;
+        }
+
+        isGenerating = true;
+        showGenerationProcess();
+        clearMessages();
+
+        try {
+          // Étape 1: Analyse
+          updateGenerationStep(1, "active");
+
+          // Étape 2: Génération
+          setTimeout(() => updateGenerationStep(2, "active"), 1000);
+
+          // Appel API
+          const formData = await aiService.generateForm(prompt);
+
+          // Étape 3: Design
+          setTimeout(() => updateGenerationStep(3, "active"), 2000);
+
+          // Finalisation
+          setTimeout(() => {
+            updateGenerationStep(1, "completed");
+            updateGenerationStep(2, "completed");
+            updateGenerationStep(3, "completed");
+
+            generatedFormData = formData;
+            displayGeneratedForm(formData);
+            hideGenerationProcess();
+            showMessage("Formulaire généré avec succès !", "success");
+
+            // Recharger les stats
+            loadAIUsageStats();
+          }, 3000);
+        } catch (error) {
+          console.error("Erreur lors de la génération:", error);
+          hideGenerationProcess();
+          showMessage(
+            "Erreur lors de la génération du formulaire. Veuillez réessayer.",
+            "error"
+          );
+        } finally {
+          isGenerating = false;
+        }
+      }
+
+      // Afficher le formulaire généré
+      function displayGeneratedForm(formData) {
+        const container = document.getElementById("formPreview");
+        const metadataContainer = document.getElementById("formMetadata");
+
+        // Afficher le formulaire
+        container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="border-b pb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">${
+                          formData.title
+                        }</h3>
+                        <p class="text-sm text-gray-600">${
+                          formData.description
+                        }</p>
+                    </div>
+                    ${formData.fields
+                      .map((field) => renderFormField(field))
+                      .join("")}
+                </div>
+            `;
+
+        // Afficher les métadonnées
+        metadataContainer.innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <div class="text-xs text-blue-600 uppercase tracking-wide font-medium">Type</div>
+                        <div class="text-sm font-semibold text-blue-900">${
+                          formData.type || "Personnalisé"
+                        }</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3">
+                        <div class="text-xs text-green-600 uppercase tracking-wide font-medium">Champs</div>
+                        <div class="text-sm font-semibold text-green-900">${
+                          formData.fields.length
+                        }</div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-sm text-gray-600">
+                        <strong>Prompt utilisé:</strong> ${
+                          formData.metadata?.prompt || "Non disponible"
+                        }
+                    </div>
+                </div>
+            `;
+
+        document
+          .getElementById("generatedFormContainer")
+          .classList.remove("hidden");
+      }
+
+      // Rendu d'un champ de formulaire
+      function renderFormField(field) {
+        const required = field.required
+          ? '<span class="text-red-500">*</span>'
+          : "";
+
+        switch (field.type) {
+          case "text":
+          case "email":
+          case "tel":
+            return `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                ${field.label} ${required}
+                            </label>
+                            <input type="${field.type}" 
+                                   placeholder="${field.placeholder || ""}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   ${field.required ? "required" : ""}>
+                        </div>
+                    `;
+          case "textarea":
+            return `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                ${field.label} ${required}
+                            </label>
+                            <textarea rows="3" 
+                                      placeholder="${field.placeholder || ""}"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      ${
+                                        field.required ? "required" : ""
+                                      }></textarea>
+                        </div>
+                    `;
+          case "select":
+            return `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                ${field.label} ${required}
+                            </label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    ${field.required ? "required" : ""}>
+                                <option value="">Sélectionnez une option</option>
+                                ${
+                                  field.options
+                                    ?.map(
+                                      (option) =>
+                                        `<option value="${option}">${option}</option>`
+                                    )
+                                    .join("") || ""
+                                }
+                            </select>
+                        </div>
+                    `;
+          default:
+            return `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                ${field.label} ${required}
+                            </label>
+                            <input type="${field.type}" 
+                                   placeholder="${field.placeholder || ""}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   ${field.required ? "required" : ""}>
+                        </div>
+                    `;
+        }
+      }
+
+      // Sauvegarder le formulaire généré
+      async function saveGeneratedForm() {
+        if (!generatedFormData) return;
+
+        try {
+          const savedForm = await aiService.saveGeneratedForm(
+            generatedFormData
+          );
+          showMessage("Formulaire sauvegardé avec succès !", "success");
+          loadRecentForms(); // Recharger la liste
+        } catch (error) {
+          console.error("Erreur lors de la sauvegarde:", error);
+          showMessage("Erreur lors de la sauvegarde du formulaire", "error");
+        }
+      }
+
+      // Régénérer le formulaire
+      function regenerateForm() {
+        if (isGenerating) return;
+        generateForm();
+      }
+
+      // Afficher le processus de génération
+      function showGenerationProcess() {
+        document.getElementById("generationProcess").classList.remove("hidden");
+        document.getElementById("generateBtn").disabled = true;
+        document.getElementById("generateBtn").innerHTML =
+          '<div class="ai-loader mr-2"></div>Génération...';
+      }
+
+      // Masquer le processus de génération
+      function hideGenerationProcess() {
+        document.getElementById("generationProcess").classList.add("hidden");
+        document.getElementById("generateBtn").disabled = false;
+        document.getElementById("generateBtn").innerHTML =
+          '<i class="ri-robot-line mr-2"></i>Générer le formulaire';
+
+        // Réinitialiser les étapes
+        document.querySelectorAll(".generation-step").forEach((step) => {
+          step.classList.remove("active", "completed");
+        });
+      }
+
+      // Mettre à jour l'étape de génération
+      function updateGenerationStep(stepNumber, status) {
+        const step = document.getElementById(`step${stepNumber}`);
+        const icon = step.querySelector("i");
+
+        step.classList.remove("active", "completed");
+        step.classList.add(status);
+
+        if (status === "completed") {
+          icon.className = "ri-check-line text-green-600 mr-3";
+        }
+      }
+
+      // Afficher un message
+      function showMessage(message, type) {
+        const container = document.getElementById("messageContainer");
+        const className =
+          type === "error" ? "error-message" : "success-message";
+
+        container.innerHTML = `
+                <div class="${className}">
+                    <i class="ri-${
+                      type === "error" ? "error-warning" : "check-circle"
+                    }-line mr-2"></i>
+                    ${message}
+                </div>
+            `;
+
+        // Masquer après 5 secondes
+        setTimeout(() => {
+          container.innerHTML = "";
+        }, 5000);
+      }
+
+      // Effacer les messages
+      function clearMessages() {
+        document.getElementById("messageContainer").innerHTML = "";
+      }
+
+      // Ouvrir un formulaire
+      function openForm(formId) {
+        window.location.href = `../forms/builder.html?id=${formId}`;
+      }
+
+      // Déconnexion
+      function logout() {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>

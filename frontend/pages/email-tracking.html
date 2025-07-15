@@ -8,14 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Remix Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <!-- Chart.js for analytics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Email Tracking System -->
-    <script src="../js/email-tracking-system.js"></script>
-    <!-- Navigation Component -->
-    <script src="../components/navigation.js"></script>
-    <!-- Navigation Standalone (Fallback) -->
-    <script src="../components/navigation-standalone.js"></script>
+    <!-- ApexCharts for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Auto-loader pour chargement dynamique -->
+    <script src="../js/auto-loader.js"></script>
     
     <script>
         tailwind.config = {
@@ -256,7 +252,7 @@
                 <!-- Actions de droite -->
                 <div class="flex items-center space-x-4">
                     <!-- Bouton actualiser -->
-                    <button onclick="refreshData()" 
+                    <button id="refresh-emails"
                             class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         Actualiser
                     </button>
@@ -385,14 +381,32 @@
             </div>
 
             <!-- Quick Stats Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+                <!-- Total Emails -->
+                <div class="tremor-Card metric-card h-full">
+                    <div class="tremor-CardContent h-full flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-tremor-content-DEFAULT text-sm mb-2">Total emails</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-emails">12,847</p>
+                                <div class="flex items-center">
+                                    <span class="text-blue-600 text-xs font-medium" id="delivery-rate">97.0% taux global</span>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="ri-mail-line text-gray-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Emails Envoyés -->
                 <div class="tremor-Card metric-card h-full">
                     <div class="tremor-CardContent h-full flex flex-col justify-between">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails envoyés</p>
-                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-sent">12,847</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="sent-emails">12,847</p>
                                 <div class="flex items-center">
                                     <i class="ri-arrow-up-line text-green-500 text-xs"></i>
                                     <span class="text-green-500 text-xs font-medium">+8.2% ce mois</span>
@@ -411,9 +425,9 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails livrés</p>
-                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-delivered">12,456</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="delivered-emails">12,456</p>
                                 <div class="flex items-center">
-                                    <span class="text-emerald-600 text-xs font-medium">97.0% taux de livraison</span>
+                                    <span class="text-emerald-600 text-xs font-medium" id="delivery-rate">97.0% taux de livraison</span>
                                 </div>
                             </div>
                             <div class="h-10 w-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -429,13 +443,31 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails ouverts</p>
-                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-opened">8,934</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="opened-emails">8,934</p>
                                 <div class="flex items-center">
-                                    <span class="text-violet-600 text-xs font-medium">71.7% taux d'ouverture</span>
+                                    <span class="text-violet-600 text-xs font-medium" id="open-rate">71.7% taux d'ouverture</span>
                                 </div>
                             </div>
                             <div class="h-10 w-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <i class="ri-mail-open-line text-violet-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emails Cliqués -->
+                <div class="tremor-Card metric-card h-full">
+                    <div class="tremor-CardContent h-full flex flex-col justify-between">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails cliqués</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="clicked-emails">2,847</p>
+                                <div class="flex items-center">
+                                    <span class="text-amber-600 text-xs font-medium" id="click-rate">32.1% taux de clic</span>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="ri-cursor-line text-amber-600"></i>
                             </div>
                         </div>
                     </div>
@@ -447,9 +479,9 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-tremor-content-DEFAULT text-sm mb-2">Emails échoués</p>
-                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="total-failed">391</p>
+                                <p class="text-2xl font-bold text-tremor-content-strong mb-2" id="bounced-emails">391</p>
                                 <div class="flex items-center">
-                                    <span class="text-red-600 text-xs font-medium">3.0% taux d'échec</span>
+                                    <span class="text-red-600 text-xs font-medium" id="bounce-rate">3.0% taux d'échec</span>
                                 </div>
                             </div>
                             <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -473,8 +505,8 @@
                     <!-- Filtre par Formulaire -->
                     <div>
                         <label class="block text-sm font-medium text-tremor-content-strong mb-2">Formulaire</label>
-                        <select id="form-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
-                            <option value="">Tous les formulaires</option>
+                        <select id="form-filter" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                            <option value="all">Tous les formulaires</option>
                             <option value="form-contact-001">Formulaire de contact</option>
                             <option value="form-survey-001">Sondage satisfaction</option>
                             <option value="form-event-001">Inscription événement</option>
@@ -485,8 +517,8 @@
                     <!-- Filtre par Statut -->
                     <div>
                         <label class="block text-sm font-medium text-tremor-content-strong mb-2">Statut</label>
-                        <select id="status-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
-                            <option value="">Tous les statuts</option>
+                        <select id="status-filter" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                            <option value="all">Tous les statuts</option>
                             <option value="delivered">Livrés</option>
                             <option value="opened">Ouverts</option>
                             <option value="clicked">Cliqués</option>
@@ -498,17 +530,24 @@
                     <!-- Filtre par Période -->
                     <div>
                         <label class="block text-sm font-medium text-tremor-content-strong mb-2">Période</label>
-                        <select id="period-filter" onchange="applyFilters()" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
-                            <option value="7">7 derniers jours</option>
-                            <option value="30" selected>30 derniers jours</option>
-                            <option value="90">90 derniers jours</option>
+                        <select id="date-range-filter" class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                            <option value="7d">7 derniers jours</option>
+                            <option value="30d" selected>30 derniers jours</option>
+                            <option value="90d">90 derniers jours</option>
                             <option value="365">Cette année</option>
                         </select>
                     </div>
 
+                    <!-- Recherche -->
+                    <div>
+                        <label class="block text-sm font-medium text-tremor-content-strong mb-2">Recherche</label>
+                        <input type="text" id="email-search" placeholder="Rechercher un email..." 
+                               class="w-full px-3 py-2.5 text-sm border border-tremor-border rounded-lg bg-tremor-background focus:ring-2 focus:ring-tremor-brand focus:border-tremor-brand transition-colors">
+                    </div>
+
                     <!-- Actions -->
                     <div class="flex items-end">
-                        <button onclick="exportTracking()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors text-sm">
+                        <button id="export-emails" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors text-sm">
                             <i class="ri-download-line mr-2"></i>Exporter
                         </button>
                     </div>
@@ -546,7 +585,7 @@
                                 </div>
                             </div>
                         </div>
-                        <canvas id="performanceChart" height="300"></canvas>
+                        <div id="delivery-chart" style="height: 300px;"></div>
                     </div>
                 </div>
 
@@ -564,7 +603,7 @@
                         </div>
                         
                         <div class="flex justify-center mb-6">
-                            <canvas id="statusChart" height="250"></canvas>
+                            <div id="engagement-chart" style="height: 250px;"></div>
                         </div>
                         
                         <!-- Status Legend with Values -->
@@ -672,7 +711,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="email-table-body" class="bg-tremor-background divide-y divide-tremor-border">
+                        <tbody id="emails-list" class="bg-tremor-background divide-y divide-tremor-border">
                             <!-- Table rows will be populated by JavaScript -->
                         </tbody>
                     </table>
@@ -684,7 +723,7 @@
                         Affichage de <span class="font-medium text-tremor-content-strong" id="page-start">1</span> à <span class="font-medium text-tremor-content-strong" id="page-end">25</span> 
                         sur <span class="font-medium text-tremor-content-strong" id="total-items">2,847</span> emails
                     </div>
-                    <div id="pagination-controls" class="flex space-x-1">
+                    <div id="pagination-container" class="flex space-x-1">
                         <!-- Pagination buttons will be generated by JavaScript -->
                     </div>
                 </div>

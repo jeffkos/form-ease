@@ -1,276 +1,521 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aperçu du Formulaire - FormEase</title>
-    <link href="../../styles/tremor-base.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FormEase - Aperçu du Formulaire</title>
     <style>
-        .preview-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-        }
-        
-        .form-field {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-field label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #374151;
-        }
-        
-        .form-field input,
-        .form-field textarea,
-        .form-field select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 0.875rem;
-        }
-        
-        .form-field input:focus,
-        .form-field textarea:focus,
-        .form-field select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .required {
-            color: #ef4444;
-        }
-        
-        .checkbox-group,
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .checkbox-item,
-        .radio-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .form-container {
+        padding: 40px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1em;
+      }
+
+      .required {
+        color: #e74c3c;
+        margin-left: 3px;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        background: #fafafa;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #4caf50;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .checkbox-item input[type="checkbox"] {
+        width: auto;
+        transform: scale(1.2);
+      }
+
+      .checkbox-item label {
+        margin-bottom: 0;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .success-message {
+        display: none;
+        background: #d4edda;
+        color: #155724;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        border: 1px solid #c3e6cb;
+      }
+
+      .error-message {
+        display: none;
+        background: #f8d7da;
+        color: #721c24;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        border: 1px solid #f5c6cb;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4caf50, #45a049);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .field-counter {
+        text-align: center;
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 0.9em;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          border-radius: 15px;
         }
 
-        .preview-header {
-            background: #f8fafc;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: between;
-            align-items: center;
+        .header {
+          padding: 20px;
         }
 
-        .back-button {
-            background: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.875rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .header h1 {
+          font-size: 2em;
         }
 
-        .back-button:hover {
-            background: #2563eb;
+        .form-container {
+          padding: 25px;
         }
+      }
     </style>
-</head>
-<body class="bg-gray-50">
-    <!-- Header de prévisualisation -->
-    <div class="preview-header">
-        <div>
-            <h1 class="text-xl font-semibold text-gray-800">Aperçu du Formulaire</h1>
-            <p class="text-sm text-gray-600">Ceci est un aperçu en lecture seule de votre formulaire</p>
-        </div>
-        <button onclick="window.close()" class="back-button">
-            <i class="ri-close-line"></i>
-            Fermer l'aperçu
-        </button>
-    </div>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1 id="form-title">Chargement...</h1>
+        <p id="form-description">Veuillez patienter...</p>
+      </div>
 
-    <!-- Conteneur du formulaire -->
-    <div class="preview-container">
-        <div id="formPreview">
-            <div class="text-center py-8">
-                <i class="ri-loader-4-line text-4xl text-gray-400 animate-spin"></i>
-                <p class="text-gray-500 mt-2">Chargement de l'aperçu...</p>
-            </div>
+      <div class="form-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
         </div>
-        
-        <!-- Boutons d'action -->
-        <div class="border-t pt-6 mt-8 flex gap-3">
-            <button onclick="window.close()" class="tremor-Button tremor-Button-secondary tremor-Button-md">
-                <i class="ri-close-line mr-2"></i>
-                Fermer
-            </button>
-            <button onclick="window.opener.focus(); window.close();" class="tremor-Button tremor-Button-primary tremor-Button-md">
-                <i class="ri-edit-line mr-2"></i>
-                Retour à l'Édition
-            </button>
+        <div class="field-counter" id="field-counter">
+          Champs complétés: 0/0
         </div>
+
+        <form id="dynamic-form">
+          <div id="form-fields">
+            <!-- Les champs seront générés dynamiquement -->
+          </div>
+
+          <button type="submit" class="submit-btn">
+            📝 Soumettre le formulaire
+          </button>
+        </form>
+
+        <div id="success-message" class="success-message">
+          <h3>✅ Formulaire soumis avec succès !</h3>
+          <p>
+            Votre inscription à la formation a été enregistrée. Vous recevrez
+            une confirmation par email.
+          </p>
+        </div>
+
+        <div id="error-message" class="error-message">
+          <h3>❌ Erreur lors de la soumission</h3>
+          <p>Veuillez vérifier tous les champs requis et réessayer.</p>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Récupérer les paramètres URL
-        function getUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                title: params.get('title') || 'Formulaire sans titre',
-                description: params.get('description') || '',
-                fields: JSON.parse(params.get('fields') || '[]')
-            };
-        }
+      // Fonction pour décoder les paramètres URL
+      function getURLParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          title: params.get("title") || "Formulaire",
+          description:
+            params.get("description") || "Veuillez remplir ce formulaire",
+          fields: JSON.parse(decodeURIComponent(params.get("fields") || "[]")),
+        };
+      }
 
-        // Générer le HTML du formulaire
-        function generateFormPreview(formData) {
-            let html = `
-                <div class="form-header mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">${formData.title}</h2>
-                    ${formData.description ? `<p class="text-gray-600">${formData.description}</p>` : ''}
-                </div>
-                <form id="previewForm">
-            `;
+      // Fonction pour générer les champs du formulaire
+      function generateFormFields(fields) {
+        const container = document.getElementById("form-fields");
+        container.innerHTML = "";
 
-            formData.fields.forEach((field, index) => {
-                html += `<div class="form-field">`;
-                
-                // Label
-                if (field.label) {
-                    html += `<label for="field_${index}">${field.label}${field.required ? '<span class="required">*</span>' : ''}</label>`;
-                }
+        fields.forEach((field) => {
+          const fieldDiv = document.createElement("div");
+          fieldDiv.className = "form-group";
 
-                // Input selon le type
-                switch (field.type) {
-                    case 'text':
-                    case 'email':
-                    case 'tel':
-                    case 'number':
-                        html += `<input type="${field.type}" id="field_${index}" ${field.placeholder ? `placeholder="${field.placeholder}"` : ''} ${field.required ? 'required' : ''} disabled>`;
-                        break;
-                        
-                    case 'textarea':
-                        html += `<textarea id="field_${index}" rows="4" ${field.placeholder ? `placeholder="${field.placeholder}"` : ''} ${field.required ? 'required' : ''} disabled></textarea>`;
-                        break;
-                        
-                    case 'select':
-                        html += `<select id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
-                        html += `<option value="">Choisir une option</option>`;
-                        if (field.options) {
-                            field.options.forEach(option => {
-                                html += `<option value="${option}">${option}</option>`;
-                            });
-                        }
-                        html += `</select>`;
-                        break;
-                        
-                    case 'radio':
-                        html += `<div class="radio-group">`;
-                        if (field.options) {
-                            field.options.forEach((option, optIndex) => {
-                                html += `
-                                    <div class="radio-item">
-                                        <input type="radio" id="field_${index}_${optIndex}" name="field_${index}" value="${option}" ${field.required ? 'required' : ''} disabled>
-                                        <label for="field_${index}_${optIndex}">${option}</label>
-                                    </div>
-                                `;
-                            });
-                        }
-                        html += `</div>`;
-                        break;
-                        
-                    case 'checkbox':
-                        if (field.options) {
-                            html += `<div class="checkbox-group">`;
-                            field.options.forEach((option, optIndex) => {
-                                html += `
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="field_${index}_${optIndex}" name="field_${index}[]" value="${option}" disabled>
-                                        <label for="field_${index}_${optIndex}">${option}</label>
-                                    </div>
-                                `;
-                            });
-                            html += `</div>`;
-                        } else {
-                            html += `<input type="checkbox" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
-                        }
-                        break;
-                        
-                    case 'date':
-                        html += `<input type="date" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
-                        break;
-                        
-                    case 'time':
-                        html += `<input type="time" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
-                        break;
-                        
-                    case 'file':
-                        html += `<input type="file" id="field_${index}" ${field.required ? 'required' : ''} disabled>`;
-                        break;
-                        
-                    default:
-                        html += `<input type="text" id="field_${index}" placeholder="Type de champ non supporté: ${field.type}" disabled>`;
-                }
+          const label = document.createElement("label");
+          label.textContent = field.label;
+          if (field.required) {
+            label.innerHTML += '<span class="required">*</span>';
+          }
 
-                html += `</div>`;
-            });
+          let input;
+          switch (field.type) {
+            case "text":
+            case "email":
+            case "tel":
+              input = document.createElement("input");
+              input.type = field.type;
+              input.placeholder = field.placeholder || "";
+              break;
 
-            html += `
-                </form>
-                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div class="flex items-center">
-                        <i class="ri-information-line text-blue-500 mr-2"></i>
-                        <p class="text-blue-700 text-sm">
-                            <strong>Aperçu en lecture seule :</strong> Les champs sont désactivés dans l'aperçu. 
-                            Le formulaire final sera fonctionnel pour vos utilisateurs.
-                        </p>
-                    </div>
-                </div>
-            `;
+            case "date":
+              input = document.createElement("input");
+              input.type = "date";
+              break;
 
-            return html;
-        }
+            case "select":
+              input = document.createElement("select");
+              const defaultOption = document.createElement("option");
+              defaultOption.value = "";
+              defaultOption.textContent = "Sélectionnez une option";
+              input.appendChild(defaultOption);
 
-        // Initialiser l'aperçu
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const formData = getUrlParams();
-                
-                if (formData.fields.length === 0) {
-                    document.getElementById('formPreview').innerHTML = `
-                        <div class="text-center py-8">
-                            <i class="ri-file-text-line text-4xl text-gray-400 mb-4"></i>
-                            <h3 class="text-lg font-medium text-gray-600 mb-2">Aucun champ à prévisualiser</h3>
-                            <p class="text-gray-500">Ajoutez des champs à votre formulaire pour voir l'aperçu</p>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('formPreview').innerHTML = generateFormPreview(formData);
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement de l\'aperçu:', error);
-                document.getElementById('formPreview').innerHTML = `
-                    <div class="text-center py-8">
-                        <i class="ri-error-warning-line text-4xl text-red-400 mb-4"></i>
-                        <h3 class="text-lg font-medium text-red-600 mb-2">Erreur de chargement</h3>
-                        <p class="text-gray-500">Impossible de charger l'aperçu du formulaire</p>
-                    </div>
-                `;
-            }
+              field.options.forEach((option) => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                input.appendChild(optionElement);
+              });
+              break;
+
+            case "textarea":
+              input = document.createElement("textarea");
+              input.placeholder = field.placeholder || "";
+              break;
+
+            case "checkbox":
+              const checkboxGroup = document.createElement("div");
+              checkboxGroup.className = "checkbox-group";
+
+              field.options.forEach((option) => {
+                const checkboxItem = document.createElement("div");
+                checkboxItem.className = "checkbox-item";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.name = field.id;
+                checkbox.value = option;
+                checkbox.id = `${field.id}_${option}`;
+
+                const checkboxLabel = document.createElement("label");
+                checkboxLabel.textContent = option;
+                checkboxLabel.htmlFor = checkbox.id;
+
+                checkboxItem.appendChild(checkbox);
+                checkboxItem.appendChild(checkboxLabel);
+                checkboxGroup.appendChild(checkboxItem);
+              });
+
+              fieldDiv.appendChild(label);
+              fieldDiv.appendChild(checkboxGroup);
+              container.appendChild(fieldDiv);
+              return;
+          }
+
+          input.name = field.id;
+          input.id = field.id;
+          input.required = field.required || false;
+
+          // Ajouter les événements pour la progression
+          input.addEventListener("input", updateProgress);
+          input.addEventListener("change", updateProgress);
+
+          fieldDiv.appendChild(label);
+          fieldDiv.appendChild(input);
+          container.appendChild(fieldDiv);
         });
+      }
+
+      // Fonction pour mettre à jour la barre de progression
+      function updateProgress() {
+        const form = document.getElementById("dynamic-form");
+        const formData = new FormData(form);
+        const fields = JSON.parse(
+          decodeURIComponent(
+            new URLSearchParams(window.location.search).get("fields") || "[]"
+          )
+        );
+
+        let completedFields = 0;
+        let totalRequiredFields = 0;
+
+        fields.forEach((field) => {
+          if (field.required) {
+            totalRequiredFields++;
+
+            if (field.type === "checkbox") {
+              const checkboxes = form.querySelectorAll(
+                `input[name="${field.id}"]:checked`
+              );
+              if (checkboxes.length > 0) {
+                completedFields++;
+              }
+            } else {
+              const value = formData.get(field.id);
+              if (value && value.trim() !== "") {
+                completedFields++;
+              }
+            }
+          }
+        });
+
+        const progress =
+          totalRequiredFields > 0
+            ? (completedFields / totalRequiredFields) * 100
+            : 0;
+        document.getElementById("progress-fill").style.width = progress + "%";
+        document.getElementById(
+          "field-counter"
+        ).textContent = `Champs requis complétés: ${completedFields}/${totalRequiredFields}`;
+      }
+
+      // Fonction pour soumettre le formulaire
+      function submitForm(event) {
+        event.preventDefault();
+
+        const form = document.getElementById("dynamic-form");
+        const formData = new FormData(form);
+        const fields = JSON.parse(
+          decodeURIComponent(
+            new URLSearchParams(window.location.search).get("fields") || "[]"
+          )
+        );
+
+        // Validation des champs requis
+        let isValid = true;
+        const errors = [];
+
+        fields.forEach((field) => {
+          if (field.required) {
+            if (field.type === "checkbox") {
+              const checkboxes = form.querySelectorAll(
+                `input[name="${field.id}"]:checked`
+              );
+              if (checkboxes.length === 0) {
+                isValid = false;
+                errors.push(`Le champ "${field.label}" est requis`);
+              }
+            } else {
+              const value = formData.get(field.id);
+              if (!value || value.trim() === "") {
+                isValid = false;
+                errors.push(`Le champ "${field.label}" est requis`);
+              }
+            }
+          }
+        });
+
+        if (!isValid) {
+          const errorDiv = document.getElementById("error-message");
+          errorDiv.style.display = "block";
+          errorDiv.innerHTML = `
+                    <h3>❌ Erreur lors de la soumission</h3>
+                    <ul>${errors
+                      .map((error) => `<li>${error}</li>`)
+                      .join("")}</ul>
+                `;
+          errorDiv.scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+
+        // Collecter toutes les données
+        const submissionData = {
+          title: document.getElementById("form-title").textContent,
+          description: document.getElementById("form-description").textContent,
+          timestamp: new Date().toISOString(),
+          data: {},
+        };
+
+        fields.forEach((field) => {
+          if (field.type === "checkbox") {
+            const checkboxes = form.querySelectorAll(
+              `input[name="${field.id}"]:checked`
+            );
+            submissionData.data[field.id] = Array.from(checkboxes).map(
+              (cb) => cb.value
+            );
+          } else {
+            submissionData.data[field.id] = formData.get(field.id);
+          }
+        });
+
+        // Sauvegarder dans localStorage
+        const existingSubmissions = JSON.parse(
+          localStorage.getItem("formease_submissions") || "[]"
+        );
+        existingSubmissions.push(submissionData);
+        localStorage.setItem(
+          "formease_submissions",
+          JSON.stringify(existingSubmissions)
+        );
+
+        // Afficher le message de succès
+        document.getElementById("error-message").style.display = "none";
+        document.getElementById("success-message").style.display = "block";
+        document
+          .getElementById("success-message")
+          .scrollIntoView({ behavior: "smooth" });
+
+        // Réinitialiser le formulaire après 3 secondes
+        setTimeout(() => {
+          form.reset();
+          updateProgress();
+          document.getElementById("success-message").style.display = "none";
+        }, 3000);
+
+        console.log("Formulaire soumis:", submissionData);
+      }
+
+      // Initialisation
+      document.addEventListener("DOMContentLoaded", function () {
+        const params = getURLParams();
+
+        // Mettre à jour le titre et la description
+        document.getElementById("form-title").textContent = params.title;
+        document.getElementById("form-description").textContent =
+          params.description;
+        document.title = `FormEase - ${params.title}`;
+
+        // Générer les champs
+        generateFormFields(params.fields);
+
+        // Ajouter l'événement de soumission
+        document
+          .getElementById("dynamic-form")
+          .addEventListener("submit", submitForm);
+
+        // Ajouter les événements pour les checkboxes
+        setTimeout(() => {
+          const checkboxes = document.querySelectorAll(
+            'input[type="checkbox"]'
+          );
+          checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener("change", updateProgress);
+          });
+          updateProgress();
+        }, 100);
+      });
     </script>
-</body>
+  </body>
 </html>

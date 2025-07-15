@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="form-title">FormEase - Formulaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Signature Pad pour les signatures électroniques -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    
+    <!-- Stripe pour les paiements -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tremor: {
+                            brand: {
+                                faint: '#f0f9ff',
+                                muted: '#bae6fd',
+                                subtle: '#38bdf8',
+                                DEFAULT: '#0ea5e9',
+                                emphasis: '#0284c7',
+                                inverted: '#ffffff'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Styles pour les champs de formulaire */
+        .form-field {
+            transition: all 0.3s ease;
+        }
+        
+        .form-field:focus-within {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .form-input {
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Styles pour les étoiles de rating */
+        .rating-star {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .rating-star:hover,
+        .rating-star.active {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+        
+        /* Styles pour le slider */
+        .form-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        .form-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Styles pour la signature */
+        .signature-canvas {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            background: #fafafa;
+            cursor: crosshair;
+        }
+        
+        .signature-canvas.signing {
+            border-color: #3b82f6;
+            background: white;
+        }
+        
+        /* Styles pour les paiements */
+        .payment-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        /* Animation de progression */
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        /* Styles pour les pages multiples */
+        .form-page {
+            display: none;
+            animation: fadeInSlide 0.4s ease-out;
+        }
+        
+        .form-page.active {
+            display: block;
+        }
+        
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Styles responsifs */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-field {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* États de chargement */
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Success/Error states */
+        .success-message {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 1px solid #22c55e;
+            color: #166534;
+        }
+        
+        .error-message-global {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border: 1px solid #ef4444;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header avec logo FormEase -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="ri-file-list-3-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-900">FormEase</div>
+                        <div class="text-sm text-gray-500">Formulaire Public</div>
+                    </div>
+                </div>
+                
+                <!-- Indicateur de sécurité -->
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <i class="ri-shield-check-line text-green-600"></i>
+                    <span>Sécurisé</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container principal -->
+    <div class="max-w-4xl mx-auto p-4 py-8">
+        <!-- En-tête du formulaire -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6" id="form-header">
+            <div class="text-center">
+                <h1 id="form-title-display" class="text-3xl font-bold text-gray-900 mb-4">
+                    Chargement du formulaire...
+                </h1>
+                <p id="form-description-display" class="text-gray-600 mb-6">
+                    Veuillez patienter pendant le chargement.
+                </p>
+                
+                <!-- Barre de progression (pour formulaires multi-pages) -->
+                <div id="progress-container" class="hidden">
+                    <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                        <span>Progression</span>
+                        <span id="progress-text">1 sur 1</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages globaux -->
+        <div id="global-messages" class="mb-6"></div>
+
+        <!-- Formulaire principal -->
+        <form id="public-form" class="space-y-6">
+            <!-- Les champs seront injectés ici dynamiquement -->
+            <div id="form-fields-container">
+                <!-- État de chargement -->
+                <div id="loading-state" class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-600">Chargement du formulaire...</p>
+                </div>
+            </div>
+            
+            <!-- Navigation entre pages (formulaires multi-pages) -->
+            <div id="form-navigation" class="hidden">
+                <div class="flex justify-between items-center bg-white rounded-xl shadow-lg p-4">
+                    <button type="button" id="prev-page-btn" class="flex items-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50" disabled>
+                        <i class="ri-arrow-left-line"></i>
+                        <span>Précédent</span>
+                    </button>
+                    
+                    <div class="flex space-x-2" id="page-indicators">
+                        <!-- Indicateurs de pages -->
+                    </div>
+                    
+                    <button type="button" id="next-page-btn" class="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <span>Suivant</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Bouton de soumission -->
+            <div id="submit-container" class="bg-white rounded-xl shadow-lg p-6 text-center">
+                <button type="submit" id="submit-btn" class="w-full md:w-auto px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span id="submit-text">Envoyer le formulaire</span>
+                    <div id="submit-spinner" class="hidden inline-block ml-2">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </button>
+                
+                <!-- Informations RGPD -->
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>Vos données sont protégées et traitées selon notre politique de confidentialité.</p>
+                </div>
+            </div>
+        </form>
+        
+        <!-- Page de succès -->
+        <div id="success-page" class="hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Merci pour votre réponse !</h2>
+                <p id="success-message-display" class="text-gray-600 mb-6">
+                    Votre formulaire a été envoyé avec succès.
+                </p>
+                
+                <!-- Actions après soumission -->
+                <div class="space-y-3">
+                    <div id="response-actions" class="hidden">
+                        <!-- Liens vers d'autres actions -->
+                    </div>
+                    
+                    <div class="text-sm text-gray-500">
+                        <p>Vous pouvez fermer cette page en toute sécurité.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page d'erreur -->
+        <div id="error-page" class="hidden">
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                <div class="text-6xl mb-4">❌</div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Erreur</h2>
+                <p id="error-message-display" class="text-gray-600 mb-6">
+                    Une erreur s'est produite lors du chargement du formulaire.
+                </p>
+                
+                <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="ri-refresh-line mr-2"></i>
+                    Réessayer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-12">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between text-sm text-gray-500">
+                <div class="flex items-center space-x-2">
+                    <span>Propulsé par</span>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">FormEase</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="hover:text-gray-700">Confidentialité</a>
+                    <a href="#" class="hover:text-gray-700">Conditions</a>
+                    <a href="#" class="hover:text-gray-700">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Variables globales
+        let formData = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let responses = {};
+        let isSubmitting = false;
+        let signaturePads = {};
+        let stripeInstance = null;
+        let paymentElements = {};
+
+        // Récupérer l'ID du formulaire depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const formId = urlParams.get('form') || urlParams.get('id');
+        const token = urlParams.get('token'); // Token de sécurité optionnel
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!formId) {
+                showError('Aucun formulaire spécifié dans l\'URL.');
+                return;
+            }
+            
+            loadForm(formId);
+        });
+
+        /**
+         * Charger les données du formulaire
+         */
+        async function loadForm(formId) {
+            try {
+                console.log('🔄 Chargement du formulaire:', formId);
+                
+                // Appel API pour récupérer le formulaire
+                const response = await fetch(`/api/public/forms/${formId}${token ? '?token=' + token : ''}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Formulaire non trouvé ou non publié.');
+                    } else if (response.status === 403) {
+                        throw new Error('Accès non autorisé à ce formulaire.');
+                    }
+                    throw new Error('Erreur lors du chargement du formulaire.');
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    formData = data.data;
+                    initializeForm();
+                } else {
+                    throw new Error(data.error || 'Erreur inconnue');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erreur chargement formulaire:', error);
+                showError(error.message);
+            }
+        }
+
+        /**
+         * Initialiser le formulaire avec les données reçues
+         */
+        function initializeForm() {
+            console.log('🎯 Initialisation du formulaire:', formData.title);
+            
+            // Mettre à jour le titre et la description
+            document.title = formData.title + ' - FormEase';
+            document.getElementById('form-title-display').textContent = formData.title;
+            document.getElementById('form-description-display').textContent = formData.description || '';
+            
+            // Analyser la structure des pages
+            analyzeFormPages();
+            
+            // Générer les champs
+            renderFormFields();
+            
+            // Initialiser la navigation si multi-pages
+            if (totalPages > 1) {
+                initializeMultiPageNavigation();
+            }
+            
+            // Masquer l'état de chargement
+            document.getElementById('loading-state').style.display = 'none';
+            
+            // Initialiser les éléments spéciaux
+            initializeSpecialFields();
+            
+            console.log('✅ Formulaire initialisé avec succès');
+        }
+
+        /**
+         * Analyser les pages du formulaire
+         */
+        function analyzeFormPages() {
+            let pageCount = 1;
+            const fields = formData.fields || [];
+            
+            // Compter les sauts de page
+            fields.forEach(field => {
+                if (field.type === 'page_break') {
+                    pageCount++;
+                }
+            });
+            
+            totalPages = pageCount;
+            console.log(`📄 Formulaire avec ${totalPages} page(s)`);
+        }
+
+        /**
+         * Générer les champs du formulaire
+         */
+        function renderFormFields() {
+            const container = document.getElementById('form-fields-container');
+            const fields = formData.fields || [];
+            
+            if (fields.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                        <div class="text-gray-500">
+                            <i class="ri-file-list-line text-4xl mb-4"></i>
+                            <p>Ce formulaire ne contient aucun champ.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let currentPageNum = 1;
+            let pagesHTML = [`<div class="form-page active" data-page="1">`];
+            
+            fields.forEach((field, index) => {
+                if (field.type === 'page_break') {
+                    // Fermer la page actuelle et ouvrir une nouvelle
+                    pagesHTML[currentPageNum - 1] += '</div>';
+                    currentPageNum++;
+                    pagesHTML.push(`<div class="form-page" data-page="${currentPageNum}">`);
+                    
+                    // Ajouter le titre de la page si spécifié
+                    if (field.settings?.title) {
+                        pagesHTML[currentPageNum - 1] += `
+                            <div class="bg-white rounded-xl shadow-lg p-6 mb-6 text-center">
+                                <h2 class="text-xl font-semibold text-gray-900">${field.settings.title}</h2>
+                                ${field.settings.description ? `<p class="text-gray-600 mt-2">${field.settings.description}</p>` : ''}
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Ajouter le champ à la page actuelle
+                    pagesHTML[currentPageNum - 1] += renderField(field, index);
+                }
+            });
+            
+            // Fermer la dernière page
+            pagesHTML[pagesHTML.length - 1] += '</div>';
+            
+            container.innerHTML = pagesHTML.join('');
+        }
+
+        /**
+         * Générer le HTML d'un champ
+         */
+        function renderField(field, index) {
+            if (!field || !field.type) return '';
+            
+            const fieldId = field.id || `field_${index}`;
+            const required = field.required ? 'required' : '';
+            const requiredMark = field.required ? '<span class="text-red-500 ml-1">*</span>' : '';
+            
+            let fieldHTML = `
+                <div class="form-field bg-white rounded-xl shadow-lg p-6" data-field-id="${fieldId}">
+                    <label class="block text-sm font-medium text-gray-900 mb-2">
+                        ${field.label}${requiredMark}
+                    </label>
+            `;
+            
+            switch (field.type) {
+                case 'text':
+                    fieldHTML += `
+                        <input type="text" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               placeholder="${field.placeholder || ''}"
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${required}>
+                    `;
+                    break;
+                    
+                case 'textarea':
+                    const rows = field.settings?.rows || 4;
+                    fieldHTML += `
+                        <textarea id="${fieldId}" 
+                                 name="${fieldId}" 
+                                 placeholder="${field.placeholder || ''}"
+                                 rows="${rows}"
+                                 class="form-input w-full p-3 border border-gray-300 rounded-lg resize-vertical"
+                                 ${required}></textarea>
+                    `;
+                    break;
+                    
+                case 'email':
+                    fieldHTML += `
+                        <input type="email" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               placeholder="${field.placeholder || 'exemple@email.com'}"
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${required}>
+                    `;
+                    break;
+                    
+                case 'number_only':
+                    const min = field.validation?.min || '';
+                    const max = field.validation?.max || '';
+                    fieldHTML += `
+                        <input type="number" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               placeholder="${field.placeholder || ''}"
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${min ? `min="${min}"` : ''}
+                               ${max ? `max="${max}"` : ''}
+                               ${required}>
+                    `;
+                    break;
+                    
+                case 'address':
+                    fieldHTML += renderAddressField(fieldId, field);
+                    break;
+                    
+                case 'website':
+                    fieldHTML += `
+                        <input type="url" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               placeholder="${field.placeholder || 'https://monsite.com'}"
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${required}>
+                    `;
+                    break;
+                    
+                case 'select':
+                    fieldHTML += renderSelectField(fieldId, field);
+                    break;
+                    
+                case 'radio':
+                    fieldHTML += renderRadioField(fieldId, field);
+                    break;
+                    
+                case 'checkbox':
+                    fieldHTML += renderCheckboxField(fieldId, field);
+                    break;
+                    
+                case 'date':
+                    fieldHTML += `
+                        <input type="date" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${required}>
+                    `;
+                    break;
+                    
+                case 'time':
+                    fieldHTML += `
+                        <input type="time" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${required}>
+                    `;
+                    break;
+                    
+                case 'file':
+                    fieldHTML += renderFileField(fieldId, field);
+                    break;
+                    
+                case 'rating':
+                    fieldHTML += renderRatingField(fieldId, field);
+                    break;
+                    
+                case 'slider':
+                    fieldHTML += renderSliderField(fieldId, field);
+                    break;
+                    
+                case 'signature':
+                    fieldHTML += renderSignatureField(fieldId, field);
+                    break;
+                    
+                case 'currency':
+                    fieldHTML += renderCurrencyField(fieldId, field);
+                    break;
+                    
+                case 'stripe_payment':
+                    fieldHTML += renderStripePaymentField(fieldId, field);
+                    break;
+                    
+                case 'paypal_payment':
+                    fieldHTML += renderPayPalPaymentField(fieldId, field);
+                    break;
+                    
+                case 'section':
+                    return renderSectionField(field);
+                    
+                case 'consent':
+                    fieldHTML += renderConsentField(fieldId, field);
+                    break;
+                    
+                case 'html':
+                    return renderHtmlField(field);
+                    
+                case 'hidden':
+                    return `<input type="hidden" id="${fieldId}" name="${fieldId}" value="${field.settings?.value || ''}">`;
+                    
+                default:
+                    fieldHTML += `
+                        <input type="text" 
+                               id="${fieldId}" 
+                               name="${fieldId}" 
+                               placeholder="${field.placeholder || ''}"
+                               class="form-input w-full p-3 border border-gray-300 rounded-lg"
+                               ${required}>
+                    `;
+            }
+            
+            fieldHTML += `
+                    <div class="error-message hidden" id="${fieldId}-error"></div>
+                </div>
+            `;
+            
+            return fieldHTML;
+        }
+
+        // Continuer dans le prochain message...
+    </script>
+    
+    <!-- Auto-loader FormEase pour dynamiser la page -->
+    <script src="../js/auto-loader.js"></script>
+</body>
+</html>
